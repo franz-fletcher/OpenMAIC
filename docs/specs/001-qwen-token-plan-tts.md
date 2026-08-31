@@ -1,6 +1,6 @@
 # Batch 001 spec: qwen-token-plan-tts WebSocket provider
 
-Spec status: implementation
+Spec status: verification
 
 ## Problem Statement
 
@@ -87,6 +87,14 @@ One opt-in live smoke test is gated by `TEST_LOAD_LOCAL_ENV=1`. The test must sk
 A protocol pin test records the exact frame sequence and event names from the probes.
 
 The success criteria: the classroom pipeline synthesizes mp3 audio, the picker filters by model, the pool reaps and reuses, and every failure maps to a typed route error.
+
+### Gate mechanics convention (ledger round-1 repair, per docs/research/001-verification-report.md)
+
+The runner matches a gate's expect string as a literal substring of captured stdout+stderr, or as a `/regex/flags` pattern. A gate passes on exit code 0 AND a match. `'/^/'` therefore means "exit code governs". Silent-success commands use it.
+
+Tier gate depth is enforced by the CLI: tier 1 needs 1 gate, tier 2 needs 2, tier 3 needs 3 with an integration tag, tier 4 needs 4 with an adversarial tag. S2 gained a protocol-suite gate, S3 gained tsc and route-test gates, S4 gained pin, skip-behavior, and neutrality-sentinel gates.
+
+The aggregate suite gate excludes `tests/server/classroom-media-generation.test.ts`. That file calls a live image endpoint and fails at the merge base (finding F5 also flags a pre-existing key-printing risk in its harness, owned outside this batch).
 
 ## Out of Scope
 

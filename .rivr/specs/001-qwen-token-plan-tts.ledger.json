@@ -4,14 +4,14 @@
   "spec": {
     "reference": "docs/specs/001-qwen-token-plan-tts.md",
     "title": "Batch 001 spec: qwen-token-plan-tts WebSocket provider",
-    "hash": "d724f38c2fb62773c97c3765aa2ce23494d5cde2c2750c2f5e627df7e23de764"
+    "hash": "8c1be20981504fa188f295008ee648719fe8c7513474e1f8e042f60ca562dfca"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "implementation",
+  "stage": "verification",
   "retry": {
-    "count": 1,
+    "count": 2,
     "max": 5,
     "consecutive_same_cause": 0,
     "escalate_at": 3
@@ -40,7 +40,8 @@
                 "kind": "type"
               },
               "postcondition": {
-                "exists": true
+                "exists": true,
+                "kind": "type"
               },
               "postcondition_quality": "INSPECTED"
             }
@@ -52,13 +53,14 @@
             {
               "name": "TTS_PROVIDERS",
               "kind": "variable",
-              "expectation": "Entry for qwen-token-plan-tts with models qwen-audio-3.0-tts-plus and qwen-audio-3.0-tts-flash, curated voices, mp3 format.",
+              "expectation": "Entry for qwen-token-plan-tts with single model qwen-audio-3.0-tts-plus, system voices longanlingxin and longanlufeng, mp3 format.",
               "before": {
                 "exists": true,
                 "kind": "variable"
               },
               "postcondition": {
-                "exists": true
+                "exists": true,
+                "kind": "variable"
               },
               "postcondition_quality": "INSPECTED"
             },
@@ -71,7 +73,8 @@
                 "kind": "variable"
               },
               "postcondition": {
-                "exists": true
+                "exists": true,
+                "kind": "variable"
               },
               "postcondition_quality": "INSPECTED"
             },
@@ -84,7 +87,8 @@
                 "kind": "variable"
               },
               "postcondition": {
-                "exists": true
+                "exists": true,
+                "kind": "variable"
               },
               "postcondition_quality": "INSPECTED"
             }
@@ -102,7 +106,8 @@
                 "kind": "variable"
               },
               "postcondition": {
-                "exists": true
+                "exists": true,
+                "kind": "variable"
               },
               "postcondition_quality": "INSPECTED"
             }
@@ -114,13 +119,14 @@
             {
               "name": "qwenTokenPlanBaseVoices",
               "kind": "variable",
-              "expectation": "Typed array of 1194 base-voice records, compatibleModels set per model id, native names only.",
+              "expectation": "Typed array of 597 plus-model base-voice records, native names only.",
               "before": {
                 "exists": true,
                 "kind": "variable"
               },
               "postcondition": {
-                "exists": true
+                "exists": true,
+                "kind": "variable"
               },
               "postcondition_quality": "INSPECTED"
             }
@@ -142,23 +148,23 @@
       "expectation": "Registry entry for qwen-token-plan-tts: single model qwen-audio-3.0-tts-plus, system voices longanlingxin and longanlufeng with description keys, requiresApiKey true. Defaults and display map updated. Provider key present in 12 locales. Data file holds 597 plus-model base voices. No flash remnants.",
       "gates": [
         {
+          "id": "G1.3",
+          "check": "grep -l providerQwenTokenPlanTTS lib/i18n/locales/*.json | wc -l",
+          "expect": "12",
+          "evidence": "pending",
+          "type": "unit"
+        },
+        {
           "id": "G1.1",
           "check": "npx tsc --noEmit",
-          "expect": "exit code 0",
+          "expect": "/^/",
           "evidence": "pending",
           "type": "unit"
         },
         {
           "id": "G1.2",
           "check": "pnpm check:i18n-keys",
-          "expect": "exit code 0",
-          "evidence": "pending",
-          "type": "unit"
-        },
-        {
-          "id": "G1.3",
-          "check": "grep -l providerQwenTokenPlanTTS lib/i18n/locales/*.json | wc -l",
-          "expect": "12",
+          "expect": "/^/",
           "evidence": "pending",
           "type": "unit"
         }
@@ -190,7 +196,8 @@
                 "signature": "(\n  config: TTSModelConfig,\n  text: string,\n): Promise<TTSGenerationResult>"
               },
               "postcondition": {
-                "exists": true
+                "exists": true,
+                "kind": "function"
               },
               "postcondition_quality": "INSPECTED"
             }
@@ -207,9 +214,10 @@
                 "exists": false
               },
               "postcondition": {
-                "exists": true
+                "exists": true,
+                "kind": "function"
               },
-              "postcondition_quality": "INFERRED"
+              "postcondition_quality": "INSPECTED"
             },
             {
               "name": "QwenTokenPlanWsPool",
@@ -219,9 +227,10 @@
                 "exists": false
               },
               "postcondition": {
-                "exists": true
+                "exists": true,
+                "kind": "class"
               },
-              "postcondition_quality": "INFERRED"
+              "postcondition_quality": "INSPECTED"
             }
           ]
         }
@@ -243,7 +252,14 @@
         {
           "id": "G2.1",
           "check": "npx vitest run tests/audio/qwen-token-plan-tts.test.ts",
-          "expect": "exit code 0",
+          "expect": "/^/",
+          "evidence": "pending",
+          "type": "unit"
+        },
+        {
+          "id": "G2.2",
+          "check": "npx vitest run tests/audio/qwen-token-plan-tts-protocol.test.ts",
+          "expect": "/^/",
           "evidence": "pending",
           "type": "unit"
         }
@@ -273,7 +289,8 @@
                 "kind": "variable"
               },
               "postcondition": {
-                "exists": true
+                "exists": true,
+                "kind": "variable"
               },
               "postcondition_quality": "INSPECTED"
             }
@@ -297,9 +314,23 @@
         {
           "id": "G3.1",
           "check": "npx vitest run tests/server/provider-config.test.ts tests/server/tts-route-missing-key.test.ts tests/providers/provider-neutrality-guard.test.ts",
-          "expect": "exit code 0",
+          "expect": "/^/",
           "evidence": "pending",
           "type": "integration"
+        },
+        {
+          "id": "G3.2",
+          "check": "npx tsc --noEmit",
+          "expect": "/^/",
+          "evidence": "pending",
+          "type": "unit"
+        },
+        {
+          "id": "G3.3",
+          "check": "npx vitest run tests/server/tts-route-missing-key.test.ts",
+          "expect": "/^/",
+          "evidence": "pending",
+          "type": "unit"
         }
       ]
     },
@@ -326,7 +357,8 @@
                 "signature": "(\n  text: string,\n  voice: string,\n  model: string,\n): Promise<{ bytes: number; format: string }>"
               },
               "postcondition": {
-                "exists": true
+                "exists": true,
+                "kind": "function"
               },
               "postcondition_quality": "INSPECTED"
             }
@@ -350,9 +382,30 @@
         {
           "id": "G4.1",
           "check": "TEST_LOAD_LOCAL_ENV=1 npx vitest run tests/audio/qwen-token-plan-tts-live.test.ts",
-          "expect": "exit code 0",
+          "expect": "/^/",
           "evidence": "pending",
           "type": "adversarial"
+        },
+        {
+          "id": "G4.2",
+          "check": "npx vitest run tests/audio/qwen-token-plan-tts-protocol.test.ts",
+          "expect": "/^/",
+          "evidence": "pending",
+          "type": "unit"
+        },
+        {
+          "id": "G4.3",
+          "check": "npx vitest run tests/audio/qwen-token-plan-tts-live.test.ts",
+          "expect": "skipped",
+          "evidence": "pending",
+          "type": "smoke"
+        },
+        {
+          "id": "G4.4",
+          "check": "npx vitest run tests/providers/provider-neutrality-guard.test.ts",
+          "expect": "/^/",
+          "evidence": "pending",
+          "type": "smoke"
         }
       ]
     },
@@ -380,7 +433,8 @@
                 "signature": "(\n  requestId: string,\n  text: string,\n  language?: string,\n  signal?: AbortSignal,\n  retryOptions?: ClientRetryOptions<TTSApiResponse>,\n  existingAudioId?: string,\n  stageId?: string,\n  // Internal: an explicit voice that bypasses narrator binding resolution — used\n  // to retry narration against the deterministic enabled-provider pick when the\n  // pinned narrator voice (bound == global) turns out to be unusable.\n  overrideVoice?: ResolvedVoice,\n  // Internal: number of narrator voice-fallback hops already taken. Guards the\n  // QWEN_VC_VOICE_NOT_FOUND retry so a chain of dead voices can never loop\n  // /api/generate/tts beyond a single fallback hop.\n  fallbackHops = 0,\n): Promise<string | null>"
               },
               "postcondition": {
-                "exists": true
+                "exists": true,
+                "kind": "function"
               },
               "postcondition_quality": "VERIFIED"
             }
@@ -399,7 +453,8 @@
                 "signature": "(input: SceneTtsInput): Promise<SceneTtsSummary>"
               },
               "postcondition": {
-                "exists": true
+                "exists": true,
+                "kind": "function"
               },
               "postcondition_quality": "VERIFIED"
             }
@@ -422,15 +477,15 @@
       "gates": [
         {
           "id": "G5.1",
-          "check": "pnpm test",
-          "expect": "exit code 0",
+          "check": "npx vitest run --exclude tests/server/classroom-media-generation.test.ts",
+          "expect": "/^/",
           "evidence": "pending",
           "type": "integration"
         },
         {
           "id": "G5.2",
           "check": "pnpm check",
-          "expect": "exit code 0",
+          "expect": "/^/",
           "evidence": "pending",
           "type": "unit"
         }
@@ -1098,7 +1153,438 @@
       "slice": "S5",
       "hash": "13553042780473af3f0306cbcf3c362fe2c5556fd44435e00bcc0ba4c0ed7be2",
       "fileHash": "9d695bcf532ad0c6f3a3f6e0033446f4b3390aebeecb6f5802045f20d198ada6"
+    },
+    {
+      "seq": 61,
+      "id": "4ae28014-22ed-4aba-802a-d0df9ea8b7b8",
+      "at": "2026-08-31T07:53:56.565Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "4ad26836b7c14dcf86bb31a2fd651d435b3e712165a8a8c059e9848862d307b6",
+      "fileHash": "c614c8b1a0f8397aeeee93a5637b52932a87bb75ca400c968abc757ac1055d1b"
+    },
+    {
+      "seq": 62,
+      "id": "0af76876-f386-4347-a176-fe8559405d4b",
+      "at": "2026-08-31T08:13:16.487Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:extension:ledger round-1 repair: oracle substring semantics, tier gate depth, excluded pre-existing live-key file from aggregate gate",
+      "slice": null,
+      "hash": "cb4559567ce187188c392e2a328ebbe4173b3e4b285da2ec6594ff8bd8f65633",
+      "fileHash": "30b3750f7b470e496fdd2defded891089f915937a16498548c499c4db4fe5e02"
+    },
+    {
+      "seq": 63,
+      "id": "e1ea42d9-44cc-482a-a902-0d9751a426e0",
+      "at": "2026-08-31T08:13:16.522Z",
+      "actor": "orchestrator",
+      "command": "gate_remove",
+      "transition": "slice:S1:gate-remove:G1.1",
+      "slice": "S1",
+      "hash": "0e32c218cbca7b527db7fa9492d7ad30350d7d2afba9be20d662ba46711c23cb",
+      "fileHash": "02d318fa4761be48ca1a58ef0be359b17b3412eafee0368984a76ee5d6a4af0f"
+    },
+    {
+      "seq": 64,
+      "id": "ce50c43a-28e7-47f4-a85e-6f8d40da77b5",
+      "at": "2026-08-31T08:13:16.558Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S1:gate-add:G1.1",
+      "slice": "S1",
+      "hash": "391be7d1e95d99da0111f423e112ccab6b9b3a8d45ebaad155ed25d8b742f7b6",
+      "fileHash": "0fd28843ec1a1e5096a43cf36971db4e6d23bd2a8259cb72b2181ac280913c1b"
+    },
+    {
+      "seq": 65,
+      "id": "299e27b9-dbb1-4ea9-895f-bf1bfc459eca",
+      "at": "2026-08-31T08:13:16.596Z",
+      "actor": "orchestrator",
+      "command": "gate_remove",
+      "transition": "slice:S1:gate-remove:G1.2",
+      "slice": "S1",
+      "hash": "459fbd380b72a3278e76ec2d50356ea187ef8d1c9bf51b5e134c72a41bc1b728",
+      "fileHash": "6a3b0a19bfb84d97d7965c17fafb1529ca3a6436d0975c0de595264d36617467"
+    },
+    {
+      "seq": 66,
+      "id": "4e6f2d58-4fdd-472c-9f97-ff8beb747b98",
+      "at": "2026-08-31T08:13:16.638Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S1:gate-add:G1.2",
+      "slice": "S1",
+      "hash": "bc081a150b97546c29dee11e394c0833f49955bb4029ca59bac864a91329ba5f",
+      "fileHash": "5463edf4033bd025ac41059706cb16e295f5cb0b06cc5e7c7f2eee2d88ebbb99"
+    },
+    {
+      "seq": 67,
+      "id": "fe342966-723e-4384-aa20-01914de2d0c1",
+      "at": "2026-08-31T08:13:16.673Z",
+      "actor": "orchestrator",
+      "command": "gate_remove",
+      "transition": "slice:S2:gate-remove:G2.1",
+      "slice": "S2",
+      "hash": "1f87712023d90e1fbe88ca0e48452dbe563887102071ceaa6a0d2cd00a37435e",
+      "fileHash": "e9fe6d0f412c03e6d23720d5ae160f74c41349993ef34ea4378dcfd245d1cd46"
+    },
+    {
+      "seq": 68,
+      "id": "fa0664b2-9ff4-45c6-ae82-34a584b7f509",
+      "at": "2026-08-31T08:13:16.714Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S2:gate-add:G2.1",
+      "slice": "S2",
+      "hash": "f8b5869d5d3fb10923e125a3427e753dc8e892ed526d1e0e82fbdd113214b08b",
+      "fileHash": "e80a6298048ab0a86625650289fd1e242f2497ec83cda94a7612f2348b288385"
+    },
+    {
+      "seq": 69,
+      "id": "921284a2-c49e-4502-a3ec-846c88a3029a",
+      "at": "2026-08-31T08:13:16.748Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S2:gate-add:G2.2",
+      "slice": "S2",
+      "hash": "686f5030dbcf1863f17d26072b3b9a2215c577f7101a4049d8e8260eee9d771c",
+      "fileHash": "bca783ec7964dd2539a8fd1b312fbaa36998d9cdc84e546b32e82f53114f03cc"
+    },
+    {
+      "seq": 70,
+      "id": "677ec672-c578-408d-ae86-1d5d1e59c799",
+      "at": "2026-08-31T08:13:16.783Z",
+      "actor": "orchestrator",
+      "command": "gate_remove",
+      "transition": "slice:S3:gate-remove:G3.1",
+      "slice": "S3",
+      "hash": "74c0910b081443367773af03cf6b9e05f3cc659fe4f1ece9b8853e4769722040",
+      "fileHash": "97affb4ecb0d2dc0e09abc8624724ff21a95b57642f32dda630864fdc17d8791"
+    },
+    {
+      "seq": 71,
+      "id": "57d5a38b-27f9-4e8e-9a45-be90eb047fb3",
+      "at": "2026-08-31T08:13:16.823Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S3:gate-add:G3.1",
+      "slice": "S3",
+      "hash": "48db64263eaf1cf2538d0ab09f008e5c2c1fb8fd5733ed402170c12fd6a0443f",
+      "fileHash": "0d157f383ed50dcccc9415c6cc643291669fd7c4c48677ff7fc2a9c6025daad9"
+    },
+    {
+      "seq": 72,
+      "id": "9d341ef1-0c10-4b7f-a321-b3d830bf4aef",
+      "at": "2026-08-31T08:13:16.858Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S3:gate-add:G3.2",
+      "slice": "S3",
+      "hash": "8d82a903f823254d51be4fd51a8875ef0a48ab08c1dd8add91bb2cc84b0d72f5",
+      "fileHash": "a81e2a7364b0945f55f13422eed139f3314a4bf4d0106da7b21ed98059234b64"
+    },
+    {
+      "seq": 73,
+      "id": "c90521f4-670e-424f-b7a5-550945cef12c",
+      "at": "2026-08-31T08:13:16.897Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S3:gate-add:G3.3",
+      "slice": "S3",
+      "hash": "30c25d0b3f1912f6dc2649a508a0a530d64c1a439919c3fb68595ca4e4e0c21e",
+      "fileHash": "866cf439600883218ab0b029799f811e4656303240963ebfeb3ff9cfc3a3b969"
+    },
+    {
+      "seq": 74,
+      "id": "08503d7b-4714-4481-be61-26dc76a2a566",
+      "at": "2026-08-31T08:13:16.931Z",
+      "actor": "orchestrator",
+      "command": "gate_remove",
+      "transition": "slice:S4:gate-remove:G4.1",
+      "slice": "S4",
+      "hash": "7654147e420abcb85df96cf99db58cc3e6633ccfd047b2e0b7d65edb200ccddf",
+      "fileHash": "e94fd8361081e19faa34100217fddccef715f17239e02d0a44a0ebe4c6a53d93"
+    },
+    {
+      "seq": 75,
+      "id": "c8d409c7-06ef-46e2-ae17-d547b18d22ac",
+      "at": "2026-08-31T08:13:16.970Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S4:gate-add:G4.1",
+      "slice": "S4",
+      "hash": "7209251d157da89d330eee12eadc30213c12112b043f972001e72a8d9464aea6",
+      "fileHash": "c34b63de423bec9183fec0ce120917466462ab23acaeb566e6531e14bbccc122"
+    },
+    {
+      "seq": 76,
+      "id": "b110e409-5ffa-4320-a5f5-350d9831bb1f",
+      "at": "2026-08-31T08:13:17.006Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S4:gate-add:G4.2",
+      "slice": "S4",
+      "hash": "e59e1b64c6c1a41bd44d51c90b95a7d19963d9451e8aa585cd792f349b1b4de2",
+      "fileHash": "2b3ff9ca0487d6f937c54b987165f4cde81b890c15165646d82907f0e0dad645"
+    },
+    {
+      "seq": 77,
+      "id": "ddff1362-a631-4a22-9e00-ce6b65d8c8bc",
+      "at": "2026-08-31T08:13:17.044Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S4:gate-add:G4.3",
+      "slice": "S4",
+      "hash": "06b7ab20d909f899691ec6479520836ba3b61db769f17529400fd3e064714171",
+      "fileHash": "46aa663a898de1ba445624b850957af2b23cf22a0fca272c46081395705ecfff"
+    },
+    {
+      "seq": 78,
+      "id": "6a35a686-9306-4f7b-8265-5e95c96b584a",
+      "at": "2026-08-31T08:13:17.079Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S4:gate-add:G4.4",
+      "slice": "S4",
+      "hash": "1c5cf465b6d836dd0b34b45d3ceeca0dae62b2ae0e1417fee8907cd0dcc9e99e",
+      "fileHash": "e960013dc7526af52ad4181a96537fb62fb4185ec38cbff7fb594ffe9215cc8d"
+    },
+    {
+      "seq": 79,
+      "id": "0bfd6b6c-ef61-44f1-9a67-2c4794abcfc7",
+      "at": "2026-08-31T08:13:17.117Z",
+      "actor": "orchestrator",
+      "command": "gate_remove",
+      "transition": "slice:S5:gate-remove:G5.1",
+      "slice": "S5",
+      "hash": "5017d1d7c21447e477affcf8dc569cd187a814c11024681b3e9c2533f4a9c662",
+      "fileHash": "0167075a7bd563a1a1012a22d9976d4fc818d664d32dbb2837012e156e622ab7"
+    },
+    {
+      "seq": 80,
+      "id": "efe25bd4-b3c8-44a1-8f2f-08aef4bd7ed3",
+      "at": "2026-08-31T08:13:17.152Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S5:gate-add:G5.1",
+      "slice": "S5",
+      "hash": "85635fdb5e7815c4876f063e6ae48f0d77cb202426f305b6bae6056efe867eb1",
+      "fileHash": "e7cdac9de021b77ee9b97f8888a2c0e0e1536cd4e1da7114fdc1147822eb14e2"
+    },
+    {
+      "seq": 81,
+      "id": "591ba0dc-3031-477c-a64e-24bf417b3f9d",
+      "at": "2026-08-31T08:13:17.192Z",
+      "actor": "orchestrator",
+      "command": "gate_remove",
+      "transition": "slice:S5:gate-remove:G5.2",
+      "slice": "S5",
+      "hash": "ec5a91c0be5bbee4616ec3ad0b9898ea583c4f0494a2a5868123ea64b27b055a",
+      "fileHash": "df9619dd126bba28302851787e5de479e586b45a704c2268d94a78e0271524d4"
+    },
+    {
+      "seq": 82,
+      "id": "8ac2feb2-bbd6-4dec-96a0-d18920f21df2",
+      "at": "2026-08-31T08:13:17.227Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S5:gate-add:G5.2",
+      "slice": "S5",
+      "hash": "31b7ea7de1eac966065967498cda1bacfefa6fd202e7abd258dbd3556a1f27e5",
+      "fileHash": "e079319437813a92d342891dcd8754d75761e711e5c5b947540c7368d4e4761a"
+    },
+    {
+      "seq": 83,
+      "id": "a4ca40ab-b520-482d-baf3-72a8d43dbc97",
+      "at": "2026-08-31T08:13:17.273Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/audio/types.ts::BuiltInTTSProviderId",
+      "slice": "S1",
+      "hash": "6bcd3059cfb2a8cad4bd8b1e822741b3d18cd96481e2b5612ff788093a636924",
+      "fileHash": "bf000416367bcc69f760269398d5c630c266ee8c8baee53b724aad2cf6a2a93e"
+    },
+    {
+      "seq": 84,
+      "id": "a31ece08-d295-4b89-916a-328a1aa5a21b",
+      "at": "2026-08-31T08:13:17.310Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/audio/constants.ts::TTS_PROVIDERS",
+      "slice": "S1",
+      "hash": "cfdc3886570a58dd4ade396d890725f2a7d5e24ef86715e29588704731170fe5",
+      "fileHash": "7d52faec0a7e0d16e8a33314e395ad38248bd9c6391321f0ba78da8c03a0bd19"
+    },
+    {
+      "seq": 85,
+      "id": "1ba6743b-2eef-4577-b2b8-e5b91f807a73",
+      "at": "2026-08-31T08:13:17.351Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/audio/constants.ts::DEFAULT_TTS_VOICES",
+      "slice": "S1",
+      "hash": "3ec45277d38956cec91202c755d4a457980c7da4542f19b3e6e61960cd2ffca3",
+      "fileHash": "336ed088d85e45bcffb67e92aa5e6744f4144452da93cce67f2045f4ed59f4e0"
+    },
+    {
+      "seq": 86,
+      "id": "19d1053d-f4f8-4589-bd8c-9873cc6d91b5",
+      "at": "2026-08-31T08:13:17.388Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/audio/constants.ts::DEFAULT_TTS_MODELS",
+      "slice": "S1",
+      "hash": "485639064b32d290be22c887e3e46c44226936964c44002444df25633e0f8d66",
+      "fileHash": "c56931cd62f54ef23d29ed186f7b2e730f123be99a6a9d8e4f898c9753f8da1a"
+    },
+    {
+      "seq": 87,
+      "id": "bf9ba6d8-8046-4c7a-b008-ab52cc9fb9ba",
+      "at": "2026-08-31T08:13:17.431Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/audio/provider-display.ts::TTS_PROVIDER_NAME_KEYS",
+      "slice": "S1",
+      "hash": "b70dbd322c06c1fbde0abeb763a861747655001bf9fb577adb131aeabbe5ea2a",
+      "fileHash": "78db38c74fd3f835b7320ad2792e49d1e76ab6bc7196f24de651bf91fff2ee77"
+    },
+    {
+      "seq": 88,
+      "id": "dc43125c-28e3-4276-a16f-23fe37eaebd5",
+      "at": "2026-08-31T08:13:17.467Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/audio/data/qwen-token-plan-base-voices.ts::qwenTokenPlanBaseVoices",
+      "slice": "S1",
+      "hash": "a05e3deafe334ea21e21580c65f0a22ae074f2fb53ed42a72ee45daed4c4ef5e",
+      "fileHash": "ade7201e98a77adfcfca6b6905970ed56615624cc805e5e998ce5d78e5eb552a"
+    },
+    {
+      "seq": 89,
+      "id": "1594c0bb-ea2f-44e6-8579-d6e7e6fb92b6",
+      "at": "2026-08-31T08:13:17.515Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/audio/tts-providers.ts::generateTTS",
+      "slice": "S2",
+      "hash": "1f6713e6b2cf0d20418269af931f5bb6b174a5acb648ee41bb16922fbc04d353",
+      "fileHash": "3b7d615ff9e457474c192146c3b66844d17ce826ab8f47f9a80715b20b02740e"
+    },
+    {
+      "seq": 90,
+      "id": "44142de7-8e71-4eac-a917-a6eb24cfe34d",
+      "at": "2026-08-31T08:13:17.551Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/audio/qwen-token-plan-ws.ts::generateQwenTokenPlanTTS",
+      "slice": "S2",
+      "hash": "9b892fc6e76c723da80cc4662b4d04b4b066a5d6d9eb9ad4a45022b277328e63",
+      "fileHash": "b83002ab9df2213a2930155b87aca32316c044a8ab354c89231844d206856a1c"
+    },
+    {
+      "seq": 91,
+      "id": "d0dfd66f-fa87-4729-a6bc-584413f1debc",
+      "at": "2026-08-31T08:13:17.594Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/audio/qwen-token-plan-ws.ts::QwenTokenPlanWsPool",
+      "slice": "S2",
+      "hash": "9a12ae2823b96bf8b68b679ba56516f0d04eba6a26b0f33c40c9a8aa5d255176",
+      "fileHash": "efac47373406ae5247e8fa946d9f111a786c5ea2c3e1f31343277bfc05f24a6a"
+    },
+    {
+      "seq": 92,
+      "id": "a976ba1f-cc39-4df5-8963-098f00466f4b",
+      "at": "2026-08-31T08:13:17.630Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:lib/server/provider-config.ts::TTS_ENV_MAP",
+      "slice": "S3",
+      "hash": "5ad9aa1586da7e1007baec21bf5efa221ff4430f5877ad86bcd5cafd4e153c82",
+      "fileHash": "80f10305c9dabda09ad02720c4ed245768d17b5d9acb411b52283eff9acaafb3"
+    },
+    {
+      "seq": 93,
+      "id": "93697960-01c0-4c5f-b4a6-cbafaf066783",
+      "at": "2026-08-31T08:13:17.669Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S4:postcondition:tests/audio/qwen-token-plan-tts-live.test.ts::qwenTokenPlanTtsLiveSmoke",
+      "slice": "S4",
+      "hash": "fb4de9fb7ecb5b69ba34b226d6538856bd625208e3d76aabdfeb011f6d4a8229",
+      "fileHash": "29db8d25ec5dca43ef0fae002309cbad5438c92b9d90179677eeb860028995fb"
+    },
+    {
+      "seq": 94,
+      "id": "25faa363-4530-4898-9cfb-53a5bdbee655",
+      "at": "2026-08-31T08:13:17.703Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S5:postcondition:lib/hooks/use-scene-generator.ts::generateAndStoreTTS",
+      "slice": "S5",
+      "hash": "156615b383b6fd6a6d61ad48def0180816ab20341f1de334082fa2b77597bfd1",
+      "fileHash": "0289009d662b1be535bead3213014bc92c534d94dad7c06d234f0e9ffb729c02"
+    },
+    {
+      "seq": 95,
+      "id": "a4eb7a66-b220-440c-9d97-a868240df73b",
+      "at": "2026-08-31T08:13:17.742Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S5:postcondition:lib/server/agent-runtime/scene-tts.ts::synthesizeSceneNarration",
+      "slice": "S5",
+      "hash": "4c939c8b738913656248705fb9e13afa4bda0a6a2087682d7b6296a40904c6d8",
+      "fileHash": "3335b3f41ee1cb8ea592ebef8695e8718bd149cff11b92d302ab497e104d616a"
+    },
+    {
+      "seq": 96,
+      "id": "01969f34-3904-45d5-9a1c-4a96bfadc1de",
+      "at": "2026-08-31T08:13:17.779Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/audio/constants.ts::TTS_PROVIDERS",
+      "slice": "S1",
+      "hash": "9e736884d5bd05cec28611db0590e9763538ca421b6d5697e60b0a3dcaca9c32",
+      "expectationHash": "9a6f2401f93d563e7ff84b2a64c469a840aa98fca83d16d2b0a60328d526f2f5",
+      "fileHash": "5ae8c76cf84d16618b52c529cab4fdcfb4a07cb3758cfc207c3f25ee5d9344ae"
+    },
+    {
+      "seq": 97,
+      "id": "fe99502c-8a7c-4308-b77e-aa8f0bc97fd7",
+      "at": "2026-08-31T08:13:17.819Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/audio/data/qwen-token-plan-base-voices.ts::qwenTokenPlanBaseVoices",
+      "slice": "S1",
+      "hash": "104703fd2a3911ccdf0415502f085511c4ac0d5ebb8dd9eac0af28faa4d5b1e8",
+      "expectationHash": "f0464eef67682c24e0b557f2ae75549e67b44456961f9e6bd5ca760f89f59e64",
+      "fileHash": "1d21123476b10048dee74b1a6b92724c1900d02a63f988ee3ea7e230c0f275c1"
+    },
+    {
+      "seq": 98,
+      "id": "1f1adf08-4c36-46fe-a2fa-4d8e925e30c5",
+      "at": "2026-08-31T08:13:17.853Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "f2f8f735a77764e3e835f2c8876af273e94765421dc348c822b951d1841136ae",
+      "fileHash": "7d61a7648188e3ef3a74236f7f6be90959e8b7f71a6e46a95231416c09271dcf"
+    },
+    {
+      "seq": 99,
+      "id": "09d1b535-3ea5-46fd-abf6-ba1ad626017a",
+      "at": "2026-08-31T08:13:17.888Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "dc7f41647ad5c035573b5dee10e25efb86ca63d2aa69294f27e804f2a09b922f",
+      "fileHash": "aab28c656f8efa3d5be2d8c3d3f04049f6eaa42852c5b6291982543639122035"
     }
   ],
-  "fileHash": "c614c8b1a0f8397aeeee93a5637b52932a87bb75ca400c968abc757ac1055d1b"
+  "fileHash": "f0040cc924fb6e7904fd69c4068f2521b57e72a60a52470a505044d0be049db0"
 }
