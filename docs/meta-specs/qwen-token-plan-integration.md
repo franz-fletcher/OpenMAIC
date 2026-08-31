@@ -36,7 +36,8 @@ TTS protocol facts, from the SpeechSynthesizer frame protocol:
 - A `task-failed` event kills the connection.
 - Model: `qwen-audio-3.0-tts-plus`.
 - System voices for plus are `longanlingxin` and `longanlufeng`. The vendor doc example `longxiaochun` is an error. It returns engine 411.
-- Base voices: 597 per model from vendor XLSX. Ids look like `qwen-audio-3.0-tts-plus-longcanzhuyue`.
+- Base voices: 597 for the plus model from vendor XLSX. Ids look like `qwen-audio-3.0-tts-plus-longcanzhuyue`.
+- The sibling model `qwen-audio-3.0-tts-flash` is NOT provisioned on the personal plan. Live probes on 2026-08-31 return `Model not exist` for three voice combinations. Batch 001 was corrected to plus-only scope.
 - No HTTP TTS endpoint exists on this host. `qwen3-tts-flash` returns 404 model-not-exist.
 
 ASR protocol facts:

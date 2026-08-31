@@ -5,7 +5,7 @@
   "spec": {
     "reference": "docs/meta-specs/qwen-token-plan-integration.md",
     "title": "Qwen Token Plan Integration (meta-spec)",
-    "hash": "a88ea51c847df4c346a3c9be9749da9d1ce491ded25bfb108db46c42708e8f2f"
+    "hash": "66446c012b36e1a1634095514b0df409a67943134e2857621aef2985f2f07e49"
   },
   "tracker": {
     "mode": "none"
@@ -46,7 +46,18 @@
       "transition": "child-link:001:.rivr/specs/001-qwen-token-plan-tts.ledger.json:research",
       "slice": null,
       "hash": "866a44df9b288fbd85627054e6ab41d3659101124950f3687176d67bf27e966a"
+    },
+    {
+      "seq": 3,
+      "id": "1d3124e8-c909-4324-8647-52c3178ea7a2",
+      "at": "2026-08-31T07:13:15.446Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:correction:record flash model absence; batch 001 corrected to plus-only",
+      "slice": null,
+      "hash": "37019f21bf9c36b8ac81ba02c0356e7f71e556babce4b3cb91fd4a634eab31ac",
+      "fileHash": "a9480e1d84f913d3cc88ea0c86fbf2956030ef897da7f5f792fca10acfc55ab7"
     }
   ],
-  "fileHash": "a9480e1d84f913d3cc88ea0c86fbf2956030ef897da7f5f792fca10acfc55ab7"
+  "fileHash": "004699896b3b5bd00bb3902fe5bf30f60580b7eebb4ecdc3e71de7dbb52bf608"
 }

@@ -4,14 +4,14 @@
   "spec": {
     "reference": "docs/specs/001-qwen-token-plan-tts.md",
     "title": "Batch 001 spec: qwen-token-plan-tts WebSocket provider",
-    "hash": "4217aecb589f686afb708f50cb0a328dce50677695ff07c05b3fd11371b2bf51"
+    "hash": "d724f38c2fb62773c97c3765aa2ce23494d5cde2c2750c2f5e627df7e23de764"
   },
   "tracker": {
     "mode": "none"
   },
   "stage": "implementation",
   "retry": {
-    "count": 0,
+    "count": 1,
     "max": 5,
     "consecutive_same_cause": 0,
     "escalate_at": 3
@@ -116,7 +116,8 @@
               "kind": "variable",
               "expectation": "Typed array of 1194 base-voice records, compatibleModels set per model id, native names only.",
               "before": {
-                "exists": false
+                "exists": true,
+                "kind": "variable"
               },
               "postcondition": {
                 "exists": true
@@ -138,7 +139,7 @@
         "status": "pending",
         "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
       },
-      "expectation": "TTS_PROVIDERS exposes qwen-token-plan-tts with requiresApiKey true, both audio models, and curated system voices with description keys. DEFAULT_TTS_VOICES and DEFAULT_TTS_MODELS carry the new key. TTS_PROVIDER_NAME_KEYS binds the display name. settings.providerQwenTokenPlanTTS exists in all 12 locale files. A prettier-clean generated data file under lib/audio/data carries the base voice catalog.",
+      "expectation": "Registry entry for qwen-token-plan-tts: single model qwen-audio-3.0-tts-plus, system voices longanlingxin and longanlufeng with description keys, requiresApiKey true. Defaults and display map updated. Provider key present in 12 locales. Data file holds 597 plus-model base voices. No flash remnants.",
       "gates": [
         {
           "id": "G1.1",
@@ -320,7 +321,9 @@
               "name": "qwenTokenPlanTtsLiveSmoke",
               "expectation": "The file declares a top-level function qwenTokenPlanTtsLiveSmoke holding the gated live synthesis body.",
               "before": {
-                "exists": false
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  text: string,\n  voice: string,\n  model: string,\n): Promise<{ bytes: number; format: string }>"
               },
               "postcondition": {
                 "exists": true
@@ -333,14 +336,16 @@
       "riskTier": 4,
       "uuid": "4c9d69dd-50e0-4a7c-abd7-c0235fad122d",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "6efd1d69fe8d785e2197073705741b1ef3c17166a76717783cde24a8f4e59434",
+        "actor": "implementer",
+        "at": "2026-08-31T07:32:43.569Z"
       },
       "verification": {
         "status": "pending",
         "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
       },
-      "expectation": "With TEST_LOAD_LOCAL_ENV=1 the live test synthesizes with longanlingxin on the plus model, validates one flash system voice, and asserts a typed error for an unknown voice. Without the gate or key it skips explicitly. A pin test records the exact frame sequence and event names from the probe log.",
+      "expectation": "Live test under TEST_LOAD_LOCAL_ENV=1 synthesizes longanlingxin on plus, rejects an unknown voice with a typed error, proves pool recovery, and skips cleanly without the gate. No flash-model test remains. Pin test records frame order and event names.",
       "gates": [
         {
           "id": "G4.1",
@@ -1001,7 +1006,86 @@
       "slice": "S3",
       "hash": "d2ec482b222292c1978d241fbd4196810fd416696b55fbca3e1f009f51ac4cf0",
       "fileHash": "6f14a331115cfb7d46dc8ef6cfedf8ec9c649b85b2af5821e209b700460e2a45"
+    },
+    {
+      "seq": 53,
+      "id": "57bd10d5-eed2-4be2-a964-d660323fe127",
+      "at": "2026-08-31T07:13:15.399Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:correction:S4 live probes proved qwen-audio-3.0-tts-flash is not provisioned on the plan; scope corrected to plus-model only (operator approved C1)",
+      "slice": null,
+      "hash": "1b18ab129a20dd8b83b9cc9ab2f434645e8079680672509fb83f76ea26a8a3d7",
+      "fileHash": "244305970759298a1f4ea112b798f2d09abade3eab6c84a782a4ceefaf5de997"
+    },
+    {
+      "seq": 54,
+      "id": "e16d18f4-ab4b-4cd3-85a5-bad7450ea4b8",
+      "at": "2026-08-31T07:13:15.568Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S1:capture",
+      "slice": "S1",
+      "hash": "6f6c4d74ed4b7ec1f02a4808a6814e6b69e4c0ce87f2b3fe89f88a0520ba6765",
+      "fileHash": "e430bbe27c2c8e9d16653f04cf7998219c90bccfa0e91d3ba7a6ff7dfea26537"
+    },
+    {
+      "seq": 55,
+      "id": "a1306140-2a70-4439-8b4d-3d59746e9c1b",
+      "at": "2026-08-31T07:13:15.645Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S4:capture",
+      "slice": "S4",
+      "hash": "be4a1749fc3954953f460c6334a4f4fb638d828eb4f9720607e10baecf6086c3",
+      "fileHash": "01bc8a67be8e608bc41f5fba8de55477a03d439b1d9fcd8d6b7b7b2621eeb8ab"
+    },
+    {
+      "seq": 56,
+      "id": "ef0860c1-550f-47e1-b63e-b028df60cc2b",
+      "at": "2026-08-31T07:13:28.566Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect",
+      "slice": "S1",
+      "hash": "259b94654160cbc159d3523162dd2c3284f77c9dd63f6d8f9690f6a08f3f8707",
+      "expectationHash": "84d567f0a52b1c9f7fd41726223db373ea80ea48ea83a2d5a26722880df28fe3",
+      "fileHash": "81b58e310b59bba668e5d77df27d5b5e330a8d4ec9565f3b4c77a15d91906b19"
+    },
+    {
+      "seq": 57,
+      "id": "85d2bc47-ebf3-4f91-9802-ee19e0b17df6",
+      "at": "2026-08-31T07:13:28.613Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect",
+      "slice": "S4",
+      "hash": "27d4892efce0edbcf51529f879cd978b622b519a5a1e9e136d399b18927999d7",
+      "expectationHash": "264cd61cc6116135e1c22cc37bceda8f0ede956384c97ff12cd5ba08753b1c18",
+      "fileHash": "29aab4c76b2183b126856776c054102bc4e98d601a4cf4e788e39d5d8e0cbfec"
+    },
+    {
+      "seq": 58,
+      "id": "0cd897c0-b4ef-40cf-8c0e-c44676c40a84",
+      "at": "2026-08-31T07:13:28.661Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "7e68254d6a1fcbf880e81fd3fb64aef03177fb3d8081b37577f8a6cd5eb61c94",
+      "fileHash": "bc7a141567cd5c12325f569026aa77a7fa7d07ad2ab95c4b44e51b2367a29d5f"
+    },
+    {
+      "seq": 59,
+      "id": "c8b1ae52-8c64-408c-88da-67bc9d8d1a50",
+      "at": "2026-08-31T07:32:43.569Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S4:impl:pending->ready_for_verification",
+      "slice": "S4",
+      "hash": "28acdb56a1da64bfbecadb93ba29f4341c916b2e1085dd0c178384d7a2f1b028",
+      "fileHash": "2c6d27f941d1911d764c70beeeda3da5b474dd4e8009d69007aa3bb2c25072b6"
     }
   ],
-  "fileHash": "244305970759298a1f4ea112b798f2d09abade3eab6c84a782a4ceefaf5de997"
+  "fileHash": "9d695bcf532ad0c6f3a3f6e0033446f4b3390aebeecb6f5802045f20d198ada6"
 }

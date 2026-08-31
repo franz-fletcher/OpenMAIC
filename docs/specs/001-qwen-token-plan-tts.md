@@ -8,13 +8,13 @@ The operator's token plan serves TTS only over a WebSocket protocol. OpenMAIC ha
 
 ## Solution
 
-This batch adds a new provider id `qwen-token-plan-tts`. It imports the `WebSocket` class from the existing direct dependency `undici`. The init object carries `{headers:{Authorization}}`. The class typechecks against the pinned `undici-types`, and the engines floor Node >= 20.9 stays honored. The provider speaks the DashScope SpeechSynthesizer frame protocol. A module-level connection pool manages two connections by default. The provider registers in the TTS registry, the server env map, the route, and the classroom pipeline. A generated data file carries 597 plus-model and 597 flash-model base voices.
+This batch adds a new provider id `qwen-token-plan-tts`. It imports the `WebSocket` class from the existing direct dependency `undici`. The init object carries `{headers:{Authorization}}`. The class typechecks against the pinned `undici-types`, and the engines floor Node >= 20.9 stays honored. The provider speaks the DashScope SpeechSynthesizer frame protocol. A module-level connection pool manages two connections by default. The provider registers in the TTS registry, the server env map, the route, and the classroom pipeline. A generated data file carries the 597 plus-model base voices.
 
 ## User Stories
 
 1. As a classroom builder, I want TTS synthesis to succeed with `qwen-token-plan-tts`, so that classroom scenes get audio from the plan.
 2. As an operator, I want the voice picker to list curated system voices first, so that the common choices are one click away.
-3. As an operator, I want search to find base voices by native name, so that the 1,194 base voices stay reachable without scrolling.
+3. As an operator, I want search to find base voices by native name, so that the 597 base voices stay reachable without scrolling.
 4. As a developer, I want the pool to survive Next dev hot reload, so that orphan sockets do not accumulate.
 5. As an operator, I want per-modality configuration through `TTS_QWEN_TOKEN_PLAN_*` env vars, so that the provider works before the preset exists.
 6. As a verifier, I want one opt-in live smoke test per batch, so that the protocol is proven against the real host.
@@ -50,11 +50,11 @@ Blockers: S3.
 
 **Endpoint.** `wss://token-plan.ap-southeast-1.maas.aliyuncs.com/api-ws/v1/inference`.
 
-**Model pair.** Primary model `qwen-audio-3.0-tts-plus`. Fallback model `qwen-audio-3.0-tts-flash`. Flash has 12 system voices: `longanfengyue`, `longanyuanfei`, `longanlingxi`, `longanxiaoxin`, `longanhuan_v3.6`, `longjielidou_v3.6`, `longpaopao_v3.6`, `longhuohuo_v3.6`, `longchuanshu_v3.6`, `loongmary`, `loongeva_v3.6`, `loongjohn`. Plus-model system voices are `longanlingxin` and `longanlufeng`.
+**Model.** The single model is `qwen-audio-3.0-tts-plus`. Its system voices are `longanlingxin` and `longanlufeng`. The earlier dual-model premise is corrected: live probes on 2026-08-31 show `qwen-audio-3.0-tts-flash` is not provisioned on the personal plan (vendor `Model not exist` for three voice combinations). Flash may return in a later batch if the plan adds it.
 
-**Base voices.** Ingest 597 plus-model and 597 flash-model voices from vendor XLSX into a generated data file under `lib/audio/data/`. The directory holds pure data with no logic. `lib/audio` already owns TTS constants. The generator output must be prettier-clean and type-valid, because `pnpm check` covers `lib/` and `npx tsc --noEmit` includes it; the file is typed as `TTSVoiceInfo[]`. Base voices use native names only and get no i18n keys. Each base voice record sets `compatibleModels` to its model id. The voice resolver filter at `lib/audio/voice-resolver.ts:317` then restricts voices by model. The ids carry the model prefix, so the mapping stays one-to-one.
+**Base voices.** Ingest the 597 plus-model voices from vendor XLSX into a generated data file under `lib/audio/data/`. The directory holds pure data with no logic. `lib/audio` already owns TTS constants. The generator output must be prettier-clean and type-valid, because `pnpm check` covers `lib/` and `npx tsc --noEmit` includes it; the file is typed as `TTSVoiceInfo[]`. Base voices use native names only and get no i18n keys. Each base voice record sets `compatibleModels` to its model id. The voice resolver filter at `lib/audio/voice-resolver.ts:317` then restricts voices by model.
 
-**Picker strategy.** The first page shows the curated system voices. Search narrows the full 1,194-entry list by native name. No virtualization. The picker maps every voice of an expanded model group to a row (`components/agent/agent-bar.tsx:267-339`), so the batch adds a display cap of 50 rows per group with a visible hint to search for more. The slice records the client bundle delta caused by importing 1,194 records into the client-rendered registry; the delta lands in the verification report.
+**Picker strategy.** The first page shows the curated system voices. Search narrows the full 597-entry list by native name. No virtualization. The picker maps every voice of an expanded model group to a row (`components/agent/agent-bar.tsx:267-339`), so the batch adds a display cap of 50 rows per group with a visible hint to search for more. The slice records the client bundle delta caused by importing 599-plus records into the client-rendered registry; the delta lands in the verification report.
 
 **Connection pool.** A module-level singleton. Anchor its shutdown in `instrumentation.ts` alongside the other drains at `instrumentation.ts:57-98`. The default pool size is two connections. Env knob `OPENMAIC_QWEN_TOKEN_PLAN_WS_POOL_SIZE` overrides the count (name aligned with the frozen `TOKEN_PLAN` spelling; the draft name `OPENMAIC_QWEN_TP_WS_POOL_SIZE` is retired). Reuse a connection after `task-finished` with a fresh `task_id`. Discard a connection after `task-failed`. Reap idle connections at 60 seconds. Serialize one task per connection.
 
@@ -70,7 +70,7 @@ Blockers: S3.
 
 **Registry records.** Add entries to `DEFAULT_TTS_VOICES` at `lib/audio/constants.ts:1336-1347` and `DEFAULT_TTS_MODELS` at `lib/audio/constants.ts:1349-1360`.
 
-**i18n.** Add provider display key `settings.providerQwenTokenPlanTTS` across 12 locales. Add the map entry `'qwen-token-plan-tts': 'settings.providerQwenTokenPlanTTS'` to `TTS_PROVIDER_NAME_KEYS` at `lib/audio/provider-display.ts:25-36`; without it the settings UI renders the raw id. Add voice description keys for the 14 system voices only.
+**i18n.** Add provider display key `settings.providerQwenTokenPlanTTS` across 12 locales. Add the map entry `'qwen-token-plan-tts': 'settings.providerQwenTokenPlanTTS'` to `TTS_PROVIDER_NAME_KEYS` at `lib/audio/provider-display.ts:25-36`; without it the settings UI renders the raw id. Add voice description keys for the 2 system voices only.
 
 **Base-voice ingestion.** Commit the generated data file. Add generator script `scripts/generate-qwen-token-plan-voices.mjs`. The script re-downloads the vendor XLSX and rebuilds the data file deterministically. License note: the vendor artifact redistributes inside the app repo. The vendor states no explicit license. Record this as an accepted risk for a local fork.
 
@@ -82,7 +82,7 @@ Route-level tests follow `tests/server/tts-route-missing-key.test.ts`. The prefi
 
 The env prefix list at `tests/server/provider-config.test.ts:8-60` grows by `TTS_QWEN_TOKEN_PLAN`.
 
-One opt-in live smoke test is gated by `TEST_LOAD_LOCAL_ENV=1`. The test must skip when `TEST_LOAD_LOCAL_ENV` is not `1` or when the plan key is absent, because no other test consumes this loader today (`tests/setup-env.ts:23-41`) and CI runs without `.env.local`. When enabled, it synthesizes `你好，世界` with `longanlingxin` on the plus model and runs one request against a flash system voice to validate the flash voice ids. The operator approved it. It is S4 tier 4.
+One opt-in live smoke test is gated by `TEST_LOAD_LOCAL_ENV=1`. The test must skip when `TEST_LOAD_LOCAL_ENV` is not `1` or when the plan key is absent, because no other test consumes this loader today (`tests/setup-env.ts:23-41`) and CI runs without `.env.local`. When enabled, it synthesizes `你好，世界` with `longanlingxin` on the plus model and rejects an unknown voice with a typed error. The operator approved it. It is S4 tier 4.
 
 A protocol pin test records the exact frame sequence and event names from the probes.
 
@@ -112,7 +112,7 @@ Pool size name: the decision is `OPENMAIC_QWEN_TOKEN_PLAN_WS_POOL_SIZE`, aligned
 
 maxDuration boundary: the default 30-second provider timeout equals the route `maxDuration = 30` at `app/api/generate/tts/route.ts:32`. A platform that enforces maxDuration can cut the request before the typed timeout error fires. Local dev is unaffected. Recorded, no action.
 
-i18n key math: 14 voice description keys plus 1 provider display key, times 12 locales, is 180 keys. Flag this count for approval.
+i18n key math: 2 voice description keys plus 1 provider display key, times 12 locales, is 36 keys. The S1 addition of a `voiceListCapped` hint key per locale brings the total to 48 keys (4 per locale file).
 
 Neutrality guard: the debt table pins vendor token counts in `lib/server/provider-config.ts`. `qwen` counts 20 today. The new env map entry and resolver lines raise the count. The same slice updates `tests/providers/provider-neutrality-guard.test.ts:164-213`.
 
@@ -120,4 +120,4 @@ XLSX provenance: the vendor hosts the base-voice workbooks on `help-static-aliyu
 
 ---
 
-Status: Reviewed for soundness (docs/research/001-spec-soundness-review.md). Blockers B1-B3 and concerns C1-C5 folded in. Awaiting human approval.
+Status: Reviewed for soundness (docs/research/001-spec-soundness-review.md). Blockers B1-B3 and concerns C1-C5 folded in. Corrected to plus-model scope after the S4 live probes proved flash is not provisioned on the plan. Awaiting ledger rebind.
