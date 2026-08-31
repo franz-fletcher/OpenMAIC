@@ -69,7 +69,7 @@ Video protocol facts:
 
 | Batch | Name | Status |
 | --- | --- | --- |
-| 001 | `tts-ws-provider` | designing. |
+| 001 | `tts-ws-provider` | **Closed and certified 2026-08-31.** All 5 slices verified, live protocol proven, proof hash 955fea98. |
 | 002 | `asr-sync-provider` | queued. |
 | 003 | `token-plan-preset-registration` | queued. |
 | 004 | `video-i2v-r2v` | queued. |
@@ -78,7 +78,7 @@ Video protocol facts:
 
 Batch 002 scope: a synchronous provider for `qwen-audio-3.0-asr-flash` on the multimodal-generation path. The parser reads top-level `.text`. Provider id `qwen-token-plan-asr`. Env prefix `ASR_QWEN_TOKEN_PLAN_*`. The store already has `setASRProviderConfig` at `lib/store/settings.ts:303`.
 
-Batch 003 scope: the `TokenPlanModality` union gains `asr`. Today the union at `lib/config/token-plan-presets.ts:20` is `llm | image | video | tts | webSearch`. The apply and remove switch cases live in `lib/config/apply-token-plan.ts`. The union growth also forces entries in `MODALITY_LABEL_KEYS` and `MODALITY_ICONS` (`components/settings/token-plan-settings.tsx:40, :48`) and a `setASRProviderConfig` action in `TokenPlanActions` (`lib/config/apply-token-plan.ts:21-61`, absent today). The UI tab lives at `components/settings/token-plan-settings.tsx`. The preset declares the `llm`, `image`, `video`, `tts`, and `asr` modality targets. The video target serves `happyhorse-1.1-t2v` until batch 004 adds i2v and r2v. Targets reuse provider ids `qwen`, `qwen-image`, `happyhorse`, plus batch-001 id `qwen-token-plan-tts` and batch-002 id `qwen-token-plan-asr`. The batch adds `.env.example` token-plan sections. It adds a new `server-providers.yml.example` file. None exists today. Samples live at `README.md:141-158` and `packages/docs/content/docs/configuration.mdx:254-296`. It updates the README and docs provider tables. Batch 003 adds no new i18n keys. Batch 001 adds 180 (see its spec).
+Batch 003 scope: the `TokenPlanModality` union gains `asr`. Today the union at `lib/config/token-plan-presets.ts:20` is `llm | image | video | tts | webSearch`. The apply and remove switch cases live in `lib/config/apply-token-plan.ts`. The union growth also forces entries in `MODALITY_LABEL_KEYS` and `MODALITY_ICONS` (`components/settings/token-plan-settings.tsx:40, :48`) and a `setASRProviderConfig` action in `TokenPlanActions` (`lib/config/apply-token-plan.ts:21-61`, absent today). The UI tab lives at `components/settings/token-plan-settings.tsx`. The preset declares the `llm`, `image`, `video`, `tts`, and `asr` modality targets. The video target serves `happyhorse-1.1-t2v` until batch 004 adds i2v and r2v. Targets reuse provider ids `qwen`, `qwen-image`, `happyhorse`, plus batch-001 id `qwen-token-plan-tts` and batch-002 id `qwen-token-plan-asr`. The batch adds `.env.example` token-plan sections. It adds a new `server-providers.yml.example` file. None exists today. Samples live at `README.md:141-158` and `packages/docs/content/docs/configuration.mdx:254-296`. It updates the README and docs provider tables. Batch 003 adds no new i18n keys. Batch 001 added 48 (4 per locale; see its spec).
 
 Batch 004 scope: `lib/media/adapters/happyhorse-adapter.ts:98-116` sends `input.prompt` only. The batch adds first-frame and reference-image inputs for `happyhorse-1.1-i2v` and `happyhorse-1.1-r2v`. It updates the model list at `lib/media/video-providers.ts:112-122`.
 

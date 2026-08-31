@@ -49,3 +49,19 @@ The round-2 F6 root cause was independently reproduced: `bun -e` with a canary `
 Orchestrator decision: invoke the repair actions through an `env -u` sanitized wrapper (`BUN_ENV`/`NODE_ENV` unset) so gate children see no leaked `.env.local` keys. The ledger itself is untouched by the wrapper (no JSON edits; audit chain preserved). This is a **replacement binding** of the verification environment: the original tool is F6-defective here; the work is unchanged and already re-proven green under a clean env in round 2.
 
 Round-2 statuses recorded: S1, S2, S4 verified (audit #100-#102) including the live adversarial gate (22242-byte plus synthesis, unknown-voice rejection with pool recovery). S3 and S5 remain ready_for_verification pending clean-env gate runs.
+
+---
+
+# ROUND 3: final verification — ALL SLICES VERIFIED (2026-08-31)
+
+The F6 wrapper correction: `env -u` sanitization alone did not work because bun re-loads `.env.local` at its own startup regardless of the parent environment. The operative fix is `bun --no-env-file` for all ledger CLI invocations that run gates. Final per-invocation form: `env $NAMES bun --no-env-file <cli> slice verify ... --run-gates`.
+
+Diff notes: S3 clean (1/1 match). S5 shows only F7 signature-gap artifacts (live signatures equal the before contracts). Precedent applied from S2/S4 round 2.
+
+Fresh gate outcomes (sanitized env, no vendor calls): G3.1 119/119 pass; G3.2 pass; G3.3 pass; G5.1 7156 passed / 0 failed; G5.2 pass. S1/S2/S4 untouched from round 2 (statuses #100-#102). New records: S3 verified #103, S5 verified #104. Chain valid, 104 entries.
+
+Open non-blocking findings: F7 (five function postconditions lack signature fields; spurious diff deviates only). F5 (pre-existing harness prints a live bearer key in one excluded test's failure output; operator follow-up recommended, not batch code).
+
+## Batch verdict
+
+Certifiable: YES. All five slices verified with fresh passing gates, including the round-2 live protocol proof (plus synthesis 22242 mp3 bytes, adversarial voice rejection, pool recovery). Awaiting human certification (`rivr ledger accept`) and the local merge decision.
