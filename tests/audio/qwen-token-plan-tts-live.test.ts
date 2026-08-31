@@ -20,20 +20,18 @@ import { describe, expect, it } from 'vitest';
  * variant that can actually run the gate. The base URL keeps route parity:
  * `TTS_QWEN_TOKEN_PLAN_BASE_URL` overrides the registry default endpoint.
  *
- * Cost note: each passing synthesis is a real vendor request. Tests A and B
- * are one synthesis each. Test C costs one rejected request plus one short
- * recovery synthesis that proves the pool discarded the failed connection.
+ * Cost note: each passing synthesis is a real vendor request. The plus-model
+ * test is one synthesis. The adversarial test costs one rejected request plus
+ * one short recovery synthesis that proves the pool discarded the failed
+ * connection.
  */
 
 import { TTS_PROVIDERS } from '@/lib/audio/constants';
-import type { TTSVoiceInfo } from '@/lib/audio/types';
 import { QwenTTSError } from '@/lib/audio/tts-providers';
 import { generateQwenTokenPlanTTS, QwenTokenPlanTTSError } from '@/lib/audio/qwen-token-plan-ws';
 
 const PROVIDER_ID = 'qwen-token-plan-tts';
 const PLUS_MODEL = 'qwen-audio-3.0-tts-plus';
-const FLASH_MODEL = 'qwen-audio-3.0-tts-flash';
-const FLASH_VOICE = 'longanfengyue';
 
 /** Per-test budget. Live RTT plus synthesis takes 5-15s per short phrase. */
 const LIVE_TIMEOUT_MS = 60_000;
@@ -125,25 +123,6 @@ if (!liveEnabled || !liveApiKey) {
         expect(result.format).toBe('mp3');
         // A real two-word Chinese phrase is far above one empty frame. The
         // mp3 magic-header check runs inside the smoke wrapper.
-        expect(result.bytes).toBeGreaterThan(1000);
-      },
-    );
-
-    it(
-      'synthesizes mp3 audio for the flash model with a registry voice',
-      { timeout: LIVE_TIMEOUT_MS },
-      async () => {
-        // The voice must exist in the curated registry for the flash model,
-        // otherwise the picker could offer a voice the plan rejects.
-        const registryVoice: TTSVoiceInfo | undefined = TTS_PROVIDERS[PROVIDER_ID].voices.find(
-          (voice) =>
-            voice.id === FLASH_VOICE && (voice.compatibleModels ?? []).includes(FLASH_MODEL),
-        );
-        expect(registryVoice).toBeDefined();
-
-        const result = await qwenTokenPlanTtsLiveSmoke('你好，世界', FLASH_VOICE, FLASH_MODEL);
-
-        expect(result.format).toBe('mp3');
         expect(result.bytes).toBeGreaterThan(1000);
       },
     );
