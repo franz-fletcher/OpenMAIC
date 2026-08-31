@@ -43,6 +43,7 @@ import {
   VOXCPM_TTS_PROVIDER_ID,
   VOXCPM_VLLM_MODEL_ID,
 } from './voxcpm';
+import { qwenTokenPlanBaseVoices } from './data/qwen-token-plan-base-voices';
 
 /**
  * Default supported languages for custom OpenAI-compatible ASR providers.
@@ -707,6 +708,40 @@ export const TTS_PROVIDERS: Record<BuiltInTTSProviderId, TTSProviderConfig> = {
     supportedFormats: ['mp3', 'wav', 'pcm'],
   },
 
+  'qwen-token-plan-tts': {
+    id: 'qwen-token-plan-tts',
+    name: 'Qwen Token Plan TTS',
+    requiresApiKey: true,
+    defaultBaseUrl: 'wss://token-plan.ap-southeast-1.maas.aliyuncs.com/api-ws/v1/inference',
+    icon: '/logos/bailian.svg',
+    models: [{ id: 'qwen-audio-3.0-tts-plus', name: 'Qwen Audio 3.0 TTS Plus' }],
+    defaultModelId: 'qwen-audio-3.0-tts-plus',
+    voices: [
+      // Plus system voices
+      {
+        id: 'longanlingxin',
+        name: 'longanlingxin',
+        language: 'zh-CN',
+        description: 'qwenTpVoiceLonganlingxin',
+        compatibleModels: ['qwen-audio-3.0-tts-plus'],
+      },
+      {
+        id: 'longanlufeng',
+        name: 'longanlufeng',
+        language: 'zh-CN',
+        description: 'qwenTpVoiceLonganlufeng',
+        compatibleModels: ['qwen-audio-3.0-tts-plus'],
+      },
+      ...qwenTokenPlanBaseVoices,
+    ],
+    supportedFormats: ['mp3'],
+    speedRange: {
+      min: 0.5,
+      max: 2.0,
+      default: 1.0,
+    },
+  },
+
   'minimax-tts': {
     id: 'minimax-tts',
     name: 'MiniMax TTS',
@@ -1344,6 +1379,7 @@ export const DEFAULT_TTS_VOICES: Record<BuiltInTTSProviderId, string> = {
   'minimax-tts': 'female-yujie',
   'lemonade-tts': 'af_heart',
   'browser-native-tts': 'default',
+  'qwen-token-plan-tts': 'longanlingxin',
 };
 
 export const DEFAULT_TTS_MODELS: Record<BuiltInTTSProviderId, string> = {
@@ -1357,6 +1393,7 @@ export const DEFAULT_TTS_MODELS: Record<BuiltInTTSProviderId, string> = {
   'minimax-tts': 'speech-2.8-hd',
   'lemonade-tts': 'kokoro-v1',
   'browser-native-tts': '',
+  'qwen-token-plan-tts': 'qwen-audio-3.0-tts-plus',
 };
 
 /**

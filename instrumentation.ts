@@ -79,6 +79,14 @@ export async function register(): Promise<void> {
       } catch (error) {
         console.error('[instrumentation] Asset collector drain failed', error);
       }
+      // Close the Qwen Token Plan WebSocket pool. Imported lazily so the pool
+      // module only ever loads inside the Node server process.
+      try {
+        const { qwenTokenPlanWsPool } = await import('@/lib/audio/qwen-token-plan-ws');
+        await qwenTokenPlanWsPool.shutdown();
+      } catch (error) {
+        console.error('[instrumentation] Qwen Token Plan WS pool drain failed', error);
+      }
       const connectionString = process.env.DATABASE_URL?.trim();
       if (connectionString) {
         try {

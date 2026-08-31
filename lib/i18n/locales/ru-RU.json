@@ -205,7 +205,8 @@
     "voiceAutoAssign": "Голоса будут назначены автоматически",
     "searchVoice": "Поиск голосов",
     "noMatchingVoices": "Подходящих голосов нет",
-    "noVoice": "Нет голоса"
+    "noVoice": "Нет голоса",
+    "voiceListCapped": "Показано {{shown}} из {{total}} голосов — используйте поиск, чтобы сузить список"
   },
   "proactiveCard": {
     "discussion": "Обсуждение",
@@ -1390,6 +1391,7 @@
     "providerAzureTTS": "Azure TTS",
     "providerGLMTTS": "GLM TTS",
     "providerQwenTTS": "Qwen TTS (Alibaba Cloud Bailian)",
+    "providerQwenTokenPlanTTS": "Qwen Token Plan TTS",
     "providerVoxCPMTTS": "VoxCPM2",
     "providerDoubaoTTS": "Doubao TTS 2.0 (Volcengine)",
     "providerElevenLabsTTS": "ElevenLabs TTS",
@@ -1512,6 +1514,9 @@
     "glmVoiceKazi": "Голос Kazi",
     "glmVoiceDouji": "Голос Douji",
     "glmVoiceLuodo": "Голос Luodo",
+    "qwenTpVoiceLonganlingxin": "Longanlingxin",
+    "qwenTpVoiceLonganlufeng": "Longanlufeng",
+
     "qwenVoiceCherry": "Солнечный, тёплый и естественный",
     "qwenVoiceSerena": "Нежный и мягкий",
     "qwenVoiceEthan": "Энергичный и живой",

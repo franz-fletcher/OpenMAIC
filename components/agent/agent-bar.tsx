@@ -28,6 +28,9 @@ import type { AgentConfig } from '@/lib/orchestration/registry/types';
 import type { TTSProviderId } from '@/lib/audio/types';
 import type { ProviderWithVoices } from '@/lib/audio/voice-resolver';
 
+/** Max voice rows rendered per expanded model group before a "search for more" hint. */
+const MAX_VOICES_PER_GROUP = 50;
+
 function matchesVoiceQuery(value: string | undefined, query: string): boolean {
   return !!value?.toLowerCase().includes(query);
 }
@@ -272,7 +275,7 @@ function AgentVoicePill({
                     ? `${provider.providerName} · ${group.modelName}`
                     : provider.providerName}
                 </div>
-                {group.voices.map((voice) => {
+                {group.voices.slice(0, MAX_VOICES_PER_GROUP).map((voice) => {
                   const isActive =
                     resolved?.providerId === provider.providerId &&
                     resolved?.voiceId === voice.id &&
@@ -334,6 +337,14 @@ function AgentVoicePill({
                     </div>
                   );
                 })}
+                {group.voices.length > MAX_VOICES_PER_GROUP && (
+                  <div className="px-2 py-1.5 text-center text-[11px] text-muted-foreground/60">
+                    {t('agentBar.voiceListCapped', {
+                      shown: MAX_VOICES_PER_GROUP,
+                      total: group.voices.length,
+                    })}
+                  </div>
+                )}
               </div>
             )),
           )}

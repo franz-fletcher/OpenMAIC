@@ -31,6 +31,7 @@ const ENV_PREFIXES_TO_CLEAR = [
   'TTS_AZURE',
   'TTS_GLM',
   'TTS_QWEN',
+  'TTS_QWEN_TOKEN_PLAN',
   'TTS_DOUBAO',
   'TTS_ELEVENLABS',
   'TTS_MINIMAX',
@@ -986,6 +987,26 @@ video:
       vi.stubEnv('TTS_QWEN_VOICE_CLONE_MODEL', 'operator-vc-model');
       const { resolveTTSModel } = await import('@/lib/server/provider-config');
       expect(() => resolveTTSModel('qwen-tts', undefined, 'Cherry')).toThrow('not allowed');
+    });
+
+    it('serves the token-plan provider with server-managed key, base URL, and model pin', async () => {
+      vi.stubEnv('TTS_QWEN_TOKEN_PLAN_API_KEY', 'sk-sp-server');
+      vi.stubEnv(
+        'TTS_QWEN_TOKEN_PLAN_BASE_URL',
+        'wss://other.region.example.com/api-ws/v1/inference',
+      );
+      vi.stubEnv('TTS_QWEN_TOKEN_PLAN_MODELS', 'qwen-audio-3.0-tts-plus,model-b');
+      const { isServerConfiguredProvider, resolveTTSApiKey, resolveTTSBaseUrl, resolveTTSModel } =
+        await import('@/lib/server/provider-config');
+
+      expect(isServerConfiguredProvider('tts', 'qwen-token-plan-tts')).toBe(true);
+      // Managed ⇒ server config is authoritative, client overrides are dropped.
+      expect(resolveTTSApiKey('qwen-token-plan-tts', 'sk-sp-client')).toBe('sk-sp-server');
+      expect(resolveTTSBaseUrl('qwen-token-plan-tts', 'https://client.example.com')).toBe(
+        'wss://other.region.example.com/api-ws/v1/inference',
+      );
+      // The first entry of the pinned comma list wins over the client model.
+      expect(resolveTTSModel('qwen-token-plan-tts', 'model-a')).toBe('qwen-audio-3.0-tts-plus');
     });
   });
 

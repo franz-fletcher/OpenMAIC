@@ -33,6 +33,7 @@ const TTS_PROVIDER_NAME_KEYS: Record<string, string> = {
   'minimax-tts': 'settings.providerMiniMaxTTS',
   'lemonade-tts': 'settings.providerLemonadeTTS',
   'browser-native-tts': 'settings.providerBrowserNativeTTS',
+  'qwen-token-plan-tts': 'settings.providerQwenTokenPlanTTS',
 };
 
 /**

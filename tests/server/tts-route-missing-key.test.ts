@@ -37,6 +37,7 @@ const TTS_ENV_PREFIXES = [
   'TTS_AZURE',
   'TTS_GLM',
   'TTS_QWEN',
+  'TTS_QWEN_TOKEN_PLAN',
   'TTS_VOXCPM',
   'TTS_DOUBAO',
   'TTS_ELEVENLABS',
@@ -78,18 +79,25 @@ describe('POST /api/generate/tts missing-key contract (#665)', () => {
 
   afterEach(() => vi.restoreAllMocks());
 
-  it('returns 400 MISSING_API_KEY for a keyed provider with no key (server or client)', async () => {
-    const { POST } = await import('@/app/api/generate/tts/route');
-    const res = await POST(ttsRequest({ ttsProviderId: 'openai-tts', ttsVoice: 'alloy' }));
-    const json = await res.json();
+  it.each([
+    { providerId: 'openai-tts', voice: 'alloy' },
+    { providerId: 'qwen-token-plan-tts', voice: 'longanlingxin' },
+  ])(
+    'returns 400 MISSING_API_KEY for $providerId with no key (server or client)',
+    async ({ providerId, voice }) => {
+      const { POST } = await import('@/app/api/generate/tts/route');
+      const res = await POST(ttsRequest({ ttsProviderId: providerId, ttsVoice: voice }));
+      const json = await res.json();
 
-    expect(res.status).toBe(400);
-    expect(json).toMatchObject({
-      success: false,
-      errorCode: 'MISSING_API_KEY',
-    });
-    expect(mocks.generateTTS).not.toHaveBeenCalled();
-  });
+      expect(res.status).toBe(400);
+      expect(json).toMatchObject({
+        success: false,
+        errorCode: 'MISSING_API_KEY',
+      });
+      // The pre-flight rejects before any synthesis call, so no socket opens.
+      expect(mocks.generateTTS).not.toHaveBeenCalled();
+    },
+  );
 
   it('no longer falls through to a 500 GENERATION_FAILED for a missing key', async () => {
     // Regression guard: before the pre-flight guard, the library threw
@@ -166,5 +174,31 @@ describe('POST /api/generate/tts missing-key contract (#665)', () => {
 
     expect(res.status).toBe(500);
     expect(json).toMatchObject({ success: false, errorCode: 'GENERATION_FAILED' });
+  });
+
+  it('maps a token-plan synthesis failure through the existing QwenTTSError branch', async () => {
+    // QwenTokenPlanTTSError extends QwenTTSError, so the route serves the
+    // typed code and httpStatus instead of falling through to 500
+    // GENERATION_FAILED. The route itself stays provider-neutral.
+    const { QwenTokenPlanTTSError } = await import('@/lib/audio/qwen-token-plan-ws');
+    mocks.generateTTS.mockRejectedValueOnce(
+      new QwenTokenPlanTTSError('task failed', 502, {
+        errorCode: 'Throttling',
+        errorMessage: 'too many requests',
+      }),
+    );
+    const { POST } = await import('@/app/api/generate/tts/route');
+    const res = await POST(
+      ttsRequest({
+        ttsProviderId: 'qwen-token-plan-tts',
+        ttsVoice: 'longanlingxin',
+        ttsApiKey: 'client-key',
+      }),
+    );
+    const json = await res.json();
+
+    expect(res.status).toBe(502);
+    expect(json).toMatchObject({ success: false, errorCode: 'QWEN_TTS_ERROR' });
+    expect(json.errorCode).not.toBe('GENERATION_FAILED');
   });
 });

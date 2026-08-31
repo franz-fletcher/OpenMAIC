@@ -173,7 +173,7 @@ export class TTSRequestTimeoutError extends Error {
 }
 
 /** Combine the caller's cancel signal with the per-request timeout. */
-function ttsRequestSignal(callerSignal?: AbortSignal): AbortSignal {
+export function ttsRequestSignal(callerSignal?: AbortSignal): AbortSignal {
   const timeout = AbortSignal.timeout(ttsRequestTimeoutMs());
   return callerSignal ? AbortSignal.any([callerSignal, timeout]) : timeout;
 }
@@ -229,6 +229,15 @@ export async function generateTTS(
 
       case 'qwen-tts':
         return await generateQwenTTS(config, text, signal);
+
+      case 'qwen-token-plan-tts': {
+        // Dynamic import keeps the module graph acyclic. The WebSocket module
+        // subclasses QwenTTSError from this file, so a static import here
+        // would evaluate that subclass before this module finishes defining
+        // the base class.
+        const { generateQwenTokenPlanTTS } = await import('./qwen-token-plan-ws');
+        return await generateQwenTokenPlanTTS(config, text, signal);
+      }
 
       case 'voxcpm-tts':
         return await generateVoxCPMTTS(config, text, signal);

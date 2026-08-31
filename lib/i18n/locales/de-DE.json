@@ -205,7 +205,8 @@
     "voiceAutoAssign": "Stimmen werden automatisch zugewiesen",
     "searchVoice": "Stimmen durchsuchen",
     "noMatchingVoices": "Keine passenden Stimmen",
-    "noVoice": "Keine Stimme"
+    "noVoice": "Keine Stimme",
+    "voiceListCapped": "Zeige {{shown}} von {{total}} Stimmen — suchen Sie, um die Liste einzugrenzen"
   },
   "proactiveCard": {
     "discussion": "Diskussion",
@@ -1390,6 +1391,7 @@
     "providerAzureTTS": "Azure TTS",
     "providerGLMTTS": "GLM TTS",
     "providerQwenTTS": "Qwen TTS (Alibaba Cloud Bailian)",
+    "providerQwenTokenPlanTTS": "Qwen Token Plan TTS",
     "providerVoxCPMTTS": "VoxCPM2",
     "providerDoubaoTTS": "Doubao TTS 2.0 (Volcengine)",
     "providerElevenLabsTTS": "ElevenLabs TTS",
@@ -1512,6 +1514,9 @@
     "glmVoiceKazi": "Kazi-Stimme",
     "glmVoiceDouji": "Douji-Stimme",
     "glmVoiceLuodo": "Luodo-Stimme",
+    "qwenTpVoiceLonganlingxin": "Longanlingxin",
+    "qwenTpVoiceLonganlufeng": "Longanlufeng",
+
     "qwenVoiceCherry": "Heiter, warm und natürlich",
     "qwenVoiceSerena": "Zart und sanft",
     "qwenVoiceEthan": "Energiegeladen und lebhaft",

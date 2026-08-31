@@ -1,0 +1,90 @@
+{
+  "schema_version": 2,
+  "$schema": "https://rivr.dev/schemas/ledger/v2",
+  "kind": "metaspec",
+  "spec": {
+    "reference": "docs/meta-specs/qwen-token-plan-integration.md",
+    "title": "Qwen Token Plan Integration (meta-spec)",
+    "hash": "8548bcc0b5219f88a48c33141a4bc4aa325d078f790cae54002a0b37f8ddba6f"
+  },
+  "tracker": {
+    "mode": "none"
+  },
+  "stage": "research",
+  "retry": {
+    "count": 0,
+    "max": 5,
+    "consecutive_same_cause": 0,
+    "escalate_at": 3
+  },
+  "slices": [],
+  "adrs": [],
+  "child_ledgers": [
+    {
+      "batch": "001",
+      "ledger": ".rivr/specs/001-qwen-token-plan-tts.ledger.json",
+      "stage": "research"
+    },
+    {
+      "batch": "batch-001",
+      "ledger": ".rivr/specs/001-qwen-token-plan-tts.ledger.json",
+      "stage": "closed"
+    }
+  ],
+  "audit": [
+    {
+      "seq": 1,
+      "id": "187c10ef-a0a9-4dee-870c-3bfb921c2154",
+      "at": "2026-08-31T03:36:57.106Z",
+      "actor": "orchestrator",
+      "command": "metaspec_init",
+      "transition": "spec-approved:docs/meta-specs/qwen-token-plan-integration.md spec-hash:a88ea51c847df4c346a3c9be9749da9d1ce491ded25bfb108db46c42708e8f2f",
+      "slice": null,
+      "hash": "d8c732254475cb04b985ab86b62ab6c99ad1f637750f8593600cb853d35098ed"
+    },
+    {
+      "seq": 2,
+      "id": "0bbcde56-aceb-4538-9a3e-cd98ca31d6ed",
+      "at": "2026-08-31T03:36:57.107Z",
+      "actor": "orchestrator",
+      "command": "metaspec_child_link",
+      "transition": "child-link:001:.rivr/specs/001-qwen-token-plan-tts.ledger.json:research",
+      "slice": null,
+      "hash": "866a44df9b288fbd85627054e6ab41d3659101124950f3687176d67bf27e966a"
+    },
+    {
+      "seq": 3,
+      "id": "1d3124e8-c909-4324-8647-52c3178ea7a2",
+      "at": "2026-08-31T07:13:15.446Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:correction:record flash model absence; batch 001 corrected to plus-only",
+      "slice": null,
+      "hash": "37019f21bf9c36b8ac81ba02c0356e7f71e556babce4b3cb91fd4a634eab31ac",
+      "fileHash": "a9480e1d84f913d3cc88ea0c86fbf2956030ef897da7f5f792fca10acfc55ab7"
+    },
+    {
+      "seq": 4,
+      "id": "da9d180c-93be-4be7-8bad-664b8b0b663a",
+      "at": "2026-08-31T09:12:09.271Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:extension:batch 001 closed and certified; link child ledger",
+      "slice": null,
+      "hash": "dda98ae3efc1ef8d3d07daf80280bf5c6fc64733d143933806bd877e10cda5fb",
+      "fileHash": "004699896b3b5bd00bb3902fe5bf30f60580b7eebb4ecdc3e71de7dbb52bf608"
+    },
+    {
+      "seq": 5,
+      "id": "ba9f0015-e3c9-47a2-a43d-dc0a2031280b",
+      "at": "2026-08-31T09:12:09.272Z",
+      "actor": "orchestrator",
+      "command": "metaspec_child_link",
+      "transition": "child-link:batch-001:.rivr/specs/001-qwen-token-plan-tts.ledger.json:closed",
+      "slice": null,
+      "hash": "0a48d6ecf768383e2ef180dc33488572dad520d7220d339a14a80ced5a292fe1",
+      "fileHash": "004699896b3b5bd00bb3902fe5bf30f60580b7eebb4ecdc3e71de7dbb52bf608"
+    }
+  ],
+  "fileHash": "9c0f93aafde5503d262397c30f773a1e222c199916d1b30a802110beaeffa5ef"
+}

@@ -86,6 +86,9 @@ e2e/screenshots/
 # local-only sandbox/demo pages (do not ship)
 /app/slide-renderer-demo
 
+# RIVR workflow runtime logs
+.rivr/logs/
+
 # local e2e screenshots for #619 review
 e2e/__screenshots-619/
 /.playwright-mcp/

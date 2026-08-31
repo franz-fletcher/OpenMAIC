@@ -11,6 +11,7 @@ const log = createLogger('TTS');
 /** Provider-specific max text length limits. */
 export const TTS_MAX_TEXT_LENGTH: Partial<Record<TTSProviderId, number>> = {
   'glm-tts': 1024,
+  'qwen-token-plan-tts': 20000,
 };
 
 /**

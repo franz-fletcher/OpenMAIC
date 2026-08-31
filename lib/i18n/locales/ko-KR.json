@@ -205,7 +205,8 @@
     "voiceAutoAssign": "음성이 자동으로 배정됩니다",
     "searchVoice": "음성 검색",
     "noMatchingVoices": "일치하는 음성 없음",
-    "noVoice": "음성 없음"
+    "noVoice": "음성 없음",
+    "voiceListCapped": "총 {{total}}개 중 {{shown}}개 표시 — 검색하여 좁히기"
   },
   "proactiveCard": {
     "discussion": "토론",
@@ -1390,6 +1391,7 @@
     "providerAzureTTS": "Azure TTS",
     "providerGLMTTS": "GLM TTS",
     "providerQwenTTS": "Qwen TTS (Alibaba Cloud Bailian)",
+    "providerQwenTokenPlanTTS": "Qwen Token Plan TTS",
     "providerVoxCPMTTS": "VoxCPM2",
     "providerDoubaoTTS": "Doubao TTS 2.0 (Volcengine)",
     "providerElevenLabsTTS": "ElevenLabs TTS",
@@ -1512,6 +1514,9 @@
     "glmVoiceKazi": "Kazi 음성",
     "glmVoiceDouji": "Douji 음성",
     "glmVoiceLuodo": "Luodo 음성",
+    "qwenTpVoiceLonganlingxin": "Longanlingxin",
+    "qwenTpVoiceLonganlufeng": "Longanlufeng",
+
     "qwenVoiceCherry": "밝고 따뜻하며 자연스러운",
     "qwenVoiceSerena": "부드럽고 온화한",
     "qwenVoiceEthan": "활기차고 생동감 있는",
