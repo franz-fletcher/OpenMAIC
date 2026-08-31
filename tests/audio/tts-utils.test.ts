@@ -80,4 +80,22 @@ describe('splitLongSpeechActions', () => {
     // …and the text is preserved across the split.
     expect(out.map((a) => a.text).join('')).toBe(long);
   });
+
+  it('splits over-limit speech for qwen-token-plan-tts at 20000', () => {
+    // Classroom acceptance (spec S5): the S2 registration is what makes the
+    // upstream splitter act. Without an entry splitLongSpeechActions returns
+    // actions unsplit, so both bounds are pinned here.
+    const max = TTS_MAX_TEXT_LENGTH['qwen-token-plan-tts']!;
+    expect(max).toBe(20000);
+    const atLimit = '句'.repeat(max); // 20000 chars: not over the limit.
+    expect(splitLongSpeechActions([speech('a', atLimit)], 'qwen-token-plan-tts')).toHaveLength(1);
+    const overLimit = '句子。'.repeat(7000); // 21000 chars > 20000.
+    const out = splitLongSpeechActions(
+      [speech('a', overLimit)],
+      'qwen-token-plan-tts',
+    ) as SpeechAction[];
+    expect(out.length).toBeGreaterThan(1);
+    expect(out.every((a) => a.text.length <= max)).toBe(true);
+    expect(out.map((a) => a.text).join('')).toBe(overLimit);
+  });
 });

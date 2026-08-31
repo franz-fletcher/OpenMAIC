@@ -995,7 +995,7 @@ video:
         'TTS_QWEN_TOKEN_PLAN_BASE_URL',
         'wss://other.region.example.com/api-ws/v1/inference',
       );
-      vi.stubEnv('TTS_QWEN_TOKEN_PLAN_MODELS', 'qwen-audio-3.0-tts-flash,qwen-audio-3.0-tts-plus');
+      vi.stubEnv('TTS_QWEN_TOKEN_PLAN_MODELS', 'qwen-audio-3.0-tts-plus,model-b');
       const { isServerConfiguredProvider, resolveTTSApiKey, resolveTTSBaseUrl, resolveTTSModel } =
         await import('@/lib/server/provider-config');
 
@@ -1006,9 +1006,7 @@ video:
         'wss://other.region.example.com/api-ws/v1/inference',
       );
       // The first entry of the pinned comma list wins over the client model.
-      expect(resolveTTSModel('qwen-token-plan-tts', 'qwen-audio-3.0-tts-plus')).toBe(
-        'qwen-audio-3.0-tts-flash',
-      );
+      expect(resolveTTSModel('qwen-token-plan-tts', 'model-a')).toBe('qwen-audio-3.0-tts-plus');
     });
   });
 
