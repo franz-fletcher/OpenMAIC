@@ -14,6 +14,10 @@ packages/@openmaic/importer/src1/
 # Docs site (separate Fumadocs app with its own toolchain)
 packages/docs/
 
+# RIVR ledgers are CLI-owned machine artifacts rewritten on every mark.
+# Formatting them is the rivr CLI's job, not prettier's.
+.rivr/
+
 # Build output
 .next/
 out/
