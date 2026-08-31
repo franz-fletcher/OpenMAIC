@@ -1,0 +1,968 @@
+{
+  "schema_version": 2,
+  "$schema": "https://rivr.dev/schemas/ledger/v2",
+  "spec": {
+    "reference": "docs/specs/001-qwen-token-plan-tts.md",
+    "title": "Batch 001 spec: qwen-token-plan-tts WebSocket provider",
+    "hash": "4217aecb589f686afb708f50cb0a328dce50677695ff07c05b3fd11371b2bf51"
+  },
+  "tracker": {
+    "mode": "none"
+  },
+  "stage": "implementation",
+  "retry": {
+    "count": 0,
+    "max": 5,
+    "consecutive_same_cause": 0,
+    "escalate_at": 3
+  },
+  "slices": [
+    {
+      "id": "S1",
+      "title": "Registry and identity",
+      "intent": "Register qwen-token-plan-tts in the TTS type union, provider registry, default voice and model records, display-name map, 12 locales, and the committed base-voice data file.",
+      "user_stories": [
+        2,
+        3,
+        5
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/audio/types.ts",
+          "symbols": [
+            {
+              "name": "BuiltInTTSProviderId",
+              "kind": "type",
+              "expectation": "The union includes the literal qwen-token-plan-tts.",
+              "before": {
+                "exists": true,
+                "kind": "type"
+              },
+              "postcondition": {
+                "exists": true
+              },
+              "postcondition_quality": "INSPECTED"
+            }
+          ]
+        },
+        {
+          "path": "lib/audio/constants.ts",
+          "symbols": [
+            {
+              "name": "TTS_PROVIDERS",
+              "kind": "variable",
+              "expectation": "Entry for qwen-token-plan-tts with models qwen-audio-3.0-tts-plus and qwen-audio-3.0-tts-flash, curated voices, mp3 format.",
+              "before": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition": {
+                "exists": true
+              },
+              "postcondition_quality": "INSPECTED"
+            },
+            {
+              "name": "DEFAULT_TTS_VOICES",
+              "kind": "variable",
+              "expectation": "Key qwen-token-plan-tts points to longanlingxin.",
+              "before": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition": {
+                "exists": true
+              },
+              "postcondition_quality": "INSPECTED"
+            },
+            {
+              "name": "DEFAULT_TTS_MODELS",
+              "kind": "variable",
+              "expectation": "Key qwen-token-plan-tts pins qwen-audio-3.0-tts-plus.",
+              "before": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition": {
+                "exists": true
+              },
+              "postcondition_quality": "INSPECTED"
+            }
+          ]
+        },
+        {
+          "path": "lib/audio/provider-display.ts",
+          "symbols": [
+            {
+              "name": "TTS_PROVIDER_NAME_KEYS",
+              "kind": "variable",
+              "expectation": "Maps qwen-token-plan-tts to settings.providerQwenTokenPlanTTS.",
+              "before": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition": {
+                "exists": true
+              },
+              "postcondition_quality": "INSPECTED"
+            }
+          ]
+        },
+        {
+          "path": "lib/audio/data/qwen-token-plan-base-voices.ts",
+          "symbols": [
+            {
+              "name": "qwenTokenPlanBaseVoices",
+              "kind": "variable",
+              "expectation": "Typed array of 1194 base-voice records, compatibleModels set per model id, native names only.",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true
+              },
+              "postcondition_quality": "INSPECTED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 1,
+      "uuid": "8bf18cce-2d3c-49d1-aafa-4e3d6d682a2e",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "TTS_PROVIDERS exposes qwen-token-plan-tts with requiresApiKey true, both audio models, and curated system voices with description keys. DEFAULT_TTS_VOICES and DEFAULT_TTS_MODELS carry the new key. TTS_PROVIDER_NAME_KEYS binds the display name. settings.providerQwenTokenPlanTTS exists in all 12 locale files. A prettier-clean generated data file under lib/audio/data carries the base voice catalog.",
+      "gates": [
+        {
+          "id": "G1.1",
+          "check": "npx tsc --noEmit",
+          "expect": "exit code 0",
+          "evidence": "pending",
+          "type": "unit"
+        },
+        {
+          "id": "G1.2",
+          "check": "pnpm check:i18n-keys",
+          "expect": "exit code 0",
+          "evidence": "pending",
+          "type": "unit"
+        },
+        {
+          "id": "G1.3",
+          "check": "grep -l providerQwenTokenPlanTTS lib/i18n/locales/*.json | wc -l",
+          "expect": "12",
+          "evidence": "pending",
+          "type": "unit"
+        }
+      ]
+    },
+    {
+      "id": "S2",
+      "title": "WebSocket synthesis core and connection pool",
+      "intent": "Deliver the SpeechSynthesizer frame client plus module-level pool and wire the generateTTS dispatch case.",
+      "user_stories": [
+        1,
+        4,
+        7
+      ],
+      "blocked_by": [
+        "S1"
+      ],
+      "targets": [
+        {
+          "path": "lib/audio/tts-providers.ts",
+          "symbols": [
+            {
+              "name": "generateTTS",
+              "kind": "function",
+              "expectation": "Switch includes case qwen-token-plan-tts routing to the WebSocket client.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  config: TTSModelConfig,\n  text: string,\n): Promise<TTSGenerationResult>"
+              },
+              "postcondition": {
+                "exists": true
+              },
+              "postcondition_quality": "INSPECTED"
+            }
+          ]
+        },
+        {
+          "path": "lib/audio/qwen-token-plan-ws.ts",
+          "symbols": [
+            {
+              "name": "generateQwenTokenPlanTTS",
+              "kind": "function",
+              "expectation": "Resolves mp3 bytes for a text input over the task protocol.",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true
+              },
+              "postcondition_quality": "INFERRED"
+            },
+            {
+              "name": "QwenTokenPlanWsPool",
+              "kind": "class",
+              "expectation": "Module singleton pool with serialize, reuse, discard, and reap rules from the spec.",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "72efab29-8c58-483f-8c31-f8b5ac9b1a2e",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "generateTTS dispatches qwen-token-plan-tts to the new client. The client opens a pooled socket with Authorization header init, sends run-task then continue-task with the full text then finish-task, concatenates binary mp3 frames, and maps task-failed, abort, and timeout to an error class extending QwenTTSError. The pool defaults to 2 connections, 60s idle reaper, reuse after task-finished with fresh task_id, discard after task-failed, env override OPENMAIC_QWEN_TOKEN_PLAN_WS_POOL_SIZE, shutdown drain anchored in instrumentation. Hermetic vitest with stubbed WebSocket passes.",
+      "gates": [
+        {
+          "id": "G2.1",
+          "check": "npx vitest run tests/audio/qwen-token-plan-tts.test.ts",
+          "expect": "exit code 0",
+          "evidence": "pending",
+          "type": "unit"
+        }
+      ]
+    },
+    {
+      "id": "S3",
+      "title": "Server wiring and route",
+      "intent": "Env map entry, .env.example section, neutrality debt table update, route serving.",
+      "user_stories": [
+        5,
+        7
+      ],
+      "blocked_by": [
+        "S2"
+      ],
+      "targets": [
+        {
+          "path": "lib/server/provider-config.ts",
+          "symbols": [
+            {
+              "name": "TTS_ENV_MAP",
+              "kind": "variable",
+              "expectation": "Entry TTS_QWEN_TOKEN_PLAN maps to qwen-token-plan-tts.",
+              "before": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition": {
+                "exists": true
+              },
+              "postcondition_quality": "INSPECTED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 3,
+      "uuid": "4b888373-80d8-4d32-ab9f-648d9fa90f6f",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "TTS_ENV_MAP maps TTS_QWEN_TOKEN_PLAN to qwen-token-plan-tts. .env.example documents API_KEY, BASE_URL, MODELS. tests/providers/provider-neutrality-guard.ts counts updated in the same change. Route serves the provider, missing-key preflight rejects before socket use, typed errors keep the existing route mapping.",
+      "gates": [
+        {
+          "id": "G3.1",
+          "check": "npx vitest run tests/server/provider-config.test.ts tests/server/tts-route-missing-key.test.ts tests/providers/provider-neutrality-guard.test.ts",
+          "expect": "exit code 0",
+          "evidence": "pending",
+          "type": "integration"
+        }
+      ]
+    },
+    {
+      "id": "S4",
+      "title": "Live smoke and protocol pin",
+      "intent": "Opt-in live test against the real endpoint plus frame-order pin test.",
+      "user_stories": [
+        6
+      ],
+      "blocked_by": [
+        "S2"
+      ],
+      "targets": [
+        {
+          "path": "tests/audio/qwen-token-plan-tts-live.test.ts",
+          "symbols": [
+            {
+              "name": "qwenTokenPlanTtsLiveSmoke",
+              "expectation": "The file declares a top-level function qwenTokenPlanTtsLiveSmoke holding the gated live synthesis body.",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true
+              },
+              "postcondition_quality": "INSPECTED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 4,
+      "uuid": "4c9d69dd-50e0-4a7c-abd7-c0235fad122d",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "With TEST_LOAD_LOCAL_ENV=1 the live test synthesizes with longanlingxin on the plus model, validates one flash system voice, and asserts a typed error for an unknown voice. Without the gate or key it skips explicitly. A pin test records the exact frame sequence and event names from the probe log.",
+      "gates": [
+        {
+          "id": "G4.1",
+          "check": "TEST_LOAD_LOCAL_ENV=1 npx vitest run tests/audio/qwen-token-plan-tts-live.test.ts",
+          "expect": "exit code 0",
+          "evidence": "pending",
+          "type": "adversarial"
+        }
+      ]
+    },
+    {
+      "id": "S5",
+      "title": "Classroom pipeline acceptance",
+      "intent": "Prove preview, regenerate, voice-all, and agent narration paths accept the provider.",
+      "user_stories": [
+        1
+      ],
+      "blocked_by": [
+        "S3"
+      ],
+      "targets": [
+        {
+          "path": "lib/hooks/use-scene-generator.ts",
+          "symbols": [
+            {
+              "name": "generateAndStoreTTS",
+              "kind": "function",
+              "expectation": "Behavior unchanged and stores mp3 from the new provider.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  requestId: string,\n  text: string,\n  language?: string,\n  signal?: AbortSignal,\n  retryOptions?: ClientRetryOptions<TTSApiResponse>,\n  existingAudioId?: string,\n  stageId?: string,\n  // Internal: an explicit voice that bypasses narrator binding resolution — used\n  // to retry narration against the deterministic enabled-provider pick when the\n  // pinned narrator voice (bound == global) turns out to be unusable.\n  overrideVoice?: ResolvedVoice,\n  // Internal: number of narrator voice-fallback hops already taken. Guards the\n  // QWEN_VC_VOICE_NOT_FOUND retry so a chain of dead voices can never loop\n  // /api/generate/tts beyond a single fallback hop.\n  fallbackHops = 0,\n): Promise<string | null>"
+              },
+              "postcondition": {
+                "exists": true
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "lib/server/agent-runtime/scene-tts.ts",
+          "symbols": [
+            {
+              "name": "synthesizeSceneNarration",
+              "kind": "function",
+              "expectation": "Persists provider audio via classroom-media bytes.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(input: SceneTtsInput): Promise<SceneTtsSummary>"
+              },
+              "postcondition": {
+                "exists": true
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "6fa12eaa-6286-40f5-90f6-751b09da1699",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "Classroom audio generates with the provider through use-scene-generator and agent-runtime narration. mp3 persists through Dexie and classroom-media without conversion. pnpm test, pnpm check, and pnpm check:i18n-keys pass.",
+      "gates": [
+        {
+          "id": "G5.1",
+          "check": "pnpm test",
+          "expect": "exit code 0",
+          "evidence": "pending",
+          "type": "integration"
+        },
+        {
+          "id": "G5.2",
+          "check": "pnpm check",
+          "expect": "exit code 0",
+          "evidence": "pending",
+          "type": "unit"
+        }
+      ]
+    }
+  ],
+  "audit": [
+    {
+      "seq": 1,
+      "id": "82f41ddc-4bd6-4087-9d0f-c16a2129d818",
+      "at": "2026-08-31T03:35:16.277Z",
+      "actor": "orchestrator",
+      "command": "init",
+      "transition": "spec-approved:docs/specs/001-qwen-token-plan-tts.md",
+      "slice": null,
+      "hash": "6bad309aa03c556f409d263243d9f7c5d468ea0794f4ab01c48d90d870b4eb36"
+    },
+    {
+      "seq": 2,
+      "id": "0991ebcf-81b8-422b-bf28-af8f371caa60",
+      "at": "2026-08-31T03:35:16.278Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect",
+      "slice": "S1",
+      "hash": "8c0fc226e02081e84e747bb45f0a9ccf88c4cad0e3f3d7df4af2475a3fa4c49a",
+      "expectationHash": "92b4c6daaaf97f3ccda0f0ceb8595f706734f03508fd1c794f8612e1433b6d66"
+    },
+    {
+      "seq": 3,
+      "id": "aecef028-c8ab-4ba4-8121-ba507bdc90e9",
+      "at": "2026-08-31T03:35:16.278Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/audio/types.ts::BuiltInTTSProviderId",
+      "slice": "S1",
+      "hash": "b310efe9c948d3e4913b8ad244a4518e2c11e0251fa7e1829c4e3253b6a13306",
+      "expectationHash": "0bcf5c4cd33b0deb747176aa2b2c454fa72ca20179bd78bc8e3ba8f14e696e7a"
+    },
+    {
+      "seq": 4,
+      "id": "9766cd7b-b5fd-4dcc-bd45-27e3bf97ad9e",
+      "at": "2026-08-31T03:35:16.278Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/audio/constants.ts::TTS_PROVIDERS",
+      "slice": "S1",
+      "hash": "18e971f5dd74962e21e212c98fe9f588808e89c3dbf5ee8ed9396710500a9ffd",
+      "expectationHash": "e555236bdf295a0453caa73558a85ac90b985eb74c1b2fedc8a781abbd943d7a"
+    },
+    {
+      "seq": 5,
+      "id": "db977430-dfbb-4771-962c-90e1d82566c4",
+      "at": "2026-08-31T03:35:16.278Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/audio/constants.ts::DEFAULT_TTS_VOICES",
+      "slice": "S1",
+      "hash": "fa434093e494d9a92b45bbedff05b88a73a7e2ffb180e7988c61d4a01c88c53b",
+      "expectationHash": "ff24a482237a4be3804e4366b0837365f2f2b4c50ecfedd8eadce235dff95bc1"
+    },
+    {
+      "seq": 6,
+      "id": "8161b596-ae87-488d-acd8-8c210790ae64",
+      "at": "2026-08-31T03:35:16.278Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/audio/constants.ts::DEFAULT_TTS_MODELS",
+      "slice": "S1",
+      "hash": "6739a1777f0af0b7463abb00f69e6afb7109c8043c1179245b926e8911d33078",
+      "expectationHash": "a2e282d24bec6bcf4d4382edda0e2566c87a150132b701b17baa33c90cddb911"
+    },
+    {
+      "seq": 7,
+      "id": "1692230e-9d2b-4d48-943c-fc9245e988ee",
+      "at": "2026-08-31T03:35:16.278Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/audio/provider-display.ts::TTS_PROVIDER_NAME_KEYS",
+      "slice": "S1",
+      "hash": "bbcac91bc7c21c2a22b8b6e741b8a3981bc83862c687620414e1b8a298d6ed77",
+      "expectationHash": "0bd8658da0094e48fcec9ac478821bd1176f90b38511d6739afe9d26b4be3b11"
+    },
+    {
+      "seq": 8,
+      "id": "3ce9ea83-4525-4242-a8ee-4efbe4bfe489",
+      "at": "2026-08-31T03:35:16.278Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/audio/data/qwen-token-plan-base-voices.ts::qwenTokenPlanBaseVoices",
+      "slice": "S1",
+      "hash": "df3a72c6a68451b6c69e332a1ec53fe8482aa459d81a1de9202a866f352e229e",
+      "expectationHash": "e554fee70116654618e76e8cab3a5c325cc7e53c3fdeebc94a622ca4c9d2ea6e"
+    },
+    {
+      "seq": 9,
+      "id": "ac443b5b-95ac-46bc-b10d-22045e835ef6",
+      "at": "2026-08-31T03:35:16.278Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect",
+      "slice": "S2",
+      "hash": "eb46109fd454d31634256986d7b7eca240ea1b5b803594a1e372d11d5172f4d8",
+      "expectationHash": "df3de4dcd8c7df89b1c8513fa0161d6c3fa1101dce65c2266fd4792f9480d6af"
+    },
+    {
+      "seq": 10,
+      "id": "d4b79def-0b7d-4c29-b37a-75567ebb9bac",
+      "at": "2026-08-31T03:35:16.278Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/audio/tts-providers.ts::generateTTS",
+      "slice": "S2",
+      "hash": "9b94457067266284fa4bc5c2fc094291bf433839e04977f2320acf5ae460d6b5",
+      "expectationHash": "4f04282ce1267e98dbe8bcab0f7410ca4d24b158964e32153bcbcfb57d35bbb1"
+    },
+    {
+      "seq": 11,
+      "id": "179ec366-b98d-4ff0-b4b5-377e69ecae4f",
+      "at": "2026-08-31T03:35:16.278Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/audio/qwen-token-plan-ws.ts::generateQwenTokenPlanTTS",
+      "slice": "S2",
+      "hash": "ac354eff2dc0e60468854601d9cd2851301d232b610855bdbff25fd407188b80",
+      "expectationHash": "a4147024d701cbcd09583ffbb951e044ce0521a70159a0cb951436920cb6ab8d"
+    },
+    {
+      "seq": 12,
+      "id": "0a84d3da-774d-484b-a2ad-687c1cb75906",
+      "at": "2026-08-31T03:35:16.278Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/audio/qwen-token-plan-ws.ts::QwenTokenPlanWsPool",
+      "slice": "S2",
+      "hash": "12a33d6d467f0745f3e1a3132615d205b18356ae0ba6edcf3f9ba67dcbb3e4a7",
+      "expectationHash": "d152f83c0a6028745e99266d00c16eb15140792a0b3a1a2aad1677bbd7fdd851"
+    },
+    {
+      "seq": 13,
+      "id": "a9fafae1-a165-4216-b406-a42e42bc87a7",
+      "at": "2026-08-31T03:35:16.278Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect",
+      "slice": "S3",
+      "hash": "7cbbac3974797e93f96605bc917bfbc33d5040076e575b97585ca3498f3f63ed",
+      "expectationHash": "b162daf2c81259f85e326d267bc67302bea47f6696e3c927a54f21628fbb4166"
+    },
+    {
+      "seq": 14,
+      "id": "f2849139-00a2-4984-9b8d-65f44dfc38c5",
+      "at": "2026-08-31T03:35:16.278Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:lib/server/provider-config.ts::TTS_ENV_MAP",
+      "slice": "S3",
+      "hash": "f6ccc6962c6f0c081d4c800d824e2b6bcd456e1c5bab11b3aff95084245093c9",
+      "expectationHash": "1a871d2b1a4f597d683c0a72ce65a9829079241a5deb1fd6360771c1d3707e2b"
+    },
+    {
+      "seq": 15,
+      "id": "a91df540-e5e9-4ffe-be54-24f043a0ac2b",
+      "at": "2026-08-31T03:35:16.278Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect",
+      "slice": "S4",
+      "hash": "0255eec4de7635127f241bb6f95d8a4c537f929ae334e6dcacd735e0d5675431",
+      "expectationHash": "461308176db3b33bb07ffa6210eb1cfc19e5dc4da619a99863e316c61ab1a5ff"
+    },
+    {
+      "seq": 16,
+      "id": "92ff17ae-5118-4c58-b1c3-eae226a626b6",
+      "at": "2026-08-31T03:35:16.278Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S5:expect",
+      "slice": "S5",
+      "hash": "f253ccc794c5c4b3c02837742aa51b6b17444fc07c0727f486c2e1efb9d31a90",
+      "expectationHash": "4621005394e22c4469bd38bf6a9dace81fd5dd24ea2e89a1e414cdfccb632cd5"
+    },
+    {
+      "seq": 17,
+      "id": "00356e41-23a2-4323-a074-2dbb84353c17",
+      "at": "2026-08-31T03:35:16.278Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S5:expect-symbol:lib/hooks/use-scene-generator.ts::generateAndStoreTTS",
+      "slice": "S5",
+      "hash": "5e2977b60f2b548b836baa000347945f6f21b2f636347bee991c259e8c988e46",
+      "expectationHash": "b0ea66c8d0a64a948d73c4b6fb77c7407b05460d3506c77bff5f84b808cd1cb5"
+    },
+    {
+      "seq": 18,
+      "id": "32443c31-4c91-4ee9-91b5-70ea9f4c13ec",
+      "at": "2026-08-31T03:35:16.278Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S5:expect-symbol:lib/server/agent-runtime/scene-tts.ts::synthesizeSceneNarration",
+      "slice": "S5",
+      "hash": "ef2b24d003c954d06d0819e2f6e98ef222b12274038ede24a46186ebf3e2bc6d",
+      "expectationHash": "919e3e793e7da96e95660c4376e807e1f9578b7a2da2220a0045fde1b9fbe413"
+    },
+    {
+      "seq": 19,
+      "id": "13a3789b-4940-450e-a249-e3cdc94efdff",
+      "at": "2026-08-31T03:35:16.278Z",
+      "actor": "orchestrator",
+      "command": "init_batch",
+      "transition": "batch-init:S1,S2,S3,S4,S5",
+      "slice": null,
+      "hash": "1927783704bf5d08d2fd3743fbda22a05c8e0e3f1f9f6ad9b3f77cb8613eb43c"
+    },
+    {
+      "seq": 20,
+      "id": "78bd1af5-6682-4b94-8a70-1ba72dd4eb9c",
+      "at": "2026-08-31T03:35:16.331Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S1:capture",
+      "slice": "S1",
+      "hash": "ffa5d4752098b338a2f391627492005446441f96e797f6bab23e26d47140a2b4",
+      "fileHash": "247f62e316a46b82dd6d24553618abf1ac2409002e39d705dd631cf0f2f7a8dd"
+    },
+    {
+      "seq": 21,
+      "id": "03254398-f5ed-44de-b5f5-c18b7bdad4bc",
+      "at": "2026-08-31T03:35:16.382Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S2:capture",
+      "slice": "S2",
+      "hash": "f81c9b51bc2e7540b47548ae336c923b9810363e9dcab39d39587e165d97d996",
+      "fileHash": "7cee1db8f57955b6f7b3d50c8dca5bb15e3f45eeeab923977f70474b9ce0c18d"
+    },
+    {
+      "seq": 22,
+      "id": "18e81bd0-6cc4-4b1e-a5d3-1fdad0242b68",
+      "at": "2026-08-31T03:35:16.434Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S3:capture",
+      "slice": "S3",
+      "hash": "e7b9715f4527e25ee72ab45da2fab9c51962c6a548af492b9626019a0d4f14b8",
+      "fileHash": "749a28c2f8c71f932ca83023d9f64d8dd6ebe0414b01fed3da0e14ba528e7f3e"
+    },
+    {
+      "seq": 23,
+      "id": "3355123b-f5f7-468d-a33f-32d2175baf6a",
+      "at": "2026-08-31T03:35:16.489Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S5:capture",
+      "slice": "S5",
+      "hash": "51139f481f538a07c5e7785db10c075d6a380e303810726b3ea597349703317b",
+      "fileHash": "a18a220ebf480712226a4dec5fc2552235e6737951cae8b9bd3958b14856d8ba"
+    },
+    {
+      "seq": 24,
+      "id": "a9a040d8-d846-478c-8d56-aa5218c849af",
+      "at": "2026-08-31T03:35:16.527Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/audio/types.ts::BuiltInTTSProviderId",
+      "slice": "S1",
+      "hash": "49c20348105ca3a5dc027d18bd74a06d5a4b767f44f6c45ad070b9a1b5b6fae8",
+      "fileHash": "756640800efa4935a368890ef6cf6784a9bf2ef0beba21731f6c7888e9147b5c"
+    },
+    {
+      "seq": 25,
+      "id": "aefe309e-51fb-4621-a033-d4f6533540ba",
+      "at": "2026-08-31T03:35:16.564Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/audio/constants.ts::TTS_PROVIDERS",
+      "slice": "S1",
+      "hash": "58dd189e094cfecbe1f3376c54e774bdf72ffbae3d2a144e34a782f54da61477",
+      "fileHash": "fbc5ef4cca015f4429c66c99e94892c472c4002f3f50e15d194717cfec873c96"
+    },
+    {
+      "seq": 26,
+      "id": "ec709297-8b01-4609-8563-e13c3ac80713",
+      "at": "2026-08-31T03:35:16.600Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/audio/constants.ts::DEFAULT_TTS_VOICES",
+      "slice": "S1",
+      "hash": "4963b88eac935cc01b532979eb786bca203e970a5e07d8e6ef90b28f697dec2d",
+      "fileHash": "6da55b1a370c31fd6d5bfbee3d1c06646607b49661b37e491be942f33fe8e7a7"
+    },
+    {
+      "seq": 27,
+      "id": "a5706527-3845-4310-b5b8-9728383a9c82",
+      "at": "2026-08-31T03:35:16.637Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/audio/constants.ts::DEFAULT_TTS_MODELS",
+      "slice": "S1",
+      "hash": "7dda233e1496f35be0bf8a98a7e77ca8ebf9048d1ac2984251a1ccf0fa7154ee",
+      "fileHash": "d09494ca389d7429dee54cbc00f8f49f887fe2d00c520924977f73eb611aa42d"
+    },
+    {
+      "seq": 28,
+      "id": "26b10e22-6496-4635-bf3d-61686c07b5a2",
+      "at": "2026-08-31T03:35:16.674Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/audio/provider-display.ts::TTS_PROVIDER_NAME_KEYS",
+      "slice": "S1",
+      "hash": "2fc5285188e25b5f0d1226063fe41e323d0e75b4f803714ade4d3e7eea0dcaf9",
+      "fileHash": "5f1a789fee4f6354d627fa0477640f9a750766ec3bbbc8ae4f5329151441bbf5"
+    },
+    {
+      "seq": 29,
+      "id": "2d3e0d9f-de8b-4281-a14e-929eb35fbeec",
+      "at": "2026-08-31T03:35:16.710Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/audio/data/qwen-token-plan-base-voices.ts::qwenTokenPlanBaseVoices",
+      "slice": "S1",
+      "hash": "d5aa316cfc69ab594feec68f35ce0c2f4204542760a379d257c3c8426d93a24d",
+      "fileHash": "98f809a0b471e8f9d2c91bebdc5dd617e943a28c23dc2d23f5309ea4c5be31d4"
+    },
+    {
+      "seq": 30,
+      "id": "96590efa-016f-4bb1-97a0-c43b4f5b2690",
+      "at": "2026-08-31T03:35:16.746Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/audio/tts-providers.ts::generateTTS",
+      "slice": "S2",
+      "hash": "79b362fcd1e0d6ac511e437383e3d74979791f96852a8dfe6a1aa4466f840290",
+      "fileHash": "2684b0cd8ab4a5ef505522a5773c7fed8213a9f6edf940acb2fb7d8e8341843a"
+    },
+    {
+      "seq": 31,
+      "id": "8682f52b-4cff-45b8-8ec1-bb63b12a7089",
+      "at": "2026-08-31T03:35:16.783Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/audio/qwen-token-plan-ws.ts::generateQwenTokenPlanTTS",
+      "slice": "S2",
+      "hash": "dc97e5fe2d6d7404c329ad20bceb6419ebf770fde554b17ea2fa2492369e28fa",
+      "fileHash": "229d4fe3719c36218212543b219b5bf04ee290e635b7dcb397f1ce1f44cbf1c3"
+    },
+    {
+      "seq": 32,
+      "id": "5e084aea-f1b0-44ff-b3da-4f6b1a4e6cbc",
+      "at": "2026-08-31T03:35:16.819Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/audio/qwen-token-plan-ws.ts::QwenTokenPlanWsPool",
+      "slice": "S2",
+      "hash": "ed6b1c688b52a4807474d5fbe90ac6eeb7905990ba8ffbf48d6ec05d67a121ed",
+      "fileHash": "6f69b6ebe54eb713ffe801461dbdda6379a5e33b6a5012fe356582ae844c53c3"
+    },
+    {
+      "seq": 33,
+      "id": "d4055d5d-39f0-48fd-84cf-391bf7f65bee",
+      "at": "2026-08-31T03:35:16.857Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:lib/server/provider-config.ts::TTS_ENV_MAP",
+      "slice": "S3",
+      "hash": "73a188ad91606b0de43f4cf8b0d4d18f779ab921a8279655d811ee9bddecbbba",
+      "fileHash": "e3168b5cde89c190e62a2ee5a5f6ebbf5efa41e9c50f04902a99f1f006e884b9"
+    },
+    {
+      "seq": 34,
+      "id": "65dedf4c-5b2a-459e-8013-96c49116b63e",
+      "at": "2026-08-31T03:35:16.896Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S5:postcondition:lib/hooks/use-scene-generator.ts::generateAndStoreTTS",
+      "slice": "S5",
+      "hash": "5d1c908b0834a0f520bb516456a50aa37651f9f81a338b7b57738af1a318dff9",
+      "fileHash": "01b5d0917c9239000c6ef9f30b9f006537e0ec22cb5ce4276dd3cb3ccc4f46d1"
+    },
+    {
+      "seq": 35,
+      "id": "9d924132-e13a-4eb3-90af-d29f96d18b76",
+      "at": "2026-08-31T03:35:16.935Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S5:postcondition:lib/server/agent-runtime/scene-tts.ts::synthesizeSceneNarration",
+      "slice": "S5",
+      "hash": "b33ef3f570c2d8755b293873dfc6df99f8ee163c19bed0cffcabe87a83fcef2a",
+      "fileHash": "c97cbd324fb955f60dc288517ffc50f5fa8e02c134fe8ec7b5f52a29f11f118a"
+    },
+    {
+      "seq": 36,
+      "id": "a75d7de0-ea2b-4ae6-92fb-42aad511c921",
+      "at": "2026-08-31T03:35:16.975Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S1:gate-add:G1.1",
+      "slice": "S1",
+      "hash": "d989e1e4e307ee2a5d1e1c78b197635afff33166ad24e41305d9b51cf21972ff",
+      "fileHash": "6df5045878aa5398e822179d8b3cb93b3ab145cf53bc926a2f4a160ba613fb82"
+    },
+    {
+      "seq": 37,
+      "id": "4919d208-3336-4b39-9fba-084498795900",
+      "at": "2026-08-31T03:35:17.013Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S1:gate-add:G1.2",
+      "slice": "S1",
+      "hash": "9b5e7c64e64adefc3c30e7e6b8c99bb377fdbf67349c1bf0cc8cbcc885b28ac9",
+      "fileHash": "89caa58c0ecc7eb8e600fd71de0e22b3e3386861228601e7239bc043febe3329"
+    },
+    {
+      "seq": 38,
+      "id": "257ad6a3-bc17-48d2-97f4-bd7cddc93fbc",
+      "at": "2026-08-31T03:35:17.050Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S1:gate-add:G1.3",
+      "slice": "S1",
+      "hash": "6cde0fecf098bed74cb49bfc2b517159eb889ba562cc83caad95c7b3b45058d6",
+      "fileHash": "09dc74bf7a41dfded4eb4e1795af2cb38f4bd4df5dbfabece941b6d8fe047ff3"
+    },
+    {
+      "seq": 39,
+      "id": "080d7e90-9b02-46d2-83e9-1ecaf6a1f334",
+      "at": "2026-08-31T03:35:17.087Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S2:gate-add:G2.1",
+      "slice": "S2",
+      "hash": "185c922dc9855fa16cae326a6bd116024e8ffd02bae579e46c155f992f592bf5",
+      "fileHash": "d528a2b8dccd74965a6414db9a16ff50b5a932e623b48ef8461c8a76f6a7d886"
+    },
+    {
+      "seq": 40,
+      "id": "c886b688-66cc-42a7-a172-af1ceb6c158b",
+      "at": "2026-08-31T03:35:17.124Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S3:gate-add:G3.1",
+      "slice": "S3",
+      "hash": "f0cf0e147a87142a8196ccfde14e797e0e7ae9ce52edbd62a0f5dbfe7b6ad06a",
+      "fileHash": "7d84d1047ee3f7cc32d2573af84d1c565102f1e4a9894431300629a81baac565"
+    },
+    {
+      "seq": 41,
+      "id": "4f0100b1-7806-425d-80e2-04fb5155e8c4",
+      "at": "2026-08-31T03:35:17.161Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S4:gate-add:G4.1",
+      "slice": "S4",
+      "hash": "afa90f6724c1c9e793f9f921fc07ead5d8bb55880dedb79ac7b6e20d43a03ebd",
+      "fileHash": "e792fee8bee333e3cbe0bfce316919b6ef2f80f975046f20ed06d69c8c8b6a1b"
+    },
+    {
+      "seq": 42,
+      "id": "f755c49b-de97-48fa-bb5f-97106b2f0e8d",
+      "at": "2026-08-31T03:35:17.198Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S5:gate-add:G5.1",
+      "slice": "S5",
+      "hash": "de128995265bb34d7b130221c634591b657f09332ec8a2d4de339c84bfbe7552",
+      "fileHash": "307302fee713fe372a251b73b026177358f08d633726729d58e2ac3ea18103c7"
+    },
+    {
+      "seq": 43,
+      "id": "ca749b81-2b19-44e2-a30f-7fd79dea608b",
+      "at": "2026-08-31T03:35:17.234Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S5:gate-add:G5.2",
+      "slice": "S5",
+      "hash": "9f4434a1b9c9edce71461b1cc2ba4222725c524c1b92783172ba791f2df32189",
+      "fileHash": "e85267f4d11cf585c2386b812e83873cd62aa32ab083250168911ddb21367820"
+    },
+    {
+      "seq": 44,
+      "id": "e57727b4-53bb-4d3b-896d-f469c7a813a3",
+      "at": "2026-08-31T03:37:37.549Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S4:target-add:tests/audio/qwen-token-plan-tts-live.test.ts::qwenTokenPlanTtsLiveSmoke",
+      "slice": "S4",
+      "hash": "75ecbbc57f24c70f0a3db3708888bb39c620e219a299f7f5f0e38b2dbc9d82a5",
+      "fileHash": "deb8390481a685d8347edffa6364097a55b83783b881fb68ea300f85972baa7f"
+    },
+    {
+      "seq": 45,
+      "id": "001869e9-98e0-40f2-88e5-7bafe7f2f920",
+      "at": "2026-08-31T03:37:37.587Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect-symbol:tests/audio/qwen-token-plan-tts-live.test.ts::qwenTokenPlanTtsLiveSmoke",
+      "slice": "S4",
+      "hash": "b5f80cbb2ded6274481d48984e72abe1808c3965ef2b97faa3e06c8a26bb1a25",
+      "expectationHash": "ceeba71945654e69fd26e9de1e2052e045eba9f5bdb71fbb19f338bd85c27c40",
+      "fileHash": "d8e7755bc6968e6beac2f9a57e46e63b1f7a3a58def365a7b063319b4b8b84ba"
+    },
+    {
+      "seq": 46,
+      "id": "ea053c30-170a-46c8-880b-471eb143fb93",
+      "at": "2026-08-31T03:37:37.623Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S4:capture",
+      "slice": "S4",
+      "hash": "6eda191a6160262fcd67e430224bd64d6617b4d85fd897c2cf1f8e6880bc5e91",
+      "fileHash": "647e3cf796e31e3d61536bfe2cf821186633ca8a191b676c3503fa81ac727e5b"
+    },
+    {
+      "seq": 47,
+      "id": "149f5171-8780-4046-a0bc-bf9d60bb8a61",
+      "at": "2026-08-31T03:37:37.660Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S4:postcondition:tests/audio/qwen-token-plan-tts-live.test.ts::qwenTokenPlanTtsLiveSmoke",
+      "slice": "S4",
+      "hash": "cd04375021634b017c4539a2ebb36b15f7acd072063dca674b48e7508aac811b",
+      "fileHash": "b87b9f91b7b960eae982d5524618f43718d02af329461fe900ae483fbb3ae4fa"
+    },
+    {
+      "seq": 48,
+      "id": "a45e57d2-cc30-4b7e-bc66-d75cfd6aa721",
+      "at": "2026-08-31T03:38:53.524Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:clarification:restore Spec status marker line required by CLI stage validation",
+      "slice": null,
+      "hash": "7b1e2c154b47f93898a46722ea8644ba1fd06111ec67c3cf4c3fa3a3c1320c8e",
+      "fileHash": "2ee807f236b78d1122d3579217d6fa7ed9336caac6352477834efabe2a232923"
+    },
+    {
+      "seq": 49,
+      "id": "a1445de7-9cf3-4278-907d-3c5cf57894cb",
+      "at": "2026-08-31T03:38:53.561Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "4a3ecafc5c540a62a6e7ef8c43faed311c1661a7ddc12dd1f42173da98459e7a",
+      "fileHash": "5537d878199d24bd78331e3738c154823c2431eeb064ed2e645922ff644f3c05"
+    }
+  ],
+  "fileHash": "cdcbef19d2506908885011025cae0f1ad652f607d594d138d852549ae99a8253"
+}
