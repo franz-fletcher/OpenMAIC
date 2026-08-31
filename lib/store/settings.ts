@@ -489,6 +489,12 @@ const getDefaultAudioConfig = () => ({
     'azure-tts': { apiKey: '', baseUrl: '', enabled: true },
     'glm-tts': { apiKey: '', baseUrl: '', enabled: true },
     'qwen-tts': { apiKey: '', baseUrl: '', enabled: true },
+    'qwen-token-plan-tts': {
+      apiKey: '',
+      baseUrl: '',
+      modelId: 'qwen-audio-3.0-tts-plus',
+      enabled: true,
+    },
     'voxcpm-tts': {
       apiKey: '',
       baseUrl: '',

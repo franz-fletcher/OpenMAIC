@@ -43,6 +43,7 @@ import {
   VOXCPM_TTS_PROVIDER_ID,
   VOXCPM_VLLM_MODEL_ID,
 } from './voxcpm';
+import { qwenTokenPlanBaseVoices } from './data/qwen-token-plan-base-voices';
 
 /**
  * Default supported languages for custom OpenAI-compatible ASR providers.
@@ -707,6 +708,128 @@ export const TTS_PROVIDERS: Record<BuiltInTTSProviderId, TTSProviderConfig> = {
     supportedFormats: ['mp3', 'wav', 'pcm'],
   },
 
+  'qwen-token-plan-tts': {
+    id: 'qwen-token-plan-tts',
+    name: 'Qwen Token Plan TTS',
+    requiresApiKey: true,
+    defaultBaseUrl: 'wss://token-plan.ap-southeast-1.maas.aliyuncs.com/api-ws/v1/inference',
+    icon: '/logos/bailian.svg',
+    models: [
+      { id: 'qwen-audio-3.0-tts-plus', name: 'Qwen Audio 3.0 TTS Plus' },
+      { id: 'qwen-audio-3.0-tts-flash', name: 'Qwen Audio 3.0 TTS Flash' },
+    ],
+    defaultModelId: 'qwen-audio-3.0-tts-plus',
+    voices: [
+      // Plus system voices
+      {
+        id: 'longanlingxin',
+        name: 'longanlingxin',
+        language: 'zh-CN',
+        description: 'qwenTpVoiceLonganlingxin',
+        compatibleModels: ['qwen-audio-3.0-tts-plus'],
+      },
+      {
+        id: 'longanlufeng',
+        name: 'longanlufeng',
+        language: 'zh-CN',
+        description: 'qwenTpVoiceLonganlufeng',
+        compatibleModels: ['qwen-audio-3.0-tts-plus'],
+      },
+      // Flash system voices
+      {
+        id: 'longanfengyue',
+        name: 'longanfengyue',
+        language: 'zh-CN',
+        description: 'qwenTpVoiceLonganfengyue',
+        compatibleModels: ['qwen-audio-3.0-tts-flash'],
+      },
+      {
+        id: 'longanyuanfei',
+        name: 'longanyuanfei',
+        language: 'zh-CN',
+        description: 'qwenTpVoiceLonganyuanfei',
+        compatibleModels: ['qwen-audio-3.0-tts-flash'],
+      },
+      {
+        id: 'longanlingxi',
+        name: 'longanlingxi',
+        language: 'zh-CN',
+        description: 'qwenTpVoiceLonganlingxi',
+        compatibleModels: ['qwen-audio-3.0-tts-flash'],
+      },
+      {
+        id: 'longanxiaoxin',
+        name: 'longanxiaoxin',
+        language: 'zh-CN',
+        description: 'qwenTpVoiceLonganxiaoxin',
+        compatibleModels: ['qwen-audio-3.0-tts-flash'],
+      },
+      {
+        id: 'longanhuan_v3.6',
+        name: 'longanhuan_v3.6',
+        language: 'zh-CN',
+        description: 'qwenTpVoiceLonganhuanV36',
+        compatibleModels: ['qwen-audio-3.0-tts-flash'],
+      },
+      {
+        id: 'longjielidou_v3.6',
+        name: 'longjielidou_v3.6',
+        language: 'zh-CN',
+        description: 'qwenTpVoiceLongjielidouV36',
+        compatibleModels: ['qwen-audio-3.0-tts-flash'],
+      },
+      {
+        id: 'longpaopao_v3.6',
+        name: 'longpaopao_v3.6',
+        language: 'zh-CN',
+        description: 'qwenTpVoiceLongpaopaoV36',
+        compatibleModels: ['qwen-audio-3.0-tts-flash'],
+      },
+      {
+        id: 'longhuohuo_v3.6',
+        name: 'longhuohuo_v3.6',
+        language: 'zh-CN',
+        description: 'qwenTpVoiceLonghuohuoV36',
+        compatibleModels: ['qwen-audio-3.0-tts-flash'],
+      },
+      {
+        id: 'longchuanshu_v3.6',
+        name: 'longchuanshu_v3.6',
+        language: 'zh-CN',
+        description: 'qwenTpVoiceLongchuanshuV36',
+        compatibleModels: ['qwen-audio-3.0-tts-flash'],
+      },
+      {
+        id: 'loongmary',
+        name: 'loongmary',
+        language: 'zh-CN',
+        description: 'qwenTpVoiceLoongmary',
+        compatibleModels: ['qwen-audio-3.0-tts-flash'],
+      },
+      {
+        id: 'loongeva_v3.6',
+        name: 'loongeva_v3.6',
+        language: 'zh-CN',
+        description: 'qwenTpVoiceLoongevaV36',
+        compatibleModels: ['qwen-audio-3.0-tts-flash'],
+      },
+      {
+        id: 'loongjohn',
+        name: 'loongjohn',
+        language: 'zh-CN',
+        description: 'qwenTpVoiceLoongjohn',
+        compatibleModels: ['qwen-audio-3.0-tts-flash'],
+      },
+      ...qwenTokenPlanBaseVoices,
+    ],
+    supportedFormats: ['mp3'],
+    speedRange: {
+      min: 0.5,
+      max: 2.0,
+      default: 1.0,
+    },
+  },
+
   'minimax-tts': {
     id: 'minimax-tts',
     name: 'MiniMax TTS',
@@ -1344,6 +1467,7 @@ export const DEFAULT_TTS_VOICES: Record<BuiltInTTSProviderId, string> = {
   'minimax-tts': 'female-yujie',
   'lemonade-tts': 'af_heart',
   'browser-native-tts': 'default',
+  'qwen-token-plan-tts': 'longanlingxin',
 };
 
 export const DEFAULT_TTS_MODELS: Record<BuiltInTTSProviderId, string> = {
@@ -1357,6 +1481,7 @@ export const DEFAULT_TTS_MODELS: Record<BuiltInTTSProviderId, string> = {
   'minimax-tts': 'speech-2.8-hd',
   'lemonade-tts': 'kokoro-v1',
   'browser-native-tts': '',
+  'qwen-token-plan-tts': 'qwen-audio-3.0-tts-plus',
 };
 
 /**
