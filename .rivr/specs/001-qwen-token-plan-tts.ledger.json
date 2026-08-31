@@ -4,7 +4,7 @@
   "spec": {
     "reference": "docs/specs/001-qwen-token-plan-tts.md",
     "title": "Batch 001 spec: qwen-token-plan-tts WebSocket provider",
-    "hash": "8c1be20981504fa188f295008ee648719fe8c7513474e1f8e042f60ca562dfca"
+    "hash": "32df75662ab226b74b161d8fccd554971a27162bf72fddf7213ee36f7b2504bd"
   },
   "tracker": {
     "mode": "none"
@@ -142,8 +142,44 @@
         "at": "2026-08-31T04:27:57.346Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "verified",
+        "hash": "16e21d6ea9f55cb5c6f6ccc22fd768c89085cef1d6dbf25738d88ba488ca5983",
+        "actor": "verifier",
+        "at": "2026-08-31T08:17:21.050Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G1.3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "      12\n",
+              "passed": true
+            },
+            {
+              "id": "G1.1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "",
+              "passed": true
+            },
+            {
+              "id": "G1.2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> node scripts/check-i18n-keys.mjs\n\ni18n key alignment check passed (12 locale files, source: en-US.json).\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "Registry entry for qwen-token-plan-tts: single model qwen-audio-3.0-tts-plus, system voices longanlingxin and longanlufeng with description keys, requiresApiKey true. Defaults and display map updated. Provider key present in 12 locales. Data file holds 597 plus-model base voices. No flash remnants.",
       "gates": [
@@ -151,21 +187,21 @@
           "id": "G1.3",
           "check": "grep -l providerQwenTokenPlanTTS lib/i18n/locales/*.json | wc -l",
           "expect": "12",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G1.3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"      12\\n\",\"passed\":true}",
           "type": "unit"
         },
         {
           "id": "G1.1",
           "check": "npx tsc --noEmit",
           "expect": "/^/",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G1.1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\",\"passed\":true}",
           "type": "unit"
         },
         {
           "id": "G1.2",
           "check": "pnpm check:i18n-keys",
           "expect": "/^/",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G1.2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> node scripts/check-i18n-keys.mjs\\n\\ni18n key alignment check passed (12 locale files, source: en-US.json).\\n\",\"passed\":true}",
           "type": "unit"
         }
       ]
@@ -244,8 +280,34 @@
         "at": "2026-08-31T06:10:12.792Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "verified",
+        "hash": "973fe1a5ddcab98aebca3dd0b69f67ff4b0246add9d02fb0f0832e7387707ba2",
+        "actor": "verifier",
+        "at": "2026-08-31T08:17:27.900Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G2.1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/audio/qwen-token-plan-tts.test.ts \u001b[2m(\u001b[22m\u001b[2m14 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 161\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m14 passed\u001b[39m\u001b[22m\u001b[90m (14)\u001b[39m\n\u001b[2m   Start at \u001b[22m 20:17:27\n\u001b[2m   Duration \u001b[22m 321ms\u001b[2m (transform 80ms, setup 12ms, import 90ms, tests 161ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G2.2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/audio/qwen-token-plan-tts-protocol.test.ts \u001b[2m(\u001b[22m\u001b[2m8 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 56\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m8 passed\u001b[39m\u001b[22m\u001b[90m (8)\u001b[39m\n\u001b[2m   Start at \u001b[22m 20:17:27\n\u001b[2m   Duration \u001b[22m 208ms\u001b[2m (transform 78ms, setup 10ms, import 90ms, tests 56ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "generateTTS dispatches qwen-token-plan-tts to the new client. The client opens a pooled socket with Authorization header init, sends run-task then continue-task with the full text then finish-task, concatenates binary mp3 frames, and maps task-failed, abort, and timeout to an error class extending QwenTTSError. The pool defaults to 2 connections, 60s idle reaper, reuse after task-finished with fresh task_id, discard after task-failed, env override OPENMAIC_QWEN_TOKEN_PLAN_WS_POOL_SIZE, shutdown drain anchored in instrumentation. Hermetic vitest with stubbed WebSocket passes.",
       "gates": [
@@ -253,14 +315,14 @@
           "id": "G2.1",
           "check": "npx vitest run tests/audio/qwen-token-plan-tts.test.ts",
           "expect": "/^/",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G2.1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/audio/qwen-token-plan-tts.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m14 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 161\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m14 passed\\u001b[39m\\u001b[22m\\u001b[90m (14)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 20:17:27\\n\\u001b[2m   Duration \\u001b[22m 321ms\\u001b[2m (transform 80ms, setup 12ms, import 90ms, tests 161ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}",
           "type": "unit"
         },
         {
           "id": "G2.2",
           "check": "npx vitest run tests/audio/qwen-token-plan-tts-protocol.test.ts",
           "expect": "/^/",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G2.2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/audio/qwen-token-plan-tts-protocol.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m8 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 56\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m8 passed\\u001b[39m\\u001b[22m\\u001b[90m (8)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 20:17:27\\n\\u001b[2m   Duration \\u001b[22m 208ms\\u001b[2m (transform 78ms, setup 10ms, import 90ms, tests 56ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}",
           "type": "unit"
         }
       ]
@@ -306,8 +368,44 @@
         "at": "2026-08-31T06:31:16.570Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "verified",
+        "hash": "0b2266b481700ca740030fed24ea48d16f6b1051093c9dbf07446723d474912a",
+        "actor": "verifier",
+        "at": "2026-08-31T08:48:32.514Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G3.1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/server/provider-config.test.ts\u001b[2m > \u001b[22m\u001b[2mprovider-config\u001b[2m > \u001b[22m\u001b[2mresolveApiKey\u001b[2m > \u001b[22m\u001b[2mreturns server key from env when no client key\n\u001b[22m\u001b[39m[2026-08-31T08:48:27.743Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 0 Video, 0 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/server/provider-config.test.ts\u001b[2m > \u001b[22m\u001b[2mprovider-config\u001b[2m > \u001b[22m\u001b[2mresolveApiKey\u001b[2m > \u001b[22m\u001b[2mignores client key for a server-managed provider (server is authoritative)\n\u001b[22m\u001b[39m[2026-08-31T08:48:27.747Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 0 Video, 0 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/",
+              "passed": true
+            },
+            {
+              "id": "G3.2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "",
+              "passed": true
+            },
+            {
+              "id": "G3.3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/server/tts-route-missing-key.test.ts\u001b[2m > \u001b[22m\u001b[2mPOST /api/generate/tts missing-key contract (#665)\u001b[2m > \u001b[22m\u001b[2mreturns 400 MISSING_API_KEY for 'openai-tts' with no key (server or client)\n\u001b[22m\u001b[39m[2026-08-31T08:48:32.422Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 0 Image, 0 Video, 0 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/server/tts-route-missing-key.test.ts\u001b[2m > \u001b[22m\u001b[2mPOST /api/generate/tts missing-key contract (#665)\u001b[2m > \u001b[22m\u001b[2mreturns 400 MISSING_API_KEY for 'qwen-token-plan-tts' with no key (server or client)\n\u001b[22m\u001b[39m[2026-08-31T08:48:32.425Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 0 ",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "TTS_ENV_MAP maps TTS_QWEN_TOKEN_PLAN to qwen-token-plan-tts. .env.example documents API_KEY, BASE_URL, MODELS. tests/providers/provider-neutrality-guard.ts counts updated in the same change. Route serves the provider, missing-key preflight rejects before socket use, typed errors keep the existing route mapping.",
       "gates": [
@@ -315,21 +413,21 @@
           "id": "G3.1",
           "check": "npx vitest run tests/server/provider-config.test.ts tests/server/tts-route-missing-key.test.ts tests/providers/provider-neutrality-guard.test.ts",
           "expect": "/^/",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G3.1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/provider-config.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mprovider-config\\u001b[2m > \\u001b[22m\\u001b[2mresolveApiKey\\u001b[2m > \\u001b[22m\\u001b[2mreturns server key from env when no client key\\n\\u001b[22m\\u001b[39m[2026-08-31T08:48:27.743Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 0 Video, 0 WebSearch providers\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/provider-config.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mprovider-config\\u001b[2m > \\u001b[22m\\u001b[2mresolveApiKey\\u001b[2m > \\u001b[22m\\u001b[2mignores client key for a server-managed provider (server is authoritative)\\n\\u001b[22m\\u001b[39m[2026-08-31T08:48:27.747Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 0 Video, 0 WebSearch providers\\n\\n\\u001b[90mstdout\\u001b[2m | tests/\",\"passed\":true}",
           "type": "integration"
         },
         {
           "id": "G3.2",
           "check": "npx tsc --noEmit",
           "expect": "/^/",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G3.2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\",\"passed\":true}",
           "type": "unit"
         },
         {
           "id": "G3.3",
           "check": "npx vitest run tests/server/tts-route-missing-key.test.ts",
           "expect": "/^/",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G3.3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/tts-route-missing-key.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mPOST /api/generate/tts missing-key contract (#665)\\u001b[2m > \\u001b[22m\\u001b[2mreturns 400 MISSING_API_KEY for 'openai-tts' with no key (server or client)\\n\\u001b[22m\\u001b[39m[2026-08-31T08:48:32.422Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 0 Image, 0 Video, 0 WebSearch providers\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/tts-route-missing-key.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mPOST /api/generate/tts missing-key contract (#665)\\u001b[2m > \\u001b[22m\\u001b[2mreturns 400 MISSING_API_KEY for 'qwen-token-plan-tts' with no key (server or client)\\n\\u001b[22m\\u001b[39m[2026-08-31T08:48:32.425Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 0 \",\"passed\":true}",
           "type": "unit"
         }
       ]
@@ -374,8 +472,54 @@
         "at": "2026-08-31T07:32:43.569Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "verified",
+        "hash": "cd0cdf69aacc9703bbf923d0b9b9a789f85c44f25b48f9f8cb9e0a6839221298",
+        "actor": "verifier",
+        "at": "2026-08-31T08:41:08.496Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G4.1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/audio/qwen-token-plan-tts-live.test.ts\u001b[2m > \u001b[22m\u001b[2mqwen-token-plan-tts live smoke\u001b[2m > \u001b[22m\u001b[2msynthesizes mp3 audio for the plus model with longanlingxin\n\u001b[22m\u001b[39m[qwen-token-plan-tts-live] ok model=qwen-audio-3.0-tts-plus voice=longanlingxin bytes=22242 format=mp3\n\n\u001b[90mstdout\u001b[2m | tests/audio/qwen-token-plan-tts-live.test.ts\u001b[2m > \u001b[22m\u001b[2mqwen-token-plan-tts live smoke\u001b[2m > \u001b[22m\u001b[2mrejects an unknown voice with a typed error and recovers on the same pool\n\u001b[22m\u001b[39m[qwen-token-plan-tts-live] ok model=qwen-audio-3.0-tts-plus voice=longanlingxin bytes=9704 format=mp3\n\n \u001b[32m✓\u001b[39m tests/audio/qwen-token-plan-tts-live.test.ts \u001b[2m(\u001b[22m\u001b[2m2 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 5632\u001b[2mms\u001b[22m\u001b[39m\n     \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m synthesizes mp3 audio for the ",
+              "passed": true
+            },
+            {
+              "id": "G4.2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/audio/qwen-token-plan-tts-protocol.test.ts \u001b[2m(\u001b[22m\u001b[2m8 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 55\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m8 passed\u001b[39m\u001b[22m\u001b[90m (8)\u001b[39m\n\u001b[2m   Start at \u001b[22m 20:41:06\n\u001b[2m   Duration \u001b[22m 231ms\u001b[2m (transform 90ms, setup 13ms, import 102ms, tests 55ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G4.3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/audio/qwen-token-plan-tts-live.test.ts\n\u001b[22m\u001b[39m[qwen-token-plan-tts-live] SKIPPED: TEST_LOAD_LOCAL_ENV is not \"1\"; .env.local is not loaded and live probes stay opt-in.\n\n \u001b[2m\u001b[90m↓\u001b[39m\u001b[22m tests/audio/qwen-token-plan-tts-live.test.ts \u001b[2m(\u001b[22m\u001b[2m1 test\u001b[22m\u001b[2m | \u001b[22m\u001b[33m1 skipped\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[2m Test Files \u001b[22m \u001b[33m1 skipped\u001b[39m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[33m1 skipped\u001b[39m\u001b[90m (1)\u001b[39m\n\u001b[2m   Start at \u001b[22m 20:41:07\n\u001b[2m   Duration \u001b[22m 200ms\u001b[2m (transform 90ms, setup 15ms, import 126ms, tests 0ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G4.4",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/providers/provider-neutrality-guard.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 35\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m3 passed\u001b[39m\u001b[22m\u001b[90m (3)\u001b[39m\n\u001b[2m   Start at \u001b[22m 20:41:08\n\u001b[2m   Duration \u001b[22m 381ms\u001b[2m (transform 90ms, setup 15ms, import 270ms, tests 35ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "Live test under TEST_LOAD_LOCAL_ENV=1 synthesizes longanlingxin on plus, rejects an unknown voice with a typed error, proves pool recovery, and skips cleanly without the gate. No flash-model test remains. Pin test records frame order and event names.",
       "gates": [
@@ -383,28 +527,28 @@
           "id": "G4.1",
           "check": "TEST_LOAD_LOCAL_ENV=1 npx vitest run tests/audio/qwen-token-plan-tts-live.test.ts",
           "expect": "/^/",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G4.1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/audio/qwen-token-plan-tts-live.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mqwen-token-plan-tts live smoke\\u001b[2m > \\u001b[22m\\u001b[2msynthesizes mp3 audio for the plus model with longanlingxin\\n\\u001b[22m\\u001b[39m[qwen-token-plan-tts-live] ok model=qwen-audio-3.0-tts-plus voice=longanlingxin bytes=22242 format=mp3\\n\\n\\u001b[90mstdout\\u001b[2m | tests/audio/qwen-token-plan-tts-live.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mqwen-token-plan-tts live smoke\\u001b[2m > \\u001b[22m\\u001b[2mrejects an unknown voice with a typed error and recovers on the same pool\\n\\u001b[22m\\u001b[39m[qwen-token-plan-tts-live] ok model=qwen-audio-3.0-tts-plus voice=longanlingxin bytes=9704 format=mp3\\n\\n \\u001b[32m✓\\u001b[39m tests/audio/qwen-token-plan-tts-live.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m2 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[33m 5632\\u001b[2mms\\u001b[22m\\u001b[39m\\n     \\u001b[33m\\u001b[2m✓\\u001b[22m\\u001b[39m synthesizes mp3 audio for the \",\"passed\":true}",
           "type": "adversarial"
         },
         {
           "id": "G4.2",
           "check": "npx vitest run tests/audio/qwen-token-plan-tts-protocol.test.ts",
           "expect": "/^/",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G4.2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/audio/qwen-token-plan-tts-protocol.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m8 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 55\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m8 passed\\u001b[39m\\u001b[22m\\u001b[90m (8)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 20:41:06\\n\\u001b[2m   Duration \\u001b[22m 231ms\\u001b[2m (transform 90ms, setup 13ms, import 102ms, tests 55ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}",
           "type": "unit"
         },
         {
           "id": "G4.3",
           "check": "npx vitest run tests/audio/qwen-token-plan-tts-live.test.ts",
           "expect": "skipped",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G4.3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/audio/qwen-token-plan-tts-live.test.ts\\n\\u001b[22m\\u001b[39m[qwen-token-plan-tts-live] SKIPPED: TEST_LOAD_LOCAL_ENV is not \\\"1\\\"; .env.local is not loaded and live probes stay opt-in.\\n\\n \\u001b[2m\\u001b[90m↓\\u001b[39m\\u001b[22m tests/audio/qwen-token-plan-tts-live.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m1 test\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[33m1 skipped\\u001b[39m\\u001b[2m)\\u001b[22m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[33m1 skipped\\u001b[39m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[33m1 skipped\\u001b[39m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 20:41:07\\n\\u001b[2m   Duration \\u001b[22m 200ms\\u001b[2m (transform 90ms, setup 15ms, import 126ms, tests 0ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}",
           "type": "smoke"
         },
         {
           "id": "G4.4",
           "check": "npx vitest run tests/providers/provider-neutrality-guard.test.ts",
           "expect": "/^/",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G4.4\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/providers/provider-neutrality-guard.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m3 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 35\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m3 passed\\u001b[39m\\u001b[22m\\u001b[90m (3)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 20:41:08\\n\\u001b[2m   Duration \\u001b[22m 381ms\\u001b[2m (transform 90ms, setup 15ms, import 270ms, tests 35ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}",
           "type": "smoke"
         }
       ]
@@ -470,8 +614,34 @@
         "at": "2026-08-31T07:48:17.357Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "verified",
+        "hash": "cd200a0956e8b0aaa9f1e3e5e73ed6ae9952433ffe2b4e0967f6de21297707e6",
+        "actor": "verifier",
+        "at": "2026-08-31T08:49:50.251Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G5.1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/server/qwen-voice-route.test.ts\u001b[2m > \u001b[22m\u001b[2mQwen voice registration route\u001b[2m > \u001b[22m\u001b[2muses the shared default Qwen base URL when the request omits one\n\u001b[22m\u001b[39m[2026-08-31T08:48:44.798Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 0 Image, 0 Video, 0 WebSearch providers\n\n \u001b[32m✓\u001b[39m tests/server/qwen-voice-route.test.ts \u001b[2m(\u001b[22m\u001b[2m7 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 27\u001b[2mms\u001b[22m\u001b[39m\n\u001b[90mstdout\u001b[2m | tests/runtime/database-chat-cutover.test.ts\u001b[2m > \u001b[22m\u001b[2mdatabase runtime chat integration\u001b[2m > \u001b[22m\u001b[2mexports RuntimeStore chats and clears them with the main database\n\u001b[22m\u001b[39m[2026-08-31T08:48:45.390Z] [INFO] [Database] Database imported successfully\n\n\u001b[90mstdout\u001b[2m | tests/",
+              "passed": true
+            },
+            {
+              "id": "G5.2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 check /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> prettier . --check\n\nChecking formatting...\nAll matched files use Prettier code style!\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "Classroom audio generates with the provider through use-scene-generator and agent-runtime narration. mp3 persists through Dexie and classroom-media without conversion. pnpm test, pnpm check, and pnpm check:i18n-keys pass.",
       "gates": [
@@ -479,14 +649,14 @@
           "id": "G5.1",
           "check": "npx vitest run --exclude tests/server/classroom-media-generation.test.ts",
           "expect": "/^/",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G5.1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/qwen-voice-route.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mQwen voice registration route\\u001b[2m > \\u001b[22m\\u001b[2muses the shared default Qwen base URL when the request omits one\\n\\u001b[22m\\u001b[39m[2026-08-31T08:48:44.798Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 0 Image, 0 Video, 0 WebSearch providers\\n\\n \\u001b[32m✓\\u001b[39m tests/server/qwen-voice-route.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m7 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 27\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\u001b[90mstdout\\u001b[2m | tests/runtime/database-chat-cutover.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mdatabase runtime chat integration\\u001b[2m > \\u001b[22m\\u001b[2mexports RuntimeStore chats and clears them with the main database\\n\\u001b[22m\\u001b[39m[2026-08-31T08:48:45.390Z] [INFO] [Database] Database imported successfully\\n\\n\\u001b[90mstdout\\u001b[2m | tests/\",\"passed\":true}",
           "type": "integration"
         },
         {
           "id": "G5.2",
           "check": "pnpm check",
           "expect": "/^/",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G5.2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 check /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> prettier . --check\\n\\nChecking formatting...\\nAll matched files use Prettier code style!\\n\",\"passed\":true}",
           "type": "unit"
         }
       ]
@@ -1584,7 +1754,83 @@
       "slice": null,
       "hash": "dc7f41647ad5c035573b5dee10e25efb86ca63d2aa69294f27e804f2a09b922f",
       "fileHash": "aab28c656f8efa3d5be2d8c3d3f04049f6eaa42852c5b6291982543639122035"
+    },
+    {
+      "seq": 100,
+      "id": "26708a6c-2ede-4c93-b8f5-0d3c934a1b13",
+      "at": "2026-08-31T08:17:21.050Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S1:verification:pending->verified",
+      "slice": "S1",
+      "hash": "ecbae4a4c8fde7b6f265f55f899542c5d9390d5d9e7e5196ee78af81e3371af9",
+      "oracle": "17f71fcac4727fadec9779eae0403812358748b16661d7b790e5b2aefbfa2692",
+      "evidence": "79a3df24fb5a8b1421fd924d48307c19a38764abe6311ccb265eb505f37943ac",
+      "fileHash": "f0040cc924fb6e7904fd69c4068f2521b57e72a60a52470a505044d0be049db0"
+    },
+    {
+      "seq": 101,
+      "id": "c28110a4-4c14-45e3-9100-6907c9166dfa",
+      "at": "2026-08-31T08:17:27.900Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S2:verification:pending->verified",
+      "slice": "S2",
+      "hash": "f6bd98242732edfc5297761d355128e2b58db75a88f42c2adb6b77f66ff4ff49",
+      "oracle": "572f0ceff600347036c5c75a6fe135711dba1c0d547489d13fd366332b181187",
+      "evidence": "80319f331d5c62e3dd8b8cfbd9d161f0c97366109b3cf5032fa762869046af61",
+      "fileHash": "fdad77228998c08a536c1d08f7a0fb50612e14da4d972ad979671daf72ac36ba"
+    },
+    {
+      "seq": 102,
+      "id": "25952dad-696c-4818-88ec-5f02eb29e0ac",
+      "at": "2026-08-31T08:41:08.496Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S4:verification:pending->verified",
+      "slice": "S4",
+      "hash": "85e2bd3556a1b383145938519ba4d046810edcb36c7d462db2c4aa46064f16a7",
+      "oracle": "16cc80b06026e82174c23509b52860f89f7cfc8032c080c191898070d14e4e16",
+      "evidence": "dbccd03a057d66722a0e2201e0800bddfffd6dc9602ac78cd70208abe0d9c704",
+      "fileHash": "faf0e1915326153ed23aa80bef0e9e3e974d245f63daed089c9eee4e12505f90"
+    },
+    {
+      "seq": 103,
+      "id": "5fb7368a-20ce-48a1-8c4e-458de40f3a8c",
+      "at": "2026-08-31T08:48:32.514Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S3:verification:pending->verified",
+      "slice": "S3",
+      "hash": "7ad42748d1ba5da2f20ce51fa48d455702832a42c24ed180e663be6b1195f852",
+      "oracle": "f4c2ad17d8a1de08789d7648d2efca28787aed892163a4cca113626b096a2a03",
+      "evidence": "941f92aba91e27a152f9c0c23414c3c9a60b81717d0f61c328d27b92e91e3c47",
+      "fileHash": "4bc1596ca1e539c4185f82dcbdfddb369223a0474d645f740d790a1789b8d0c7"
+    },
+    {
+      "seq": 104,
+      "id": "8e9c5381-9d59-4b41-9dcf-7033d2ecddfa",
+      "at": "2026-08-31T08:49:50.251Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S5:verification:pending->verified",
+      "slice": "S5",
+      "hash": "e76b59fef50b1e1ecb894e58eb8a78bebade0d77310cbeba817e7292940c0947",
+      "oracle": "3279e9e08580135a968c064fc6db87d2e5d42c226869f62b3632d7adaa4ef796",
+      "evidence": "80d66cc3ee5ddd490748c9d87b68c43eabdd8b6bd2220c0c4aa2339f8b9f635b",
+      "fileHash": "b9ad015cd6e1b0b4ffe2a9e5532efeba2ff0a8e3739da7dd95d7d07e5d563ddb"
+    },
+    {
+      "seq": 105,
+      "id": "d7897dc3-5230-4aa1-8839-1b925e118388",
+      "at": "2026-08-31T09:00:20.156Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:respecify:stage 4 research update rewritten with shipped file:lines, learnings, and verification evidence",
+      "slice": null,
+      "hash": "5752235fb00a21e625d27770e1fbb1db3a6cacc89ce0ffe684f092f06060a37b",
+      "fileHash": "e53be2ee44703fe810e3c42dd37badba774a27a28ffa877ce63553b5a26321b8"
     }
   ],
-  "fileHash": "f0040cc924fb6e7904fd69c4068f2521b57e72a60a52470a505044d0be049db0"
+  "fileHash": "0dcbf1371de5b1f8b1b1c3f42f4a17318e6de06cf7f0ed9d4a7aaec11c94a129"
 }
