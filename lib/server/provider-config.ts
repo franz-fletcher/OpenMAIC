@@ -89,6 +89,7 @@ const TTS_ENV_MAP: Record<string, string> = {
   TTS_AZURE: 'azure-tts',
   TTS_GLM: 'glm-tts',
   TTS_QWEN: 'qwen-tts',
+  TTS_QWEN_TOKEN_PLAN: 'qwen-token-plan-tts',
   TTS_VOXCPM: 'voxcpm-tts',
   TTS_DOUBAO: 'doubao-tts',
   TTS_ELEVENLABS: 'elevenlabs-tts',

@@ -166,7 +166,7 @@ const TEMPORARY_VENDOR_DEBT: readonly AllowedVendorDebt[] = [
     'lib/server/provider-config.ts',
     'Temporary: provider configuration is still a mixed catalog and resolver composition root.',
     [
-      ['qwen', 20],
+      ['qwen', 22],
       ['openai', 23],
       ['azure', 6],
       ['atlascloud', 2],
@@ -209,7 +209,27 @@ const TEMPORARY_VENDOR_DEBT: readonly AllowedVendorDebt[] = [
       ['browser-native', 3],
       ['comfyui', 2],
       ['alidocmind', 14],
+      // Generic English words derived as vendor terms by the provider id
+      // `qwen-token-plan-tts`. They match ordinary config identifiers,
+      // not provider knowledge.
+      ['token', 3],
+      ['plan', 2],
     ],
+  ),
+  ...groupedDebt(
+    'lib/server/model-routes.ts',
+    'Temporary: LLM budget plumbing uses the generic word token. The provider id qwen-token-plan-tts derived it as vendor vocabulary.',
+    [['token', 6]],
+  ),
+  ...groupedDebt(
+    'app/api/web-search/route.ts',
+    'Temporary: the output-token limit uses the generic word token. The provider id qwen-token-plan-tts derived it as vendor vocabulary.',
+    [['token', 1]],
+  ),
+  ...groupedDebt(
+    'lib/server/web-search-config.ts',
+    'Temporary: MiniMax coding_plan URLs contain the generic word plan. The provider id qwen-token-plan-tts derived it as vendor vocabulary.',
+    [['plan', 4]],
   ),
   ...groupedDebt(
     'app/api/generate/tts/route.ts',
