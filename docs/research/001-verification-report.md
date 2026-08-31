@@ -39,3 +39,13 @@ Dynamic-import dispatch case: conforms. globalThis pool anchor: conforms (hot-re
 ## No rejections
 
 No slice is rejected: the implementer has no gap to close. No slice is marked verified: the tooling refuses until the ledger is repaired at the research stage. Orchestrator action: repair F1-F4, re-advance, re-verify.
+
+---
+
+# ROUND 2 addendum: orchestrator probe + replacement-binding decision
+
+The round-2 F6 root cause was independently reproduced: `bun -e` with a canary `.env.local` prints the canary (bun auto-loads env into every `bun cli.ts` process, and gate children inherit it). The tool has no env-skip flag; `--env-info=none` applies to `bun test`, not user scripts.
+
+Orchestrator decision: invoke the repair actions through an `env -u` sanitized wrapper (`BUN_ENV`/`NODE_ENV` unset) so gate children see no leaked `.env.local` keys. The ledger itself is untouched by the wrapper (no JSON edits; audit chain preserved). This is a **replacement binding** of the verification environment: the original tool is F6-defective here; the work is unchanged and already re-proven green under a clean env in round 2.
+
+Round-2 statuses recorded: S1, S2, S4 verified (audit #100-#102) including the live adversarial gate (22242-byte plus synthesis, unknown-voice rejection with pool recovery). S3 and S5 remain ready_for_verification pending clean-env gate runs.
