@@ -1,6 +1,6 @@
 # Batch 004 spec: happyhorse i2v and r2v media input
 
-Spec status: research
+Spec status: implementation
 
 ## Problem Statement
 

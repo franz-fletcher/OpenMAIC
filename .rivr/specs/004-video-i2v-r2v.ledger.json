@@ -106,8 +106,10 @@
       "riskTier": 4,
       "uuid": "68755789-8d16-4cf4-9a6e-df501202fdc9",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "b8274ce2de931ca162a9a0eb1503235ba1decd1f2feebd22ba94a20632e0c30b",
+        "actor": "implementer",
+        "at": "2026-09-01T23:50:42.096Z"
       },
       "verification": {
         "status": "pending",
@@ -266,8 +268,10 @@
       "riskTier": 2,
       "uuid": "2e862d4c-7917-46e0-9a82-8d6c5d7ed75d",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "0d37bac57bca0f54ff4dedb2a8dfc6310bfaed8ed35497c3f287069fe311900a",
+        "actor": "implementer",
+        "at": "2026-09-01T23:52:31.066Z"
       },
       "verification": {
         "status": "pending",
@@ -792,7 +796,29 @@
       "slice": null,
       "hash": "edb93228fd0480e22b9ce71d79282b82a6647290c42a88ff8e2047f42e41531c",
       "fileHash": "2cb28f3b2e48ba66e2ef44b5b42295f1467c65c1f1dd72c9b17a659945a67269"
+    },
+    {
+      "seq": 34,
+      "id": "c5c1b3aa-4d93-422c-98ce-1d033483e188",
+      "at": "2026-09-01T23:50:42.096Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S01:impl:pending->ready_for_verification",
+      "slice": "S01",
+      "hash": "cb4eddd322a6ef8657d8dd6bb70a81a09d1b7ad84820ad4004e470f0483b7878",
+      "fileHash": "0b82aeb5a584725aecc949aaeda3afd6a5813d6bd39c6455f7c6f1fd4eda69b6"
+    },
+    {
+      "seq": 35,
+      "id": "f2198686-011c-423c-9564-fbe3708a27d5",
+      "at": "2026-09-01T23:52:31.066Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S03:impl:pending->ready_for_verification",
+      "slice": "S03",
+      "hash": "d4fe59b32ebef9fab5e87522130a00b111e40ba50651f1da6f8615ab879a4593",
+      "fileHash": "ba01a7c5f39b53a77770e6e7475fd8bcd74c429250354bc959f17f151b711198"
     }
   ],
-  "fileHash": "0b82aeb5a584725aecc949aaeda3afd6a5813d6bd39c6455f7c6f1fd4eda69b6"
+  "fileHash": "d4710c3c47435fd36687bcf3b8a06b05162142ba57e2ef68dca5b52456821c17"
 }

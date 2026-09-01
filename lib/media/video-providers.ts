@@ -114,7 +114,12 @@ export const VIDEO_PROVIDERS: Record<VideoProviderId, VideoProviderConfig> = {
     name: 'HappyHorse',
     requiresApiKey: true,
     defaultBaseUrl: 'https://dashscope.aliyuncs.com',
-    models: [{ id: 'happyhorse-1.0-t2v', name: 'HappyHorse 1.0 T2V' }],
+    models: [
+      { id: 'happyhorse-1.0-t2v', name: 'HappyHorse 1.0 T2V' },
+      { id: 'happyhorse-1.1-t2v', name: 'HappyHorse 1.1 T2V' },
+      { id: 'happyhorse-1.1-i2v', name: 'HappyHorse 1.1 I2V', sourceRequirement: 'first_frame' },
+      { id: 'happyhorse-1.1-r2v', name: 'HappyHorse 1.1 R2V', sourceRequirement: 'reference_images' },
+    ],
     supportedAspectRatios: ['16:9', '9:16', '1:1', '4:3', '3:4'],
     supportedDurations: [5, 10, 15],
     supportedResolutions: ['720p', '1080p'],
@@ -208,4 +213,18 @@ export async function generateVideo(
     default:
       throw new Error(`Unsupported video provider: ${config.providerId}`);
   }
+}
+
+/**
+ * Get the source requirement for a video model.
+ * Returns undefined for t2v models, first_frame for i2v, reference_images for r2v.
+ */
+export function getVideoModelSourceRequirement(
+  providerId: string,
+  modelId: string,
+): 'first_frame' | 'reference_images' | undefined {
+  const provider = VIDEO_PROVIDERS[providerId as VideoProviderId];
+  if (!provider) return undefined;
+  const model = provider.models.find((m) => m.id === modelId);
+  return model?.sourceRequirement;
 }

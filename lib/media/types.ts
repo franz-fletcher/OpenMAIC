@@ -208,8 +208,11 @@ export type VideoProviderId =
  * Describes the capabilities and metadata of a video generation provider.
  * Used to populate UI controls and validate generation requests.
  */
-/** Model metadata for a video generation model (same shape as image) */
-export type VideoModelInfo = ImageModelInfo;
+/** Model metadata for a video generation model */
+export interface VideoModelInfo extends ImageModelInfo {
+  /** Source requirement for the model: first_frame for i2v, reference_images for r2v */
+  sourceRequirement?: 'first_frame' | 'reference_images';
+}
 
 export interface VideoProviderConfig {
   /** Unique provider identifier */
@@ -270,6 +273,10 @@ export interface VideoGenerationOptions {
   stageId?: string;
   /** Cancel server-side provider I/O (agent runtime / background callers). */
   signal?: AbortSignal;
+  /** Public HTTPS URL of a first-frame image for image-to-video generation. */
+  firstFrameUrl?: string;
+  /** Public HTTPS URLs of reference images for reference-to-video generation. */
+  referenceImageUrls?: string[];
 }
 
 /**
