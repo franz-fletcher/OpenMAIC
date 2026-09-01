@@ -13,10 +13,12 @@ function makeActions(): TokenPlanActions {
     setVideoProviderConfig: vi.fn(),
     setTTSProviderConfig: vi.fn(),
     setWebSearchProviderConfig: vi.fn(),
+    setASRProviderConfig: vi.fn(),
   };
 }
 
 const minimax = TOKEN_PLAN_PRESETS.find((p) => p.id === 'minimax')!;
+const qwen = TOKEN_PLAN_PRESETS.find((p) => p.id === 'qwen-token-plan')!;
 // An LLM-only plan shape. The shipped presets are all multi-modal token plans
 // now, so use a local fixture to exercise the "only touch declared modalities"
 // path without coupling to a particular shipped entry.
@@ -70,6 +72,9 @@ describe('applyTokenPlan', () => {
     // Result reports each declared modality as lit, and includes llm.
     const lit = results.filter((r) => r.status === 'lit').map((r) => r.modality);
     expect(lit).toEqual(expect.arrayContaining(['llm', 'image', 'video', 'tts', 'webSearch']));
+
+    // ASR is also lit on the qwen preset
+    expect(actions.setASRProviderConfig).not.toHaveBeenCalled(); // minimax has no asr target
   });
 
   it('only touches declared modalities for an LLM-only plan (DeepSeek)', () => {
@@ -196,9 +201,112 @@ describe('applyTokenPlan', () => {
     expect(results.find((r) => r.modality === 'llm')?.status).toBe('lit');
     expect(results.find((r) => r.modality === 'tts')?.status).toBe('lit');
   });
+
+  it('applies the qwen-token-plan preset to all five modalities', () => {
+    const actions = makeActions();
+    const results = applyTokenPlan(qwen, 'sk-sp-test', actions);
+
+    // LLM
+    expect(actions.setProviderConfig).toHaveBeenCalledWith(
+      'qwen',
+      expect.objectContaining({
+        apiKey: 'sk-sp-test',
+        baseUrl: 'https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1',
+        type: 'openai',
+      }),
+    );
+    // Image
+    expect(actions.setImageProviderConfig).toHaveBeenCalledWith(
+      'qwen-image',
+      expect.objectContaining({
+        apiKey: 'sk-sp-test',
+        baseUrl: 'https://token-plan.ap-southeast-1.maas.aliyuncs.com',
+        enabled: true,
+      }),
+    );
+    // Video
+    expect(actions.setVideoProviderConfig).toHaveBeenCalledWith(
+      'happyhorse',
+      expect.objectContaining({
+        apiKey: 'sk-sp-test',
+        baseUrl: 'https://token-plan.ap-southeast-1.maas.aliyuncs.com',
+        enabled: true,
+      }),
+    );
+    // TTS
+    expect(actions.setTTSProviderConfig).toHaveBeenCalledWith(
+      'qwen-token-plan-tts',
+      expect.objectContaining({
+        apiKey: 'sk-sp-test',
+        baseUrl: 'wss://token-plan.ap-southeast-1.maas.aliyuncs.com/api-ws/v1/inference',
+        enabled: true,
+        modelId: 'qwen-audio-3.0-tts-plus',
+      }),
+    );
+    // ASR
+    expect(actions.setASRProviderConfig).toHaveBeenCalledWith(
+      'qwen-token-plan-asr',
+      expect.objectContaining({
+        apiKey: 'sk-sp-test',
+        baseUrl: 'https://token-plan.ap-southeast-1.maas.aliyuncs.com/api/v1',
+        enabled: true,
+        modelId: 'qwen-audio-3.0-asr-flash',
+      }),
+    );
+
+    // All five lit
+    const lit = results.filter((r) => r.status === 'lit').map((r) => r.modality);
+    expect(lit).toEqual(['llm', 'image', 'video', 'tts', 'asr']);
+  });
+
+  it('isolates a failing asr modality without aborting the rest', () => {
+    const actions = makeActions();
+    (actions.setASRProviderConfig as ReturnType<typeof vi.fn>).mockImplementation(() => {
+      throw new Error('asr boom');
+    });
+    const results = applyTokenPlan(qwen, 'sk', actions);
+
+    const asr = results.find((r) => r.modality === 'asr');
+    expect(asr?.status).toBe('failed');
+    expect(asr?.detail).toBe('asr boom');
+    // Other modalities still lit
+    expect(results.find((r) => r.modality === 'llm')?.status).toBe('lit');
+    expect(results.find((r) => r.modality === 'image')?.status).toBe('lit');
+    expect(results.find((r) => r.modality === 'video')?.status).toBe('lit');
+    expect(results.find((r) => r.modality === 'tts')?.status).toBe('lit');
+  });
 });
 
 describe('removeTokenPlan', () => {
+  it('removes the qwen-token-plan preset and disables all five modalities', () => {
+    const actions = makeActions();
+    const results = removeTokenPlan(qwen, actions);
+
+    expect(actions.setProviderConfig).toHaveBeenCalledWith(
+      'qwen',
+      expect.objectContaining({ apiKey: '' }),
+    );
+    expect(actions.setImageProviderConfig).toHaveBeenCalledWith(
+      'qwen-image',
+      expect.objectContaining({ apiKey: '', baseUrl: '', enabled: false }),
+    );
+    expect(actions.setVideoProviderConfig).toHaveBeenCalledWith(
+      'happyhorse',
+      expect.objectContaining({ apiKey: '', baseUrl: '', enabled: false }),
+    );
+    expect(actions.setTTSProviderConfig).toHaveBeenCalledWith(
+      'qwen-token-plan-tts',
+      expect.objectContaining({ apiKey: '', baseUrl: '', enabled: false }),
+    );
+    expect(actions.setASRProviderConfig).toHaveBeenCalledWith(
+      'qwen-token-plan-asr',
+      expect.objectContaining({ apiKey: '', baseUrl: '', enabled: false }),
+    );
+
+    const lit = results.filter((r) => r.status === 'lit').map((r) => r.modality);
+    expect(lit).toEqual(['llm', 'image', 'video', 'tts', 'asr']);
+  });
+
   it('restores the built-in LLM provider + disables every declared modality (MiniMax)', () => {
     const actions = makeActions();
     removeTokenPlan(minimax, actions);
