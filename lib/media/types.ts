@@ -319,4 +319,8 @@ export interface MediaGenerationRequest {
   aspectRatio?: '16:9' | '4:3' | '1:1' | '9:16';
   /** Optional artistic style hint */
   style?: string;
+  /** Public HTTPS URL of a first-frame image for image-to-video generation. */
+  firstFrameUrl?: string;
+  /** Public HTTPS URLs of reference images for reference-to-video generation. */
+  referenceImageUrls?: string[];
 }

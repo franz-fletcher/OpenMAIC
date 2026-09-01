@@ -335,6 +335,8 @@ async function callVideoApi(
     body: JSON.stringify({
       prompt: req.prompt,
       aspectRatio: req.aspectRatio,
+      firstFrameUrl: req.firstFrameUrl,
+      referenceImageUrls: req.referenceImageUrls,
     }),
     signal: abortSignal,
   });
