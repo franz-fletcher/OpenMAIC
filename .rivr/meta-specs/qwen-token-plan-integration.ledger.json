@@ -5,7 +5,7 @@
   "spec": {
     "reference": "docs/meta-specs/qwen-token-plan-integration.md",
     "title": "Qwen Token Plan Integration (meta-spec)",
-    "hash": "579e84636067f5f1f96140e87efe56c8ebe375bfdf8314646beca3f4dace2965"
+    "hash": "4d2496a134d921d6ffd06cfe131934d21c1aa12858f259a49d8b2cc17ca68f8f"
   },
   "tracker": {
     "mode": "none"
@@ -193,7 +193,18 @@
       "slice": null,
       "hash": "a32a186e3da1b35d348a5f1620c5c6b9fa903ee45dfccf9d219e692c58db7d71",
       "fileHash": "b057c70898edcc67ff77d0d0cfc037648a50ae35a3bc8aceab1801ecc5fb9493"
+    },
+    {
+      "seq": 15,
+      "id": "e7beb846-75a3-4c33-a30e-9fa5851c4c80",
+      "at": "2026-09-01T22:07:31.773Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:clarification:rebind after batch 003 closure row landed in the merged meta table",
+      "slice": null,
+      "hash": "fbbf45275d8be10aaa1a9b610bfa6a947c321e790f00cd3734db5fd20e5048ec",
+      "fileHash": "baa344b9a91c21353f886045767ecc4aba784c1009a9e3404bd417e27a6a01ec"
     }
   ],
-  "fileHash": "baa344b9a91c21353f886045767ecc4aba784c1009a9e3404bd417e27a6a01ec"
+  "fileHash": "90df9318cd9308a1ebecc2402aee566ffb17805f69f135b001fdcbfc90aba1e1"
 }
