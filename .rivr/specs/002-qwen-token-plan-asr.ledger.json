@@ -1,0 +1,588 @@
+{
+  "schema_version": 2,
+  "$schema": "https://rivr.dev/schemas/ledger/v2",
+  "spec": {
+    "reference": "docs/specs/002-qwen-token-plan-asr.md",
+    "title": "Batch 002 spec: qwen-token-plan-asr synchronous provider",
+    "hash": "f555090b85f9c7cdbc315cf9d4e2c6aa63f7585eedf50cf1a288032911f0401d"
+  },
+  "tracker": {
+    "mode": "none"
+  },
+  "stage": "implementation",
+  "retry": {
+    "count": 0,
+    "max": 5,
+    "consecutive_same_cause": 0,
+    "escalate_at": 3
+  },
+  "slices": [
+    {
+      "id": "S1",
+      "title": "Registry and identity",
+      "intent": "Provider id in the ASR union, the registry record with defaultModelId, the display name map, the store default, and one i18n key in 12 locales.",
+      "user_stories": [
+        1,
+        2
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/audio/types.ts",
+          "symbols": [
+            {
+              "name": "BuiltInASRProviderId",
+              "kind": "type",
+              "expectation": "Union includes qwen-token-plan-asr literal.",
+              "before": {
+                "exists": true,
+                "kind": "type"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "type"
+              },
+              "postcondition_quality": "INSPECTED"
+            }
+          ]
+        },
+        {
+          "path": "lib/audio/constants.ts",
+          "symbols": [
+            {
+              "name": "ASR_PROVIDERS",
+              "kind": "variable",
+              "expectation": "Record gains qwen-token-plan-asr entry with defaultModelId and token-plan defaults.",
+              "before": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "INSPECTED"
+            }
+          ]
+        },
+        {
+          "path": "lib/audio/provider-display.ts",
+          "symbols": [
+            {
+              "name": "ASR_PROVIDER_NAME_KEYS",
+              "kind": "variable",
+              "expectation": "Entry maps qwen-token-plan-asr to settings.providerQwenTokenPlanASR.",
+              "before": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "INSPECTED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "f14cb372-6cad-4d12-a7c7-74ba24bfeebf",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "BuiltInASRProviderId includes qwen-token-plan-asr. ASR_PROVIDERS record has requiresApiKey true, defaultModelId qwen-audio-3.0-asr-flash, token-plan defaultBaseUrl, models, formats, 30 language codes. Display map binds settings.providerQwenTokenPlanASR. Store default injected. Key present in 12 locales.",
+      "gates": [
+        {
+          "id": "G1.1",
+          "check": "npx vitest run tests/audio/qwen-token-plan-asr.test.ts",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "identity tests green"
+        },
+        {
+          "id": "G1.2",
+          "check": "pnpm check:i18n-keys",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "locale parity"
+        },
+        {
+          "id": "G1.3",
+          "check": "npx tsc --noEmit",
+          "expect": "/^/",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "typecheck"
+        }
+      ]
+    },
+    {
+      "id": "S2",
+      "title": "Synchronous provider core",
+      "intent": "transcribeAudio dispatch case plus transcribeQwenTokenPlanASR: input_audio body, format and sample_rate derivation, top-level text parsing, empty-400 and non-OK error mapping.",
+      "user_stories": [
+        1,
+        3,
+        4,
+        5
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/audio/asr-providers.ts",
+          "symbols": [
+            {
+              "name": "transcribeAudio",
+              "kind": "function",
+              "expectation": "Switch routes the new id; signature unchanged.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  config: ASRModelConfig,\n  audioBuffer: Buffer | Blob,\n): Promise<ASRTranscriptionResult>"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(config: ASRModelConfig, audioBuffer: Buffer | Blob): Promise<ASRTranscriptionResult>"
+              },
+              "postcondition_quality": "INSPECTED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "89f19cd8-9e66-4d64-9e0c-2e1d8ad4a6c4",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "transcribeAudio dispatches qwen-token-plan-asr to the sync implementation. Body sends input_audio data URI plus parameters.format and sample_rate as strings. Response parsing prefers top-level text with documented fallbacks. 400 empty maps to empty text; other non-OK throws. webm and wav both supported without conversion.",
+      "gates": [
+        {
+          "id": "G2.1",
+          "check": "npx vitest run tests/audio/qwen-token-plan-asr.test.ts",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "hermetic core"
+        },
+        {
+          "id": "G2.2",
+          "check": "npx vitest run tests/audio/qwen-token-plan-asr-protocol.test.ts",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "protocol pin"
+        }
+      ]
+    },
+    {
+      "id": "S3",
+      "title": "Server wiring, env, and neutrality",
+      "intent": "ASR_ENV_MAP entry, .env.example section, provider-config coverage, force-off inheritance, neutrality debt update.",
+      "user_stories": [
+        2,
+        7
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/server/provider-config.ts",
+          "symbols": [
+            {
+              "name": "ASR_ENV_MAP",
+              "kind": "variable",
+              "expectation": "Entry ASR_QWEN_TOKEN_PLAN added.",
+              "before": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "INSPECTED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "5b54fb98-a6c6-4214-aa8e-98f718f1ea0d",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "ASR_ENV_MAP maps ASR_QWEN_TOKEN_PLAN to qwen-token-plan-asr. .env.example carries the three token-plan ASR vars. Provider-config tests cover server precedence and model pin. Neutrality guard green with updated debt counts.",
+      "gates": [
+        {
+          "id": "G3.1",
+          "check": "npx vitest run tests/server/provider-config.test.ts",
+          "expect": "passed",
+          "type": "integration",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "env resolution"
+        },
+        {
+          "id": "G3.2",
+          "check": "npx vitest run tests/server/capability-force-off-routes.test.ts",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "force-off"
+        },
+        {
+          "id": "G3.3",
+          "check": "npx vitest run tests/providers/provider-neutrality-guard.test.ts",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "debt table"
+        }
+      ]
+    },
+    {
+      "id": "S4",
+      "title": "Live smoke and protocol pin",
+      "intent": "Opt-in live test proves one real transcription; skip behavior clean without the gate; shape pin test frozen.",
+      "user_stories": [
+        6
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "tests/audio/qwen-token-plan-asr-live.test.ts",
+          "symbols": [
+            {
+              "name": "qwenTokenPlanAsrLiveSmoke",
+              "kind": "function",
+              "expectation": "Top-level smoke function returning the transcript.",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(): Promise<string>"
+              },
+              "postcondition_quality": "INSPECTED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "315413b3-65d0-4885-b1bf-dd17b60d1862",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "With TEST_LOAD_LOCAL_ENV=1 and the key, the live test transcribes the vendor sample wav and prints [qwen-token-plan-asr-live] ok. Without them it skips with a printed reason. Pin test asserts request shape, response fallback keys, and the 30-code language list.",
+      "gates": [
+        {
+          "id": "G4.1",
+          "check": "TEST_LOAD_LOCAL_ENV=1 npx vitest run tests/audio/qwen-token-plan-asr-live.test.ts",
+          "expect": "[qwen-token-plan-asr-live] ok",
+          "type": "adversarial",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "live vendor proof"
+        },
+        {
+          "id": "G4.2",
+          "check": "npx vitest run tests/audio/qwen-token-plan-asr-protocol.test.ts",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pin"
+        },
+        {
+          "id": "G4.3",
+          "check": "npx vitest run tests/audio/qwen-token-plan-asr-live.test.ts",
+          "expect": "skipped",
+          "type": "smoke",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "skip clean"
+        },
+        {
+          "id": "G4.4",
+          "check": "npx vitest run tests/providers/provider-neutrality-guard.test.ts",
+          "expect": "passed",
+          "type": "smoke",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "sentinel"
+        }
+      ]
+    }
+  ],
+  "audit": [
+    {
+      "seq": 1,
+      "id": "c47c02d0-afdc-4836-a58e-46782dfe5608",
+      "at": "2026-09-01T01:45:13.563Z",
+      "actor": "orchestrator",
+      "command": "init",
+      "transition": "spec-approved:docs/specs/002-qwen-token-plan-asr.md",
+      "slice": null,
+      "hash": "c7eeb36709f8df26f749f8ee55309f6f6fa6357d9c62bcba25c2afe378193f1e"
+    },
+    {
+      "seq": 2,
+      "id": "dd90ea67-0c1a-47ae-a487-c98c7a66e8ae",
+      "at": "2026-09-01T01:45:13.564Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect",
+      "slice": "S1",
+      "hash": "d443636e1cb0feb601ac8f6fa2e88a114ab95d9ac4d843b408667abb530634e6",
+      "expectationHash": "0ef699d759060389347c829d38beecf98414e8722e012a27912788fa69a63927"
+    },
+    {
+      "seq": 3,
+      "id": "c8c2a1f1-3deb-4cee-9eca-d3801a6cfe42",
+      "at": "2026-09-01T01:45:13.564Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/audio/types.ts::BuiltInASRProviderId",
+      "slice": "S1",
+      "hash": "14675bfd2b78e9797c13dcf35ebcbae0fbd3039d5efa2da01a81594346dad843",
+      "expectationHash": "a31c5b76f138bdd90196ae8f4b57078f1ec07c61126d667aadbfa05830fc693a"
+    },
+    {
+      "seq": 4,
+      "id": "bc1642a8-bea7-442a-a391-7a31b0092cc5",
+      "at": "2026-09-01T01:45:13.564Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/audio/constants.ts::ASR_PROVIDERS",
+      "slice": "S1",
+      "hash": "9e85402a6b6fda55f7d28b6edb1be2bc48e5e3f649a15792e68449b40124b610",
+      "expectationHash": "d35729afc486789aedce15d83743082a5026793cbea4c37b7434b2262445197d"
+    },
+    {
+      "seq": 5,
+      "id": "c2bbc62d-a7dd-4f57-a1ae-1b73b4683713",
+      "at": "2026-09-01T01:45:13.564Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/audio/provider-display.ts::ASR_PROVIDER_NAME_KEYS",
+      "slice": "S1",
+      "hash": "8f630ee06df95432572a99f9a98e7f5dd3097fa01b74501a448ec74b357840e3",
+      "expectationHash": "77adebc0f4606a5d3412ab3dbdd4ad9ea09e82880108e2d40fdb6aad5f9f08f0"
+    },
+    {
+      "seq": 6,
+      "id": "88b757e4-a9fe-4967-aa64-7f5e8c9461d4",
+      "at": "2026-09-01T01:45:13.564Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect",
+      "slice": "S2",
+      "hash": "1e8c78863128c602221487db23fada97ce16a9b072759fd0adfad46a31f9c152",
+      "expectationHash": "08ae0a7241f13d541bec2268b875bd61cf873ced94d0e51186b08eae2106a589"
+    },
+    {
+      "seq": 7,
+      "id": "637325a4-5728-4bc3-a164-23db37e8f98c",
+      "at": "2026-09-01T01:45:13.564Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/audio/asr-providers.ts::transcribeAudio",
+      "slice": "S2",
+      "hash": "8b8fd2b5184d4325a1804ac89452a0d412c8680cf4d58a82dd7f102eec647a4e",
+      "expectationHash": "b479432b527a326a84c17b8f4381ded91ca04a6e39fe703257ed42e7e4d503b4"
+    },
+    {
+      "seq": 8,
+      "id": "1a4fb034-61a4-4a25-8d30-961f9d07cd05",
+      "at": "2026-09-01T01:45:13.564Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect",
+      "slice": "S3",
+      "hash": "72dd56955d8204dc9cd80a3faf32b05cb3aeb3c015a657662effecf4de880637",
+      "expectationHash": "0f990ab21515a5b523df27ae4f567d40b16444bd9d0905a6154eb9dc07e602c7"
+    },
+    {
+      "seq": 9,
+      "id": "6f8a3127-055f-4f10-8213-6d953117d859",
+      "at": "2026-09-01T01:45:13.564Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:lib/server/provider-config.ts::ASR_ENV_MAP",
+      "slice": "S3",
+      "hash": "7a1ed6255de775dc888d5a484b8561cf7190cb58e122be612ba3a10b1e7a83af",
+      "expectationHash": "9cac488a7aa142cd05eb263add7a35616e861cfa383afeaeb6e00f54091458d8"
+    },
+    {
+      "seq": 10,
+      "id": "1d6ccca7-2208-427c-96f4-2750a3daa14f",
+      "at": "2026-09-01T01:45:13.564Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect",
+      "slice": "S4",
+      "hash": "4f049a08509910cec93e6820dd9648e0d6c02e914f58c170fe227a8a5f260f99",
+      "expectationHash": "ddfe6af2cd720fe96d15e27be77d08f5653d8c8ca6f0b9ed574d37a406135546"
+    },
+    {
+      "seq": 11,
+      "id": "9473375c-73c7-4ad9-b773-a80358351211",
+      "at": "2026-09-01T01:45:13.564Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect-symbol:tests/audio/qwen-token-plan-asr-live.test.ts::qwenTokenPlanAsrLiveSmoke",
+      "slice": "S4",
+      "hash": "3c506def4a907c389f306e853c229016e446dd81bedf3ce49b5b974767715a94",
+      "expectationHash": "82b60f31bfac947b3dc9b0601a29d69af4dc724a167185e6ddbecd7a5bcb0602"
+    },
+    {
+      "seq": 12,
+      "id": "cf74c304-6352-43ec-b9bd-797c702b8ba3",
+      "at": "2026-09-01T01:45:13.564Z",
+      "actor": "orchestrator",
+      "command": "init_batch",
+      "transition": "batch-init:S1,S2,S3,S4",
+      "slice": null,
+      "hash": "70ec026e4dbe4686e3de6a8da37b17709422bb5b5457f648ee48893c978ea23e"
+    },
+    {
+      "seq": 13,
+      "id": "8ba9bb90-68a5-4637-bf25-550accc7c597",
+      "at": "2026-09-01T01:45:13.635Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S1:capture",
+      "slice": "S1",
+      "hash": "961858d16bb758d568960f05f36ae941cf26ea427cb616bff27fa9eb3498839f",
+      "fileHash": "40c7b350c2c6b390ebb3995977ef5c2ff0e52747410155846c57315266b85e55"
+    },
+    {
+      "seq": 14,
+      "id": "06523c94-de4f-44d2-8da5-238171e53537",
+      "at": "2026-09-01T01:45:13.700Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S2:capture",
+      "slice": "S2",
+      "hash": "7c37e27b0cb52522a3c1cb830ca458203b16285e4ac581c1107750ca4fe619c4",
+      "fileHash": "34022fca78386a7bb15792ebaf30e9cf3a045ee5a8da3130d33fd8e503aae2da"
+    },
+    {
+      "seq": 15,
+      "id": "b4aebb0f-6836-4f33-aa9f-434d30d78848",
+      "at": "2026-09-01T01:45:13.765Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S3:capture",
+      "slice": "S3",
+      "hash": "00c6f90b40e15e0d6bbd3f9fecc3f44814a8666ee8d30fd02a0c09b4c6607678",
+      "fileHash": "6beb9df11a4a890be186475e0410fd91a899977debd5631d1e36debe96ffb470"
+    },
+    {
+      "seq": 16,
+      "id": "0209df3e-2044-4a35-b2bb-964a80a0952e",
+      "at": "2026-09-01T01:45:13.814Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S4:capture",
+      "slice": "S4",
+      "hash": "bc978a8204c6ff55ea4690fe3ba62e8a048592a440f3cd01721f8230493f99f0",
+      "fileHash": "0612855c9cebc24e1a2310941f41c7ec277e86aa6c44da5fcd5777f39cd15648"
+    },
+    {
+      "seq": 17,
+      "id": "ecfea223-6661-463e-80e0-9e2d1595c32e",
+      "at": "2026-09-01T01:45:13.853Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/audio/types.ts::BuiltInASRProviderId",
+      "slice": "S1",
+      "hash": "5a189e5fd2eb362cded9ddedc73b3296b904d9c24a484415790a8f1a84372ad2",
+      "fileHash": "9d5b353328ebacf25fb7e8b1892e9904a315f53617c4c68d7764cb2bf22da1ee"
+    },
+    {
+      "seq": 18,
+      "id": "b1d42ce9-ac12-44e9-bb4d-9d86c0960342",
+      "at": "2026-09-01T01:45:13.898Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/audio/constants.ts::ASR_PROVIDERS",
+      "slice": "S1",
+      "hash": "10be7ba28e2d45b9d8f9196ef73fb2ef5a841f80511086423fc9c636f47047e1",
+      "fileHash": "0627da4979899e6337c735712aa05ac03fe706c4130dbd5ac2384dd5464e3fc8"
+    },
+    {
+      "seq": 19,
+      "id": "2e963d32-f9b3-4222-b9e0-8048570b48cb",
+      "at": "2026-09-01T01:45:13.939Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/audio/provider-display.ts::ASR_PROVIDER_NAME_KEYS",
+      "slice": "S1",
+      "hash": "1a8797e941f8d8a22218432c3c6d7b7ecfd9d13c4b1c2998266f8264b8d62504",
+      "fileHash": "b4134227887b783f160f80351acdbb4f8469ddf91a92c5cd6b6e6ac03900864d"
+    },
+    {
+      "seq": 20,
+      "id": "c7da773e-41bc-4480-b002-fcb8087be354",
+      "at": "2026-09-01T01:45:13.975Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/audio/asr-providers.ts::transcribeAudio",
+      "slice": "S2",
+      "hash": "b4685066db1fdb5855a4fbc81b95e7d9ce2d8f2d9eee8132d233169bf02a37dd",
+      "fileHash": "3733e1aa38e2e0247d161e41bb94e49a0d52607ea1e870b8955409b9520be505"
+    },
+    {
+      "seq": 21,
+      "id": "69471f2f-5872-48ec-8ef0-100228c36a53",
+      "at": "2026-09-01T01:45:14.020Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:lib/server/provider-config.ts::ASR_ENV_MAP",
+      "slice": "S3",
+      "hash": "97e93f7617881f45b12374fe6604e6e86293e9b09f2bac4d4111008f0cbd027b",
+      "fileHash": "9907b61bd542929ef559dd0ead0cad355df164eef250accc1f73cddf012d57bf"
+    },
+    {
+      "seq": 22,
+      "id": "f1e63942-891e-4bd8-a60d-7279e8cb987a",
+      "at": "2026-09-01T01:45:14.064Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S4:postcondition:tests/audio/qwen-token-plan-asr-live.test.ts::qwenTokenPlanAsrLiveSmoke",
+      "slice": "S4",
+      "hash": "17ca6ea68cd48ad514c71d578f59f1e38b36f53e269bdbe1d8a84c96501fba6f",
+      "fileHash": "c2b99ec086bfe6ff6460f448c361768488c1ebc21aabcf0077177ed1ce71a03c"
+    },
+    {
+      "seq": 23,
+      "id": "f30bfbfe-0b90-49cd-965f-d23645067acc",
+      "at": "2026-09-01T01:45:14.111Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "5b5244db0b6ce32a3e29042c13bd17251896a04432bdbc6efa850204495731de",
+      "fileHash": "324bce29deec96651183788da112c1b635345cfb155f2492502c154972de6533"
+    }
+  ],
+  "fileHash": "13656ddd6646a8bf05909181d3685cbc12973f6f9cd5d5d755e0c9276296bfde"
+}
