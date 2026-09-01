@@ -5,7 +5,7 @@
   "spec": {
     "reference": "docs/meta-specs/qwen-token-plan-integration.md",
     "title": "Qwen Token Plan Integration (meta-spec)",
-    "hash": "463eedcb1ca596cff4ae538ed83e76008ebbc5d1136a9f35c3bb77cfd6939cfc"
+    "hash": "579e84636067f5f1f96140e87efe56c8ebe375bfdf8314646beca3f4dace2965"
   },
   "tracker": {
     "mode": "none"
@@ -34,6 +34,11 @@
       "batch": "batch-002",
       "ledger": ".rivr/specs/002-qwen-token-plan-asr.ledger.json",
       "stage": "closed"
+    },
+    {
+      "batch": "batch-003",
+      "ledger": ".rivr/specs/003-qwen-token-plan-preset.ledger.json",
+      "stage": "research_update"
     }
   ],
   "audit": [
@@ -144,7 +149,51 @@
       "slice": null,
       "hash": "d12b9524cf02d5db720072811cdcc871c06070bdac2867e55edbc16c8b26982c",
       "fileHash": "b92bcc9372ae973e1dd10cad39d1e8ba588c2eacf0d21750a890a73b36236662"
+    },
+    {
+      "seq": 11,
+      "id": "7d317418-24b2-4253-804f-56f93e3c0f8b",
+      "at": "2026-09-01T22:05:50.118Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:extension:batch 003 certified: five-target preset + asr modality, hermetic cycle, diffs clean r2",
+      "slice": null,
+      "hash": "31ebb447afa523e0c6f2ded4a1669afe0c9be1c91bbc9f95cfa56c86deedca1f",
+      "fileHash": "41c6c2866508a818dc4cd61270ec05bf8bbc44d0181485c1bd72863a15d94d42"
+    },
+    {
+      "seq": 12,
+      "id": "579669e0-d637-4422-9019-56bf3dcd4bf9",
+      "at": "2026-09-01T22:05:50.118Z",
+      "actor": "orchestrator",
+      "command": "metaspec_child_link",
+      "transition": "child-link:batch-003:.rivr/specs/003-qwen-token-plan-preset.ledger.json:research_update",
+      "slice": null,
+      "hash": "5e86901d7cbb86220d29578f83f838a2fa648aed74f2f5459e6d0cbe90332815",
+      "fileHash": "41c6c2866508a818dc4cd61270ec05bf8bbc44d0181485c1bd72863a15d94d42"
+    },
+    {
+      "seq": 13,
+      "id": "a17a1fcb-3cf0-4b33-939a-0bf3e3a519f6",
+      "at": "2026-09-01T22:06:25.361Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:extension:batch 003 accept completed after symbol-expectation backfill on the three contract anchors",
+      "slice": null,
+      "hash": "58c1312d51e2aa13f5468d9602b95cf3270380c5a0663af85f03aeee52cfde55",
+      "fileHash": "5362155a0b7ee550d12068006db6be05e7c081ab64667c37160958d88155b794"
+    },
+    {
+      "seq": 14,
+      "id": "bd9f1704-129e-45c4-9497-5caa181b7519",
+      "at": "2026-09-01T22:07:04.769Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:extension:batch 003 acceptance proof 1389e23f recorded",
+      "slice": null,
+      "hash": "a32a186e3da1b35d348a5f1620c5c6b9fa903ee45dfccf9d219e692c58db7d71",
+      "fileHash": "b057c70898edcc67ff77d0d0cfc037648a50ae35a3bc8aceab1801ecc5fb9493"
     }
   ],
-  "fileHash": "41c6c2866508a818dc4cd61270ec05bf8bbc44d0181485c1bd72863a15d94d42"
+  "fileHash": "baa344b9a91c21353f886045767ecc4aba784c1009a9e3404bd417e27a6a01ec"
 }
