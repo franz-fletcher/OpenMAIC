@@ -4,14 +4,14 @@
   "spec": {
     "reference": "docs/specs/002-qwen-token-plan-asr.md",
     "title": "Batch 002 spec: qwen-token-plan-asr synchronous provider",
-    "hash": "f555090b85f9c7cdbc315cf9d4e2c6aa63f7585eedf50cf1a288032911f0401d"
+    "hash": "eddaa8866609e7d988dfad5890876fb555a95b1fb38a223f725b5464cc83b805"
   },
   "tracker": {
     "mode": "none"
   },
   "stage": "implementation",
   "retry": {
-    "count": 0,
+    "count": 1,
     "max": 5,
     "consecutive_same_cause": 0,
     "escalate_at": 3
@@ -88,14 +88,16 @@
       "riskTier": 2,
       "uuid": "f14cb372-6cad-4d12-a7c7-74ba24bfeebf",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "37b4017c1c41635bba9319efec58307530bb119b510a908ac9efae7c60c49930",
+        "actor": "implementer",
+        "at": "2026-09-01T01:51:58.331Z"
       },
       "verification": {
         "status": "pending",
         "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
       },
-      "expectation": "BuiltInASRProviderId includes qwen-token-plan-asr. ASR_PROVIDERS record has requiresApiKey true, defaultModelId qwen-audio-3.0-asr-flash, token-plan defaultBaseUrl, models, formats, 30 language codes. Display map binds settings.providerQwenTokenPlanASR. Store default injected. Key present in 12 locales.",
+      "expectation": "Union includes qwen-token-plan-asr. Registry record: requiresApiKey true, defaultModelId qwen-audio-3.0-asr-flash, token-plan base URL, 31 language codes, 4 formats. Display map binds the name key. Store default injected with modelId. Provider key in all 12 locales.",
       "gates": [
         {
           "id": "G1.1",
@@ -294,7 +296,7 @@
         "status": "pending",
         "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
       },
-      "expectation": "With TEST_LOAD_LOCAL_ENV=1 and the key, the live test transcribes the vendor sample wav and prints [qwen-token-plan-asr-live] ok. Without them it skips with a printed reason. Pin test asserts request shape, response fallback keys, and the 30-code language list.",
+      "expectation": "With TEST_LOAD_LOCAL_ENV=1 and the key, the live test transcribes the vendor sample and prints [qwen-token-plan-asr-live] ok. Otherwise it skips with a printed reason. Pin test asserts request shape, response fallback keys, and the 31-code list.",
       "gates": [
         {
           "id": "G4.1",
@@ -582,7 +584,64 @@
       "slice": null,
       "hash": "5b5244db0b6ce32a3e29042c13bd17251896a04432bdbc6efa850204495731de",
       "fileHash": "324bce29deec96651183788da112c1b635345cfb155f2492502c154972de6533"
+    },
+    {
+      "seq": 24,
+      "id": "c8eab188-7bb5-4ef6-8b4f-9a8318d7d5e8",
+      "at": "2026-09-01T01:51:58.332Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S1:impl:pending->ready_for_verification",
+      "slice": "S1",
+      "hash": "4a82c555e085835034c241227efabf55b5995df42d9235fa5b68007e74154475",
+      "fileHash": "13656ddd6646a8bf05909181d3685cbc12973f6f9cd5d5d755e0c9276296bfde"
+    },
+    {
+      "seq": 25,
+      "id": "1d54f674-b177-4b2d-9dbc-4735dec4b28c",
+      "at": "2026-09-01T01:56:33.392Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:correction:pin the enumerated language count as 31 in the spec after the S1 finding",
+      "slice": null,
+      "hash": "ad7c599822ab4cb9af3579c5ae661d9b464009a143932f503c1ab60816f9a956",
+      "fileHash": "8f3d02858b24ce10f0fa923ba38af728ae23f1032bd85dcce190493fc320489f"
+    },
+    {
+      "seq": 26,
+      "id": "ec6954e4-5b75-4ed8-adb8-8a04d74f12a2",
+      "at": "2026-09-01T01:56:33.431Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect",
+      "slice": "S1",
+      "hash": "e76124412ace38a41dffad9e029c5e99eb6595972e207b2b874ee8ea774bf75c",
+      "expectationHash": "73354a0ef2b5541f2573c8b0a862a601f707516eb6674ad87cff6e8406d95489",
+      "fileHash": "148511463f34af65bad00c6a809376b94e0ace223336649bd3a0aa863cfced6d"
+    },
+    {
+      "seq": 27,
+      "id": "45c835dc-33ae-410f-87ec-7f87c64f7517",
+      "at": "2026-09-01T01:56:33.469Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect",
+      "slice": "S4",
+      "hash": "4ddd7436f9bdd2beb50c2bbcb34d72d85235ebb318c82713e7c52b9dba34a0e3",
+      "expectationHash": "d7199eddcd0aa8ad7204c1a53de97adb7d11c059d4f975254315fa3267eb1522",
+      "fileHash": "b098d25c9d02f7a1959c9aa7fa02125e7d91e14f55556943d8e31fc0078ce190"
+    },
+    {
+      "seq": 28,
+      "id": "7a1b3380-e7f6-4b32-b799-5558d1d88c16",
+      "at": "2026-09-01T01:56:33.511Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "743e6a643ce46763bfd0b75098f10f7405aed138a870aa649ab51ccf48ceb907",
+      "fileHash": "44fdb2199e51acf25ca3942ecbb9578480e68d170252f90bcedbeb74339b7cc9"
     }
   ],
-  "fileHash": "13656ddd6646a8bf05909181d3685cbc12973f6f9cd5d5d755e0c9276296bfde"
+  "fileHash": "f0a26a6a526185c3fe91505f91da206c38ffa3f864fdc3a5fe1ec2ac0cd33049"
 }
