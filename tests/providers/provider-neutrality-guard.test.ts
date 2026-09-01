@@ -166,7 +166,7 @@ const TEMPORARY_VENDOR_DEBT: readonly AllowedVendorDebt[] = [
     'lib/server/provider-config.ts',
     'Temporary: provider configuration is still a mixed catalog and resolver composition root.',
     [
-      ['qwen', 22],
+      ['qwen', 24],
       ['openai', 23],
       ['azure', 6],
       ['atlascloud', 2],
@@ -212,8 +212,8 @@ const TEMPORARY_VENDOR_DEBT: readonly AllowedVendorDebt[] = [
       // Generic English words derived as vendor terms by the provider id
       // `qwen-token-plan-tts`. They match ordinary config identifiers,
       // not provider knowledge.
-      ['token', 3],
-      ['plan', 2],
+      ['token', 5],
+      ['plan', 4],
     ],
   ),
   ...groupedDebt(

@@ -38,6 +38,7 @@ const ENV_PREFIXES_TO_CLEAR = [
   'TTS_VOXCPM',
   'ASR_OPENAI',
   'ASR_QWEN',
+  'ASR_QWEN_TOKEN_PLAN',
   'ASR_FUNASR',
   'PDF_UNPDF',
   'PDF_MINERU',
@@ -1007,6 +1008,25 @@ video:
       );
       // The first entry of the pinned comma list wins over the client model.
       expect(resolveTTSModel('qwen-token-plan-tts', 'model-a')).toBe('qwen-audio-3.0-tts-plus');
+    });
+  });
+
+  describe('ASR token-plan server configuration', () => {
+    it('serves the token-plan provider with server-managed key, base URL, and model pin', async () => {
+      vi.stubEnv('ASR_QWEN_TOKEN_PLAN_API_KEY', 'sk-sp-server');
+      vi.stubEnv('ASR_QWEN_TOKEN_PLAN_BASE_URL', 'https://other.region.example.com/api/v1');
+      vi.stubEnv('ASR_QWEN_TOKEN_PLAN_MODELS', 'qwen-audio-3.0-asr-flash,model-b');
+      const { isServerConfiguredProvider, resolveASRApiKey, resolveASRBaseUrl, resolveASRModel } =
+        await import('@/lib/server/provider-config');
+
+      expect(isServerConfiguredProvider('asr', 'qwen-token-plan-asr')).toBe(true);
+      // Managed key means server config is authoritative. Client overrides are dropped.
+      expect(resolveASRApiKey('qwen-token-plan-asr', 'sk-sp-client')).toBe('sk-sp-server');
+      expect(resolveASRBaseUrl('qwen-token-plan-asr', 'https://client.example.com')).toBe(
+        'https://other.region.example.com/api/v1',
+      );
+      // The first entry of the pinned comma list wins over the client model.
+      expect(resolveASRModel('qwen-token-plan-asr', 'model-a')).toBe('qwen-audio-3.0-asr-flash');
     });
   });
 

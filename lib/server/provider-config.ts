@@ -100,6 +100,7 @@ const TTS_ENV_MAP: Record<string, string> = {
 const ASR_ENV_MAP: Record<string, string> = {
   ASR_OPENAI: 'openai-whisper',
   ASR_QWEN: 'qwen-asr',
+  ASR_QWEN_TOKEN_PLAN: 'qwen-token-plan-asr',
   ASR_AZURE: 'azure-asr',
   ASR_FUNASR: 'funasr-asr',
   ASR_LEMONADE: 'lemonade-asr',
