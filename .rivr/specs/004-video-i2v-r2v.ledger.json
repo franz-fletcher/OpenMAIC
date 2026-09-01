@@ -4,12 +4,12 @@
   "spec": {
     "reference": "docs/specs/004-video-i2v-r2v.md",
     "title": "Batch 004 spec: happyhorse i2v and r2v media input",
-    "hash": "e68b97e94753e056cbc59590cb5bf794ec41823272336e34cc32807925e523a9"
+    "hash": "1f9869240f6d0c3a793ad414a208b2d1d41accce01c051c62ca9e4e0453bdc91"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "research",
+  "stage": "implementation",
   "retry": {
     "count": 0,
     "max": 5,
@@ -37,7 +37,12 @@
               "before": {
                 "exists": true,
                 "kind": "interface"
-              }
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "interface"
+              },
+              "postcondition_quality": "VERIFIED"
             }
           ]
         },
@@ -53,7 +58,13 @@
                 "exists": true,
                 "kind": "function",
                 "signature": "(\n  config: VideoGenerationConfig,\n  options: VideoGenerationOptions,\n): Promise<string>"
-              }
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "( config: VideoGenerationConfig, options: VideoGenerationOptions, ): Promise<string>"
+              },
+              "postcondition_quality": "VERIFIED"
             },
             {
               "name": "pollHappyHorseTask",
@@ -64,7 +75,13 @@
                 "exists": true,
                 "kind": "function",
                 "signature": "(\n  config: VideoGenerationConfig,\n  taskId: string,\n): Promise<VideoGenerationResult | null>"
-              }
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "( config: VideoGenerationConfig, taskId: string, ): Promise<VideoGenerationResult | null>"
+              },
+              "postcondition_quality": "VERIFIED"
             },
             {
               "name": "generateWithHappyHorse",
@@ -75,7 +92,13 @@
                 "exists": true,
                 "kind": "function",
                 "signature": "(\n  config: VideoGenerationConfig,\n  options: VideoGenerationOptions,\n): Promise<VideoGenerationResult>"
-              }
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "( config: VideoGenerationConfig, options: VideoGenerationOptions, ): Promise<VideoGenerationResult>"
+              },
+              "postcondition_quality": "VERIFIED"
             }
           ]
         }
@@ -141,7 +164,12 @@
               "expectation": "Matrix of model requirement x payload combos with expected codes.",
               "before": {
                 "exists": false
-              }
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "INFERRED"
             }
           ]
         }
@@ -193,7 +221,12 @@
               "before": {
                 "exists": true,
                 "kind": "variable"
-              }
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "VERIFIED"
             },
             {
               "name": "getVideoModelSourceRequirement",
@@ -201,7 +234,12 @@
               "expectation": "New exported helper signature (providerId: string, modelId: string): VideoModelSourceRequirement | undefined.",
               "before": {
                 "exists": false
-              }
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function"
+              },
+              "postcondition_quality": "INFERRED"
             }
           ]
         },
@@ -215,7 +253,12 @@
               "before": {
                 "exists": true,
                 "kind": "variable"
-              }
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "VERIFIED"
             }
           ]
         }
@@ -267,7 +310,12 @@
               "before": {
                 "exists": true,
                 "kind": "variable"
-              }
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "VERIFIED"
             }
           ]
         }
@@ -327,7 +375,12 @@
               "expectation": "Pinned public https URL constant used by both live proofs.",
               "before": {
                 "exists": false
-              }
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "INFERRED"
             }
           ]
         }
@@ -618,7 +671,128 @@
       "slice": "S05",
       "hash": "2153a187fe5828fcde6de3f277a00c150aa6aef64718b1493e09f3b065f77a4f",
       "fileHash": "3f9b8264d1377994d5bfb155bc488db1082d53c92e0968a4e91c8abec6b2034a"
+    },
+    {
+      "seq": 23,
+      "id": "5114bd0b-0f8d-4773-a4d6-66a6bf860787",
+      "at": "2026-09-01T23:47:58.370Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S01:postcondition:lib/media/types.ts::VideoGenerationOptions",
+      "slice": "S01",
+      "hash": "3330e7d72e92d200905a50f6ad3aee47c9a01e872fd83161012da65c9cbdbb87",
+      "fileHash": "410dd87b345a19adbf4d60ee31e737c5162a71118bbc0dda83716d25ae9f911d"
+    },
+    {
+      "seq": 24,
+      "id": "da08d171-f7f6-4cf5-b417-3e153881a1e8",
+      "at": "2026-09-01T23:47:58.409Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S01:postcondition:lib/media/adapters/happyhorse-adapter.ts::submitHappyHorseTask",
+      "slice": "S01",
+      "hash": "5b318a99e58e49a38ec5eb5bd796a41d94d1c36d685abbae0da86788eefdbe91",
+      "fileHash": "2937049191e3291a18d240e134129412fd416cbf32d307dd7276c2bc43329a12"
+    },
+    {
+      "seq": 25,
+      "id": "c0b82be5-db81-4b2f-8392-44260c29a9c2",
+      "at": "2026-09-01T23:47:58.451Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S01:postcondition:lib/media/adapters/happyhorse-adapter.ts::pollHappyHorseTask",
+      "slice": "S01",
+      "hash": "1c636089f83fa7c1443b7cb8c9709f3ed15d152a56a653bab02e7cdf202acf0e",
+      "fileHash": "8e0f059b9b338e5b818cdae3449dbed5dbda6fa9f5f74728feee5fc9bad6d70c"
+    },
+    {
+      "seq": 26,
+      "id": "9af409ac-8b2b-4c04-baa7-f89f946f1aba",
+      "at": "2026-09-01T23:47:58.489Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S01:postcondition:lib/media/adapters/happyhorse-adapter.ts::generateWithHappyHorse",
+      "slice": "S01",
+      "hash": "3dec2b1481af89d5b794c87a93278302f00c142174cdca3782fc9beb47eab35e",
+      "fileHash": "17aaa7f72e29ed132c5a6e3cb3bd0ba2d54ebf0b6d648cb7d86869586f99c947"
+    },
+    {
+      "seq": 27,
+      "id": "a51d030c-2c14-490f-89ab-745ee484cf6e",
+      "at": "2026-09-01T23:47:58.527Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S02:postcondition:tests/server/video-route-preflight.test.ts::PREFLIGHT_MATRIX",
+      "slice": "S02",
+      "hash": "e85a2ea02db9b07427f6b1589817baccc60c3f8b8725e760e7c025ea672c7ced",
+      "fileHash": "88652b2e0cd5ec484f200c1c08dc7da7e28f244485125b3486b149abd6507313"
+    },
+    {
+      "seq": 28,
+      "id": "a62e96ba-0baf-430a-9e50-abe803d7c86a",
+      "at": "2026-09-01T23:47:58.567Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S03:postcondition:lib/media/video-providers.ts::getVideoModelSourceRequirement",
+      "slice": "S03",
+      "hash": "fb6c1da8f62624265dd9196f4970fbca8be77a4dedb4827e125ffb93e9f400f7",
+      "fileHash": "ea045a29e7bff5bda1baeb337e727b48be0c4e89fa8fa9e2fff35543d6f2ace0"
+    },
+    {
+      "seq": 29,
+      "id": "a45cb720-8ef6-4674-b2ac-d414a3f61956",
+      "at": "2026-09-01T23:47:58.606Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S03:postcondition:lib/media/video-providers.ts::VIDEO_PROVIDERS",
+      "slice": "S03",
+      "hash": "10a2bb939ea03225f5c76bc9e93f40acd14a26d222c682a8c4eb60eb2dbe091a",
+      "fileHash": "1be315a62183521a12583121e4ddac2b33d7aba8d20ff438fc5d38da62528ca5"
+    },
+    {
+      "seq": 30,
+      "id": "18d20869-e412-4ce2-a473-ffc476bea355",
+      "at": "2026-09-01T23:47:58.645Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S03:postcondition:lib/config/token-plan-presets.ts::TOKEN_PLAN_PRESETS",
+      "slice": "S03",
+      "hash": "d728296153772913fd17c35df216f01401e3e10a8bd3d7274f95ecea4bf1c296",
+      "fileHash": "1097a7a3bd816f83ad3bc45f3edb934c397e5827d338c3d73d84ed5cb4087622"
+    },
+    {
+      "seq": 31,
+      "id": "ea81170c-e1d8-482d-bada-22bb0e8559be",
+      "at": "2026-09-01T23:47:58.683Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S04:postcondition:tests/server/server-providers-example.test.ts::EXAMPLE_TOKEN_PLAN_IDS",
+      "slice": "S04",
+      "hash": "4f28ba5b93d9539dcf4f347974a3fc8fccb502491f6de65615860117f2f9fdba",
+      "fileHash": "a3a2d8338406a5f5fe108d54d903fce25681809a238bd01aab5616aaf2c3aeca"
+    },
+    {
+      "seq": 32,
+      "id": "f64d8d3c-9e22-4c27-9fe6-746b49f2fd12",
+      "at": "2026-09-01T23:47:58.722Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S05:postcondition:tests/media/happyhorse-live.test.ts::LIVE_IMAGE_URL",
+      "slice": "S05",
+      "hash": "c1e8c7b315ce390cbe7bafcc71fbe6effe72efe1b62478b88d4d02a3af58f4d9",
+      "fileHash": "27cff2abd7354d0699bed84481b929b78b73ec07991da8d1150e30d63ce45a59"
+    },
+    {
+      "seq": 33,
+      "id": "263385e0-949c-4bec-a5cf-2b4aaba66374",
+      "at": "2026-09-01T23:47:58.761Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "edb93228fd0480e22b9ce71d79282b82a6647290c42a88ff8e2047f42e41531c",
+      "fileHash": "2cb28f3b2e48ba66e2ef44b5b42295f1467c65c1f1dd72c9b17a659945a67269"
     }
   ],
-  "fileHash": "410dd87b345a19adbf4d60ee31e737c5162a71118bbc0dda83716d25ae9f911d"
+  "fileHash": "0b82aeb5a584725aecc949aaeda3afd6a5813d6bd39c6455f7c6f1fd4eda69b6"
 }
