@@ -16,8 +16,8 @@ import type { ProviderType } from '@/lib/types/provider';
 /** Loose grouping for the preset list UI. */
 export type PresetCategory = 'official' | 'aggregator' | 'token_plan' | 'third_party';
 
-/** The modalities a token plan can be applied to. ASR is omitted = not adapted. */
-export type TokenPlanModality = 'llm' | 'image' | 'video' | 'tts' | 'webSearch';
+/** The modalities a token plan can be applied to. */
+export type TokenPlanModality = 'llm' | 'image' | 'video' | 'tts' | 'asr' | 'webSearch';
 
 /** Where a token plan maps in one modality's provider registry. */
 export interface TokenPlanModalityTarget {
@@ -38,7 +38,7 @@ export interface TokenPlanModalityTarget {
    * them; we never silently drop a model the user paid for.
    */
   defaultModels?: string[];
-  /** TTS only: default model id to enable. */
+  /** TTS and ASR only: default model id to enable. */
   defaultModelId?: string;
 }
 
@@ -59,7 +59,14 @@ export interface TokenPlanPreset {
 }
 
 /** Human-facing order of modalities in the apply result. */
-export const MODALITY_ORDER: TokenPlanModality[] = ['llm', 'image', 'video', 'tts', 'webSearch'];
+export const MODALITY_ORDER: TokenPlanModality[] = [
+  'llm',
+  'image',
+  'video',
+  'tts',
+  'asr',
+  'webSearch',
+];
 
 /**
  * Built-in token plans.
@@ -198,6 +205,53 @@ export const TOKEN_PLAN_PRESETS: TokenPlanPreset[] = [
       tts: {
         providerId: 'doubao-tts',
         baseUrl: 'https://openspeech.bytedance.com/api/v3/plan/tts',
+      },
+    },
+  },
+
+  // ── Token Plan: Qwen (sk-sp- key, five modalities) ──────────────────────
+  {
+    id: 'qwen-token-plan',
+    name: 'Qwen Token Plan',
+    apiKeyPlaceholder: 'sk-sp-...',
+    icon: '/logos/qwen.svg',
+    category: 'token_plan',
+    modalities: {
+      llm: {
+        providerId: 'qwen',
+        baseUrl: 'https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1',
+        apiFormat: 'openai',
+        defaultModels: [
+          'qwen3.8-max',
+          'qwen3.8-flash',
+          'qwen3.7-plus',
+          'qwen3.7-max',
+          'qwen3.6-flash',
+          'deepseek-v4-pro',
+          'deepseek-v4-pro-0813',
+          'deepseek-v4-flash-0731',
+          'glm-5.2',
+        ],
+      },
+      image: {
+        providerId: 'qwen-image',
+        baseUrl: 'https://token-plan.ap-southeast-1.maas.aliyuncs.com',
+        defaultModels: ['qwen-image-3.0-pro', 'wan2.7-image'],
+      },
+      video: {
+        providerId: 'happyhorse',
+        baseUrl: 'https://token-plan.ap-southeast-1.maas.aliyuncs.com',
+        defaultModels: ['happyhorse-1.1-t2v'],
+      },
+      tts: {
+        providerId: 'qwen-token-plan-tts',
+        baseUrl: 'wss://token-plan.ap-southeast-1.maas.aliyuncs.com/api-ws/v1/inference',
+        defaultModelId: 'qwen-audio-3.0-tts-plus',
+      },
+      asr: {
+        providerId: 'qwen-token-plan-asr',
+        baseUrl: 'https://token-plan.ap-southeast-1.maas.aliyuncs.com/api/v1',
+        defaultModelId: 'qwen-audio-3.0-asr-flash',
       },
     },
   },

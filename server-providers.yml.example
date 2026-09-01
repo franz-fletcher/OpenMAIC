@@ -1,0 +1,61 @@
+# =============================================================================
+# Server Providers Configuration (YAML)
+#
+# Copy this file to server-providers.yml and fill in your values.
+# This file configures server-side providers that take precedence over
+# client-side Settings. Server-managed keys and base URLs are authoritative;
+# client values for the same provider id are ignored.
+#
+# Token Plan pointer comments exist in .env.example for each section.
+# Use either env vars or this file — not both for the same provider.
+# =============================================================================
+
+# --- LLM Providers -----------------------------------------------------------
+providers:
+  # Qwen Token Plan — single sk-sp- key spans all five modalities.
+  qwen:
+    apiKey: sk-sp-REPLACE_ME
+    baseUrl: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+    models:
+      - qwen3.8-max
+      - qwen3.8-flash
+      - qwen3.7-plus
+      - qwen3.7-max
+      - qwen3.6-flash
+      - deepseek-v4-pro
+      - deepseek-v4-pro-0813
+      - deepseek-v4-flash-0731
+      - glm-5.2
+
+# --- TTS (Text-to-Speech) ----------------------------------------------------
+tts:
+  qwen-token-plan-tts:
+    apiKey: sk-sp-REPLACE_ME
+    baseUrl: wss://token-plan.ap-southeast-1.maas.aliyuncs.com/api-ws/v1/inference
+    models:
+      - qwen-audio-3.0-tts-plus
+
+# --- ASR (Automatic Speech Recognition) --------------------------------------
+asr:
+  qwen-token-plan-asr:
+    apiKey: sk-sp-REPLACE_ME
+    baseUrl: https://token-plan.ap-southeast-1.maas.aliyuncs.com/api/v1
+    models:
+      - qwen-audio-3.0-asr-flash
+
+# --- Image Generation ---------------------------------------------------------
+image:
+  qwen-image:
+    apiKey: sk-sp-REPLACE_ME
+    baseUrl: https://token-plan.ap-southeast-1.maas.aliyuncs.com
+    models:
+      - qwen-image-3.0-pro
+      - wan2.7-image
+
+# --- Video Generation ---------------------------------------------------------
+video:
+  happyhorse:
+    apiKey: sk-sp-REPLACE_ME
+    baseUrl: https://token-plan.ap-southeast-1.maas.aliyuncs.com
+    models:
+      - happyhorse-1.1-t2v

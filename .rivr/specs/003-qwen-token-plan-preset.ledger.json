@@ -1,0 +1,1233 @@
+{
+  "schema_version": 2,
+  "$schema": "https://rivr.dev/schemas/ledger/v2",
+  "spec": {
+    "reference": "docs/specs/003-qwen-token-plan-preset.md",
+    "title": "Batch 003 spec: qwen-token-plan preset registration",
+    "hash": "023c60a59e4a36c4f5e4ca7290558d59d06f34f7a77bd3af742cf6dbb6a29152"
+  },
+  "tracker": {
+    "mode": "none"
+  },
+  "stage": "closed",
+  "retry": {
+    "count": 2,
+    "max": 5,
+    "consecutive_same_cause": 0,
+    "escalate_at": 3
+  },
+  "slices": [
+    {
+      "id": "S1",
+      "title": "Union growth, ASR wiring, and the Qwen preset",
+      "intent": "Add asr to the modality union and order, asr apply/remove cases, TokenPlanActions setter, UI label and icon, and the full qwen-token-plan preset entry.",
+      "user_stories": [
+        1,
+        4
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/config/token-plan-presets.ts",
+          "symbols": [
+            {
+              "name": "TokenPlanModality",
+              "kind": "type",
+              "expectation": "Union includes asr alongside llm image video tts webSearch.",
+              "before": {
+                "exists": true,
+                "kind": "type"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "type"
+              },
+              "postcondition_quality": "VERIFIED"
+            },
+            {
+              "name": "MODALITY_ORDER",
+              "kind": "variable",
+              "expectation": "asr sits between tts and webSearch.",
+              "before": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "VERIFIED"
+            },
+            {
+              "name": "TOKEN_PLAN_PRESETS",
+              "kind": "variable",
+              "expectation": "Contains the qwen-token-plan preset with the five frozen targets.",
+              "before": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "lib/config/apply-token-plan.ts",
+          "symbols": [
+            {
+              "name": "applyModality",
+              "kind": "function",
+              "expectation": "Handles the asr case writing provider qwen-token-plan-asr config with enabled true.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  modality: TokenPlanModality,\n  target: TokenPlanModalityTarget,\n  preset: TokenPlanPreset,\n  apiKey: string,\n  actions: TokenPlanActions,\n): void"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  modality: TokenPlanModality,\n  target: TokenPlanModalityTarget,\n  preset: TokenPlanPreset,\n  apiKey: string,\n  actions: TokenPlanActions,\n): void"
+              },
+              "postcondition_quality": "VERIFIED"
+            },
+            {
+              "name": "removeModality",
+              "kind": "function",
+              "expectation": "Handles the asr case clearing key and base url with enabled false.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  modality: TokenPlanModality,\n  target: TokenPlanModalityTarget,\n  actions: TokenPlanActions,\n): void"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  modality: TokenPlanModality,\n  target: TokenPlanModalityTarget,\n  actions: TokenPlanActions,\n): void"
+              },
+              "postcondition_quality": "VERIFIED"
+            },
+            {
+              "name": "TokenPlanActions",
+              "kind": "type",
+              "expectation": "Declares setASRProviderConfig mirroring the store setter.",
+              "before": {
+                "exists": true,
+                "kind": "interface"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "interface"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "components/settings/token-plan-settings.tsx",
+          "symbols": [
+            {
+              "name": "MODALITY_LABEL_KEYS",
+              "kind": "variable",
+              "expectation": "Includes asr mapping to settings.asrSettings.",
+              "before": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "VERIFIED"
+            },
+            {
+              "name": "MODALITY_ICONS",
+              "kind": "variable",
+              "expectation": "Includes an asr icon entry.",
+              "before": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "b5e4b109-87e0-4801-ba2e-140d27cea355",
+      "impl": {
+        "status": "ready_for_verification",
+        "hash": "c42d639de92d86e253e47cbc70311fc06e6f6c66eaffa5c5256e13336c819885",
+        "actor": "implementer",
+        "at": "2026-09-01T11:03:00.096Z"
+      },
+      "verification": {
+        "status": "verified",
+        "hash": "146e01fe8aafe852c305f72b14e426c99e9ca62fa6e5a9be4831bf5809b9e289",
+        "actor": "verifier",
+        "at": "2026-09-01T11:43:21.173Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G1.1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/config/apply-token-plan.test.ts \u001b[2m(\u001b[22m\u001b[2m12 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 5\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m12 passed\u001b[39m\u001b[22m\u001b[90m (12)\u001b[39m\n\u001b[2m   Start at \u001b[22m 23:43:17\n\u001b[2m   Duration \u001b[22m 195ms\u001b[2m (transform 47ms, setup 9ms, import 127ms, tests 5ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G1.2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            },
+            {
+              "id": "G1.3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> node scripts/check-i18n-keys.mjs\n\ni18n key alignment check passed (12 locale files, source: en-US.json).\n",
+              "passed": true
+            }
+          ]
+        }
+      },
+      "expectation": "TokenPlanModality gains asr; MODALITY_ORDER lists asr between tts and webSearch; TOKEN_PLAN_PRESETS carries id qwen-token-plan with five targets and literal name Qwen Token Plan; apply/remove handle asr with enabled flip mirroring tts; UI records gain asr entries.",
+      "gates": [
+        {
+          "id": "G1.1",
+          "check": "npx vitest run tests/config/apply-token-plan.test.ts",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G1.1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/config/apply-token-plan.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m12 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 5\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m12 passed\\u001b[39m\\u001b[22m\\u001b[90m (12)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 23:43:17\\n\\u001b[2m   Duration \\u001b[22m 195ms\\u001b[2m (transform 47ms, setup 9ms, import 127ms, tests 5ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}"
+        },
+        {
+          "id": "G1.2",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G1.2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}"
+        },
+        {
+          "id": "G1.3",
+          "check": "pnpm check:i18n-keys",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G1.3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> node scripts/check-i18n-keys.mjs\\n\\ni18n key alignment check passed (12 locale files, source: en-US.json).\\n\",\"passed\":true}"
+        }
+      ]
+    },
+    {
+      "id": "S2",
+      "title": "Precedence and clobber pins",
+      "intent": "Pin that server-managed env or yml values win over the client preset store for all five section resolvers, and that preset apply never writes server values.",
+      "user_stories": [
+        3,
+        4
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "tests/config/token-plan-precedence.test.ts",
+          "symbols": [
+            {
+              "name": "PRECEDENCE_SECTIONS",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Top-level const naming the five sections with their apiKey/baseUrl resolver pairs."
+            }
+          ]
+        }
+      ],
+      "riskTier": 3,
+      "uuid": "51a70871-afcb-46d8-9adc-a42dc877035f",
+      "impl": {
+        "status": "ready_for_verification",
+        "hash": "d98ae47724915e03459f67d633c7fe87fbe0866db57b92f8880aa9cbc7c76d82",
+        "actor": "implementer",
+        "at": "2026-09-01T11:14:06.881Z"
+      },
+      "verification": {
+        "status": "verified",
+        "hash": "e3ece3627c486ce905ff1ec163e7dce536a7d58d8727434c692df5bf1fde311c",
+        "actor": "verifier",
+        "at": "2026-09-01T11:32:00.164Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G2.1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/config/token-plan-precedence.test.ts\u001b[2m > \u001b[22m\u001b[2mtoken-plan precedence\u001b[2m > \u001b[22m\u001b[2mserver values win when server env is present\u001b[2m > \u001b[22m\u001b[2mllm resolvers\u001b[2m > \u001b[22m\u001b[2mresolveApiKey returns server value over client store value\n\u001b[22m\u001b[39m[2026-09-01T11:31:58.437Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 7 LLM, 1 TTS, 1 ASR, 0 PDF, 2 Image, 1 Video, 0 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/config/token-plan-precedence.test.ts\u001b[2m > \u001b[22m\u001b[2mtoken-plan precedence\u001b[2m > \u001b[22m\u001b[2mserver values win when server env is present\u001b[2m > \u001b[22m\u001b[2mllm resolvers\u001b[2m > \u001b[22m\u001b[2mresolveBaseUrl returns server value over client store value\n\u001b[22m\u001b[39m[2026-09-01T11:31:58.439Z] [INFO] [ServerProviderConfig] [Serve",
+              "passed": true
+            },
+            {
+              "id": "G2.2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/server/provider-config.test.ts\u001b[2m > \u001b[22m\u001b[2mprovider-config\u001b[2m > \u001b[22m\u001b[2mresolveApiKey\u001b[2m > \u001b[22m\u001b[2mreturns server key from env when no client key\n\u001b[22m\u001b[39m[2026-09-01T11:31:59.160Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 0 Video, 0 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/server/provider-config.test.ts\u001b[2m > \u001b[22m\u001b[2mprovider-config\u001b[2m > \u001b[22m\u001b[2mresolveApiKey\u001b[2m > \u001b[22m\u001b[2mignores client key for a server-managed provider (server is authoritative)\n\u001b[22m\u001b[39m[2026-09-01T11:31:59.163Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 0 Video, 0 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/",
+              "passed": true
+            },
+            {
+              "id": "G2.3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/config/token-plan-apply-persist.test.ts \u001b[2m(\u001b[22m\u001b[2m1 test\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 3\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m   Start at \u001b[22m 23:31:59\n\u001b[2m   Duration \u001b[22m 476ms\u001b[2m (transform 281ms, setup 13ms, import 401ms, tests 3ms, environment 0ms)\u001b[22m\n\n\u001b[90mstderr\u001b[2m | tests/config/token-plan-apply-persist.test.ts\u001b[2m > \u001b[22m\u001b[2mtoken plan apply + probe model write\u001b[2m > \u001b[22m\u001b[2mkeeps apiKey/baseUrl/type after a models-only follow-up write\n\u001b[22m\u001b[39m[2026-09-01T11:32:00.105Z] [ERROR] [KVPersist] Refusing to persist \"settings-storage\" while its storage is unhydrated. Changes made in this session are not being saved.\n\n\u001b[90mstderr\u001b[2m | tests/c",
+              "passed": true
+            }
+          ]
+        }
+      },
+      "expectation": "tests/config/token-plan-precedence.test.ts asserts server-wins per field for llm tts asr image video resolvers, client-values with no server entry, and no server writes from apply.",
+      "gates": [
+        {
+          "id": "G2.1",
+          "check": "npx vitest run tests/config/token-plan-precedence.test.ts",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G2.1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/config/token-plan-precedence.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mtoken-plan precedence\\u001b[2m > \\u001b[22m\\u001b[2mserver values win when server env is present\\u001b[2m > \\u001b[22m\\u001b[2mllm resolvers\\u001b[2m > \\u001b[22m\\u001b[2mresolveApiKey returns server value over client store value\\n\\u001b[22m\\u001b[39m[2026-09-01T11:31:58.437Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 7 LLM, 1 TTS, 1 ASR, 0 PDF, 2 Image, 1 Video, 0 WebSearch providers\\n\\n\\u001b[90mstdout\\u001b[2m | tests/config/token-plan-precedence.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mtoken-plan precedence\\u001b[2m > \\u001b[22m\\u001b[2mserver values win when server env is present\\u001b[2m > \\u001b[22m\\u001b[2mllm resolvers\\u001b[2m > \\u001b[22m\\u001b[2mresolveBaseUrl returns server value over client store value\\n\\u001b[22m\\u001b[39m[2026-09-01T11:31:58.439Z] [INFO] [ServerProviderConfig] [Serve\",\"passed\":true}"
+        },
+        {
+          "id": "G2.2",
+          "check": "npx vitest run tests/server/provider-config.test.ts",
+          "expect": "passed",
+          "type": "integration",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G2.2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/provider-config.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mprovider-config\\u001b[2m > \\u001b[22m\\u001b[2mresolveApiKey\\u001b[2m > \\u001b[22m\\u001b[2mreturns server key from env when no client key\\n\\u001b[22m\\u001b[39m[2026-09-01T11:31:59.160Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 0 Video, 0 WebSearch providers\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/provider-config.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mprovider-config\\u001b[2m > \\u001b[22m\\u001b[2mresolveApiKey\\u001b[2m > \\u001b[22m\\u001b[2mignores client key for a server-managed provider (server is authoritative)\\n\\u001b[22m\\u001b[39m[2026-09-01T11:31:59.163Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 0 Video, 0 WebSearch providers\\n\\n\\u001b[90mstdout\\u001b[2m | tests/\",\"passed\":true}"
+        },
+        {
+          "id": "G2.3",
+          "check": "npx vitest run tests/config/token-plan-apply-persist.test.ts",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G2.3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/config/token-plan-apply-persist.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m1 test\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 3\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 23:31:59\\n\\u001b[2m   Duration \\u001b[22m 476ms\\u001b[2m (transform 281ms, setup 13ms, import 401ms, tests 3ms, environment 0ms)\\u001b[22m\\n\\n\\u001b[90mstderr\\u001b[2m | tests/config/token-plan-apply-persist.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mtoken plan apply + probe model write\\u001b[2m > \\u001b[22m\\u001b[2mkeeps apiKey/baseUrl/type after a models-only follow-up write\\n\\u001b[22m\\u001b[39m[2026-09-01T11:32:00.105Z] [ERROR] [KVPersist] Refusing to persist \\\"settings-storage\\\" while its storage is unhydrated. Changes made in this session are not being saved.\\n\\n\\u001b[90mstderr\\u001b[2m | tests/c\",\"passed\":true}"
+        }
+      ]
+    },
+    {
+      "id": "S3",
+      "title": "Env pointers and server-providers.yml.example",
+      "intent": "Add token-plan preset pointer comments in .env.example sections and create the root server-providers.yml.example with all five token-plan ids, validated by a loader test.",
+      "user_stories": [
+        2
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "tests/server/server-providers-example.test.ts",
+          "symbols": [
+            {
+              "name": "EXAMPLE_TOKEN_PLAN_IDS",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Top-level const listing the five token-plan provider ids asserted against the example file."
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "90c9a2c9-3bd9-44a6-8fb6-cafd7161c401",
+      "impl": {
+        "status": "ready_for_verification",
+        "hash": "36217eabd6b79e3dced7e6b761b5310d4942538dfe86f898827562c644bec180",
+        "actor": "implementer",
+        "at": "2026-09-01T11:22:13.399Z"
+      },
+      "verification": {
+        "status": "verified",
+        "hash": "064f62da7a18e55e91c87fc5943f3bcb9b8d0f867e2055b27a769b2fd1a1db5c",
+        "actor": "verifier",
+        "at": "2026-09-01T11:32:05.637Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G3.1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/server/server-providers-example.test.ts\u001b[2m > \u001b[22m\u001b[2mserver-providers.yml.example\u001b[2m > \u001b[22m\u001b[2mresolves all five token-plan ids through isServerConfiguredProvider\n\u001b[22m\u001b[39m[2026-09-01T11:32:04.931Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 7 LLM, 1 TTS, 1 ASR, 0 PDF, 2 Image, 1 Video, 0 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/server/server-providers-example.test.ts\u001b[2m > \u001b[22m\u001b[2mserver-providers.yml.example\u001b[2m > \u001b[22m\u001b[2mspot-checks one base_url per token-plan section\n\u001b[22m\u001b[39m[2026-09-01T11:32:04.933Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 7 LLM, 1 TTS, 1 ASR, 0 PDF, 2 Image, 1 Video, 0 WebSearch providers\n\n \u001b[32m✓\u001b[39m tests/server/server-providers-e",
+              "passed": true
+            },
+            {
+              "id": "G3.2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/server/provider-config.test.ts\u001b[2m > \u001b[22m\u001b[2mprovider-config\u001b[2m > \u001b[22m\u001b[2mresolveApiKey\u001b[2m > \u001b[22m\u001b[2mreturns server key from env when no client key\n\u001b[22m\u001b[39m[2026-09-01T11:32:05.515Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 0 Video, 0 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/server/provider-config.test.ts\u001b[2m > \u001b[22m\u001b[2mprovider-config\u001b[2m > \u001b[22m\u001b[2mresolveApiKey\u001b[2m > \u001b[22m\u001b[2mignores client key for a server-managed provider (server is authoritative)\n\u001b[22m\u001b[39m[2026-09-01T11:32:05.519Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 0 Video, 0 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/",
+              "passed": true
+            }
+          ]
+        }
+      },
+      "expectation": ".env.example carries pointers in llm image and video blocks; server-providers.yml.example parses through the loader fs-mock and resolves all five ids in their sections.",
+      "gates": [
+        {
+          "id": "G3.1",
+          "check": "npx vitest run tests/server/server-providers-example.test.ts",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G3.1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/server-providers-example.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mserver-providers.yml.example\\u001b[2m > \\u001b[22m\\u001b[2mresolves all five token-plan ids through isServerConfiguredProvider\\n\\u001b[22m\\u001b[39m[2026-09-01T11:32:04.931Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 7 LLM, 1 TTS, 1 ASR, 0 PDF, 2 Image, 1 Video, 0 WebSearch providers\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/server-providers-example.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mserver-providers.yml.example\\u001b[2m > \\u001b[22m\\u001b[2mspot-checks one base_url per token-plan section\\n\\u001b[22m\\u001b[39m[2026-09-01T11:32:04.933Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 7 LLM, 1 TTS, 1 ASR, 0 PDF, 2 Image, 1 Video, 0 WebSearch providers\\n\\n \\u001b[32m✓\\u001b[39m tests/server/server-providers-e\",\"passed\":true}"
+        },
+        {
+          "id": "G3.2",
+          "check": "npx vitest run tests/server/provider-config.test.ts",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G3.2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/provider-config.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mprovider-config\\u001b[2m > \\u001b[22m\\u001b[2mresolveApiKey\\u001b[2m > \\u001b[22m\\u001b[2mreturns server key from env when no client key\\n\\u001b[22m\\u001b[39m[2026-09-01T11:32:05.515Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 0 Video, 0 WebSearch providers\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/provider-config.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mprovider-config\\u001b[2m > \\u001b[22m\\u001b[2mresolveApiKey\\u001b[2m > \\u001b[22m\\u001b[2mignores client key for a server-managed provider (server is authoritative)\\n\\u001b[22m\\u001b[39m[2026-09-01T11:32:05.519Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 0 Video, 0 WebSearch providers\\n\\n\\u001b[90mstdout\\u001b[2m | tests/\",\"passed\":true}"
+        }
+      ]
+    },
+    {
+      "id": "S4",
+      "title": "Docs refresh",
+      "intent": "Update README pair and English docs tables with token-plan providers and prefixes; generic LLM table untouched.",
+      "user_stories": [
+        5
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "README.md",
+          "symbols": [
+            {
+              "name": "Token Plan",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "module",
+                "signature": "###"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Module heading introducing the one-key token-plan setup subsection with ids and prefixes."
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "e47f99c2-882a-4148-9b3b-d4a51f34f8af",
+      "impl": {
+        "status": "ready_for_verification",
+        "hash": "7d71d6fa26e8c52e02f2fd2d9003b99e988f60f145eb20c018252e5e25e5ce38",
+        "actor": "implementer",
+        "at": "2026-09-01T11:26:00.734Z"
+      },
+      "verification": {
+        "status": "verified",
+        "hash": "1905f9df67651b1e3893ce587143d5604f9a3dcb5f11de7a6a50280ffb5c5b2a",
+        "actor": "verifier",
+        "at": "2026-09-01T11:32:09.189Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G4.1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "       4\n",
+              "passed": true
+            },
+            {
+              "id": "G4.2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "84:| Qwen Token Plan ASR | `qwen-token-plan-asr` | Qwen Audio 3.0 ASR Flash (`qwen-audio-3.0-asr-flash`)                                                                                                                                                                                                                                                      |\n",
+              "passed": true
+            }
+          ]
+        }
+      },
+      "expectation": "README.md README-zh.md configuration.mdx and supported-models.mdx all mention qwen-token-plan providers with correct env prefixes.",
+      "gates": [
+        {
+          "id": "G4.1",
+          "check": "grep -l qwen-token-plan README.md README-zh.md packages/docs/content/docs/configuration.mdx packages/docs/content/docs/supported-models.mdx | wc -l",
+          "expect": "4",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G4.1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"       4\\n\",\"passed\":true}"
+        },
+        {
+          "id": "G4.2",
+          "check": "grep -n qwen-token-plan-asr packages/docs/content/docs/supported-models.mdx",
+          "expect": "qwen-token-plan-asr",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G4.2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"84:| Qwen Token Plan ASR | `qwen-token-plan-asr` | Qwen Audio 3.0 ASR Flash (`qwen-audio-3.0-asr-flash`)                                                                                                                                                                                                                                                      |\\n\",\"passed\":true}"
+        }
+      ]
+    }
+  ],
+  "audit": [
+    {
+      "seq": 1,
+      "id": "b9ba5e56-d53d-42a6-8f5b-a3f4cd143b90",
+      "at": "2026-09-01T10:52:41.760Z",
+      "actor": "orchestrator",
+      "command": "init",
+      "transition": "spec-approved:docs/specs/003-qwen-token-plan-preset.md",
+      "slice": null,
+      "hash": "5e818b07128617e38f3d27f4325503729e9a35608a637f0dbc027aa12c90e5ee"
+    },
+    {
+      "seq": 2,
+      "id": "beee4e63-5157-4fe3-bd40-14da0c7655f2",
+      "at": "2026-09-01T10:52:41.761Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect",
+      "slice": "S1",
+      "hash": "4436cbe2350e64c7eb5ac8b968df4fea9d459e1b1891d821a0070671e21774d0",
+      "expectationHash": "edd07ccef98c91f4151caf167fb5c99e0f9b08d598e009835efd9aba503c4597"
+    },
+    {
+      "seq": 3,
+      "id": "3d3578b2-e61b-4d15-a4d6-712c0b142fb4",
+      "at": "2026-09-01T10:52:41.761Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/config/token-plan-presets.ts::TokenPlanModality",
+      "slice": "S1",
+      "hash": "c39dbc7ea7eff1555776cbe682e0f253437287f0944fdadff2bfbd796d59493c",
+      "expectationHash": "9715a2a2ce56f925a4b06f1a8329fdf833e56cb8b9d0a423a54fad97eb4bcf1e"
+    },
+    {
+      "seq": 4,
+      "id": "12b1fd86-baa3-4db8-b843-d1b9586d020a",
+      "at": "2026-09-01T10:52:41.761Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/config/token-plan-presets.ts::MODALITY_ORDER",
+      "slice": "S1",
+      "hash": "bc8538b9321d201a32dde9851f9cb40445ee266f69e8b737b6f304397b9b0efe",
+      "expectationHash": "eb62ab84f0bb728f785351bfa2c022ccf60b4e1289d7f695fdd9b519b721060c"
+    },
+    {
+      "seq": 5,
+      "id": "70fb08ef-ce50-4ea3-ab36-0ce092ca959e",
+      "at": "2026-09-01T10:52:41.761Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/config/token-plan-presets.ts::TOKEN_PLAN_PRESETS",
+      "slice": "S1",
+      "hash": "b3375bf113c0e6eba4af7523b3503d7a3681239a8d85d241c4442a20607acfea",
+      "expectationHash": "d69a6d155f27905cf057f0fc2edc1e98b6b14be2ad54098801eea8b5f702a97f"
+    },
+    {
+      "seq": 6,
+      "id": "78d78a98-3a2b-49ea-8294-a21a9c40a9b0",
+      "at": "2026-09-01T10:52:41.761Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/config/apply-token-plan.ts::applyModality",
+      "slice": "S1",
+      "hash": "1fe0725f20e4da9cf316e436a1fa7b19e43ceea8b3e3c8bf8294320d2028b342",
+      "expectationHash": "8402b215c006f7a266b0f9f7e98135e7eed8c0a480aea6cb2c2dcd456909f558"
+    },
+    {
+      "seq": 7,
+      "id": "86514718-3d94-4406-a333-e21a91a57aa5",
+      "at": "2026-09-01T10:52:41.761Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/config/apply-token-plan.ts::removeModality",
+      "slice": "S1",
+      "hash": "082b827ec35cabffe7d6d387ce6b1e9c2c5aaeb12bde5f24c23354933f662af4",
+      "expectationHash": "02fcf9f1fced986e7501fb00f06def33cb537c88e03db46f2a4c2c15d8fb82f9"
+    },
+    {
+      "seq": 8,
+      "id": "f615a0c2-3361-41ea-928a-0741c9a6303e",
+      "at": "2026-09-01T10:52:41.761Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/config/apply-token-plan.ts::TokenPlanActions",
+      "slice": "S1",
+      "hash": "ca4ae02814e5db5bc424916f5fb186ed8bc4e9043bc9aba1b9566cb8e4fca0b4",
+      "expectationHash": "7ce24a5e8d9e4dfcf272fa33d4ac3eec5df2428d4fcbd0773d3cf652b633736f"
+    },
+    {
+      "seq": 9,
+      "id": "81efa570-da46-44fb-baf6-6f5246b7650b",
+      "at": "2026-09-01T10:52:41.761Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:components/settings/token-plan-settings.tsx::MODALITY_LABEL_KEYS",
+      "slice": "S1",
+      "hash": "9aa29af73719259241c18640974c679bd16d4fcbebfaa2cc6aa1a5075214e73f",
+      "expectationHash": "143f39476a9b0a5146887b3b2f65768133e1ce01242c3e9dc020de8028d6b94b"
+    },
+    {
+      "seq": 10,
+      "id": "58e31cfb-92e5-4439-93b6-b710b64a39ac",
+      "at": "2026-09-01T10:52:41.761Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:components/settings/token-plan-settings.tsx::MODALITY_ICONS",
+      "slice": "S1",
+      "hash": "dfa4a390597b90ece94b0b8e6e977b1710357470a198958dd4c8bb8b355a7af3",
+      "expectationHash": "e4c33c3569205c5deae0a86a34007150377cd3b5d394280c88403575131c2f2c"
+    },
+    {
+      "seq": 11,
+      "id": "d6ff8832-9e9e-47dd-93c0-4f50223e5d99",
+      "at": "2026-09-01T10:52:41.761Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect",
+      "slice": "S2",
+      "hash": "6df5d3c8a08eb1749e86a89d95b78bf372d959a3deb23f06119f1488514cf925",
+      "expectationHash": "788a59719e80fe2c39a5b16792963a5709af34ea84945d269ab436eb829fad2b"
+    },
+    {
+      "seq": 12,
+      "id": "8a3a4acd-d343-456e-a164-d08f203b447f",
+      "at": "2026-09-01T10:52:41.761Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect",
+      "slice": "S3",
+      "hash": "f70541b90c31f12c4172817842a630f176c80f6aa689e71e9c17f9634e7e5faa",
+      "expectationHash": "8ca561b932bc8939d7b024ef231a9942e27deffa8d2fe3386ab3852b818aed9b"
+    },
+    {
+      "seq": 13,
+      "id": "a7cc0733-6eb0-4347-aa63-81d08fc7ca8d",
+      "at": "2026-09-01T10:52:41.761Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect",
+      "slice": "S4",
+      "hash": "e1de10a7fe62d1b4677924c9671d26ef73c23a76ce4edc38bcffbb8261cb5687",
+      "expectationHash": "98a0f5f37211d81c7853a088b99b84061ff3ec32088c4cf78b2bd335f111a6e2"
+    },
+    {
+      "seq": 14,
+      "id": "141dd252-ffa1-4214-8d3d-c47c319d0446",
+      "at": "2026-09-01T10:52:41.761Z",
+      "actor": "orchestrator",
+      "command": "init_batch",
+      "transition": "batch-init:S1,S2,S3,S4",
+      "slice": null,
+      "hash": "5e3512807507df89051d6063e30a632064b3f22f49a046adc6c4b6adcaaa9a2f"
+    },
+    {
+      "seq": 15,
+      "id": "0c71e91e-c2ce-458c-9b28-0be4d862a6c4",
+      "at": "2026-09-01T10:52:48.964Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S1:capture",
+      "slice": "S1",
+      "hash": "ab524e2e0c6e3f90fc0f70e9e1852563b19ca3b389175f18767779bafe737f49",
+      "fileHash": "4c88f9949df96c4de68209efb6b64a6b8dade396a27f2769b200ba23fb7bdb95"
+    },
+    {
+      "seq": 16,
+      "id": "332d2ea1-77f0-48da-8a14-782b4425a646",
+      "at": "2026-09-01T10:53:51.655Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/config/token-plan-presets.ts::TokenPlanModality",
+      "slice": "S1",
+      "hash": "8c6128c46e26e47bfd865fbe74e4f9c7a89e6bfc4b2b8cf3d0201b8d588010a8",
+      "fileHash": "3fe9009744e5c11e025156c034ee0651576e2bc43144d7f7f2618b57e407c654"
+    },
+    {
+      "seq": 17,
+      "id": "3df2125d-35d7-4d40-bf0d-3ba62e7c7930",
+      "at": "2026-09-01T10:53:51.695Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/config/token-plan-presets.ts::MODALITY_ORDER",
+      "slice": "S1",
+      "hash": "546b05f6da0212f6ea1406e022ee024af342e85157be9ab484f3bc8673ad4080",
+      "fileHash": "de17c2aee8ea949fe312a7a966932861d062c98019459706bb17eb9e5c404c50"
+    },
+    {
+      "seq": 18,
+      "id": "440a5bf6-338c-4305-8725-dce69ae7ff72",
+      "at": "2026-09-01T10:53:51.732Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/config/token-plan-presets.ts::TOKEN_PLAN_PRESETS",
+      "slice": "S1",
+      "hash": "29812ceda5aaeb6a658f92bb7b29c5b21ae70a3341df6e047b207d81942f95d1",
+      "fileHash": "8701d52ba98c848c77e4e8f52337d944c9e6f6df7b77588bb097eb1009e0808e"
+    },
+    {
+      "seq": 19,
+      "id": "a0a8a418-4a4a-485e-9a2d-eabef854156b",
+      "at": "2026-09-01T10:53:51.769Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:components/settings/token-plan-settings.tsx::MODALITY_LABEL_KEYS",
+      "slice": "S1",
+      "hash": "1bcc2cc308326277bc0572b04d676b3b423867dffd0a84c4fdf602a995b933e3",
+      "fileHash": "0a0d7bc3b465cbd66c0fe3bb110863e2e50d0922fb838167e582ea7fcfe7421d"
+    },
+    {
+      "seq": 20,
+      "id": "9b95bceb-737f-434d-8fea-db8149f2b36a",
+      "at": "2026-09-01T10:53:51.805Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:components/settings/token-plan-settings.tsx::MODALITY_ICONS",
+      "slice": "S1",
+      "hash": "9fe6803a8a09f2b71fe97bda1d04ad37cc115d8f294541960b17cd1e72bb3229",
+      "fileHash": "31990bab7244d6b61af7e323aa32fe84ce18dfc7bfbcf0b53319829cf20ae3b3"
+    },
+    {
+      "seq": 21,
+      "id": "025951ce-aeae-4fa0-8637-2bc6784a3c07",
+      "at": "2026-09-01T10:53:51.841Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/config/apply-token-plan.ts::TokenPlanActions",
+      "slice": "S1",
+      "hash": "a23e0dd32522456154b20039c25a61fd010bf872e92efafea9ce0f0397282696",
+      "fileHash": "efe4a0a8a3f3660c3829e7857415322cd515485201cc8c8c52cc2b617160ce09"
+    },
+    {
+      "seq": 22,
+      "id": "cc90972b-68ba-4054-bdd7-075796de5e1a",
+      "at": "2026-09-01T10:53:51.876Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/config/apply-token-plan.ts::applyModality",
+      "slice": "S1",
+      "hash": "4c6fafc7d8bc3004242ef3b65c8322e3323922b78e363b84adc234c7df4e4710",
+      "fileHash": "d4ae7445240d844d4fc19543c804ff806ba4f5b6a0cee2b96f6ca010ebf0ca2e"
+    },
+    {
+      "seq": 23,
+      "id": "734f68e0-63f8-41b1-b6fd-1061950932a4",
+      "at": "2026-09-01T10:53:51.911Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/config/apply-token-plan.ts::removeModality",
+      "slice": "S1",
+      "hash": "36497406308a50c26580e185b7948fff454d92bf09436df5046efb352f13a662",
+      "fileHash": "0313b5dbb44eef07d8622daa478ae535b00b5033477df64eb9f6f53f3db04ce7"
+    },
+    {
+      "seq": 24,
+      "id": "af2b9451-35fc-4647-8cee-fed810c0ef5b",
+      "at": "2026-09-01T10:54:48.474Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:clarification:ledger mechanics only: named contract-anchor symbols for S2/S3/S4 per the stage gate requirement; no intent change",
+      "slice": null,
+      "hash": "284d3bb48b9c807d90040c71c982fce017539ea43e3ff6976c3c2d3111fe80ac",
+      "fileHash": "c604eb2bd59bb1d03dcdc4a32e90c0367aede14db92d5487fe2fc22dd8c279ca"
+    },
+    {
+      "seq": 25,
+      "id": "1e2a66d9-0342-49c5-b7fe-ae73f9be76d8",
+      "at": "2026-09-01T10:54:48.513Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:target-add:tests/config/token-plan-precedence.test.ts::PRECEDENCE_SECTIONS",
+      "slice": "S2",
+      "hash": "b5fbcb763f96cad5cf033c8528c640a4a3414f5ce753584cc3da1c3879515c89",
+      "fileHash": "003b1d61d955ca7f21fec308444ed7f4cd622437f6ce900017896699402d489d"
+    },
+    {
+      "seq": 26,
+      "id": "cd3f167f-1663-4da7-a7d2-7597c2bd04a6",
+      "at": "2026-09-01T10:54:48.547Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:target-add:tests/server/server-providers-example.test.ts::EXAMPLE_TOKEN_PLAN_IDS",
+      "slice": "S3",
+      "hash": "d27ad57aa31f7bdb527db3f308c56d1ccb92d7107828c5358d78cc0b30828b68",
+      "fileHash": "5861d9dfcae735846eb01d9fde276d535a5e4f3de9b19b7d3c308c3240a42048"
+    },
+    {
+      "seq": 27,
+      "id": "37f9bdf6-23c6-4a2a-91b5-3ee17bbc68ef",
+      "at": "2026-09-01T10:55:05.235Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S4:target-add:README.md::Token Plan",
+      "slice": "S4",
+      "hash": "601a339ed96b43bb1854a6495cdae570b775fc6c28731c6f8de5dc4988e6f3e3",
+      "fileHash": "9a89cd91296c203833ba551397080a4cc5735f7d051cf865cfc1e0b0ff27c135"
+    },
+    {
+      "seq": 28,
+      "id": "54ca7c23-07e9-4d44-9ccc-502539dc3abf",
+      "at": "2026-09-01T10:55:05.271Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S2:capture",
+      "slice": "S2",
+      "hash": "5b53a451c92aac801f12fd4ea38a0e266b09d2621a46b97df0b0885a74f502f8",
+      "fileHash": "0e227e28108774c4cba70b15ea28e24c10457697ad668c268f59676025eadc49"
+    },
+    {
+      "seq": 29,
+      "id": "9cb647ea-03d4-482b-ac91-09cd9d1bdc2a",
+      "at": "2026-09-01T10:55:05.306Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S3:capture",
+      "slice": "S3",
+      "hash": "1f114321e9d67967de82db38a2fa8ff2a662e3e69a26030b3889611fe4d1dcd4",
+      "fileHash": "914bf2d967b695d46d1e7fa0c65bfb6599137ccac174e822f7090e2d47a82178"
+    },
+    {
+      "seq": 30,
+      "id": "4a8f5df7-a3de-4dbb-a562-deaff1599393",
+      "at": "2026-09-01T10:55:05.340Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S4:capture",
+      "slice": "S4",
+      "hash": "975614e7526966b0ba73eccddf1f362db864fbe680f283ed4d3fe17c48e25692",
+      "fileHash": "00400815ffbe997622d8e3859b598f890da1cfc155674c7ebe6d704a1fd054df"
+    },
+    {
+      "seq": 31,
+      "id": "69ffe7d6-95fe-4934-a7ac-cd987a608297",
+      "at": "2026-09-01T10:55:05.375Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:tests/config/token-plan-precedence.test.ts::PRECEDENCE_SECTIONS",
+      "slice": "S2",
+      "hash": "f8a4b6a5e1c9340f1c5e26191117a5e15cecb213b0b9acb96b4e64464b1f3e05",
+      "fileHash": "37f03d80e7902b8386437a11e919a0d3ecac2d879e3face83d0d210328f000ac"
+    },
+    {
+      "seq": 32,
+      "id": "eb28bacd-6d7f-447e-999e-cc55816760a1",
+      "at": "2026-09-01T10:55:05.409Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:tests/server/server-providers-example.test.ts::EXAMPLE_TOKEN_PLAN_IDS",
+      "slice": "S3",
+      "hash": "f906004dd818e20e31baed1b2bd7c8924c5b770e6413dc709cac059db462d776",
+      "fileHash": "386c6084e249b2966c368cdb0ae061df340b8ef02ef7513afddf9d9864aefb9b"
+    },
+    {
+      "seq": 33,
+      "id": "f05dc770-069e-48e6-a693-c6faa00dee64",
+      "at": "2026-09-01T10:55:05.443Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S4:postcondition:README.md::Token Plan",
+      "slice": "S4",
+      "hash": "46d5abeffa1bd1be83c47d55c29c324823facb56ff9ad9f24b7e8d7e41939e60",
+      "fileHash": "7481da014327c7c6135a132d7235cf89ae8599f4e0d9f85b45e15109ea8f9397"
+    },
+    {
+      "seq": 34,
+      "id": "cacb2613-9f39-4666-872c-86d442ef0e7c",
+      "at": "2026-09-01T10:55:05.478Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "982da26e77e58d90454fff5685f9fc77b6be2a072246b300c565b3cda4601ddf",
+      "fileHash": "ee762313a9a08ad9981a4241ddbc5153aef2aef187dc3e807f006ea6641d3510"
+    },
+    {
+      "seq": 35,
+      "id": "bec52085-e598-4d19-b628-7aff840f1874",
+      "at": "2026-09-01T11:03:00.096Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S1:impl:pending->ready_for_verification",
+      "slice": "S1",
+      "hash": "7f4f0b9dec12a787444e0b139459a7f437d7115ba558333d216f3312123fd913",
+      "fileHash": "3e011279a47833ff4707a3e04cceb1a9982a1d2aea2d8d957e763fc99fdb028e"
+    },
+    {
+      "seq": 36,
+      "id": "b5238d63-3c9f-4187-8ed6-1046154811a7",
+      "at": "2026-09-01T11:14:06.881Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S2:impl:pending->ready_for_verification",
+      "slice": "S2",
+      "hash": "9112a6da4662eea496d64d604ebd0a6511c18430aceea5db2b0e4b848c78c977",
+      "fileHash": "bc0f637fa3e10b8560845842401e000a8477c8e3a6a8d601ba250f47407cc577"
+    },
+    {
+      "seq": 37,
+      "id": "3cc861b4-875c-463a-8ae5-755b99a05ffd",
+      "at": "2026-09-01T11:22:13.399Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S3:impl:pending->ready_for_verification",
+      "slice": "S3",
+      "hash": "eada70d66db5461b29f355b5933afff1a867ab421fb387a0609b376463c41b46",
+      "fileHash": "834ce31e6ad90949987e25a703389d205f4b12252ced423d56b8d5afa14eeda5"
+    },
+    {
+      "seq": 38,
+      "id": "c7d3b765-ba8f-4034-b2b3-96708ba04dfb",
+      "at": "2026-09-01T11:26:00.734Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S4:impl:pending->ready_for_verification",
+      "slice": "S4",
+      "hash": "2cdf75b60a00d14471e7373ce8c1bcd6e1f2dd466e17f0278096f162d1cc868f",
+      "fileHash": "2d33d9baeda2aa3c35534081bc7e2014ea9be917d686b622801d1f697a879f18"
+    },
+    {
+      "seq": 39,
+      "id": "7b3ff1a2-521d-4197-a4be-5b8e1977ebf8",
+      "at": "2026-09-01T11:28:15.345Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "346e016d9709c79956cabe4c1b0f48e02cee89c3e99258a01a4174fe61ae3463",
+      "fileHash": "3fe374ac338993246dd364271032b785d2ee9224d3307adcdbc962d6077d97e8"
+    },
+    {
+      "seq": 40,
+      "id": "e72d3bbe-15c8-4249-b77b-014e5106bdbd",
+      "at": "2026-09-01T11:31:53.583Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S1:verification:pending->verified",
+      "slice": "S1",
+      "hash": "761827c08863622eb213c85e388373e7d2e6ad8972ad345396cdc5379e7c928a",
+      "oracle": "b3da6e1a7217c4c1f92f8932e2d5b7e5afbb60223c929e1085e0d08ca319feb4",
+      "evidence": "309d2191a3db57b28b0c77628bddf5321a0fa72866eafed1a33a14cb2f0da6cd",
+      "fileHash": "d31c107a197accd96e27585cea1750705e4303e30b8ace0b050e46ab564f9b3f"
+    },
+    {
+      "seq": 41,
+      "id": "ea503fba-d851-4d9b-9f5d-1874812d5db0",
+      "at": "2026-09-01T11:32:00.164Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S2:verification:pending->verified",
+      "slice": "S2",
+      "hash": "6106d11e9fbe3450c16ca8df4b641e10ca2dffa8f1cf6839247de3d52fe07f3e",
+      "oracle": "bbaab4773c065cece683e192185ff42a8bb06c55e2d62c5699414e0dc20cfe19",
+      "evidence": "145c0467f8e08f5c83638ec70058faf9c2f1559e608be5a88a05fc6a035e3118",
+      "fileHash": "6acebb2e677c8d7bdfa6c4e477cd15bd1c219c3e55c9c82f3c4b7c8d9fc9305b"
+    },
+    {
+      "seq": 42,
+      "id": "0e679a67-167a-4189-aaf2-e25c6869b1c7",
+      "at": "2026-09-01T11:32:05.637Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S3:verification:pending->verified",
+      "slice": "S3",
+      "hash": "891e19f31bc0032a7f1434c542fbda5d9c4ba9bb20262546c05c1daab77743c9",
+      "oracle": "20a683580cbd7f3346de879fc1ce90e8d9d736a0c3b2dca892705b52fffdd9c6",
+      "evidence": "c7133d0da6650be2978a76ced3fa03b202e972c4f76a97b79e22c545556d4fcf",
+      "fileHash": "97e06e076aa61770f291625d2f5fb168c9a0d28c6df0b7f0a508646ab64fd788"
+    },
+    {
+      "seq": 43,
+      "id": "27d13ec6-fa62-494f-b244-d172a2d3dd7e",
+      "at": "2026-09-01T11:32:09.189Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S4:verification:pending->verified",
+      "slice": "S4",
+      "hash": "e10fcb3ac8e6d201f8667f7c577d96617a976bf06cfc1d63b5d28be9c88b11a0",
+      "oracle": "c8e3192bc0ae59eb666bb344eef792d01c936918280fea5bd6ae868f78dfdb74",
+      "evidence": "80c47d86b98c97b4f601d86bcf91486e7dc40ed5adfa2a32ebce38921ccb9855",
+      "fileHash": "ff10240d12427cfde8ebb44c02842a2a4510ce91bd90e7b574cbbfa4c9ce79e6"
+    },
+    {
+      "seq": 44,
+      "id": "08dd4f49-11fa-4511-baab-28f24520fba1",
+      "at": "2026-09-01T11:38:09.544Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:correction:round-1 F1: record after-kind on all postconditions so diffs report clean",
+      "slice": null,
+      "hash": "e745665c1fc1d1fb383daae9fee33b8541df77a6f0b2868bdd12d04f18674fac",
+      "fileHash": "b549700126abfd12262bfc37b77702e0f7750646d6f2ee6caa1765b9b3a670d5"
+    },
+    {
+      "seq": 45,
+      "id": "1926e06e-cbd4-4e4e-8157-4daae790b627",
+      "at": "2026-09-01T11:38:09.577Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/config/token-plan-presets.ts::TokenPlanModality",
+      "slice": "S1",
+      "hash": "38fe3412acffba596fcd8a84becf20f48f144a497cd4e5d537331453e1abf9dc",
+      "fileHash": "aa04c8b3c85916f69471d9e869d5bab78e8e214773a970099f164cca6d71c715"
+    },
+    {
+      "seq": 46,
+      "id": "30bf53c0-0951-4a0b-8be4-fe2635e5ae9a",
+      "at": "2026-09-01T11:38:09.609Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/config/token-plan-presets.ts::MODALITY_ORDER",
+      "slice": "S1",
+      "hash": "da230aa7084d322bbe873e4131616d68254e0786ed3b5428b4315144db855b55",
+      "fileHash": "a7ec11c518030f2f05d08a32b84860a7f381e8da99349305405c90ce6c2a5bf2"
+    },
+    {
+      "seq": 47,
+      "id": "bfcf50b6-7193-4765-b399-a0630cc2c959",
+      "at": "2026-09-01T11:38:09.644Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/config/token-plan-presets.ts::TOKEN_PLAN_PRESETS",
+      "slice": "S1",
+      "hash": "5dc20dd6d6dad2fde7a2cb3c399462eb76eeb7606262bcaca918accafe428df5",
+      "fileHash": "9761ca1383ff7742725e9cd043c4835ad4c4b77c088bbe4de9400dde7b24613f"
+    },
+    {
+      "seq": 48,
+      "id": "6f3849ed-eb5b-4f2f-b0a3-902445e28b7c",
+      "at": "2026-09-01T11:38:09.676Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/config/apply-token-plan.ts::TokenPlanActions",
+      "slice": "S1",
+      "hash": "c02a7e52d6594d49d808fd96b0e97127a2d9c73b87c0b605f744da62102aedbd",
+      "fileHash": "8958be5d89013db1b7923512b1528992b97e8a8a1d9b598b5a7570169768e66d"
+    },
+    {
+      "seq": 49,
+      "id": "7605b857-cc6c-499f-9cc1-8e18ea3496e4",
+      "at": "2026-09-01T11:38:09.712Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:components/settings/token-plan-settings.tsx::MODALITY_LABEL_KEYS",
+      "slice": "S1",
+      "hash": "103d80dc46799b82a4070e3fc39197ba184571fd20687f9d69229af7a9728ae1",
+      "fileHash": "04f3b599b9419a78119eeda0d20ef0b5ca513e231c0fb5a0d80354427eb0e9fc"
+    },
+    {
+      "seq": 50,
+      "id": "09c6c65c-6ee5-4456-b5a8-bb069dfbc5c7",
+      "at": "2026-09-01T11:38:09.744Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:components/settings/token-plan-settings.tsx::MODALITY_ICONS",
+      "slice": "S1",
+      "hash": "ba5bc74330921b74a49b64afcbc25587f43afde298e8d3fe3056ce3be5414279",
+      "fileHash": "4c65934977d673a06e07daf824db27bb7167c5fbd6543423916015e88b60737d"
+    },
+    {
+      "seq": 51,
+      "id": "18ec735b-004a-48dd-a41a-9d4126d23a26",
+      "at": "2026-09-01T11:38:09.776Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S4:postcondition:README.md::Token Plan",
+      "slice": "S4",
+      "hash": "535aa0386b34d576b76c103196073614dec307ca115021a3edd99da75800761d",
+      "fileHash": "ee5860cfd6db61c85deea0af38a6e5c34e25249fca400bd83b91eee4a789558f"
+    },
+    {
+      "seq": 52,
+      "id": "a8e854cf-26f7-4923-8496-47e223bf711f",
+      "at": "2026-09-01T11:38:09.808Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "fd72ef5aa9c399aba1edc5c3527733528259448594a479063ecc0ebe96893819",
+      "fileHash": "6e31f519d515aca10fd8ee78420ca7346b64e7027f813ee1bf065e37b5d12580"
+    },
+    {
+      "seq": 53,
+      "id": "9661276b-bd88-48a4-a0f9-1c9e903df2b2",
+      "at": "2026-09-01T11:42:02.773Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "9a61cdb454eabb160858235ac1bcf6615fb0d9679ad5541072f49a990c21997a",
+      "fileHash": "7b1b132adf7ae1e76c7f56c1b367402e1d59a2f73b3fc4bb0c6418668ff1e44b"
+    },
+    {
+      "seq": 54,
+      "id": "d54d0a9d-86d6-44c8-9fde-37e7e77d4a4f",
+      "at": "2026-09-01T11:43:21.173Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S1:verification:pending->verified",
+      "slice": "S1",
+      "hash": "b18111a57239d41fe55ad55f6c3a03d14e6cd6696dcf15c6557a5af974db4c0e",
+      "oracle": "41d111691111f251838744ffdf9cf88e7e582283ef2634dd368be66c354796ff",
+      "evidence": "ee98bf46a0fc442ca67f04e7ba117ff508399eb01a19a43e3c375363e533d982",
+      "fileHash": "30eae9291403213f323359354110e6dfd1057fc959982fbf44220d2a64fefb16"
+    },
+    {
+      "seq": 55,
+      "id": "8644e311-b757-44d2-8c3a-65f31ae86082",
+      "at": "2026-09-01T11:44:31.506Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:verification->research_update",
+      "slice": null,
+      "hash": "08b641f0aefa59891840a5df45f1c882168d88c103b9afd3f3c66fcc30200b88",
+      "fileHash": "96b37567cf84e9b1faefbb8660e3332c55e63a5df9a0b5d54e9836a2fbb5db4e"
+    },
+    {
+      "seq": 56,
+      "id": "520b16e3-6ed5-4c97-81de-801254d04638",
+      "at": "2026-09-01T11:51:55.721Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:respecify:stage 4 research update: shipped lines, 10 learnings",
+      "slice": null,
+      "hash": "cead84d11da13139abdd9a6118a8b66ba11f3aaaf5e753baf9b24b9e08f8b175",
+      "fileHash": "2dba2d6f1538706e3eed44292b37924f07147e787ebe67320d89045a6eee6f3e"
+    },
+    {
+      "seq": 57,
+      "id": "fdfcf0a0-8d8a-4d27-9076-1cec787062bc",
+      "at": "2026-09-01T22:06:55.229Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:correction:record symbol-expectation requirement and backfill the three anchors flagged by accept",
+      "slice": null,
+      "hash": "437aa3c245f7e0ba2475f3d559dfb2a2b29af1c5bc4f2fd1bafb5af26bce1c59",
+      "fileHash": "2a0a41052f74878655fc508e24eaaad6bb1b752ed7bd47b7acf352a001d0565b"
+    },
+    {
+      "seq": 58,
+      "id": "bc4af804-a6ec-400b-836f-8b2b925c7d03",
+      "at": "2026-09-01T22:06:55.269Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:tests/config/token-plan-precedence.test.ts::PRECEDENCE_SECTIONS",
+      "slice": "S2",
+      "hash": "840688971e77a4ce571724e37637fe5e3230da08c5458ef066146ce4c0121dbe",
+      "expectationHash": "f23367b502116836e2baae41261327b582841305d2f364e5ba021dfefb10471d",
+      "fileHash": "26ae47edbd162b26f29bc070ff60a0a0723c9c19eaffe78dbef898e999a5773a"
+    },
+    {
+      "seq": 59,
+      "id": "9b835ac4-50df-4c99-a0ce-9f2fd42e7f94",
+      "at": "2026-09-01T22:06:55.304Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:tests/server/server-providers-example.test.ts::EXAMPLE_TOKEN_PLAN_IDS",
+      "slice": "S3",
+      "hash": "d0a22b6414f57c0ef3206699397b4e6a596eaaf66854564871a166658001b53b",
+      "expectationHash": "a13e3cdc73ce0832de447c14bb68826344b23a835e2c431b9f8d866c964a5d3a",
+      "fileHash": "499d85867b470e0529f9ebe9345bc19767651b4bf19224d58332c269fb82eb50"
+    },
+    {
+      "seq": 60,
+      "id": "3d9473f8-5eea-4761-9cc7-7c988eaa344b",
+      "at": "2026-09-01T22:06:55.341Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect-symbol:README.md::Token Plan",
+      "slice": "S4",
+      "hash": "0268864cae6923c21733d0789675e1e00c28ca72fe1b8537a55614500f118007",
+      "expectationHash": "64d7b2cad44d998e89478bd06e23c520501f5fc5601d74ccc572a33a8b3ae564",
+      "fileHash": "8bba87262c3249e4a771fccada87e5fe8171e330823599f8a7972cf3b4da8035"
+    },
+    {
+      "seq": 61,
+      "id": "9958d51f-6565-46f3-b637-c2d54d8e657a",
+      "at": "2026-09-01T22:06:55.380Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "26096361cbe62d64c029a75e0f2e4d27f560541061b832312f103cd6e5320352",
+      "fileHash": "952df4f02080453a6b1a2b9521797b6ba7887ad21251aa022b28165dc731059f"
+    },
+    {
+      "seq": 62,
+      "id": "b2aa4f9c-d711-4294-a370-2900087a888c",
+      "at": "2026-09-01T22:06:55.417Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "151daa88184a0aa7336b0e9e6a676940fdde52c16d11ef4da204fe5a543f37e8",
+      "fileHash": "ed8a4bc86622e0a9d58f3ab0c25c224e643baec03d6afdaacb546dd590e1f6e7"
+    },
+    {
+      "seq": 63,
+      "id": "e525da94-2212-4132-9150-3aa410e2ca78",
+      "at": "2026-09-01T22:06:55.462Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:verification->research_update",
+      "slice": null,
+      "hash": "0453b7a1cb0d4aabf1942eeeaf467159249760f3c68760347830e8a4ddb2cb23",
+      "fileHash": "2798a989005d3bedfdeabef07b1c50c9f26fb5bfc5fd3083d8ab00905f19a52f"
+    },
+    {
+      "seq": 64,
+      "id": "4df8963e-ef41-4cba-a90d-aa3693daab52",
+      "at": "2026-09-01T22:06:55.505Z",
+      "actor": "verifier",
+      "command": "certify",
+      "transition": "certify:1389e23ffb3d9067a0fcdb9f313fa36b78bd53b099caaece75f3a5315cf02cb0",
+      "slice": null,
+      "hash": "08d00dd7e0a8c5c1d0dd424f5a5a6b8a1713226cae5924b89757370430c2fbfa",
+      "oracle": "1389e23ffb3d9067a0fcdb9f313fa36b78bd53b099caaece75f3a5315cf02cb0",
+      "fileHash": "c92e19b66d430d99fef0ccbb4a7fce248206df5d8a1ce0aa2c98938d59014e27"
+    }
+  ],
+  "fileHash": "1b4e6122b5d8c4e595e6d9f009d00180785f563ce11d39c5c4baa4a84a368f93"
+}
