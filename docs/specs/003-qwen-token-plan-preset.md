@@ -1,6 +1,6 @@
 # Batch 003 spec: qwen-token-plan preset registration
 
-Spec status: research
+Spec status: implementation
 
 ## Problem Statement
 
@@ -30,7 +30,7 @@ Proposed gates:
 - G1.3 `pnpm check:i18n-keys` expect `passed`
 
 **S2: Precedence and clobber pins** (risk tier 3, integration gate)
-Intent: pin the rule that a server-managed env or yml value wins over the client preset store, per field.
+Intent: pin the rule that a server-managed env or yml value wins over the client preset store, per field. The new test file exposes the covered section list as a top-level `const PRECEDENCE_SECTIONS` so the ledger can anchor a symbol.
 Stories: 3, 4.
 Blockers: S1.
 Proposed gates:
@@ -39,7 +39,7 @@ Proposed gates:
 - G2.3 `npx vitest run tests/config/token-plan-apply-persist.test.ts` expect `passed`
 
 **S3: Env and yml examples** (risk tier 2)
-Intent: add the token-plan comment pointers to `.env.example` and create the new `server-providers.yml.example`.
+Intent: add the token-plan comment pointers to `.env.example` and create the new `server-providers.yml.example`. The new example test exposes the asserted id list as a top-level `const EXAMPLE_TOKEN_PLAN_IDS` so the ledger can anchor a symbol.
 Stories: 2.
 Blockers: none.
 Proposed gates:
@@ -47,7 +47,7 @@ Proposed gates:
 - G3.2 `npx vitest run tests/server/provider-config.test.ts` expect `passed`
 
 **S4: Docs slice** (risk tier 2)
-Intent: update the README pair and the docs provider tables with the token-plan providers.
+Intent: update the README pair and the docs provider tables with the token-plan providers. `README.md` gains a `Token Plan` subsection heading as the ledger anchor.
 Stories: 5.
 Blockers: none.
 Proposed gates:

@@ -4,12 +4,12 @@
   "spec": {
     "reference": "docs/specs/003-qwen-token-plan-preset.md",
     "title": "Batch 003 spec: qwen-token-plan preset registration",
-    "hash": "1b938721392b66680af3da6988021ebdf5808d280bd50e500b6e567e3d553daf"
+    "hash": "e6d4c64551615a468f5e4c2d1a6563fb936a37634aa977155253ebbfe7bffc17"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "research",
+  "stage": "implementation",
   "retry": {
     "count": 0,
     "max": 5,
@@ -200,7 +200,24 @@
         4
       ],
       "blocked_by": [],
-      "targets": [],
+      "targets": [
+        {
+          "path": "tests/config/token-plan-precedence.test.ts",
+          "symbols": [
+            {
+              "name": "PRECEDENCE_SECTIONS",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        }
+      ],
       "riskTier": 3,
       "uuid": "51a70871-afcb-46d8-9adc-a42dc877035f",
       "impl": {
@@ -247,7 +264,24 @@
         2
       ],
       "blocked_by": [],
-      "targets": [],
+      "targets": [
+        {
+          "path": "tests/server/server-providers-example.test.ts",
+          "symbols": [
+            {
+              "name": "EXAMPLE_TOKEN_PLAN_IDS",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        }
+      ],
       "riskTier": 2,
       "uuid": "90c9a2c9-3bd9-44a6-8fb6-cafd7161c401",
       "impl": {
@@ -286,7 +320,23 @@
         5
       ],
       "blocked_by": [],
-      "targets": [],
+      "targets": [
+        {
+          "path": "README.md",
+          "symbols": [
+            {
+              "name": "Token Plan",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        }
+      ],
       "riskTier": 2,
       "uuid": "e47f99c2-882a-4148-9b3b-d4a51f34f8af",
       "impl": {
@@ -569,7 +619,128 @@
       "slice": "S1",
       "hash": "36497406308a50c26580e185b7948fff454d92bf09436df5046efb352f13a662",
       "fileHash": "0313b5dbb44eef07d8622daa478ae535b00b5033477df64eb9f6f53f3db04ce7"
+    },
+    {
+      "seq": 24,
+      "id": "af2b9451-35fc-4647-8cee-fed810c0ef5b",
+      "at": "2026-09-01T10:54:48.474Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:clarification:ledger mechanics only: named contract-anchor symbols for S2/S3/S4 per the stage gate requirement; no intent change",
+      "slice": null,
+      "hash": "284d3bb48b9c807d90040c71c982fce017539ea43e3ff6976c3c2d3111fe80ac",
+      "fileHash": "c604eb2bd59bb1d03dcdc4a32e90c0367aede14db92d5487fe2fc22dd8c279ca"
+    },
+    {
+      "seq": 25,
+      "id": "1e2a66d9-0342-49c5-b7fe-ae73f9be76d8",
+      "at": "2026-09-01T10:54:48.513Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:target-add:tests/config/token-plan-precedence.test.ts::PRECEDENCE_SECTIONS",
+      "slice": "S2",
+      "hash": "b5fbcb763f96cad5cf033c8528c640a4a3414f5ce753584cc3da1c3879515c89",
+      "fileHash": "003b1d61d955ca7f21fec308444ed7f4cd622437f6ce900017896699402d489d"
+    },
+    {
+      "seq": 26,
+      "id": "cd3f167f-1663-4da7-a7d2-7597c2bd04a6",
+      "at": "2026-09-01T10:54:48.547Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:target-add:tests/server/server-providers-example.test.ts::EXAMPLE_TOKEN_PLAN_IDS",
+      "slice": "S3",
+      "hash": "d27ad57aa31f7bdb527db3f308c56d1ccb92d7107828c5358d78cc0b30828b68",
+      "fileHash": "5861d9dfcae735846eb01d9fde276d535a5e4f3de9b19b7d3c308c3240a42048"
+    },
+    {
+      "seq": 27,
+      "id": "37f9bdf6-23c6-4a2a-91b5-3ee17bbc68ef",
+      "at": "2026-09-01T10:55:05.235Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S4:target-add:README.md::Token Plan",
+      "slice": "S4",
+      "hash": "601a339ed96b43bb1854a6495cdae570b775fc6c28731c6f8de5dc4988e6f3e3",
+      "fileHash": "9a89cd91296c203833ba551397080a4cc5735f7d051cf865cfc1e0b0ff27c135"
+    },
+    {
+      "seq": 28,
+      "id": "54ca7c23-07e9-4d44-9ccc-502539dc3abf",
+      "at": "2026-09-01T10:55:05.271Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S2:capture",
+      "slice": "S2",
+      "hash": "5b53a451c92aac801f12fd4ea38a0e266b09d2621a46b97df0b0885a74f502f8",
+      "fileHash": "0e227e28108774c4cba70b15ea28e24c10457697ad668c268f59676025eadc49"
+    },
+    {
+      "seq": 29,
+      "id": "9cb647ea-03d4-482b-ac91-09cd9d1bdc2a",
+      "at": "2026-09-01T10:55:05.306Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S3:capture",
+      "slice": "S3",
+      "hash": "1f114321e9d67967de82db38a2fa8ff2a662e3e69a26030b3889611fe4d1dcd4",
+      "fileHash": "914bf2d967b695d46d1e7fa0c65bfb6599137ccac174e822f7090e2d47a82178"
+    },
+    {
+      "seq": 30,
+      "id": "4a8f5df7-a3de-4dbb-a562-deaff1599393",
+      "at": "2026-09-01T10:55:05.340Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S4:capture",
+      "slice": "S4",
+      "hash": "975614e7526966b0ba73eccddf1f362db864fbe680f283ed4d3fe17c48e25692",
+      "fileHash": "00400815ffbe997622d8e3859b598f890da1cfc155674c7ebe6d704a1fd054df"
+    },
+    {
+      "seq": 31,
+      "id": "69ffe7d6-95fe-4934-a7ac-cd987a608297",
+      "at": "2026-09-01T10:55:05.375Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:tests/config/token-plan-precedence.test.ts::PRECEDENCE_SECTIONS",
+      "slice": "S2",
+      "hash": "f8a4b6a5e1c9340f1c5e26191117a5e15cecb213b0b9acb96b4e64464b1f3e05",
+      "fileHash": "37f03d80e7902b8386437a11e919a0d3ecac2d879e3face83d0d210328f000ac"
+    },
+    {
+      "seq": 32,
+      "id": "eb28bacd-6d7f-447e-999e-cc55816760a1",
+      "at": "2026-09-01T10:55:05.409Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:tests/server/server-providers-example.test.ts::EXAMPLE_TOKEN_PLAN_IDS",
+      "slice": "S3",
+      "hash": "f906004dd818e20e31baed1b2bd7c8924c5b770e6413dc709cac059db462d776",
+      "fileHash": "386c6084e249b2966c368cdb0ae061df340b8ef02ef7513afddf9d9864aefb9b"
+    },
+    {
+      "seq": 33,
+      "id": "f05dc770-069e-48e6-a693-c6faa00dee64",
+      "at": "2026-09-01T10:55:05.443Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S4:postcondition:README.md::Token Plan",
+      "slice": "S4",
+      "hash": "46d5abeffa1bd1be83c47d55c29c324823facb56ff9ad9f24b7e8d7e41939e60",
+      "fileHash": "7481da014327c7c6135a132d7235cf89ae8599f4e0d9f85b45e15109ea8f9397"
+    },
+    {
+      "seq": 34,
+      "id": "cacb2613-9f39-4666-872c-86d442ef0e7c",
+      "at": "2026-09-01T10:55:05.478Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "982da26e77e58d90454fff5685f9fc77b6be2a072246b300c565b3cda4601ddf",
+      "fileHash": "ee762313a9a08ad9981a4241ddbc5153aef2aef187dc3e807f006ea6641d3510"
     }
   ],
-  "fileHash": "c604eb2bd59bb1d03dcdc4a32e90c0367aede14db92d5487fe2fc22dd8c279ca"
+  "fileHash": "3e011279a47833ff4707a3e04cceb1a9982a1d2aea2d8d957e763fc99fdb028e"
 }
