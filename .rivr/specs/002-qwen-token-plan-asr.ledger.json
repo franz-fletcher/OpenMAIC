@@ -4,12 +4,12 @@
   "spec": {
     "reference": "docs/specs/002-qwen-token-plan-asr.md",
     "title": "Batch 002 spec: qwen-token-plan-asr synchronous provider",
-    "hash": "736c7af0533363c0376c7cb2a75961fb6ed7f8a0a8630deb999306509d119380"
+    "hash": "1e6aae35513dbeda91c703ed06da88eded09fe1ffd82e19e3de56f04432b6f8c"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "implementation",
+  "stage": "verification",
   "retry": {
     "count": 3,
     "max": 5,
@@ -89,8 +89,10 @@
       "riskTier": 2,
       "uuid": "f14cb372-6cad-4d12-a7c7-74ba24bfeebf",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "fb25e9d7acc34927143ef101984bd1334ed7243d2d76da9a7bd9e576a169f826",
+        "actor": "implementer",
+        "at": "2026-09-01T06:25:17.473Z"
       },
       "verification": {
         "status": "rejected",
@@ -910,7 +912,29 @@
       "slice": null,
       "hash": "efd224c5eb75f6eb8d0ae8845cd2a419602181f9454f80edb69d0da49bd9458c",
       "fileHash": "9c9340461188a31b40f93400d05d79364192ba2579383a49143797ebd2599ce4"
+    },
+    {
+      "seq": 41,
+      "id": "69f82fc9-11b5-47f7-9ec2-c2bcd372f6f2",
+      "at": "2026-09-01T06:25:17.473Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S1:impl:pending->ready_for_verification",
+      "slice": "S1",
+      "hash": "eba6302d44d8aacbe8e2b58c0325533120d7990d31ddcae1d9fec21f4d2d5310",
+      "fileHash": "79b1a2edbf4870833d3c67fccc77f7c2372bc5c132539b8483434cc9c6a893c7"
+    },
+    {
+      "seq": 42,
+      "id": "0d605ed9-cb45-4912-835d-47535cb6c0ad",
+      "at": "2026-09-01T06:26:27.530Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "e7c3ac4eb52e8ef642e653cdca4def26d9fd00dd2a328e07d077e8043716d55e",
+      "fileHash": "c45fff0f5f40025f44b31a3bbf1aea14cc47f162913c36945f16e0b96a633b64"
     }
   ],
-  "fileHash": "79b1a2edbf4870833d3c67fccc77f7c2372bc5c132539b8483434cc9c6a893c7"
+  "fileHash": "06bd6a2cc81efd7b9c69be2dcdb1900ba920124f45c0c3975925a37bfb031064"
 }
