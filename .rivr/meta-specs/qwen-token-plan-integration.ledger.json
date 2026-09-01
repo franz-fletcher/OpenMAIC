@@ -5,7 +5,7 @@
   "spec": {
     "reference": "docs/meta-specs/qwen-token-plan-integration.md",
     "title": "Qwen Token Plan Integration (meta-spec)",
-    "hash": "29579103b35ae53e5af3c5b24c0b23b04afec22bce8898f1970155a755a237ee"
+    "hash": "823787d3745016a5d8f512b03a689ca77a5f2d3d1b97a0b5584a4b5e54061b15"
   },
   "tracker": {
     "mode": "none"
@@ -95,7 +95,18 @@
       "slice": null,
       "hash": "410cf79bd6bd691bea8b1bd8be803f08d9d8337624cdfdf18df4f2515222ab87",
       "fileHash": "9c0f93aafde5503d262397c30f773a1e222c199916d1b30a802110beaeffa5ef"
+    },
+    {
+      "seq": 7,
+      "id": "06d583b8-f5f7-41e2-99fa-4d02d2b06c57",
+      "at": "2026-09-01T01:27:11.814Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:extension:batch 006 asr-key-preflight-parity registered as final batch (operator request after batch-002 grilling)",
+      "slice": null,
+      "hash": "762f659c11267469cd3c7a0ab50173e0aee9ef8951a0f8e759f50767c700abaf",
+      "fileHash": "9fcd7103e84db3a3752102dfb803e3a48c0cf5d8644dc81c08793e99ff4c72d4"
     }
   ],
-  "fileHash": "9fcd7103e84db3a3752102dfb803e3a48c0cf5d8644dc81c08793e99ff4c72d4"
+  "fileHash": "7ad0d9e9e4c040a13505c9da96c55215d19707c6de0c9ec8b0b4080687a8f2c5"
 }

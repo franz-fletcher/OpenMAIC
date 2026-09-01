@@ -73,7 +73,8 @@ Video protocol facts:
 | 002 | `asr-sync-provider` | queued. |
 | 003 | `token-plan-preset-registration` | queued. |
 | 004 | `video-i2v-r2v` | queued. |
-| 005 | `media-test-redaction` | queued. Final batch. |
+| 005 | `media-test-redaction` | queued. |
+| 006 | `asr-preflight-parity` | queued. Final batch. |
 | blocked | `voice-cloning` | vendor gap, probe evidence. |
 | documented-only | `realtime` | no app surface. |
 
@@ -83,7 +84,9 @@ Batch 003 scope: the `TokenPlanModality` union gains `asr`. Today the union at `
 
 Batch 004 scope: `lib/media/adapters/happyhorse-adapter.ts:98-116` sends `input.prompt` only. The batch adds first-frame and reference-image inputs for `happyhorse-1.1-i2v` and `happyhorse-1.1-r2v`. It updates the model list at `lib/media/video-providers.ts:112-122`.
 
-Batch 005 scope (final batch, closes finding F5): `tests/server/classroom-media-generation.test.ts` prints a live bearer key in its failure output when the upstream call rejects. The evidence sits in `docs/research/001-verification-report.md` (finding F5, round 2). The batch redacts secret material from captured fetch-mock output and adds a hermetic guard test proving no key substring reaches test logs. No product code changes. The batch also removes the batch-001 gate exclusion for this file once fixed.
+Batch 005 scope (closes finding F5): `tests/server/classroom-media-generation.test.ts` prints a live bearer key in its failure output when the upstream call rejects. The evidence sits in `docs/research/001-verification-report.md` (finding F5, round 2). The batch redacts secret material from captured fetch-mock output and adds a hermetic guard test proving no key substring reaches test logs. No product code changes. The batch also removes the batch-001 gate exclusion for this file once fixed.
+
+Batch 006 scope (final batch, operator request 2026-09-01): transcription route key preflight parity. `app/api/transcribe/route.ts` has no missing-key contract. A request without a configured ASR key takes the generic 500 error path for every ASR provider. The batch adds the 400 `MISSING_API_KEY` preflight that `app/api/generate/tts/route.ts:112-119` already enforces for TTS, then adds the per-provider missing-key test matrix across the ASR registry. It changes route behavior for all ASR providers, so it ships as its own cycle with its own approval.
 
 Blocked record `voice-cloning`: every enrollment model returns 404. The re-check trigger is an enrollment model appearing in the plan catalog.
 
