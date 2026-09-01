@@ -1,6 +1,6 @@
 # Batch 002 spec: qwen-token-plan-asr synchronous provider
 
-Spec status: implementation
+Spec status: verification
 
 ## Problem Statement
 

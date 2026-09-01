@@ -35,3 +35,13 @@ S1 rejected; S2, S3, S4 verified. Audit #33-#35 verify marks, #36 reject-batch (
 ## Overall
 
 Certifiable: NO (pending). The rejection is an oracle defect, not code. Orchestrator route: research rebind, redefine G1.3, re-advance, implementer re-marks S1, verifier round 2 covers S1 only.
+
+---
+
+# ROUND 2 addendum (same day)
+
+S1-only scope after the F1 oracle repair. Diff 3/3 from repo root (F2 doctrine applied). Fresh gates: G1.1 16 passed; G1.2 i18n passed; G1.3 prints literal TSC_OK, exit 0 (regex defect closed). No vendor calls. Statuses: S1 verified (#43) joining S2/S3/S4. Chain valid, 43 entries.
+
+Retry-counter observation: count=3, consecutive_same_cause=1 at the escalate threshold. The drift comes from the repair cycle (gate remove/add + re-mark + two advances), not from three same-cause failures. Noted, no action.
+
+OVERALL: certifiable YES. Awaiting human certification and local merge.
