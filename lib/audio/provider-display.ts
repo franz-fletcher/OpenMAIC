@@ -17,6 +17,7 @@ const ASR_PROVIDER_NAME_KEYS: Record<string, string> = {
   'openai-whisper': 'settings.providerOpenAIWhisper',
   'browser-native': 'settings.providerBrowserNative',
   'qwen-asr': 'settings.providerQwenASR',
+  'qwen-token-plan-asr': 'settings.providerQwenTokenPlanASR',
   'azure-asr': 'settings.providerAzureASR',
   'funasr-asr': 'settings.providerFunASRASR',
   'lemonade-asr': 'settings.providerLemonadeASR',

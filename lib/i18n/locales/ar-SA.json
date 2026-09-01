@@ -1453,6 +1453,7 @@
     "providerOpenAIWhisper": "OpenAI ASR (gpt-4o-mini-transcribe)",
     "providerBrowserNative": "التعرّف على الكلام المدمج في المتصفح",
     "providerQwenASR": "Qwen ASR (سحابة علي بابا بايليان)",
+    "providerQwenTokenPlanASR": "Qwen Token Plan التعرف على الكلام",
     "providerFunASRASR": "FunASR (محلي)",
     "providerLemonadeASR": "Lemonade ASR (محلي)",
     "providerAzureASR": "Azure STT",

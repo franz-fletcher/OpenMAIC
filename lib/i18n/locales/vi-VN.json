@@ -1453,6 +1453,7 @@
     "providerOpenAIWhisper": "OpenAI ASR (gpt-4o-mini-transcribe)",
     "providerBrowserNative": "Nhận dạng giọng nói sẵn có của trình duyệt",
     "providerQwenASR": "Qwen ASR (Alibaba Cloud Bailian)",
+    "providerQwenTokenPlanASR": "Qwen Token Plan Nhận dạng giọng nói",
     "providerFunASRASR": "FunASR (Cục bộ)",
     "providerLemonadeASR": "Lemonade ASR (Cục bộ)",
     "providerAzureASR": "Azure STT",

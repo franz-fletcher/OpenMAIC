@@ -522,6 +522,12 @@ const getDefaultAudioConfig = () => ({
     'openai-whisper': { apiKey: '', baseUrl: '', enabled: true },
     'browser-native': { apiKey: '', baseUrl: '', enabled: true },
     'qwen-asr': { apiKey: '', baseUrl: '', enabled: false },
+    'qwen-token-plan-asr': {
+      apiKey: '',
+      baseUrl: '',
+      modelId: 'qwen-audio-3.0-asr-flash',
+      enabled: false,
+    },
     'azure-asr': { apiKey: '', baseUrl: '', enabled: false },
     'funasr-asr': { apiKey: '', baseUrl: '', enabled: false },
     'lemonade-asr': { apiKey: '', baseUrl: '', enabled: false },

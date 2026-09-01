@@ -1453,6 +1453,7 @@
     "providerOpenAIWhisper": "OpenAI ASR (gpt-4o-mini-transcribe)",
     "providerBrowserNative": "ASR Nativo do Navegador",
     "providerQwenASR": "Qwen ASR (Alibaba Cloud Bailian)",
+    "providerQwenTokenPlanASR": "Qwen Token Plan Reconhecimento de fala",
     "providerFunASRASR": "FunASR (Local)",
     "providerLemonadeASR": "Lemonade ASR (Local)",
     "providerAzureASR": "Azure STT",
