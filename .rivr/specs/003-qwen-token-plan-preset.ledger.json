@@ -1,0 +1,575 @@
+{
+  "schema_version": 2,
+  "$schema": "https://rivr.dev/schemas/ledger/v2",
+  "spec": {
+    "reference": "docs/specs/003-qwen-token-plan-preset.md",
+    "title": "Batch 003 spec: qwen-token-plan preset registration",
+    "hash": "1b938721392b66680af3da6988021ebdf5808d280bd50e500b6e567e3d553daf"
+  },
+  "tracker": {
+    "mode": "none"
+  },
+  "stage": "research",
+  "retry": {
+    "count": 0,
+    "max": 5,
+    "consecutive_same_cause": 0,
+    "escalate_at": 3
+  },
+  "slices": [
+    {
+      "id": "S1",
+      "title": "Union growth, ASR wiring, and the Qwen preset",
+      "intent": "Add asr to the modality union and order, asr apply/remove cases, TokenPlanActions setter, UI label and icon, and the full qwen-token-plan preset entry.",
+      "user_stories": [
+        1,
+        4
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/config/token-plan-presets.ts",
+          "symbols": [
+            {
+              "name": "TokenPlanModality",
+              "kind": "type",
+              "expectation": "Union includes asr alongside llm image video tts webSearch.",
+              "before": {
+                "exists": true,
+                "kind": "type"
+              },
+              "postcondition": {
+                "exists": true
+              },
+              "postcondition_quality": "VERIFIED"
+            },
+            {
+              "name": "MODALITY_ORDER",
+              "kind": "variable",
+              "expectation": "asr sits between tts and webSearch.",
+              "before": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition": {
+                "exists": true
+              },
+              "postcondition_quality": "VERIFIED"
+            },
+            {
+              "name": "TOKEN_PLAN_PRESETS",
+              "kind": "variable",
+              "expectation": "Contains the qwen-token-plan preset with the five frozen targets.",
+              "before": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition": {
+                "exists": true
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "lib/config/apply-token-plan.ts",
+          "symbols": [
+            {
+              "name": "applyModality",
+              "kind": "function",
+              "expectation": "Handles the asr case writing provider qwen-token-plan-asr config with enabled true.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  modality: TokenPlanModality,\n  target: TokenPlanModalityTarget,\n  preset: TokenPlanPreset,\n  apiKey: string,\n  actions: TokenPlanActions,\n): void"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  modality: TokenPlanModality,\n  target: TokenPlanModalityTarget,\n  preset: TokenPlanPreset,\n  apiKey: string,\n  actions: TokenPlanActions,\n): void"
+              },
+              "postcondition_quality": "VERIFIED"
+            },
+            {
+              "name": "removeModality",
+              "kind": "function",
+              "expectation": "Handles the asr case clearing key and base url with enabled false.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  modality: TokenPlanModality,\n  target: TokenPlanModalityTarget,\n  actions: TokenPlanActions,\n): void"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  modality: TokenPlanModality,\n  target: TokenPlanModalityTarget,\n  actions: TokenPlanActions,\n): void"
+              },
+              "postcondition_quality": "VERIFIED"
+            },
+            {
+              "name": "TokenPlanActions",
+              "kind": "type",
+              "expectation": "Declares setASRProviderConfig mirroring the store setter.",
+              "before": {
+                "exists": true,
+                "kind": "interface"
+              },
+              "postcondition": {
+                "exists": true
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "components/settings/token-plan-settings.tsx",
+          "symbols": [
+            {
+              "name": "MODALITY_LABEL_KEYS",
+              "kind": "variable",
+              "expectation": "Includes asr mapping to settings.asrSettings.",
+              "before": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition": {
+                "exists": true
+              },
+              "postcondition_quality": "VERIFIED"
+            },
+            {
+              "name": "MODALITY_ICONS",
+              "kind": "variable",
+              "expectation": "Includes an asr icon entry.",
+              "before": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition": {
+                "exists": true
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "b5e4b109-87e0-4801-ba2e-140d27cea355",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "TokenPlanModality gains asr; MODALITY_ORDER lists asr between tts and webSearch; TOKEN_PLAN_PRESETS carries id qwen-token-plan with five targets and literal name Qwen Token Plan; apply/remove handle asr with enabled flip mirroring tts; UI records gain asr entries.",
+      "gates": [
+        {
+          "id": "G1.1",
+          "check": "npx vitest run tests/config/apply-token-plan.test.ts",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "apply/remove asr cases plus preset roundtrip; existing 9 cases keep passing with asr in order."
+        },
+        {
+          "id": "G1.2",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "Exhaustive UI records and union growth must typecheck."
+        },
+        {
+          "id": "G1.3",
+          "check": "pnpm check:i18n-keys",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "Zero new keys; parity must stay green."
+        }
+      ]
+    },
+    {
+      "id": "S2",
+      "title": "Precedence and clobber pins",
+      "intent": "Pin that server-managed env or yml values win over the client preset store for all five section resolvers, and that preset apply never writes server values.",
+      "user_stories": [
+        3,
+        4
+      ],
+      "blocked_by": [],
+      "targets": [],
+      "riskTier": 3,
+      "uuid": "51a70871-afcb-46d8-9adc-a42dc877035f",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "tests/config/token-plan-precedence.test.ts asserts server-wins per field for llm tts asr image video resolvers, client-values with no server entry, and no server writes from apply.",
+      "gates": [
+        {
+          "id": "G2.1",
+          "check": "npx vitest run tests/config/token-plan-precedence.test.ts",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "Five-resolver precedence pin."
+        },
+        {
+          "id": "G2.2",
+          "check": "npx vitest run tests/server/provider-config.test.ts",
+          "expect": "passed",
+          "type": "integration",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "Server resolution suite unchanged and green with preset store present."
+        },
+        {
+          "id": "G2.3",
+          "check": "npx vitest run tests/config/token-plan-apply-persist.test.ts",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "Clobber regression precedent stays green."
+        }
+      ]
+    },
+    {
+      "id": "S3",
+      "title": "Env pointers and server-providers.yml.example",
+      "intent": "Add token-plan preset pointer comments in .env.example sections and create the root server-providers.yml.example with all five token-plan ids, validated by a loader test.",
+      "user_stories": [
+        2
+      ],
+      "blocked_by": [],
+      "targets": [],
+      "riskTier": 2,
+      "uuid": "90c9a2c9-3bd9-44a6-8fb6-cafd7161c401",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": ".env.example carries pointers in llm image and video blocks; server-providers.yml.example parses through the loader fs-mock and resolves all five ids in their sections.",
+      "gates": [
+        {
+          "id": "G3.1",
+          "check": "npx vitest run tests/server/server-providers-example.test.ts",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "Example file parses and ids resolve."
+        },
+        {
+          "id": "G3.2",
+          "check": "npx vitest run tests/server/provider-config.test.ts",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "Loader suite stays green."
+        }
+      ]
+    },
+    {
+      "id": "S4",
+      "title": "Docs refresh",
+      "intent": "Update README pair and English docs tables with token-plan providers and prefixes; generic LLM table untouched.",
+      "user_stories": [
+        5
+      ],
+      "blocked_by": [],
+      "targets": [],
+      "riskTier": 2,
+      "uuid": "e47f99c2-882a-4148-9b3b-d4a51f34f8af",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "README.md README-zh.md configuration.mdx and supported-models.mdx all mention qwen-token-plan providers with correct env prefixes.",
+      "gates": [
+        {
+          "id": "G4.1",
+          "check": "grep -l qwen-token-plan README.md README-zh.md packages/docs/content/docs/configuration.mdx packages/docs/content/docs/supported-models.mdx | wc -l",
+          "expect": "4",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "Content gate replacing the phantom prettier gate."
+        },
+        {
+          "id": "G4.2",
+          "check": "grep -n qwen-token-plan-asr packages/docs/content/docs/supported-models.mdx",
+          "expect": "qwen-token-plan-asr",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "ASR provider row exists in the model table."
+        }
+      ]
+    }
+  ],
+  "audit": [
+    {
+      "seq": 1,
+      "id": "b9ba5e56-d53d-42a6-8f5b-a3f4cd143b90",
+      "at": "2026-09-01T10:52:41.760Z",
+      "actor": "orchestrator",
+      "command": "init",
+      "transition": "spec-approved:docs/specs/003-qwen-token-plan-preset.md",
+      "slice": null,
+      "hash": "5e818b07128617e38f3d27f4325503729e9a35608a637f0dbc027aa12c90e5ee"
+    },
+    {
+      "seq": 2,
+      "id": "beee4e63-5157-4fe3-bd40-14da0c7655f2",
+      "at": "2026-09-01T10:52:41.761Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect",
+      "slice": "S1",
+      "hash": "4436cbe2350e64c7eb5ac8b968df4fea9d459e1b1891d821a0070671e21774d0",
+      "expectationHash": "edd07ccef98c91f4151caf167fb5c99e0f9b08d598e009835efd9aba503c4597"
+    },
+    {
+      "seq": 3,
+      "id": "3d3578b2-e61b-4d15-a4d6-712c0b142fb4",
+      "at": "2026-09-01T10:52:41.761Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/config/token-plan-presets.ts::TokenPlanModality",
+      "slice": "S1",
+      "hash": "c39dbc7ea7eff1555776cbe682e0f253437287f0944fdadff2bfbd796d59493c",
+      "expectationHash": "9715a2a2ce56f925a4b06f1a8329fdf833e56cb8b9d0a423a54fad97eb4bcf1e"
+    },
+    {
+      "seq": 4,
+      "id": "12b1fd86-baa3-4db8-b843-d1b9586d020a",
+      "at": "2026-09-01T10:52:41.761Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/config/token-plan-presets.ts::MODALITY_ORDER",
+      "slice": "S1",
+      "hash": "bc8538b9321d201a32dde9851f9cb40445ee266f69e8b737b6f304397b9b0efe",
+      "expectationHash": "eb62ab84f0bb728f785351bfa2c022ccf60b4e1289d7f695fdd9b519b721060c"
+    },
+    {
+      "seq": 5,
+      "id": "70fb08ef-ce50-4ea3-ab36-0ce092ca959e",
+      "at": "2026-09-01T10:52:41.761Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/config/token-plan-presets.ts::TOKEN_PLAN_PRESETS",
+      "slice": "S1",
+      "hash": "b3375bf113c0e6eba4af7523b3503d7a3681239a8d85d241c4442a20607acfea",
+      "expectationHash": "d69a6d155f27905cf057f0fc2edc1e98b6b14be2ad54098801eea8b5f702a97f"
+    },
+    {
+      "seq": 6,
+      "id": "78d78a98-3a2b-49ea-8294-a21a9c40a9b0",
+      "at": "2026-09-01T10:52:41.761Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/config/apply-token-plan.ts::applyModality",
+      "slice": "S1",
+      "hash": "1fe0725f20e4da9cf316e436a1fa7b19e43ceea8b3e3c8bf8294320d2028b342",
+      "expectationHash": "8402b215c006f7a266b0f9f7e98135e7eed8c0a480aea6cb2c2dcd456909f558"
+    },
+    {
+      "seq": 7,
+      "id": "86514718-3d94-4406-a333-e21a91a57aa5",
+      "at": "2026-09-01T10:52:41.761Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/config/apply-token-plan.ts::removeModality",
+      "slice": "S1",
+      "hash": "082b827ec35cabffe7d6d387ce6b1e9c2c5aaeb12bde5f24c23354933f662af4",
+      "expectationHash": "02fcf9f1fced986e7501fb00f06def33cb537c88e03db46f2a4c2c15d8fb82f9"
+    },
+    {
+      "seq": 8,
+      "id": "f615a0c2-3361-41ea-928a-0741c9a6303e",
+      "at": "2026-09-01T10:52:41.761Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/config/apply-token-plan.ts::TokenPlanActions",
+      "slice": "S1",
+      "hash": "ca4ae02814e5db5bc424916f5fb186ed8bc4e9043bc9aba1b9566cb8e4fca0b4",
+      "expectationHash": "7ce24a5e8d9e4dfcf272fa33d4ac3eec5df2428d4fcbd0773d3cf652b633736f"
+    },
+    {
+      "seq": 9,
+      "id": "81efa570-da46-44fb-baf6-6f5246b7650b",
+      "at": "2026-09-01T10:52:41.761Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:components/settings/token-plan-settings.tsx::MODALITY_LABEL_KEYS",
+      "slice": "S1",
+      "hash": "9aa29af73719259241c18640974c679bd16d4fcbebfaa2cc6aa1a5075214e73f",
+      "expectationHash": "143f39476a9b0a5146887b3b2f65768133e1ce01242c3e9dc020de8028d6b94b"
+    },
+    {
+      "seq": 10,
+      "id": "58e31cfb-92e5-4439-93b6-b710b64a39ac",
+      "at": "2026-09-01T10:52:41.761Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:components/settings/token-plan-settings.tsx::MODALITY_ICONS",
+      "slice": "S1",
+      "hash": "dfa4a390597b90ece94b0b8e6e977b1710357470a198958dd4c8bb8b355a7af3",
+      "expectationHash": "e4c33c3569205c5deae0a86a34007150377cd3b5d394280c88403575131c2f2c"
+    },
+    {
+      "seq": 11,
+      "id": "d6ff8832-9e9e-47dd-93c0-4f50223e5d99",
+      "at": "2026-09-01T10:52:41.761Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect",
+      "slice": "S2",
+      "hash": "6df5d3c8a08eb1749e86a89d95b78bf372d959a3deb23f06119f1488514cf925",
+      "expectationHash": "788a59719e80fe2c39a5b16792963a5709af34ea84945d269ab436eb829fad2b"
+    },
+    {
+      "seq": 12,
+      "id": "8a3a4acd-d343-456e-a164-d08f203b447f",
+      "at": "2026-09-01T10:52:41.761Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect",
+      "slice": "S3",
+      "hash": "f70541b90c31f12c4172817842a630f176c80f6aa689e71e9c17f9634e7e5faa",
+      "expectationHash": "8ca561b932bc8939d7b024ef231a9942e27deffa8d2fe3386ab3852b818aed9b"
+    },
+    {
+      "seq": 13,
+      "id": "a7cc0733-6eb0-4347-aa63-81d08fc7ca8d",
+      "at": "2026-09-01T10:52:41.761Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect",
+      "slice": "S4",
+      "hash": "e1de10a7fe62d1b4677924c9671d26ef73c23a76ce4edc38bcffbb8261cb5687",
+      "expectationHash": "98a0f5f37211d81c7853a088b99b84061ff3ec32088c4cf78b2bd335f111a6e2"
+    },
+    {
+      "seq": 14,
+      "id": "141dd252-ffa1-4214-8d3d-c47c319d0446",
+      "at": "2026-09-01T10:52:41.761Z",
+      "actor": "orchestrator",
+      "command": "init_batch",
+      "transition": "batch-init:S1,S2,S3,S4",
+      "slice": null,
+      "hash": "5e3512807507df89051d6063e30a632064b3f22f49a046adc6c4b6adcaaa9a2f"
+    },
+    {
+      "seq": 15,
+      "id": "0c71e91e-c2ce-458c-9b28-0be4d862a6c4",
+      "at": "2026-09-01T10:52:48.964Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S1:capture",
+      "slice": "S1",
+      "hash": "ab524e2e0c6e3f90fc0f70e9e1852563b19ca3b389175f18767779bafe737f49",
+      "fileHash": "4c88f9949df96c4de68209efb6b64a6b8dade396a27f2769b200ba23fb7bdb95"
+    },
+    {
+      "seq": 16,
+      "id": "332d2ea1-77f0-48da-8a14-782b4425a646",
+      "at": "2026-09-01T10:53:51.655Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/config/token-plan-presets.ts::TokenPlanModality",
+      "slice": "S1",
+      "hash": "8c6128c46e26e47bfd865fbe74e4f9c7a89e6bfc4b2b8cf3d0201b8d588010a8",
+      "fileHash": "3fe9009744e5c11e025156c034ee0651576e2bc43144d7f7f2618b57e407c654"
+    },
+    {
+      "seq": 17,
+      "id": "3df2125d-35d7-4d40-bf0d-3ba62e7c7930",
+      "at": "2026-09-01T10:53:51.695Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/config/token-plan-presets.ts::MODALITY_ORDER",
+      "slice": "S1",
+      "hash": "546b05f6da0212f6ea1406e022ee024af342e85157be9ab484f3bc8673ad4080",
+      "fileHash": "de17c2aee8ea949fe312a7a966932861d062c98019459706bb17eb9e5c404c50"
+    },
+    {
+      "seq": 18,
+      "id": "440a5bf6-338c-4305-8725-dce69ae7ff72",
+      "at": "2026-09-01T10:53:51.732Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/config/token-plan-presets.ts::TOKEN_PLAN_PRESETS",
+      "slice": "S1",
+      "hash": "29812ceda5aaeb6a658f92bb7b29c5b21ae70a3341df6e047b207d81942f95d1",
+      "fileHash": "8701d52ba98c848c77e4e8f52337d944c9e6f6df7b77588bb097eb1009e0808e"
+    },
+    {
+      "seq": 19,
+      "id": "a0a8a418-4a4a-485e-9a2d-eabef854156b",
+      "at": "2026-09-01T10:53:51.769Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:components/settings/token-plan-settings.tsx::MODALITY_LABEL_KEYS",
+      "slice": "S1",
+      "hash": "1bcc2cc308326277bc0572b04d676b3b423867dffd0a84c4fdf602a995b933e3",
+      "fileHash": "0a0d7bc3b465cbd66c0fe3bb110863e2e50d0922fb838167e582ea7fcfe7421d"
+    },
+    {
+      "seq": 20,
+      "id": "9b95bceb-737f-434d-8fea-db8149f2b36a",
+      "at": "2026-09-01T10:53:51.805Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:components/settings/token-plan-settings.tsx::MODALITY_ICONS",
+      "slice": "S1",
+      "hash": "9fe6803a8a09f2b71fe97bda1d04ad37cc115d8f294541960b17cd1e72bb3229",
+      "fileHash": "31990bab7244d6b61af7e323aa32fe84ce18dfc7bfbcf0b53319829cf20ae3b3"
+    },
+    {
+      "seq": 21,
+      "id": "025951ce-aeae-4fa0-8637-2bc6784a3c07",
+      "at": "2026-09-01T10:53:51.841Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/config/apply-token-plan.ts::TokenPlanActions",
+      "slice": "S1",
+      "hash": "a23e0dd32522456154b20039c25a61fd010bf872e92efafea9ce0f0397282696",
+      "fileHash": "efe4a0a8a3f3660c3829e7857415322cd515485201cc8c8c52cc2b617160ce09"
+    },
+    {
+      "seq": 22,
+      "id": "cc90972b-68ba-4054-bdd7-075796de5e1a",
+      "at": "2026-09-01T10:53:51.876Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/config/apply-token-plan.ts::applyModality",
+      "slice": "S1",
+      "hash": "4c6fafc7d8bc3004242ef3b65c8322e3323922b78e363b84adc234c7df4e4710",
+      "fileHash": "d4ae7445240d844d4fc19543c804ff806ba4f5b6a0cee2b96f6ca010ebf0ca2e"
+    },
+    {
+      "seq": 23,
+      "id": "734f68e0-63f8-41b1-b6fd-1061950932a4",
+      "at": "2026-09-01T10:53:51.911Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/config/apply-token-plan.ts::removeModality",
+      "slice": "S1",
+      "hash": "36497406308a50c26580e185b7948fff454d92bf09436df5046efb352f13a662",
+      "fileHash": "0313b5dbb44eef07d8622daa478ae535b00b5033477df64eb9f6f53f3db04ce7"
+    }
+  ],
+  "fileHash": "c604eb2bd59bb1d03dcdc4a32e90c0367aede14db92d5487fe2fc22dd8c279ca"
+}
