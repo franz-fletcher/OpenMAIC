@@ -43,7 +43,7 @@ TTS protocol facts, from the SpeechSynthesizer frame protocol:
 ASR protocol facts:
 
 - Content item type `input_audio`. The `parameters.format` and `parameters.sample_rate` fields are mandatory.
-- Response text sits at top-level `.text`. It is not under `output.choices`. The repo parser at `lib/audio/asr-providers.ts:418-420` reads `output.choices`, so it throws on this shape.
+- Response text sits at top-level `.text`. It is not under `output.choices`. The repo parser at `lib/audio/asr-providers.ts:421-425` reads `output.choices`, so it throws on this shape.
 - `qwen3-asr-flash` and all `filetrans` variants are 404 absent.
 
 Image protocol facts:
@@ -86,7 +86,7 @@ Batch 004 scope: `lib/media/adapters/happyhorse-adapter.ts:98-116` sends `input.
 
 Batch 005 scope (closes finding F5): `tests/server/classroom-media-generation.test.ts` prints a live bearer key in its failure output when the upstream call rejects. The evidence sits in `docs/research/001-verification-report.md` (finding F5, round 2). The batch redacts secret material from captured fetch-mock output and adds a hermetic guard test proving no key substring reaches test logs. No product code changes. The batch also removes the batch-001 gate exclusion for this file once fixed.
 
-Batch 006 scope (final batch, operator request 2026-09-01): transcription route key preflight parity. `app/api/transcribe/route.ts` has no missing-key contract. A request without a configured ASR key takes the generic 500 error path for every ASR provider. The batch adds the 400 `MISSING_API_KEY` preflight that `app/api/generate/tts/route.ts:112-119` already enforces for TTS, then adds the per-provider missing-key test matrix across the ASR registry. It changes route behavior for all ASR providers, so it ships as its own cycle with its own approval.
+Batch 006 scope (final batch, operator request 2026-09-01): transcription route key preflight parity. `app/api/transcription/route.ts` has no missing-key contract. A request without a configured ASR key takes the generic 500 error path for every ASR provider. The batch adds the 400 `MISSING_API_KEY` preflight that `app/api/generate/tts/route.ts:112-119` already enforces for TTS, then adds the per-provider missing-key test matrix across the ASR registry. It changes route behavior for all ASR providers, so it ships as its own cycle with its own approval.
 
 Blocked record `voice-cloning`: every enrollment model returns 404. The re-check trigger is an enrollment model appearing in the plan catalog.
 
