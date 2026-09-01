@@ -1439,6 +1439,7 @@
     "providerBrowserNative": "瀏覽器原生 ASR",
     "providerFunASRASR": "FunASR（本機）",
     "providerQwenASR": "Qwen ASR（阿里雲百煉）",
+    "providerQwenTokenPlanASR": "千問 Token Plan 語音識別",
     "providerLemonadeASR": "Lemonade ASR（本機）",
     "providerAzureASR": "Azure STT（語音轉文字）",
     "providerUnpdf": "unpdf（內建）",

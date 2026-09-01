@@ -1,6 +1,6 @@
 # Batch 002 spec: qwen-token-plan-asr synchronous provider
 
-Spec status: research
+Spec status: research_update
 
 ## Problem Statement
 
@@ -25,16 +25,16 @@ This batch adds provider id `qwen-token-plan-asr`. It sends the `input_audio` co
 **S1: Registry and identity** (risk tier 1)
 Intent: add the provider id to the ASR union, the `ASR_PROVIDERS` registry record, the display name map, the per-provider store default, and one i18n key across 12 locales.
 Stories: 1, 2.
-Blockers: none.
+Blockers: none. Status: verified.
 Proposed gates:
 - G1.1 `npx vitest run tests/audio/qwen-token-plan-asr.test.ts` expect `passed`
 - G1.2 `pnpm check:i18n-keys` expect `passed`
-- G1.3 `npx tsc --noEmit` expect `/^/`
+- G1.3 `npx tsc --noEmit && echo TSC_OK` expect `TSC_OK`
 
 **S2: Synchronous provider core** (risk tier 2)
 Intent: add the `transcribeAudio` dispatch case and the `transcribeQwenTokenPlanASR` function. The function builds the `input_audio` body, derives `format` and `sample_rate` from the audio bytes, parses the top-level `.text` response, and maps the vendor error shapes.
 Stories: 1, 3, 4, 5.
-Blockers: S1.
+Blockers: S1. Status: verified.
 Proposed gates:
 - G2.1 `npx vitest run tests/audio/qwen-token-plan-asr.test.ts` expect `passed`
 - G2.2 `npx vitest run tests/audio/qwen-token-plan-asr-protocol.test.ts` expect `passed`
@@ -42,7 +42,7 @@ Proposed gates:
 **S3: Server wiring, env, and neutrality** (risk tier 3, integration gate)
 Intent: add the `ASR_ENV_MAP` entry, the `.env.example` section, the provider-config test coverage, and the neutrality guard debt update.
 Stories: 2, 7.
-Blockers: S2.
+Blockers: S2. Status: verified.
 Proposed gates:
 - G3.1 `npx vitest run tests/server/provider-config.test.ts` expect `passed` (type integration)
 - G3.2 `npx vitest run tests/server/capability-force-off-routes.test.ts` expect `passed`
@@ -51,7 +51,7 @@ Proposed gates:
 **S4: Live smoke and protocol pin** (risk tier 4, adversarial gate)
 Intent: add the opt-in live test that proves the protocol once against the real host, the clean skip behavior, and the request-shape pin test.
 Stories: 6.
-Blockers: S2.
+Blockers: S2. Status: verified.
 Proposed gates:
 - G4.1 `TEST_LOAD_LOCAL_ENV=1 npx vitest run tests/audio/qwen-token-plan-asr-live.test.ts` expect `[qwen-token-plan-asr-live] ok` (type adversarial)
 - G4.2 `npx vitest run tests/audio/qwen-token-plan-asr-protocol.test.ts` expect `passed`
@@ -62,17 +62,17 @@ Proposed gates:
 
 **Provider identity.** Add `'qwen-token-plan-asr'` to the `BuiltInASRProviderId` union at `lib/audio/types.ts:180-186`. Add `case 'qwen-token-plan-asr'` to the `transcribeAudio` switch at `lib/audio/asr-providers.ts:175-204`. The `default` branch throws `Unsupported ASR provider` at line 203, so the case is mandatory. This is the batch-001 B1 lesson applied to ASR. Do not modify `transcribeQwenASR`. The old provider keeps its schema and its errors.
 
-**Registry record.** Add the record to `ASR_PROVIDERS` at `lib/audio/constants.ts:1113-1365`. Set `requiresApiKey: true`. Set `defaultModelId: 'qwen-audio-3.0-asr-flash'` (the field is required by `ASRProviderConfig` at `lib/audio/types.ts:200`). Set `defaultBaseUrl` to `https://token-plan.ap-southeast-1.maas.aliyuncs.com/api/v1`. The transcribe function appends `/services/aigc/multimodal-generation/generation`, matching the `qwen-asr` convention at lines 1197 and 396. Set `models` to `qwen-audio-3.0-asr-flash`. Set `supportedFormats` to `['wav', 'webm', 'mp3', 'opus']`. Set `supportedLanguages` to the model's `language_hints` codes from the vendor docs. The S4 protocol pin test asserts this exact list, so vendor-doc drift breaks the pin instead of the live gate. The codes are `auto`, `zh`, `en`, `ja`, `ko`, `vi`, `th`, `id`, `ms`, `tl`, `hi`, `ar`, `fr`, `de`, `es`, `pt`, `ru`, `it`, `nl`, `sv`, `da`, `fi`, `no`, `el`, `pl`, `cs`, `hu`, `ro`, `bg`, `hr`, `sk`.
+**Registry record.** Add the record to `ASR_PROVIDERS` at `lib/audio/constants.ts:1238-1265`. Set `requiresApiKey: true`. Set `defaultModelId: 'qwen-audio-3.0-asr-flash'` (the field is required by `ASRProviderConfig` at `lib/audio/types.ts:200`). Set `defaultBaseUrl` to `https://token-plan.ap-southeast-1.maas.aliyuncs.com/api/v1`. The transcribe function appends `/services/aigc/multimodal-generation/generation`, matching the `qwen-asr` convention. Set `models` to `qwen-audio-3.0-asr-flash`. Set `supportedFormats` to `['wav', 'webm', 'mp3', 'opus']`. Set `supportedLanguages` to the model's `language_hints` codes from the vendor docs. The S4 protocol pin test asserts this exact 31-code list, so vendor-doc drift breaks the pin instead of the live gate. The codes are `auto`, `zh`, `en`, `ja`, `ko`, `vi`, `th`, `id`, `ms`, `tl`, `hi`, `ar`, `fr`, `de`, `es`, `pt`, `ru`, `it`, `nl`, `sv`, `da`, `fi`, `no`, `el`, `pl`, `cs`, `hu`, `ro`, `bg`, `hr`, `sk`.
 
 **Request body.** Mirror the probe payload. Send `model`, then `input.messages[0].content[0]` with `type: 'input_audio'` and `input_audio.data` as `data:<mime>;base64,<bytes>`. Send `parameters.format` and `parameters.sample_rate` as strings. Always send both. The frozen probe facts record that a missing parameter yields an opaque `400 {}`.
 
-**Format derivation.** Read the audio bytes to pick `format`. Wav starts with `RIFF....WAVE` at offsets 0 and 8. Webm starts with the EBML magic `0x1A45DFA3`. Mp3 starts with `ID3` or an `0xFF` sync byte. Ogg starts with `OggS`. The wav and webm detectors reuse the existing helpers `detectWavBuffer` and `detectWavBytes` at `lib/audio/asr-providers.ts:283-297`. Default to `wav` when the container is unknown. The recorder produces webm. Local-media chunks are wav.
+**Format derivation.** Read the audio bytes to pick `format` with `detectAudioFormat` at `lib/audio/asr-providers.ts:332-338`. The priority is webm (EBML magic `0x1A45DFA3`) then mp3 (`ID3` or `0xFF` sync byte) then opus (`OggS`) then wav (`RIFF....WAVE`). Unknown containers default to `wav`. The recorder produces webm. Local-media chunks are wav.
 
-**Sample rate derivation.** For wav, read the unsigned 32-bit little-endian value at header offset 24. For webm, search for the `OpusHead` marker and read the unsigned 32-bit little-endian value 12 bytes after it. Fall back to `48000`. Send the value as a string. Probe 3 proves the vendor tolerates a wrong value for webm. Probe 1 proves `48000` works for wav.
+**Sample rate derivation.** For wav, read the unsigned 32-bit little-endian value at header offset 24 with `readWavSampleRate` at `lib/audio/asr-providers.ts:344-351`. For webm, search for the `OpusHead` marker and read the unsigned 32-bit little-endian value 12 bytes after it with `readWebmOpusHeadRate` at `:357-380`. The scan reads the first 256 bytes only. Longer headers fall back to `48000`. The vendor tolerates that fallback for webm. Send the value as a string. Probe 3 proves the vendor tolerates a wrong value for webm. Probe 1 proves `48000` works for wav.
 
 **Response parsing.** Read the transcript from top-level `data.text` first. Probe 2 confirms the key exists. Fall back to `data.sentence?.text`, which probe 2 also returns. Fall back to `data.output?.output?.sentence?.text`, which the vendor docs document. Return `{ text }`.
 
-**Error mapping.** A `400` with an empty body means no speech or a rejected payload. Return `{ text: '' }` for it, mirroring the existing empty-audio handling at `lib/audio/asr-providers.ts:406-412`. Any other non-OK status throws `Error` with the status and the response text. The transcription route at `app/api/transcription/route.ts:87-92` already maps every thrown error to `TRANSCRIPTION_FAILED` with the message. No new error class. The ASR surface has no typed error classes, and the route has no `instanceof` branch.
+**Error mapping.** Every 400 status returns `{ text: '' }`, regardless of body. This mirrors the existing empty-audio handling at `lib/audio/asr-providers.ts:406-412` and sits at `:612-615` for the new provider. The pin test freezes 400-with-body to empty text on purpose (verification finding F5, round 1). Any other non-OK status throws `Error` with the status and the response text. The transcription route at `app/api/transcription/route.ts:87-92` already maps every thrown error to `TRANSCRIPTION_FAILED` with the message. No new error class. The ASR surface has no typed error classes, and the route has no `instanceof` branch.
 
 **Display name.** Add `'qwen-token-plan-asr': 'settings.providerQwenTokenPlanASR'` to `ASR_PROVIDER_NAME_KEYS` at `lib/audio/provider-display.ts:16-23`. Without it, the settings UI renders the raw id. This is the batch-001 C1 lesson applied to ASR.
 
@@ -94,13 +94,13 @@ The protocol pin test at `tests/audio/qwen-token-plan-asr-protocol.test.ts` reco
 
 The route and server tests mirror batch 001. Add `ASR_QWEN_TOKEN_PLAN` to the clear list at `tests/server/provider-config.test.ts:8-61`. Add a test that mirrors the TTS token-plan block at lines 992-1010. It stubs the three env vars and asserts `isServerConfiguredProvider`, server-key precedence, server-base-url precedence, and the model pin. The force-off route suite at `tests/server/capability-force-off-routes.test.ts` keeps its `ASR_QWEN` coverage and gains no new tests. The new prefix works through the generic disable map.
 
-The live test at `tests/audio/qwen-token-plan-asr-live.test.ts` is opt-in. It skips unless `TEST_LOAD_LOCAL_ENV` is `1` and `ASR_QWEN_TOKEN_PLAN_API_KEY` is present. The skip message mirrors batch 001. The audio source is the vendor's public sample, fetched at test time and sent as a base64 data URI (operator decision Q1-a): `https://dashscope.oss-cn-beijing.aliyuncs.com/samples/audio/paraformer/hello_world_female2.wav`. Public-read object, 128480 bytes, 16 kHz mono PCM16, about 5 seconds, no auth. The verified 2026-09-01 call returned the transcript `hello world，这里是阿里巴巴语音实验室。`. The test asserts non-empty text and prints the expected transcript prefix `hello world`. If the CDN object ever drifts, the S4 live gate breaks and the URL needs a refresh. When enabled, the test prints `[qwen-token-plan-asr-live] ok`. The adversarial gate runs it with the env loader. The skip gate runs it without.
+The live test at `tests/audio/qwen-token-plan-asr-live.test.ts` is opt-in. It skips unless `TEST_LOAD_LOCAL_ENV` is `1` and `ASR_QWEN_TOKEN_PLAN_API_KEY` is present. The skip message mirrors batch 001. The audio source is the vendor's public sample, fetched at test time and sent as a base64 data URI (operator decision Q1-a): `https://dashscope.oss-cn-beijing.aliyuncs.com/samples/audio/paraformer/hello_world_female2.wav`. Public-read object, 128480 bytes, 16 kHz mono PCM16, about 5 seconds, no auth. The verified 2026-09-01 call returned the transcript `hello world，这里是阿里巴巴语音实验室。`. The happy path asserts the transcript prefix `hello world`. The adversarial case prints `vendor returned { text: "" }` when the provider returns empty text. If the CDN object ever drifts, the S4 live gate breaks and the URL needs a refresh. When enabled, the test prints `[qwen-token-plan-asr-live] ok`. The adversarial gate runs it with the env loader. The skip gate runs it without. The gate run used 4 to 6 requests against an approved 4. The overage came from the failed first live attempt (finding F4).
 
 Success criteria: the webm recorder path returns text, the wav local-media path returns text, every failure maps to an actionable message, and the neutrality guard passes with recorded counts.
 
 ### Gate mechanics convention (inherited batch-001 lessons, refined for the installed CLI)
 
-Expect strings match literal substrings of captured stdout+stderr, or a `/regex/flags` pattern. A gate passes on exit code 0 AND a match. `'/^/'` means the exit code governs. The installed `rivr` binary still auto-loads `.env.local` from its startup directory into gate children. Gate runs therefore start `rivr` from a neutral directory with no `.env.local`, pass absolute ledger paths, and pin each gate's `cwd` to the repo root. Live gates still see their key because `tests/setup-env.ts` loads `.env.local` by test-root path inside the vitest process. This replaces the round-3 `bun --no-env-file` recipe.
+Expect strings match literal substrings of captured stdout+stderr, or a `/regex/flags` pattern. A gate passes on exit code 0 AND a match. The installed rivr 0.15.0 regex-times-out on `/^/` (batch-002 finding F1), so silent-success commands instead echo a literal marker such as `TSC_OK` and expect it. Gate runs start `rivr` from a neutral directory with no `.env.local`, pass absolute ledger paths, and pin each gate's `cwd` to the repo root (finding F2: diffs run from the repo root, not the neutral dir). Live gates still see their key because `tests/setup-env.ts` loads `.env.local` by test-root path inside the vitest process. This replaces the round-3 `bun --no-env-file` recipe.
 
 ## Out of Scope
 
@@ -130,8 +130,72 @@ Response shape drift: top-level `text` is verified. The parser keeps two documen
 
 Sample-rate risk for non-wav containers: probe 3 proves tolerance for webm only. The wav path derives from the header. Unknown containers default to 48000.
 
-Neutrality: the derived terms from `qwen-token-plan-asr` are `qwen`, `token`, and `plan`. The word `asr` is generic, so `GENERIC_ID_PARTS` at `tests/providers/provider-neutrality-guard.test.ts:339-355` excludes it. New occurrences land in `lib/server/provider-config.ts` only. The debt rows for `qwen`, `token`, and `plan` at lines 164-218 grow. The exact counts come from running the guard after the edits. S3 owns that update.
+Neutrality: the derived terms from `qwen-token-plan-asr` are `qwen`, `token`, and `plan`. The word `asr` is generic, so `GENERIC_ID_PARTS` at `tests/providers/provider-neutrality-guard.test.ts:339-355` excludes it. New occurrences land in `lib/server/provider-config.ts` only. The shipped guard pins `qwen` 24, `token` 5, and `plan` 4 for that file at `tests/providers/provider-neutrality-guard.test.ts:169,215-216`. S3 landed the update in commit 19243f44.
 
 maxDuration: the transcription route sets 60 seconds at `app/api/transcription/route.ts:17`. The vendor sync limit is 5 minutes of audio. Voice notes are seconds long. No action.
 
 i18n math: 1 key times 12 locales is 12 keys.
+
+## Post-implementation learnings
+
+1. `transcribeQwenASR` stayed untouched. The old schema and the old errors remain as they were. The new dispatch case at `lib/audio/asr-providers.ts:185-186` sits beside it at `:182-183`. Commit 4942de3b carried both.
+2. The dispatch case is mandatory. The `default` branch throws `Unsupported ASR provider` at `lib/audio/asr-providers.ts:206`. A registry entry without a case fails at runtime. This is the batch-001 B1 lesson, verified again in the round-1 spot checks.
+3. Format and sample-rate derivation lives in three helpers at `lib/audio/asr-providers.ts:332-338` (`detectAudioFormat`), `:344-351` (`readWavSampleRate`), and `:357-380` (`readWebmOpusHeadRate`). The OpusHead scan caps at 256 bytes at `:358`. Longer headers fall back to `48000`. Finding F6 records the cap as tolerated, because probe 3 proved the vendor accepts a wrong webm rate.
+4. The every-400-to-empty-text convention is pinned. The implementation returns `{ text: '' }` for every 400 at `lib/audio/asr-providers.ts:612-615`. The pin test freezes 400-with-body to empty text at `tests/audio/qwen-token-plan-asr-protocol.test.ts:200-217`. Finding F5 tightened the spec wording to match the shipped behavior.
+5. The `/^/` oracle is dead in rivr 0.15.0. A throwaway probe ledger reproduced the regex-timeout on `/^/` with a plain `echo hello` command. A literal oracle passes. G1.3 became `npx tsc --noEmit && echo TSC_OK` expecting `TSC_OK`. The repair landed in commit de45b13e and round 2 confirmed the literal marker prints.
+6. Diffs run from the repo root. Gate executions run from the neutral startup directory. Finding F2 cost one false alarm in round 1 before the doctrine settled. The ledger pins each gate `cwd` to the repo root.
+7. The `init-batch` tier key drift recorded all four slices as tier 2. Finding F3 records the drift. The gate counts and the integration and adversarial tags still exceeded every spec-tier minimum, so enforcement held. Future batches must verify tier values right after `rivr ledger init-batch`.
+8. Live proof stands. The vendor sample transcribed with prefix `hello world`. The adversarial case printed `vendor returned { text: "" }`. The manual run took 4.97 seconds. The four-gate run took 8.8 seconds. The gate run used 4 to 6 requests against an approved 4, with the overage from the failed first live attempt (finding F4).
+9. A cancellation mid-S2 was recovered with the audit-then-keep fix flow. The audit chain kept every entry. The partial work stayed in the ledger and verification covered it without a rebuild.
+10. Retry-counter drift is noted. Round 2 recorded count 3 with consecutive-same-cause 1 at the escalate threshold. The drift came from the repair cycle (gate remove and add, re-mark, two advances), not from three same-cause failures. No action.
+11. Batch 003 consumes the provider id and the `ASR_QWEN_TOKEN_PLAN_*` prefix. Batch 006 owns the transcription-route preflight parity gap at `app/api/transcription/route.ts`, which this batch deliberately left untouched.
+
+---
+
+Status: Implemented (Batch 002, commits 32bd8961..de45b13e plus the fix-round marks). Post-impl learnings appended above.
+
+## Certification Report
+
+Certified: 2026-09-01T09:57:56.511Z
+Signature: 1b751a68e077650747253030c73bc7ba5c02f82e0556fab33b7512ef82c745e4
+
+### Summary
+
+Slices: 4
+Symbols: 6
+Gates: 12
+
+### Implemented Symbols
+
+- **S1** (Registry and identity):
+  - lib/audio/types.ts::BuiltInASRProviderId
+  - lib/audio/constants.ts::ASR_PROVIDERS
+  - lib/audio/provider-display.ts::ASR_PROVIDER_NAME_KEYS
+- **S2** (Synchronous provider core):
+  - lib/audio/asr-providers.ts::transcribeAudio
+- **S3** (Server wiring, env, and neutrality):
+  - lib/server/provider-config.ts::ASR_ENV_MAP
+- **S4** (Live smoke and protocol pin):
+  - tests/audio/qwen-token-plan-asr-live.test.ts::qwenTokenPlanAsrLiveSmoke
+
+### Gates Passed
+
+- **S1**:
+  - G1.1: {"id":"G1.1","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9","pathCount":30,"output":"\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/audio/qwen-token-plan-asr.test.ts \u001b[2m(\u001b[22m\u001b[2m16 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 15\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m16 passed\u001b[39m\u001b[22m\u001b[90m (16)\u001b[39m\n\u001b[2m   Start at \u001b[22m 18:27:59\n\u001b[2m   Duration \u001b[22m 387ms\u001b[2m (transform 220ms, setup 10ms, import 310ms, tests 15ms, environment 0ms)\u001b[22m\n\n","passed":true}
+  - G1.2: {"id":"G1.2","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9","pathCount":30,"output":"\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> node scripts/check-i18n-keys.mjs\n\ni18n key alignment check passed (12 locale files, source: en-US.json).\n","passed":true}
+  - G1.3: {"id":"G1.3","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9","pathCount":30,"output":"TSC_OK\n","passed":true}
+- **S2**:
+  - G2.1: {"id":"G2.1","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9","pathCount":30,"output":"\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/audio/qwen-token-plan-asr.test.ts \u001b[2m(\u001b[22m\u001b[2m16 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 16\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m16 passed\u001b[39m\u001b[22m\u001b[90m (16)\u001b[39m\n\u001b[2m   Start at \u001b[22m 18:13:12\n\u001b[2m   Duration \u001b[22m 373ms\u001b[2m (transform 204ms, setup 13ms, import 291ms, tests 16ms, environment 0ms)\u001b[22m\n\n","passed":true}
+  - G2.2: {"id":"G2.2","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9","pathCount":30,"output":"\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/audio/qwen-token-plan-asr-protocol.test.ts \u001b[2m(\u001b[22m\u001b[2m5 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 50\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m5 passed\u001b[39m\u001b[22m\u001b[90m (5)\u001b[39m\n\u001b[2m   Start at \u001b[22m 18:13:12\n\u001b[2m   Duration \u001b[22m 163ms\u001b[2m (transform 55ms, setup 13ms, import 47ms, tests 50ms, environment 0ms)\u001b[22m\n\n","passed":true}
+- **S3**:
+  - G3.1: {"id":"G3.1","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9","pathCount":30,"output":"\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/server/provider-config.test.ts\u001b[2m > \u001b[22m\u001b[2mprovider-config\u001b[2m > \u001b[22m\u001b[2mresolveApiKey\u001b[2m > \u001b[22m\u001b[2mreturns server key from env when no client key\n\u001b[22m\u001b[39m[2026-09-01T06:13:16.534Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 0 Video, 0 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/server/provider-config.test.ts\u001b[2m > \u001b[22m\u001b[2mprovider-config\u001b[2m > \u001b[22m\u001b[2mresolveApiKey\u001b[2m > \u001b[22m\u001b[2mignores client key for a server-managed provider (server is authoritative)\n\u001b[22m\u001b[39m[2026-09-01T06:13:16.537Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 0 Video, 0 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/","passed":true}
+  - G3.2: {"id":"G3.2","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9","pathCount":30,"output":"\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/server/capability-force-off-routes.test.ts \u001b[2m(\u001b[22m\u001b[2m10 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 160\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m10 passed\u001b[39m\u001b[22m\u001b[90m (10)\u001b[39m\n\u001b[2m   Start at \u001b[22m 18:13:16\n\u001b[2m   Duration \u001b[22m 268ms\u001b[2m (transform 110ms, setup 14ms, import 43ms, tests 160ms, environment 0ms)\u001b[22m\n\n","passed":true}
+  - G3.3: {"id":"G3.3","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9","pathCount":30,"output":"\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/providers/provider-neutrality-guard.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 32\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m3 passed\u001b[39m\u001b[22m\u001b[90m (3)\u001b[39m\n\u001b[2m   Start at \u001b[22m 18:13:17\n\u001b[2m   Duration \u001b[22m 366ms\u001b[2m (transform 77ms, setup 13ms, import 234ms, tests 32ms, environment 0ms)\u001b[22m\n\n","passed":true}
+- **S4**:
+  - G4.1: {"id":"G4.1","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9","pathCount":30,"output":"\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/audio/qwen-token-plan-asr-live.test.ts\u001b[2m > \u001b[22m\u001b[2mqwen-token-plan-asr live smoke\u001b[2m > \u001b[22m\u001b[2mtranscribes the vendor sample and starts with \"hello world\"\n\u001b[22m\u001b[39m[qwen-token-plan-asr-live] ok\n\n\u001b[90mstdout\u001b[2m | tests/audio/qwen-token-plan-asr-live.test.ts\u001b[2m > \u001b[22m\u001b[2mqwen-token-plan-asr live smoke\u001b[2m > \u001b[22m\u001b[2mhandles empty-ish audio gracefully (adversarial)\n\u001b[22m\u001b[39m[qwen-token-plan-asr-live] adversarial: vendor returned { text: \"\" }\n\n \u001b[32m✓\u001b[39m tests/audio/qwen-token-plan-asr-live.test.ts \u001b[2m(\u001b[22m\u001b[2m2 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 6662\u001b[2mms\u001b[22m\u001b[39m\n     \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m transcribes the vendor sample and starts with \"hello world\" \u001b[33m 6198\u001b[2mms\u001b[22m\u001b[39m\n     \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m handles empty-ish audio gracefully (adversarial)","passed":true}
+  - G4.2: {"id":"G4.2","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9","pathCount":30,"output":"\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/audio/qwen-token-plan-asr-protocol.test.ts \u001b[2m(\u001b[22m\u001b[2m5 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 52\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m5 passed\u001b[39m\u001b[22m\u001b[90m (5)\u001b[39m\n\u001b[2m   Start at \u001b[22m 18:15:13\n\u001b[2m   Duration \u001b[22m 163ms\u001b[2m (transform 55ms, setup 11ms, import 49ms, tests 52ms, environment 0ms)\u001b[22m\n\n","passed":true}
+  - G4.3: {"id":"G4.3","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9","pathCount":30,"output":"\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/audio/qwen-token-plan-asr-live.test.ts\n\u001b[22m\u001b[39m[qwen-token-plan-asr-live] SKIPPED: TEST_LOAD_LOCAL_ENV is not \"1\"; .env.local is not loaded and live probes stay opt-in.\n\n \u001b[2m\u001b[90m↓\u001b[39m\u001b[22m tests/audio/qwen-token-plan-asr-live.test.ts \u001b[2m(\u001b[22m\u001b[2m1 test\u001b[22m\u001b[2m | \u001b[22m\u001b[33m1 skipped\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[2m Test Files \u001b[22m \u001b[33m1 skipped\u001b[39m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[33m1 skipped\u001b[39m\u001b[90m (1)\u001b[39m\n\u001b[2m   Start at \u001b[22m 18:15:14\n\u001b[2m   Duration \u001b[22m 146ms\u001b[2m (transform 51ms, setup 10ms, import 86ms, tests 0ms, environment 0ms)\u001b[22m\n\n","passed":true}
+  - G4.4: {"id":"G4.4","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9","pathCount":30,"output":"\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/providers/provider-neutrality-guard.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 32\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m3 passed\u001b[39m\u001b[22m\u001b[90m (3)\u001b[39m\n\u001b[2m   Start at \u001b[22m 18:15:14\n\u001b[2m   Duration \u001b[22m 337ms\u001b[2m (transform 80ms, setup 13ms, import 240ms, tests 32ms, environment 0ms)\u001b[22m\n\n","passed":true}
+
+Certification hash: 1b751a68e077650747253030c73bc7ba5c02f82e0556fab33b7512ef82c745e4
+Certified: 2026-09-01T09:57:56.511Z | Signature: 1b751a68e077650747253030c73bc7ba5c02f82e0556fab33b7512ef82c745e4 | Certifier: verifier

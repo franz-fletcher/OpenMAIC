@@ -9,7 +9,7 @@ Reviewer: independent researcher, no authorship stake (round 1, 2026-09-01). Met
 ## Concerns (all folded into the spec in the same pass)
 
 - **C1** Registry decision omitted the required `defaultModelId`. Added (`qwen-audio-3.0-asr-flash`, field required by `ASRProviderConfig` at `lib/audio/types.ts:200`).
-- **C2** The 30-code `supportedLanguages` list is vendor-doc sourced and unverifiable offline. Fix applied: the S4 protocol pin asserts the exact list, so drift breaks the pin, not the live gate.
+- **C2** The 31-code `supportedLanguages` list is vendor-doc sourced and unverifiable offline. Fix applied: the S4 protocol pin asserts the exact list, so drift breaks the pin, not the live gate. (Review copy said 30; the enumerated list carries 31 codes. Corrected after the S1 implementation finding.)
 - **C3** User story 5 clashed with the no-speech empty-400 design. Reworded.
 - **C4** "Mirror the qwen-asr default" was imprecise (old entry has no modelId). Clarified.
 - **C5** The env clear list is not ASR-exhaustive (pre-existing; no action).

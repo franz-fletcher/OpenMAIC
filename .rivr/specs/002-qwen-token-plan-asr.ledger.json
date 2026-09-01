@@ -1,0 +1,1021 @@
+{
+  "schema_version": 2,
+  "$schema": "https://rivr.dev/schemas/ledger/v2",
+  "spec": {
+    "reference": "docs/specs/002-qwen-token-plan-asr.md",
+    "title": "Batch 002 spec: qwen-token-plan-asr synchronous provider",
+    "hash": "11f0611981990f1d6126c6fb89848ff1cd977a216d936c31478b557e4348487c"
+  },
+  "tracker": {
+    "mode": "none"
+  },
+  "stage": "closed",
+  "retry": {
+    "count": 3,
+    "max": 5,
+    "consecutive_same_cause": 1,
+    "escalate_at": 3,
+    "last_cause": "regex-oracle-timeout"
+  },
+  "slices": [
+    {
+      "id": "S1",
+      "title": "Registry and identity",
+      "intent": "Provider id in the ASR union, the registry record with defaultModelId, the display name map, the store default, and one i18n key in 12 locales.",
+      "user_stories": [
+        1,
+        2
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/audio/types.ts",
+          "symbols": [
+            {
+              "name": "BuiltInASRProviderId",
+              "kind": "type",
+              "expectation": "Union includes qwen-token-plan-asr literal.",
+              "before": {
+                "exists": true,
+                "kind": "type"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "type"
+              },
+              "postcondition_quality": "INSPECTED"
+            }
+          ]
+        },
+        {
+          "path": "lib/audio/constants.ts",
+          "symbols": [
+            {
+              "name": "ASR_PROVIDERS",
+              "kind": "variable",
+              "expectation": "Record gains qwen-token-plan-asr entry with defaultModelId and token-plan defaults.",
+              "before": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "INSPECTED"
+            }
+          ]
+        },
+        {
+          "path": "lib/audio/provider-display.ts",
+          "symbols": [
+            {
+              "name": "ASR_PROVIDER_NAME_KEYS",
+              "kind": "variable",
+              "expectation": "Entry maps qwen-token-plan-asr to settings.providerQwenTokenPlanASR.",
+              "before": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "INSPECTED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "f14cb372-6cad-4d12-a7c7-74ba24bfeebf",
+      "impl": {
+        "status": "ready_for_verification",
+        "hash": "fb25e9d7acc34927143ef101984bd1334ed7243d2d76da9a7bd9e576a169f826",
+        "actor": "implementer",
+        "at": "2026-09-01T06:25:17.473Z"
+      },
+      "verification": {
+        "status": "verified",
+        "hash": "2031b91d77cca7e4502d837d5d9be65e3c6c166791017c07154a77e8fe97e4c1",
+        "actor": "verifier",
+        "at": "2026-09-01T06:28:04.186Z",
+        "deficiencies": [
+          "Gate G1.3 (npx tsc --noEmit, expect /^/) fails with regex-timeout on the installed rivr 0.15.0. Reproduced with a throwaway probe ledger: check=echo hello, expect=/^/ fails identically while a literal oracle passes. The tsc check itself passes in 3.1s with exit 0 and empty output. The /^/ oracle cannot be satisfied by the installed runner, so the gate can never record a pass. Fix in research: re-define G1.3 with a literal success marker, for example check=npx tsc --noEmit && echo TSC_OK, expect=TSC_OK."
+        ],
+        "evidence": {
+          "gates": [
+            {
+              "id": "G1.1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/audio/qwen-token-plan-asr.test.ts \u001b[2m(\u001b[22m\u001b[2m16 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 15\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m16 passed\u001b[39m\u001b[22m\u001b[90m (16)\u001b[39m\n\u001b[2m   Start at \u001b[22m 18:27:59\n\u001b[2m   Duration \u001b[22m 387ms\u001b[2m (transform 220ms, setup 10ms, import 310ms, tests 15ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G1.2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> node scripts/check-i18n-keys.mjs\n\ni18n key alignment check passed (12 locale files, source: en-US.json).\n",
+              "passed": true
+            },
+            {
+              "id": "G1.3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        }
+      },
+      "expectation": "Union includes qwen-token-plan-asr. Registry record: requiresApiKey true, defaultModelId qwen-audio-3.0-asr-flash, token-plan base URL, 31 language codes, 4 formats. Display map binds the name key. Store default injected with modelId. Provider key in all 12 locales.",
+      "gates": [
+        {
+          "id": "G1.1",
+          "check": "npx vitest run tests/audio/qwen-token-plan-asr.test.ts",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G1.1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/audio/qwen-token-plan-asr.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m16 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 15\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m16 passed\\u001b[39m\\u001b[22m\\u001b[90m (16)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 18:27:59\\n\\u001b[2m   Duration \\u001b[22m 387ms\\u001b[2m (transform 220ms, setup 10ms, import 310ms, tests 15ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}"
+        },
+        {
+          "id": "G1.2",
+          "check": "pnpm check:i18n-keys",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G1.2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> node scripts/check-i18n-keys.mjs\\n\\ni18n key alignment check passed (12 locale files, source: en-US.json).\\n\",\"passed\":true}"
+        },
+        {
+          "id": "G1.3",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "evidence": "{\"id\":\"G1.3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "unit"
+        }
+      ],
+      "findings": [
+        {
+          "id": 1,
+          "correlation": "63ddae51398bf17ea942840d73a8b4cc7feed3b3f73bfc6d2433226977161adc",
+          "at": "2026-09-01T06:17:23.178Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "Gate G1.3 (npx tsc --noEmit, expect /^/) fails with regex-timeout on the installed rivr 0.15.0. Reproduced with a throwaway probe ledger: check=echo hello, expect=/^/ fails identically while a literal oracle passes. The tsc check itself passes in 3.1s with exit 0 and empty output. The /^/ oracle cannot be satisfied by the installed runner, so the gate can never record a pass. Fix in research: re-define G1.3 with a literal success marker, for example check=npx tsc --noEmit && echo TSC_OK, expect=TSC_OK.",
+          "evidence": "regex-oracle-timeout"
+        }
+      ]
+    },
+    {
+      "id": "S2",
+      "title": "Synchronous provider core",
+      "intent": "transcribeAudio dispatch case plus transcribeQwenTokenPlanASR: input_audio body, format and sample_rate derivation, top-level text parsing, empty-400 and non-OK error mapping.",
+      "user_stories": [
+        1,
+        3,
+        4,
+        5
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/audio/asr-providers.ts",
+          "symbols": [
+            {
+              "name": "transcribeAudio",
+              "kind": "function",
+              "expectation": "Switch routes the new id; signature unchanged.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  config: ASRModelConfig,\n  audioBuffer: Buffer | Blob,\n): Promise<ASRTranscriptionResult>"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(config: ASRModelConfig, audioBuffer: Buffer | Blob): Promise<ASRTranscriptionResult>"
+              },
+              "postcondition_quality": "INSPECTED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "89f19cd8-9e66-4d64-9e0c-2e1d8ad4a6c4",
+      "impl": {
+        "status": "ready_for_verification",
+        "hash": "637042e653c17c25cd3b527e3685856cfd7fe1052cb3c77d9c93e10c3343432f",
+        "actor": "implementer",
+        "at": "2026-09-01T05:51:43.998Z"
+      },
+      "verification": {
+        "status": "verified",
+        "hash": "42dbd92c39c50dc15f8f4e507d4ace918e5798bc46c981841b46d0a42a682f05",
+        "actor": "verifier",
+        "at": "2026-09-01T06:13:12.989Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G2.1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/audio/qwen-token-plan-asr.test.ts \u001b[2m(\u001b[22m\u001b[2m16 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 16\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m16 passed\u001b[39m\u001b[22m\u001b[90m (16)\u001b[39m\n\u001b[2m   Start at \u001b[22m 18:13:12\n\u001b[2m   Duration \u001b[22m 373ms\u001b[2m (transform 204ms, setup 13ms, import 291ms, tests 16ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G2.2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/audio/qwen-token-plan-asr-protocol.test.ts \u001b[2m(\u001b[22m\u001b[2m5 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 50\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m5 passed\u001b[39m\u001b[22m\u001b[90m (5)\u001b[39m\n\u001b[2m   Start at \u001b[22m 18:13:12\n\u001b[2m   Duration \u001b[22m 163ms\u001b[2m (transform 55ms, setup 13ms, import 47ms, tests 50ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            }
+          ]
+        }
+      },
+      "expectation": "transcribeAudio dispatches qwen-token-plan-asr to the sync implementation. Body sends input_audio data URI plus parameters.format and sample_rate as strings. Response parsing prefers top-level text with documented fallbacks. 400 empty maps to empty text; other non-OK throws. webm and wav both supported without conversion.",
+      "gates": [
+        {
+          "id": "G2.1",
+          "check": "npx vitest run tests/audio/qwen-token-plan-asr.test.ts",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G2.1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/audio/qwen-token-plan-asr.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m16 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 16\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m16 passed\\u001b[39m\\u001b[22m\\u001b[90m (16)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 18:13:12\\n\\u001b[2m   Duration \\u001b[22m 373ms\\u001b[2m (transform 204ms, setup 13ms, import 291ms, tests 16ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}"
+        },
+        {
+          "id": "G2.2",
+          "check": "npx vitest run tests/audio/qwen-token-plan-asr-protocol.test.ts",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G2.2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/audio/qwen-token-plan-asr-protocol.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m5 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 50\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m5 passed\\u001b[39m\\u001b[22m\\u001b[90m (5)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 18:13:12\\n\\u001b[2m   Duration \\u001b[22m 163ms\\u001b[2m (transform 55ms, setup 13ms, import 47ms, tests 50ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}"
+        }
+      ]
+    },
+    {
+      "id": "S3",
+      "title": "Server wiring, env, and neutrality",
+      "intent": "ASR_ENV_MAP entry, .env.example section, provider-config coverage, force-off inheritance, neutrality debt update.",
+      "user_stories": [
+        2,
+        7
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/server/provider-config.ts",
+          "symbols": [
+            {
+              "name": "ASR_ENV_MAP",
+              "kind": "variable",
+              "expectation": "Entry ASR_QWEN_TOKEN_PLAN added.",
+              "before": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "INSPECTED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "5b54fb98-a6c6-4214-aa8e-98f718f1ea0d",
+      "impl": {
+        "status": "ready_for_verification",
+        "hash": "a2800e326dc19a92b79ee6edc862c8d448887f0ee14280d27bdeb988989fe799",
+        "actor": "implementer",
+        "at": "2026-09-01T05:59:06.384Z"
+      },
+      "verification": {
+        "status": "verified",
+        "hash": "3cc96785a1859aa102ec729ec99b1737d8f3e5f72a096b93fb26b3549e767131",
+        "actor": "verifier",
+        "at": "2026-09-01T06:13:17.853Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G3.1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/server/provider-config.test.ts\u001b[2m > \u001b[22m\u001b[2mprovider-config\u001b[2m > \u001b[22m\u001b[2mresolveApiKey\u001b[2m > \u001b[22m\u001b[2mreturns server key from env when no client key\n\u001b[22m\u001b[39m[2026-09-01T06:13:16.534Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 0 Video, 0 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/server/provider-config.test.ts\u001b[2m > \u001b[22m\u001b[2mprovider-config\u001b[2m > \u001b[22m\u001b[2mresolveApiKey\u001b[2m > \u001b[22m\u001b[2mignores client key for a server-managed provider (server is authoritative)\n\u001b[22m\u001b[39m[2026-09-01T06:13:16.537Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 0 Video, 0 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/",
+              "passed": true
+            },
+            {
+              "id": "G3.2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/server/capability-force-off-routes.test.ts \u001b[2m(\u001b[22m\u001b[2m10 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 160\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m10 passed\u001b[39m\u001b[22m\u001b[90m (10)\u001b[39m\n\u001b[2m   Start at \u001b[22m 18:13:16\n\u001b[2m   Duration \u001b[22m 268ms\u001b[2m (transform 110ms, setup 14ms, import 43ms, tests 160ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G3.3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/providers/provider-neutrality-guard.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 32\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m3 passed\u001b[39m\u001b[22m\u001b[90m (3)\u001b[39m\n\u001b[2m   Start at \u001b[22m 18:13:17\n\u001b[2m   Duration \u001b[22m 366ms\u001b[2m (transform 77ms, setup 13ms, import 234ms, tests 32ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            }
+          ]
+        }
+      },
+      "expectation": "ASR_ENV_MAP maps ASR_QWEN_TOKEN_PLAN to qwen-token-plan-asr. .env.example carries the three token-plan ASR vars. Provider-config tests cover server precedence and model pin. Neutrality guard green with updated debt counts.",
+      "gates": [
+        {
+          "id": "G3.1",
+          "check": "npx vitest run tests/server/provider-config.test.ts",
+          "expect": "passed",
+          "type": "integration",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G3.1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/provider-config.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mprovider-config\\u001b[2m > \\u001b[22m\\u001b[2mresolveApiKey\\u001b[2m > \\u001b[22m\\u001b[2mreturns server key from env when no client key\\n\\u001b[22m\\u001b[39m[2026-09-01T06:13:16.534Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 0 Video, 0 WebSearch providers\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/provider-config.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mprovider-config\\u001b[2m > \\u001b[22m\\u001b[2mresolveApiKey\\u001b[2m > \\u001b[22m\\u001b[2mignores client key for a server-managed provider (server is authoritative)\\n\\u001b[22m\\u001b[39m[2026-09-01T06:13:16.537Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 0 Video, 0 WebSearch providers\\n\\n\\u001b[90mstdout\\u001b[2m | tests/\",\"passed\":true}"
+        },
+        {
+          "id": "G3.2",
+          "check": "npx vitest run tests/server/capability-force-off-routes.test.ts",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G3.2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/server/capability-force-off-routes.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m10 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 160\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m10 passed\\u001b[39m\\u001b[22m\\u001b[90m (10)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 18:13:16\\n\\u001b[2m   Duration \\u001b[22m 268ms\\u001b[2m (transform 110ms, setup 14ms, import 43ms, tests 160ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}"
+        },
+        {
+          "id": "G3.3",
+          "check": "npx vitest run tests/providers/provider-neutrality-guard.test.ts",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G3.3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/providers/provider-neutrality-guard.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m3 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 32\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m3 passed\\u001b[39m\\u001b[22m\\u001b[90m (3)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 18:13:17\\n\\u001b[2m   Duration \\u001b[22m 366ms\\u001b[2m (transform 77ms, setup 13ms, import 234ms, tests 32ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}"
+        }
+      ]
+    },
+    {
+      "id": "S4",
+      "title": "Live smoke and protocol pin",
+      "intent": "Opt-in live test proves one real transcription; skip behavior clean without the gate; shape pin test frozen.",
+      "user_stories": [
+        6
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "tests/audio/qwen-token-plan-asr-live.test.ts",
+          "symbols": [
+            {
+              "name": "qwenTokenPlanAsrLiveSmoke",
+              "kind": "function",
+              "expectation": "Top-level smoke function returning the transcript.",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(): Promise<string>"
+              },
+              "postcondition_quality": "INSPECTED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "315413b3-65d0-4885-b1bf-dd17b60d1862",
+      "impl": {
+        "status": "ready_for_verification",
+        "hash": "65a2934894098e1cec268d5225878c3e088dae0dc0931aba31043f5c6f54d48c",
+        "actor": "implementer",
+        "at": "2026-09-01T06:06:49.817Z"
+      },
+      "verification": {
+        "status": "verified",
+        "hash": "dcca59e531d13503ec5a851668ec423f51d9d41aaef5cb27ae72c56e138fb6e0",
+        "actor": "verifier",
+        "at": "2026-09-01T06:15:14.889Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G4.1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/audio/qwen-token-plan-asr-live.test.ts\u001b[2m > \u001b[22m\u001b[2mqwen-token-plan-asr live smoke\u001b[2m > \u001b[22m\u001b[2mtranscribes the vendor sample and starts with \"hello world\"\n\u001b[22m\u001b[39m[qwen-token-plan-asr-live] ok\n\n\u001b[90mstdout\u001b[2m | tests/audio/qwen-token-plan-asr-live.test.ts\u001b[2m > \u001b[22m\u001b[2mqwen-token-plan-asr live smoke\u001b[2m > \u001b[22m\u001b[2mhandles empty-ish audio gracefully (adversarial)\n\u001b[22m\u001b[39m[qwen-token-plan-asr-live] adversarial: vendor returned { text: \"\" }\n\n \u001b[32m✓\u001b[39m tests/audio/qwen-token-plan-asr-live.test.ts \u001b[2m(\u001b[22m\u001b[2m2 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 6662\u001b[2mms\u001b[22m\u001b[39m\n     \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m transcribes the vendor sample and starts with \"hello world\" \u001b[33m 6198\u001b[2mms\u001b[22m\u001b[39m\n     \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m handles empty-ish audio gracefully (adversarial)",
+              "passed": true
+            },
+            {
+              "id": "G4.2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/audio/qwen-token-plan-asr-protocol.test.ts \u001b[2m(\u001b[22m\u001b[2m5 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 52\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m5 passed\u001b[39m\u001b[22m\u001b[90m (5)\u001b[39m\n\u001b[2m   Start at \u001b[22m 18:15:13\n\u001b[2m   Duration \u001b[22m 163ms\u001b[2m (transform 55ms, setup 11ms, import 49ms, tests 52ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G4.3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/audio/qwen-token-plan-asr-live.test.ts\n\u001b[22m\u001b[39m[qwen-token-plan-asr-live] SKIPPED: TEST_LOAD_LOCAL_ENV is not \"1\"; .env.local is not loaded and live probes stay opt-in.\n\n \u001b[2m\u001b[90m↓\u001b[39m\u001b[22m tests/audio/qwen-token-plan-asr-live.test.ts \u001b[2m(\u001b[22m\u001b[2m1 test\u001b[22m\u001b[2m | \u001b[22m\u001b[33m1 skipped\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[2m Test Files \u001b[22m \u001b[33m1 skipped\u001b[39m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[33m1 skipped\u001b[39m\u001b[90m (1)\u001b[39m\n\u001b[2m   Start at \u001b[22m 18:15:14\n\u001b[2m   Duration \u001b[22m 146ms\u001b[2m (transform 51ms, setup 10ms, import 86ms, tests 0ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G4.4",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/providers/provider-neutrality-guard.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 32\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m3 passed\u001b[39m\u001b[22m\u001b[90m (3)\u001b[39m\n\u001b[2m   Start at \u001b[22m 18:15:14\n\u001b[2m   Duration \u001b[22m 337ms\u001b[2m (transform 80ms, setup 13ms, import 240ms, tests 32ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            }
+          ]
+        }
+      },
+      "expectation": "With TEST_LOAD_LOCAL_ENV=1 and the key, the live test transcribes the vendor sample and prints [qwen-token-plan-asr-live] ok. Otherwise it skips with a printed reason. Pin test asserts request shape, response fallback keys, and the 31-code list.",
+      "gates": [
+        {
+          "id": "G4.1",
+          "check": "TEST_LOAD_LOCAL_ENV=1 npx vitest run tests/audio/qwen-token-plan-asr-live.test.ts",
+          "expect": "[qwen-token-plan-asr-live] ok",
+          "type": "adversarial",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G4.1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/audio/qwen-token-plan-asr-live.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mqwen-token-plan-asr live smoke\\u001b[2m > \\u001b[22m\\u001b[2mtranscribes the vendor sample and starts with \\\"hello world\\\"\\n\\u001b[22m\\u001b[39m[qwen-token-plan-asr-live] ok\\n\\n\\u001b[90mstdout\\u001b[2m | tests/audio/qwen-token-plan-asr-live.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mqwen-token-plan-asr live smoke\\u001b[2m > \\u001b[22m\\u001b[2mhandles empty-ish audio gracefully (adversarial)\\n\\u001b[22m\\u001b[39m[qwen-token-plan-asr-live] adversarial: vendor returned { text: \\\"\\\" }\\n\\n \\u001b[32m✓\\u001b[39m tests/audio/qwen-token-plan-asr-live.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m2 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[33m 6662\\u001b[2mms\\u001b[22m\\u001b[39m\\n     \\u001b[33m\\u001b[2m✓\\u001b[22m\\u001b[39m transcribes the vendor sample and starts with \\\"hello world\\\" \\u001b[33m 6198\\u001b[2mms\\u001b[22m\\u001b[39m\\n     \\u001b[33m\\u001b[2m✓\\u001b[22m\\u001b[39m handles empty-ish audio gracefully (adversarial)\",\"passed\":true}"
+        },
+        {
+          "id": "G4.2",
+          "check": "npx vitest run tests/audio/qwen-token-plan-asr-protocol.test.ts",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G4.2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/audio/qwen-token-plan-asr-protocol.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m5 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 52\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m5 passed\\u001b[39m\\u001b[22m\\u001b[90m (5)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 18:15:13\\n\\u001b[2m   Duration \\u001b[22m 163ms\\u001b[2m (transform 55ms, setup 11ms, import 49ms, tests 52ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}"
+        },
+        {
+          "id": "G4.3",
+          "check": "npx vitest run tests/audio/qwen-token-plan-asr-live.test.ts",
+          "expect": "skipped",
+          "type": "smoke",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G4.3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/audio/qwen-token-plan-asr-live.test.ts\\n\\u001b[22m\\u001b[39m[qwen-token-plan-asr-live] SKIPPED: TEST_LOAD_LOCAL_ENV is not \\\"1\\\"; .env.local is not loaded and live probes stay opt-in.\\n\\n \\u001b[2m\\u001b[90m↓\\u001b[39m\\u001b[22m tests/audio/qwen-token-plan-asr-live.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m1 test\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[33m1 skipped\\u001b[39m\\u001b[2m)\\u001b[22m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[33m1 skipped\\u001b[39m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[33m1 skipped\\u001b[39m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 18:15:14\\n\\u001b[2m   Duration \\u001b[22m 146ms\\u001b[2m (transform 51ms, setup 10ms, import 86ms, tests 0ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}"
+        },
+        {
+          "id": "G4.4",
+          "check": "npx vitest run tests/providers/provider-neutrality-guard.test.ts",
+          "expect": "passed",
+          "type": "smoke",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G4.4\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/providers/provider-neutrality-guard.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m3 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 32\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m3 passed\\u001b[39m\\u001b[22m\\u001b[90m (3)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 18:15:14\\n\\u001b[2m   Duration \\u001b[22m 337ms\\u001b[2m (transform 80ms, setup 13ms, import 240ms, tests 32ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}"
+        }
+      ]
+    }
+  ],
+  "audit": [
+    {
+      "seq": 1,
+      "id": "c47c02d0-afdc-4836-a58e-46782dfe5608",
+      "at": "2026-09-01T01:45:13.563Z",
+      "actor": "orchestrator",
+      "command": "init",
+      "transition": "spec-approved:docs/specs/002-qwen-token-plan-asr.md",
+      "slice": null,
+      "hash": "c7eeb36709f8df26f749f8ee55309f6f6fa6357d9c62bcba25c2afe378193f1e"
+    },
+    {
+      "seq": 2,
+      "id": "dd90ea67-0c1a-47ae-a487-c98c7a66e8ae",
+      "at": "2026-09-01T01:45:13.564Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect",
+      "slice": "S1",
+      "hash": "d443636e1cb0feb601ac8f6fa2e88a114ab95d9ac4d843b408667abb530634e6",
+      "expectationHash": "0ef699d759060389347c829d38beecf98414e8722e012a27912788fa69a63927"
+    },
+    {
+      "seq": 3,
+      "id": "c8c2a1f1-3deb-4cee-9eca-d3801a6cfe42",
+      "at": "2026-09-01T01:45:13.564Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/audio/types.ts::BuiltInASRProviderId",
+      "slice": "S1",
+      "hash": "14675bfd2b78e9797c13dcf35ebcbae0fbd3039d5efa2da01a81594346dad843",
+      "expectationHash": "a31c5b76f138bdd90196ae8f4b57078f1ec07c61126d667aadbfa05830fc693a"
+    },
+    {
+      "seq": 4,
+      "id": "bc1642a8-bea7-442a-a391-7a31b0092cc5",
+      "at": "2026-09-01T01:45:13.564Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/audio/constants.ts::ASR_PROVIDERS",
+      "slice": "S1",
+      "hash": "9e85402a6b6fda55f7d28b6edb1be2bc48e5e3f649a15792e68449b40124b610",
+      "expectationHash": "d35729afc486789aedce15d83743082a5026793cbea4c37b7434b2262445197d"
+    },
+    {
+      "seq": 5,
+      "id": "c2bbc62d-a7dd-4f57-a1ae-1b73b4683713",
+      "at": "2026-09-01T01:45:13.564Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/audio/provider-display.ts::ASR_PROVIDER_NAME_KEYS",
+      "slice": "S1",
+      "hash": "8f630ee06df95432572a99f9a98e7f5dd3097fa01b74501a448ec74b357840e3",
+      "expectationHash": "77adebc0f4606a5d3412ab3dbdd4ad9ea09e82880108e2d40fdb6aad5f9f08f0"
+    },
+    {
+      "seq": 6,
+      "id": "88b757e4-a9fe-4967-aa64-7f5e8c9461d4",
+      "at": "2026-09-01T01:45:13.564Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect",
+      "slice": "S2",
+      "hash": "1e8c78863128c602221487db23fada97ce16a9b072759fd0adfad46a31f9c152",
+      "expectationHash": "08ae0a7241f13d541bec2268b875bd61cf873ced94d0e51186b08eae2106a589"
+    },
+    {
+      "seq": 7,
+      "id": "637325a4-5728-4bc3-a164-23db37e8f98c",
+      "at": "2026-09-01T01:45:13.564Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/audio/asr-providers.ts::transcribeAudio",
+      "slice": "S2",
+      "hash": "8b8fd2b5184d4325a1804ac89452a0d412c8680cf4d58a82dd7f102eec647a4e",
+      "expectationHash": "b479432b527a326a84c17b8f4381ded91ca04a6e39fe703257ed42e7e4d503b4"
+    },
+    {
+      "seq": 8,
+      "id": "1a4fb034-61a4-4a25-8d30-961f9d07cd05",
+      "at": "2026-09-01T01:45:13.564Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect",
+      "slice": "S3",
+      "hash": "72dd56955d8204dc9cd80a3faf32b05cb3aeb3c015a657662effecf4de880637",
+      "expectationHash": "0f990ab21515a5b523df27ae4f567d40b16444bd9d0905a6154eb9dc07e602c7"
+    },
+    {
+      "seq": 9,
+      "id": "6f8a3127-055f-4f10-8213-6d953117d859",
+      "at": "2026-09-01T01:45:13.564Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:lib/server/provider-config.ts::ASR_ENV_MAP",
+      "slice": "S3",
+      "hash": "7a1ed6255de775dc888d5a484b8561cf7190cb58e122be612ba3a10b1e7a83af",
+      "expectationHash": "9cac488a7aa142cd05eb263add7a35616e861cfa383afeaeb6e00f54091458d8"
+    },
+    {
+      "seq": 10,
+      "id": "1d6ccca7-2208-427c-96f4-2750a3daa14f",
+      "at": "2026-09-01T01:45:13.564Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect",
+      "slice": "S4",
+      "hash": "4f049a08509910cec93e6820dd9648e0d6c02e914f58c170fe227a8a5f260f99",
+      "expectationHash": "ddfe6af2cd720fe96d15e27be77d08f5653d8c8ca6f0b9ed574d37a406135546"
+    },
+    {
+      "seq": 11,
+      "id": "9473375c-73c7-4ad9-b773-a80358351211",
+      "at": "2026-09-01T01:45:13.564Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect-symbol:tests/audio/qwen-token-plan-asr-live.test.ts::qwenTokenPlanAsrLiveSmoke",
+      "slice": "S4",
+      "hash": "3c506def4a907c389f306e853c229016e446dd81bedf3ce49b5b974767715a94",
+      "expectationHash": "82b60f31bfac947b3dc9b0601a29d69af4dc724a167185e6ddbecd7a5bcb0602"
+    },
+    {
+      "seq": 12,
+      "id": "cf74c304-6352-43ec-b9bd-797c702b8ba3",
+      "at": "2026-09-01T01:45:13.564Z",
+      "actor": "orchestrator",
+      "command": "init_batch",
+      "transition": "batch-init:S1,S2,S3,S4",
+      "slice": null,
+      "hash": "70ec026e4dbe4686e3de6a8da37b17709422bb5b5457f648ee48893c978ea23e"
+    },
+    {
+      "seq": 13,
+      "id": "8ba9bb90-68a5-4637-bf25-550accc7c597",
+      "at": "2026-09-01T01:45:13.635Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S1:capture",
+      "slice": "S1",
+      "hash": "961858d16bb758d568960f05f36ae941cf26ea427cb616bff27fa9eb3498839f",
+      "fileHash": "40c7b350c2c6b390ebb3995977ef5c2ff0e52747410155846c57315266b85e55"
+    },
+    {
+      "seq": 14,
+      "id": "06523c94-de4f-44d2-8da5-238171e53537",
+      "at": "2026-09-01T01:45:13.700Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S2:capture",
+      "slice": "S2",
+      "hash": "7c37e27b0cb52522a3c1cb830ca458203b16285e4ac581c1107750ca4fe619c4",
+      "fileHash": "34022fca78386a7bb15792ebaf30e9cf3a045ee5a8da3130d33fd8e503aae2da"
+    },
+    {
+      "seq": 15,
+      "id": "b4aebb0f-6836-4f33-aa9f-434d30d78848",
+      "at": "2026-09-01T01:45:13.765Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S3:capture",
+      "slice": "S3",
+      "hash": "00c6f90b40e15e0d6bbd3f9fecc3f44814a8666ee8d30fd02a0c09b4c6607678",
+      "fileHash": "6beb9df11a4a890be186475e0410fd91a899977debd5631d1e36debe96ffb470"
+    },
+    {
+      "seq": 16,
+      "id": "0209df3e-2044-4a35-b2bb-964a80a0952e",
+      "at": "2026-09-01T01:45:13.814Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S4:capture",
+      "slice": "S4",
+      "hash": "bc978a8204c6ff55ea4690fe3ba62e8a048592a440f3cd01721f8230493f99f0",
+      "fileHash": "0612855c9cebc24e1a2310941f41c7ec277e86aa6c44da5fcd5777f39cd15648"
+    },
+    {
+      "seq": 17,
+      "id": "ecfea223-6661-463e-80e0-9e2d1595c32e",
+      "at": "2026-09-01T01:45:13.853Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/audio/types.ts::BuiltInASRProviderId",
+      "slice": "S1",
+      "hash": "5a189e5fd2eb362cded9ddedc73b3296b904d9c24a484415790a8f1a84372ad2",
+      "fileHash": "9d5b353328ebacf25fb7e8b1892e9904a315f53617c4c68d7764cb2bf22da1ee"
+    },
+    {
+      "seq": 18,
+      "id": "b1d42ce9-ac12-44e9-bb4d-9d86c0960342",
+      "at": "2026-09-01T01:45:13.898Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/audio/constants.ts::ASR_PROVIDERS",
+      "slice": "S1",
+      "hash": "10be7ba28e2d45b9d8f9196ef73fb2ef5a841f80511086423fc9c636f47047e1",
+      "fileHash": "0627da4979899e6337c735712aa05ac03fe706c4130dbd5ac2384dd5464e3fc8"
+    },
+    {
+      "seq": 19,
+      "id": "2e963d32-f9b3-4222-b9e0-8048570b48cb",
+      "at": "2026-09-01T01:45:13.939Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/audio/provider-display.ts::ASR_PROVIDER_NAME_KEYS",
+      "slice": "S1",
+      "hash": "1a8797e941f8d8a22218432c3c6d7b7ecfd9d13c4b1c2998266f8264b8d62504",
+      "fileHash": "b4134227887b783f160f80351acdbb4f8469ddf91a92c5cd6b6e6ac03900864d"
+    },
+    {
+      "seq": 20,
+      "id": "c7da773e-41bc-4480-b002-fcb8087be354",
+      "at": "2026-09-01T01:45:13.975Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/audio/asr-providers.ts::transcribeAudio",
+      "slice": "S2",
+      "hash": "b4685066db1fdb5855a4fbc81b95e7d9ce2d8f2d9eee8132d233169bf02a37dd",
+      "fileHash": "3733e1aa38e2e0247d161e41bb94e49a0d52607ea1e870b8955409b9520be505"
+    },
+    {
+      "seq": 21,
+      "id": "69471f2f-5872-48ec-8ef0-100228c36a53",
+      "at": "2026-09-01T01:45:14.020Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:lib/server/provider-config.ts::ASR_ENV_MAP",
+      "slice": "S3",
+      "hash": "97e93f7617881f45b12374fe6604e6e86293e9b09f2bac4d4111008f0cbd027b",
+      "fileHash": "9907b61bd542929ef559dd0ead0cad355df164eef250accc1f73cddf012d57bf"
+    },
+    {
+      "seq": 22,
+      "id": "f1e63942-891e-4bd8-a60d-7279e8cb987a",
+      "at": "2026-09-01T01:45:14.064Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S4:postcondition:tests/audio/qwen-token-plan-asr-live.test.ts::qwenTokenPlanAsrLiveSmoke",
+      "slice": "S4",
+      "hash": "17ca6ea68cd48ad514c71d578f59f1e38b36f53e269bdbe1d8a84c96501fba6f",
+      "fileHash": "c2b99ec086bfe6ff6460f448c361768488c1ebc21aabcf0077177ed1ce71a03c"
+    },
+    {
+      "seq": 23,
+      "id": "f30bfbfe-0b90-49cd-965f-d23645067acc",
+      "at": "2026-09-01T01:45:14.111Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "5b5244db0b6ce32a3e29042c13bd17251896a04432bdbc6efa850204495731de",
+      "fileHash": "324bce29deec96651183788da112c1b635345cfb155f2492502c154972de6533"
+    },
+    {
+      "seq": 24,
+      "id": "c8eab188-7bb5-4ef6-8b4f-9a8318d7d5e8",
+      "at": "2026-09-01T01:51:58.332Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S1:impl:pending->ready_for_verification",
+      "slice": "S1",
+      "hash": "4a82c555e085835034c241227efabf55b5995df42d9235fa5b68007e74154475",
+      "fileHash": "13656ddd6646a8bf05909181d3685cbc12973f6f9cd5d5d755e0c9276296bfde"
+    },
+    {
+      "seq": 25,
+      "id": "1d54f674-b177-4b2d-9dbc-4735dec4b28c",
+      "at": "2026-09-01T01:56:33.392Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:correction:pin the enumerated language count as 31 in the spec after the S1 finding",
+      "slice": null,
+      "hash": "ad7c599822ab4cb9af3579c5ae661d9b464009a143932f503c1ab60816f9a956",
+      "fileHash": "8f3d02858b24ce10f0fa923ba38af728ae23f1032bd85dcce190493fc320489f"
+    },
+    {
+      "seq": 26,
+      "id": "ec6954e4-5b75-4ed8-adb8-8a04d74f12a2",
+      "at": "2026-09-01T01:56:33.431Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect",
+      "slice": "S1",
+      "hash": "e76124412ace38a41dffad9e029c5e99eb6595972e207b2b874ee8ea774bf75c",
+      "expectationHash": "73354a0ef2b5541f2573c8b0a862a601f707516eb6674ad87cff6e8406d95489",
+      "fileHash": "148511463f34af65bad00c6a809376b94e0ace223336649bd3a0aa863cfced6d"
+    },
+    {
+      "seq": 27,
+      "id": "45c835dc-33ae-410f-87ec-7f87c64f7517",
+      "at": "2026-09-01T01:56:33.469Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect",
+      "slice": "S4",
+      "hash": "4ddd7436f9bdd2beb50c2bbcb34d72d85235ebb318c82713e7c52b9dba34a0e3",
+      "expectationHash": "d7199eddcd0aa8ad7204c1a53de97adb7d11c059d4f975254315fa3267eb1522",
+      "fileHash": "b098d25c9d02f7a1959c9aa7fa02125e7d91e14f55556943d8e31fc0078ce190"
+    },
+    {
+      "seq": 28,
+      "id": "7a1b3380-e7f6-4b32-b799-5558d1d88c16",
+      "at": "2026-09-01T01:56:33.511Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "743e6a643ce46763bfd0b75098f10f7405aed138a870aa649ab51ccf48ceb907",
+      "fileHash": "44fdb2199e51acf25ca3942ecbb9578480e68d170252f90bcedbeb74339b7cc9"
+    },
+    {
+      "seq": 29,
+      "id": "79f567df-d276-4d88-9a08-62eb1c708864",
+      "at": "2026-09-01T05:51:43.998Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S2:impl:pending->ready_for_verification",
+      "slice": "S2",
+      "hash": "2191155b991d2fcd2fdc80800198eb0f7bfd3ebe72ee964aa8326b8914fced34",
+      "fileHash": "f0a26a6a526185c3fe91505f91da206c38ffa3f864fdc3a5fe1ec2ac0cd33049"
+    },
+    {
+      "seq": 30,
+      "id": "91ec84d1-ea32-41da-9936-987d7b2697c1",
+      "at": "2026-09-01T05:59:06.384Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S3:impl:pending->ready_for_verification",
+      "slice": "S3",
+      "hash": "3a92d540ba40970ee0336c430c9c52cc570fb3d938db5e5649a49bb8278ee395",
+      "fileHash": "5e3463420ada1920188459904d513325ff7d3239f475d56b1645283123b865a9"
+    },
+    {
+      "seq": 31,
+      "id": "88a2d7f4-4faa-48ef-b5c7-af6feb0a69c8",
+      "at": "2026-09-01T06:06:49.817Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S4:impl:pending->ready_for_verification",
+      "slice": "S4",
+      "hash": "7741718be16dcea9552f91ae27502379fe3ebd8a9cfeb3078590cf847857648b",
+      "fileHash": "1c8b3684b5b76b0e1af4a66f08aa8eb949ff9c2741cdea5879ff7a6a8ce15b08"
+    },
+    {
+      "seq": 32,
+      "id": "d73f949e-ee74-44fc-84e2-2d5a988266fd",
+      "at": "2026-09-01T06:08:58.279Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "f3a00e9b033b4280d4d40c6e0dd1b2a6e430c3bc7a6bd67855f45b6c3e64de35",
+      "fileHash": "96063cb2087c4bf866e5317607f8be634833df6d596b0ae566b2697197c24b89"
+    },
+    {
+      "seq": 33,
+      "id": "a3e1708f-22ff-4098-83ac-a2d9261ad43b",
+      "at": "2026-09-01T06:13:12.989Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S2:verification:pending->verified",
+      "slice": "S2",
+      "hash": "b9e878e21ae179e6f5737f6f07abb225170aa8ad247001d70489e91d5159f3d9",
+      "oracle": "9b36ae926a71bbdfc10d643cc4e5313d90e8f76f6d56033ca83409a6a500d015",
+      "evidence": "744a6a1b55262408a95f2e0743c6011bd8aa9bc5e6b8031aa433896d578fc474",
+      "fileHash": "8a8d51886f0234118d0742a4aa00fb3128af2cae11ca9da49aa7e6a6c8748025"
+    },
+    {
+      "seq": 34,
+      "id": "1bfff341-2b11-42d3-a437-b0db15221794",
+      "at": "2026-09-01T06:13:17.853Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S3:verification:pending->verified",
+      "slice": "S3",
+      "hash": "8fa3a42ffc060b5e5231a68e8e782b31068567c575d610da145ea6c90fa8d427",
+      "oracle": "a8cb00460a7a59ac06f34b7ae0deba046fcd271bf94aa4108e6ef4004d338b1e",
+      "evidence": "c7c3c2536867c28d9d0f6af53bedd5145cbe03baf8043e4078588140282f3c65",
+      "fileHash": "70e52d530dbe0e5076e270e0517a9017b2afc8c4e1a44b166c7c17d907680046"
+    },
+    {
+      "seq": 35,
+      "id": "c270f5c2-f00b-4b6f-a41b-bf7a9fcda74c",
+      "at": "2026-09-01T06:15:14.889Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S4:verification:pending->verified",
+      "slice": "S4",
+      "hash": "f4f27ead8dab5eff1835fb15002671202c46a7fa61dce13c249d497f4511c8a1",
+      "oracle": "851b0bac4215ed344dfdd68782f32cd5760276303c5e5d65b4f034542db4a51f",
+      "evidence": "352146ed882aae4fd0ff4768551993609f40739d2245a4eebe98afdc6eae7453",
+      "fileHash": "7da46bf195b2e97eef3aaeeda2ad664e83bf5e15094f5e178e775c9193c6962a"
+    },
+    {
+      "seq": 36,
+      "id": "186fe7f0-0710-479d-9289-a8a1350ab18c",
+      "at": "2026-09-01T06:17:23.178Z",
+      "actor": "verifier",
+      "command": "slice_reject_batch",
+      "transition": "reject-batch:S1",
+      "slice": null,
+      "hash": "319c7d9b9220e3fabfd99481885adc720b93d4f9dd11c218a55148fa4c18b812",
+      "fileHash": "296b856c8560d266b74ccb3a4dcee1a974c591a5be3463358dff9df056105ffb"
+    },
+    {
+      "seq": 37,
+      "id": "797d1b7a-f21d-4b57-abae-34eccb5b72db",
+      "at": "2026-09-01T06:22:47.638Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:extension:round-1 F1: replace broken /^/ oracle with literal TSC_OK marker; F5 wording alignment",
+      "slice": null,
+      "hash": "23abad2e743b0f8d14d6304158fca7ea3b6912365de5c7f03c03be0afc141f7c",
+      "fileHash": "1d9793b4908a887b0742a7b796c9f1c116f23ef74751b003132927c767393b47"
+    },
+    {
+      "seq": 38,
+      "id": "c8b174d0-3659-4e7b-9748-69c918384eb3",
+      "at": "2026-09-01T06:22:47.672Z",
+      "actor": "orchestrator",
+      "command": "gate_remove",
+      "transition": "slice:S1:gate-remove:G1.3",
+      "slice": "S1",
+      "hash": "6e212299542a11066de41c6536babd8486d906aebdeee482afc0e2b9e45f4942",
+      "fileHash": "854feccef7b1559acecb276af9fead01a9305f0bfc0f81617487ef697a15dda4"
+    },
+    {
+      "seq": 39,
+      "id": "358bbd4c-b4ae-49d9-8e8f-6a48e931a0ae",
+      "at": "2026-09-01T06:22:47.707Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S1:gate-add:G1.3",
+      "slice": "S1",
+      "hash": "db701b8de325b0a8fb5790b7fb0f7aa66765390ec8540f308ed885f82f204cfb",
+      "fileHash": "4c9186523aca22e84b8d687619bd24e8966e2529555ce22fb7782c566114304b"
+    },
+    {
+      "seq": 40,
+      "id": "af71fd56-da61-494d-811d-494de9b0e087",
+      "at": "2026-09-01T06:22:47.744Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "efd224c5eb75f6eb8d0ae8845cd2a419602181f9454f80edb69d0da49bd9458c",
+      "fileHash": "9c9340461188a31b40f93400d05d79364192ba2579383a49143797ebd2599ce4"
+    },
+    {
+      "seq": 41,
+      "id": "69f82fc9-11b5-47f7-9ec2-c2bcd372f6f2",
+      "at": "2026-09-01T06:25:17.473Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S1:impl:pending->ready_for_verification",
+      "slice": "S1",
+      "hash": "eba6302d44d8aacbe8e2b58c0325533120d7990d31ddcae1d9fec21f4d2d5310",
+      "fileHash": "79b1a2edbf4870833d3c67fccc77f7c2372bc5c132539b8483434cc9c6a893c7"
+    },
+    {
+      "seq": 42,
+      "id": "0d605ed9-cb45-4912-835d-47535cb6c0ad",
+      "at": "2026-09-01T06:26:27.530Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "e7c3ac4eb52e8ef642e653cdca4def26d9fd00dd2a328e07d077e8043716d55e",
+      "fileHash": "c45fff0f5f40025f44b31a3bbf1aea14cc47f162913c36945f16e0b96a633b64"
+    },
+    {
+      "seq": 43,
+      "id": "4c3bbce9-d7d9-4657-84ac-7e2e6705a634",
+      "at": "2026-09-01T06:28:04.186Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S1:verification:pending->verified",
+      "slice": "S1",
+      "hash": "f6f0cdf6aa4b5a1c2c1f23dc6b807a656fb1881c676aed9d19ae602d693220dd",
+      "oracle": "a957e44e32f2f74825fcd75a268619ae12bf54ef833ba9bd434e602cbf2d2fb4",
+      "evidence": "5d1fa1c63025457d4a0b13b3a29becc65dc45ec11805fe43e11069cdd25c6077",
+      "fileHash": "06bd6a2cc81efd7b9c69be2dcdb1900ba920124f45c0c3975925a37bfb031064"
+    },
+    {
+      "seq": 44,
+      "id": "3f32be16-c8d6-4c9e-af30-7a29f0a369dd",
+      "at": "2026-09-01T06:29:18.272Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:verification->research_update",
+      "slice": null,
+      "hash": "bc83599cdecf92b3ee62d7926a2ff92228725db8e625e2ab6d83718d6f766113",
+      "fileHash": "791d4f24af8750d4858a67bec77aa4af85cc08d6f73024b7d36a8d39b1cbc241"
+    },
+    {
+      "seq": 45,
+      "id": "c1824df5-b64c-4da9-87be-6c1265221ba6",
+      "at": "2026-09-01T06:35:13.711Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:respecify:stage 4 research update: shipped file:lines, oracle doctrine, 11 learnings",
+      "slice": null,
+      "hash": "b712a2791b52f8e5f7b462632a9be2033651bd23a1db80585d97ea70d7c5a3cd",
+      "fileHash": "c82e702390a629abd893e3058a5933c0568a4e36704d870156f5013c7528fa62"
+    },
+    {
+      "seq": 46,
+      "id": "d3607a06-c65f-4d7d-b194-7241b425d0a7",
+      "at": "2026-09-01T09:57:56.511Z",
+      "actor": "verifier",
+      "command": "certify",
+      "transition": "certify:1b751a68e077650747253030c73bc7ba5c02f82e0556fab33b7512ef82c745e4",
+      "slice": null,
+      "hash": "b78c8554cc74df2a1ba7d8468bfd2cafb4e753560847db1fd9a59f29810f70fe",
+      "oracle": "1b751a68e077650747253030c73bc7ba5c02f82e0556fab33b7512ef82c745e4",
+      "fileHash": "e068d7b49295ab62fe6f0c43a8ec647f25e9f1c51eaa0eae7d1978cb93f7a8b1"
+    }
+  ],
+  "fileHash": "ba4f59a249297117e1bbe064a6041fc9d2861edd3d4eb20ef069b4c205644ae9"
+}

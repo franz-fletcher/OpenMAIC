@@ -182,6 +182,9 @@ export async function transcribeAudio(
     case 'qwen-asr':
       return await transcribeQwenASR(config, audioBuffer);
 
+    case 'qwen-token-plan-asr':
+      return await transcribeQwenTokenPlanASR(config, audioBuffer);
+
     case 'azure-asr':
       return await transcribeAzureASR(config, audioBuffer);
 
@@ -294,6 +297,86 @@ function detectWavBytes(bytes: Uint8Array): boolean {
     String.fromCharCode(...bytes.slice(0, 4)) === 'RIFF' &&
     String.fromCharCode(...bytes.slice(8, 12)) === 'WAVE'
   );
+}
+
+/**
+ * Detect mp3 by ID3 tag or 0xFF sync byte.
+ */
+function detectMp3Bytes(bytes: Uint8Array): boolean {
+  if (bytes.byteLength < 3) return false;
+  if (String.fromCharCode(...bytes.slice(0, 3)) === 'ID3') return true;
+  if (bytes[0] === 0xff && (bytes[1] & 0xe0) === 0xe0) return true;
+  return false;
+}
+
+/**
+ * Detect Ogg container by the OggS magic.
+ */
+function detectOggBytes(bytes: Uint8Array): boolean {
+  if (bytes.byteLength < 4) return false;
+  return String.fromCharCode(...bytes.slice(0, 4)) === 'OggS';
+}
+
+/**
+ * Detect webm by the EBML magic number 0x1A45DFA3.
+ */
+function detectWebmBytes(bytes: Uint8Array): boolean {
+  if (bytes.byteLength < 4) return false;
+  return bytes[0] === 0x1a && bytes[1] === 0x45 && bytes[2] === 0xdf && bytes[3] === 0xa3;
+}
+
+/**
+ * Derive the audio format from raw bytes.
+ * Priority: webm (EBML) -> mp3 (ID3/0xFF) -> opus (OggS) -> wav (RIFF) -> wav fallback.
+ */
+function detectAudioFormat(bytes: Uint8Array): string {
+  if (detectWebmBytes(bytes)) return 'webm';
+  if (detectMp3Bytes(bytes)) return 'mp3';
+  if (detectOggBytes(bytes)) return 'opus';
+  if (detectWavBytes(bytes)) return 'wav';
+  return 'wav';
+}
+
+/**
+ * Read the sample rate from a WAV header (uint32 LE at offset 24).
+ * Falls back to '48000' when the buffer is too short.
+ */
+function readWavSampleRate(bytes: Uint8Array): string {
+  if (bytes.byteLength >= 28) {
+    const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+    const rate = view.getUint32(24, true);
+    if (rate > 0) return String(rate);
+  }
+  return '48000';
+}
+
+/**
+ * Search for the OpusHead marker in webm bytes and read the sample rate
+ * 12 bytes after it. Falls back to '48000' when not found.
+ */
+function readWebmOpusHeadRate(bytes: Uint8Array): string {
+  const searchEnd = Math.min(bytes.byteLength - 16, 256);
+  for (let i = 0; i < searchEnd; i++) {
+    if (
+      bytes[i] === 0x4f &&
+      bytes[i + 1] === 0x70 &&
+      bytes[i + 2] === 0x75 &&
+      bytes[i + 3] === 0x73 &&
+      bytes[i + 4] === 0x48 &&
+      bytes[i + 5] === 0x65 &&
+      bytes[i + 6] === 0x61 &&
+      bytes[i + 7] === 0x64
+    ) {
+      const rateOffset = i + 12;
+      if (rateOffset + 4 <= bytes.byteLength) {
+        const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+        const rate = view.getUint32(rateOffset, true);
+        if (rate > 0) return String(rate);
+      }
+      break;
+    }
+  }
+  return '48000';
 }
 
 function getOptionalBearerAuthHeaders(apiKey?: string): Record<string, string> {
@@ -436,6 +519,109 @@ async function transcribeQwenASR(
   // Extract text from first content item
   const transcribedText = messageContent[0]?.text || '';
   return { text: transcribedText };
+}
+
+/**
+ * Qwen Token Plan ASR (sync HTTP).
+ *
+ * Sends input_audio content with base64 data URI. Sends format and
+ * sample_rate as strings. Parses top-level .text with documented
+ * fallbacks. 400 with any body returns empty text. Other non-OK
+ * statuses throw with status and response text.
+ */
+async function transcribeQwenTokenPlanASR(
+  config: ASRModelConfig,
+  audioBuffer: Buffer | Blob,
+): Promise<ASRTranscriptionResult> {
+  const baseUrl = (
+    config.baseUrl ||
+    ASR_PROVIDERS['qwen-token-plan-asr'].defaultBaseUrl ||
+    ''
+  ).replace(/\/$/, '');
+
+  // Convert to base64 and detect format + sample rate from raw bytes
+  let base64Audio: string;
+  let rawBytes: Uint8Array;
+
+  if (audioBuffer instanceof Buffer) {
+    base64Audio = audioBuffer.toString('base64');
+    rawBytes = new Uint8Array(
+      audioBuffer.buffer.slice(
+        audioBuffer.byteOffset,
+        audioBuffer.byteOffset + audioBuffer.byteLength,
+      ) as ArrayBuffer,
+    );
+  } else if (audioBuffer instanceof Blob) {
+    const arrayBuffer = await audioBuffer.arrayBuffer();
+    rawBytes = new Uint8Array(arrayBuffer);
+    base64Audio = Buffer.from(arrayBuffer).toString('base64');
+  } else {
+    throw new Error('Invalid audio buffer type');
+  }
+
+  const format = detectAudioFormat(rawBytes);
+  let sampleRate: string;
+  if (format === 'wav') {
+    sampleRate = readWavSampleRate(rawBytes);
+  } else if (format === 'webm') {
+    sampleRate = readWebmOpusHeadRate(rawBytes);
+  } else {
+    sampleRate = '48000';
+  }
+
+  // Build the data URI with the correct MIME type
+  const mimeMap: Record<string, string> = {
+    wav: 'audio/wav',
+    webm: 'audio/webm',
+    mp3: 'audio/mpeg',
+    opus: 'audio/ogg',
+  };
+  const mime = mimeMap[format] || 'audio/wav';
+  const dataUri = `data:${mime};base64,${base64Audio}`;
+
+  const requestBody: Record<string, unknown> = {
+    model: config.modelId || ASR_PROVIDERS['qwen-token-plan-asr'].defaultModelId,
+    input: {
+      messages: [
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'input_audio',
+              input_audio: { data: dataUri },
+            },
+          ],
+        },
+      ],
+    },
+    parameters: {
+      format,
+      sample_rate: sampleRate,
+    },
+  };
+
+  const response = await fetch(`${baseUrl}/services/aigc/multimodal-generation/generation`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${config.apiKey}`,
+      'Content-Type': 'application/json; charset=utf-8',
+    },
+    body: JSON.stringify(requestBody),
+  });
+
+  if (!response.ok) {
+    if (response.status === 400) {
+      return { text: '' };
+    }
+    const errorText = await response.text().catch(() => response.statusText);
+    throw new Error(`Qwen Token Plan ASR error (${response.status}): ${errorText}`);
+  }
+
+  const data = await response.json();
+
+  // Parse response with fallback chain
+  const text = data.text || data.sentence?.text || data.output?.output?.sentence?.text || '';
+  return { text };
 }
 
 /**

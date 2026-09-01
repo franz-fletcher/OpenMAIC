@@ -181,6 +181,7 @@ export type BuiltInASRProviderId =
   | 'openai-whisper'
   | 'browser-native'
   | 'qwen-asr'
+  | 'qwen-token-plan-asr'
   | 'funasr-asr'
   | 'lemonade-asr'
   | 'azure-asr';

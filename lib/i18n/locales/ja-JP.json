@@ -1453,6 +1453,7 @@
     "providerOpenAIWhisper": "OpenAI ASR (gpt-4o-mini-transcribe)",
     "providerBrowserNative": "ブラウザネイティブASR",
     "providerQwenASR": "Qwen ASR（Alibaba Cloud百錬）",
+    "providerQwenTokenPlanASR": "Qwen Token Plan 音声認識",
     "providerFunASRASR": "FunASR（ローカル）",
     "providerLemonadeASR": "Lemonade ASR（ローカル）",
     "providerAzureASR": "Azure STT",
