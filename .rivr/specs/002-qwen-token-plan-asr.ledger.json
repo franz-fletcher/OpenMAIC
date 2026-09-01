@@ -4,12 +4,12 @@
   "spec": {
     "reference": "docs/specs/002-qwen-token-plan-asr.md",
     "title": "Batch 002 spec: qwen-token-plan-asr synchronous provider",
-    "hash": "1e6aae35513dbeda91c703ed06da88eded09fe1ffd82e19e3de56f04432b6f8c"
+    "hash": "11f0611981990f1d6126c6fb89848ff1cd977a216d936c31478b557e4348487c"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "verification",
+  "stage": "research_update",
   "retry": {
     "count": 3,
     "max": 5,
@@ -981,7 +981,29 @@
       "oracle": "a957e44e32f2f74825fcd75a268619ae12bf54ef833ba9bd434e602cbf2d2fb4",
       "evidence": "5d1fa1c63025457d4a0b13b3a29becc65dc45ec11805fe43e11069cdd25c6077",
       "fileHash": "06bd6a2cc81efd7b9c69be2dcdb1900ba920124f45c0c3975925a37bfb031064"
+    },
+    {
+      "seq": 44,
+      "id": "3f32be16-c8d6-4c9e-af30-7a29f0a369dd",
+      "at": "2026-09-01T06:29:18.272Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:verification->research_update",
+      "slice": null,
+      "hash": "bc83599cdecf92b3ee62d7926a2ff92228725db8e625e2ab6d83718d6f766113",
+      "fileHash": "791d4f24af8750d4858a67bec77aa4af85cc08d6f73024b7d36a8d39b1cbc241"
+    },
+    {
+      "seq": 45,
+      "id": "c1824df5-b64c-4da9-87be-6c1265221ba6",
+      "at": "2026-09-01T06:35:13.711Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:respecify:stage 4 research update: shipped file:lines, oracle doctrine, 11 learnings",
+      "slice": null,
+      "hash": "b712a2791b52f8e5f7b462632a9be2033651bd23a1db80585d97ea70d7c5a3cd",
+      "fileHash": "c82e702390a629abd893e3058a5933c0568a4e36704d870156f5013c7528fa62"
     }
   ],
-  "fileHash": "791d4f24af8750d4858a67bec77aa4af85cc08d6f73024b7d36a8d39b1cbc241"
+  "fileHash": "e068d7b49295ab62fe6f0c43a8ec647f25e9f1c51eaa0eae7d1978cb93f7a8b1"
 }
