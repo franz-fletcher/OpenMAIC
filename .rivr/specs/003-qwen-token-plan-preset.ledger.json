@@ -223,8 +223,10 @@
       "riskTier": 3,
       "uuid": "51a70871-afcb-46d8-9adc-a42dc877035f",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "d98ae47724915e03459f67d633c7fe87fbe0866db57b92f8880aa9cbc7c76d82",
+        "actor": "implementer",
+        "at": "2026-09-01T11:14:06.881Z"
       },
       "verification": {
         "status": "pending",
@@ -753,7 +755,18 @@
       "slice": "S1",
       "hash": "7f4f0b9dec12a787444e0b139459a7f437d7115ba558333d216f3312123fd913",
       "fileHash": "3e011279a47833ff4707a3e04cceb1a9982a1d2aea2d8d957e763fc99fdb028e"
+    },
+    {
+      "seq": 36,
+      "id": "b5238d63-3c9f-4187-8ed6-1046154811a7",
+      "at": "2026-09-01T11:14:06.881Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S2:impl:pending->ready_for_verification",
+      "slice": "S2",
+      "hash": "9112a6da4662eea496d64d604ebd0a6511c18430aceea5db2b0e4b848c78c977",
+      "fileHash": "bc0f637fa3e10b8560845842401e000a8477c8e3a6a8d601ba250f47407cc577"
     }
   ],
-  "fileHash": "bc0f637fa3e10b8560845842401e000a8477c8e3a6a8d601ba250f47407cc577"
+  "fileHash": "834ce31e6ad90949987e25a703389d205f4b12252ced423d56b8d5afa14eeda5"
 }
