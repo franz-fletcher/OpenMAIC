@@ -71,7 +71,7 @@ Video protocol facts:
 | --- | --- | --- |
 | 001 | `tts-ws-provider` | **Closed and certified 2026-08-31.** All 5 slices verified, live protocol proven, proof hash 955fea98. |
 | 002 | `asr-sync-provider` | **Closed and certified 2026-09-01.** All 4 slices verified in 2 rounds, live transcript proof, proof hash 1b751a68. |
-| 003 | `token-plan-preset-registration` | queued. |
+| 003 | `token-plan-preset-registration` | **Closed and certified 2026-09-01.** Five-target preset, asr modality, 4/4 slices, hermetic cycle, proof 1389e23f. |
 | 004 | `video-i2v-r2v` | queued. |
 | 005 | `media-test-redaction` | queued. |
 | 006 | `asr-preflight-parity` | queued. Final batch. |
