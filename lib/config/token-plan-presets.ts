@@ -16,7 +16,7 @@ import type { ProviderType } from '@/lib/types/provider';
 /** Loose grouping for the preset list UI. */
 export type PresetCategory = 'official' | 'aggregator' | 'token_plan' | 'third_party';
 
-/** The modalities a token plan can be applied to. ASR is omitted = not adapted. */
+/** The modalities a token plan can be applied to. */
 export type TokenPlanModality = 'llm' | 'image' | 'video' | 'tts' | 'asr' | 'webSearch';
 
 /** Where a token plan maps in one modality's provider registry. */
