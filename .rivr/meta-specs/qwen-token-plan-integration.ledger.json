@@ -5,7 +5,7 @@
   "spec": {
     "reference": "docs/meta-specs/qwen-token-plan-integration.md",
     "title": "Qwen Token Plan Integration (meta-spec)",
-    "hash": "bbe28fc449ac357e0da9e2abe9e59d55551c654415884aae4b08842498c0079d"
+    "hash": "463eedcb1ca596cff4ae538ed83e76008ebbc5d1136a9f35c3bb77cfd6939cfc"
   },
   "tracker": {
     "mode": "none"
@@ -28,6 +28,11 @@
     {
       "batch": "batch-001",
       "ledger": ".rivr/specs/001-qwen-token-plan-tts.ledger.json",
+      "stage": "closed"
+    },
+    {
+      "batch": "batch-002",
+      "ledger": ".rivr/specs/002-qwen-token-plan-asr.ledger.json",
       "stage": "closed"
     }
   ],
@@ -117,7 +122,29 @@
       "slice": null,
       "hash": "2eb4de75fd8d687b3c9dad5a8af67d4e1391c2f636809c000aa5e6e1d47fb4f3",
       "fileHash": "7ad0d9e9e4c040a13505c9da96c55215d19707c6de0c9ec8b0b4080687a8f2c5"
+    },
+    {
+      "seq": 9,
+      "id": "cea3ab78-230d-40c1-bce9-a8a62aaf6f45",
+      "at": "2026-09-01T09:59:23.214Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:extension:batch 002 certified and closing: proof 1b751a68, four slices verified",
+      "slice": null,
+      "hash": "d0b0bdd9ca1a13d5ebf1edda7664af430f4b572a49c442eb93988879874dc59a",
+      "fileHash": "b92bcc9372ae973e1dd10cad39d1e8ba588c2eacf0d21750a890a73b36236662"
+    },
+    {
+      "seq": 10,
+      "id": "707ec177-dd8c-4c6a-acd1-036dd138fd71",
+      "at": "2026-09-01T09:59:23.214Z",
+      "actor": "orchestrator",
+      "command": "metaspec_child_link",
+      "transition": "child-link:batch-002:.rivr/specs/002-qwen-token-plan-asr.ledger.json:closed",
+      "slice": null,
+      "hash": "d12b9524cf02d5db720072811cdcc871c06070bdac2867e55edbc16c8b26982c",
+      "fileHash": "b92bcc9372ae973e1dd10cad39d1e8ba588c2eacf0d21750a890a73b36236662"
     }
   ],
-  "fileHash": "b92bcc9372ae973e1dd10cad39d1e8ba588c2eacf0d21750a890a73b36236662"
+  "fileHash": "41c6c2866508a818dc4cd61270ec05bf8bbc44d0181485c1bd72863a15d94d42"
 }
