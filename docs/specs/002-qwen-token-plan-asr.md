@@ -29,7 +29,7 @@ Blockers: none.
 Proposed gates:
 - G1.1 `npx vitest run tests/audio/qwen-token-plan-asr.test.ts` expect `passed`
 - G1.2 `pnpm check:i18n-keys` expect `passed`
-- G1.3 `npx tsc --noEmit` expect `/^/`
+- G1.3 `npx tsc --noEmit && echo TSC_OK` expect `TSC_OK`
 
 **S2: Synchronous provider core** (risk tier 2)
 Intent: add the `transcribeAudio` dispatch case and the `transcribeQwenTokenPlanASR` function. The function builds the `input_audio` body, derives `format` and `sample_rate` from the audio bytes, parses the top-level `.text` response, and maps the vendor error shapes.
@@ -72,7 +72,7 @@ Proposed gates:
 
 **Response parsing.** Read the transcript from top-level `data.text` first. Probe 2 confirms the key exists. Fall back to `data.sentence?.text`, which probe 2 also returns. Fall back to `data.output?.output?.sentence?.text`, which the vendor docs document. Return `{ text }`.
 
-**Error mapping.** A `400` with an empty body means no speech or a rejected payload. Return `{ text: '' }` for it, mirroring the existing empty-audio handling at `lib/audio/asr-providers.ts:406-412`. Any other non-OK status throws `Error` with the status and the response text. The transcription route at `app/api/transcription/route.ts:87-92` already maps every thrown error to `TRANSCRIPTION_FAILED` with the message. No new error class. The ASR surface has no typed error classes, and the route has no `instanceof` branch.
+**Error mapping.** A `400` status means no speech or a rejected payload. Return `{ text: '' }` for every 400, mirroring the existing empty-audio handling at `lib/audio/asr-providers.ts:406-412`. The pin test freezes 400-with-body to empty text on purpose (verification finding F5, round 1). Any other non-OK status throws `Error` with the status and the response text. The transcription route at `app/api/transcription/route.ts:87-92` already maps every thrown error to `TRANSCRIPTION_FAILED` with the message. No new error class. The ASR surface has no typed error classes, and the route has no `instanceof` branch.
 
 **Display name.** Add `'qwen-token-plan-asr': 'settings.providerQwenTokenPlanASR'` to `ASR_PROVIDER_NAME_KEYS` at `lib/audio/provider-display.ts:16-23`. Without it, the settings UI renders the raw id. This is the batch-001 C1 lesson applied to ASR.
 
@@ -100,7 +100,7 @@ Success criteria: the webm recorder path returns text, the wav local-media path 
 
 ### Gate mechanics convention (inherited batch-001 lessons, refined for the installed CLI)
 
-Expect strings match literal substrings of captured stdout+stderr, or a `/regex/flags` pattern. A gate passes on exit code 0 AND a match. `'/^/'` means the exit code governs. The installed `rivr` binary still auto-loads `.env.local` from its startup directory into gate children. Gate runs therefore start `rivr` from a neutral directory with no `.env.local`, pass absolute ledger paths, and pin each gate's `cwd` to the repo root. Live gates still see their key because `tests/setup-env.ts` loads `.env.local` by test-root path inside the vitest process. This replaces the round-3 `bun --no-env-file` recipe.
+Expect strings match literal substrings of captured stdout+stderr, or a `/regex/flags` pattern. A gate passes on exit code 0 AND a match. The installed rivr 0.15.0 regex-times-out on `/^/` (batch-002 finding F1), so silent-success commands instead echo a literal marker such as `TSC_OK` and expect it. Gate runs start `rivr` from a neutral directory with no `.env.local`, pass absolute ledger paths, and pin each gate's `cwd` to the repo root (finding F2: diffs run from the repo root, not the neutral dir). Live gates still see their key because `tests/setup-env.ts` loads `.env.local` by test-root path inside the vitest process. This replaces the round-3 `bun --no-env-file` recipe.
 
 ## Out of Scope
 
