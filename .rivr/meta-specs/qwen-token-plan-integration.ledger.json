@@ -5,7 +5,7 @@
   "spec": {
     "reference": "docs/meta-specs/qwen-token-plan-integration.md",
     "title": "Qwen Token Plan Integration (meta-spec)",
-    "hash": "8548bcc0b5219f88a48c33141a4bc4aa325d078f790cae54002a0b37f8ddba6f"
+    "hash": "29579103b35ae53e5af3c5b24c0b23b04afec22bce8898f1970155a755a237ee"
   },
   "tracker": {
     "mode": "none"
@@ -84,7 +84,18 @@
       "slice": null,
       "hash": "0a48d6ecf768383e2ef180dc33488572dad520d7220d339a14a80ced5a292fe1",
       "fileHash": "004699896b3b5bd00bb3902fe5bf30f60580b7eebb4ecdc3e71de7dbb52bf608"
+    },
+    {
+      "seq": 6,
+      "id": "fe8925a8-ebe3-45c9-8f5d-c1a11f6acf11",
+      "at": "2026-09-01T01:11:19.435Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:extension:batch 005 media-test-redaction registered as final batch (closes finding F5)",
+      "slice": null,
+      "hash": "410cf79bd6bd691bea8b1bd8be803f08d9d8337624cdfdf18df4f2515222ab87",
+      "fileHash": "9c0f93aafde5503d262397c30f773a1e222c199916d1b30a802110beaeffa5ef"
     }
   ],
-  "fileHash": "9c0f93aafde5503d262397c30f773a1e222c199916d1b30a802110beaeffa5ef"
+  "fileHash": "9fcd7103e84db3a3752102dfb803e3a48c0cf5d8644dc81c08793e99ff4c72d4"
 }

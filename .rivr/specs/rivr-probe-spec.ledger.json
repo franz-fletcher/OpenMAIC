@@ -1,0 +1,84 @@
+{
+  "schema_version": 2,
+  "$schema": "https://rivr.dev/schemas/ledger/v2",
+  "spec": {
+    "reference": "/tmp/rivr-probe-spec.md",
+    "title": "Probe spec",
+    "hash": "36fdc8bbc8e01b956944002e0624ffc88e2ce57434e7db03e13c3b6f5a330b09"
+  },
+  "tracker": {
+    "mode": "none"
+  },
+  "stage": "research",
+  "retry": {
+    "count": 0,
+    "max": 5,
+    "consecutive_same_cause": 0,
+    "escalate_at": 3
+  },
+  "slices": [
+    {
+      "id": "S1",
+      "title": "env leak probe",
+      "intent": "probe",
+      "user_stories": [
+        1
+      ],
+      "blocked_by": [],
+      "targets": [],
+      "riskTier": 2,
+      "uuid": "11770d74-9e39-4e0e-9e7d-c6e3872f2498",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "gate proves child env state",
+      "gates": [
+        {
+          "id": "G1",
+          "check": "sh -c \"if [ -n \\\"$BRAVE_API_KEY\\\" ]; then echo LEAKED; else echo CLEAN; fi\"",
+          "expect": "CLEAN",
+          "evidence": "probe"
+        }
+      ]
+    }
+  ],
+  "audit": [
+    {
+      "seq": 1,
+      "id": "26eea240-22f6-44cc-8ed7-361c9ab64839",
+      "at": "2026-09-01T01:05:37.669Z",
+      "actor": "orchestrator",
+      "command": "init",
+      "transition": "spec-approved:/tmp/rivr-probe-spec.md",
+      "slice": null,
+      "hash": "68a0d207f205fc46c273a7595fb46105047c7974c407f01ba7a3a99067e64dee"
+    },
+    {
+      "seq": 2,
+      "id": "3d782405-a09f-4a52-a0bb-ff7c1859ef10",
+      "at": "2026-09-01T01:05:37.669Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect",
+      "slice": "S1",
+      "hash": "f4afd0bd78a2a7f15c3583f32ba7aeff6787adcda9b5b116d887593e91465965",
+      "expectationHash": "8e4d94c9b02139e7433d4f29f569b3f531ea77bc6a5cc05350b5239e6efcf5f1"
+    },
+    {
+      "seq": 3,
+      "id": "e783b7fe-8483-4b0c-acdd-0214be9cb9e1",
+      "at": "2026-09-01T01:05:37.669Z",
+      "actor": "orchestrator",
+      "command": "init_batch",
+      "transition": "batch-init:S1",
+      "slice": null,
+      "hash": "1663826fd8fc7333062e1795d86e5a7d19a3b5ca1289bcbdfe28a3c9853fc432"
+    }
+  ],
+  "fileHash": "a1c303d086eb5537c0ea58ca9cec1d46f321f21a6829d340223af74e4e224d40"
+}
