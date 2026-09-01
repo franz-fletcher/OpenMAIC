@@ -146,7 +146,14 @@ providers:
 
 支持的服务商：**OpenAI**、**Azure OpenAI**、**Anthropic**、**Amazon Bedrock**、**Google Gemini**、**DeepSeek**、**通义千问 Qwen**、**Kimi**、**MiniMax**、**Grok (xAI)**、**OpenRouter**、**豆包**、**腾讯混元 / TokenHub**、**小米 MiMo**、**智谱 GLM**、**Ollama**（本地）、**Lemonade**（本地 LLM / 图像 / TTS / ASR）、**FunASR**（本地 ASR）以及任何兼容 OpenAI API 的服务。
 
-Amazon Bedrock 快速示例：
+### Token Plan（令牌计划）
+
+通义千问云令牌计划个人版提供一键配置路径：前往 **设置 → 令牌计划**，选择 **Qwen Token Plan**，粘贴 `sk-sp-` 密钥即可同时配置全部五种模态（LLM、图像、视频、TTS、ASR）。
+
+服务端或无界面部署可设置五组环境变量前缀：`QWEN_*`（LLM）、`IMAGE_QWEN_*`（图像）、`VIDEO_HAPPYHORSE_*`（视频）、`TTS_QWEN_TOKEN_PLAN_*`（TTS）和 `ASR_QWEN_TOKEN_PLAN_*`（ASR）。完整 YAML 示例参见 [`server-providers.yml.example`](./server-providers.yml.example)。
+
+qwen-token-plan 预设的 provider ID 包括 `qwen`、`qwen-image`、`happyhorse`、`qwen-token-plan-tts` 和 `qwen-token-plan-asr`。
+
 
 ```env
 BEDROCK_REGION=us-east-1

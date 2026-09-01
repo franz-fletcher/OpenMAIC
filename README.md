@@ -159,7 +159,14 @@ providers:
 
 Supported providers: **OpenAI**, **Azure OpenAI**, **Anthropic**, **Amazon Bedrock**, **Google Gemini**, **DeepSeek**, **Qwen**, **Kimi**, **MiniMax**, **Grok (xAI)**, **OpenRouter**, **Doubao**, **Tencent Hunyuan/TokenHub**, **Xiaomi MiMo**, **GLM (Zhipu)**, **Ollama** (local), **Lemonade** (local LLM / image / TTS / ASR), **FunASR** (local ASR), and any OpenAI-compatible API.
 
-Amazon Bedrock quick example:
+### Token Plan
+
+The Qwen Cloud token-plan personal plan provides a one-key path: go to **Settings → Token Plan**, select **Qwen Token Plan**, and paste your `sk-sp-` key. All five modalities (LLM, image, video, TTS, ASR) configure at once.
+
+For server-side or headless deployments, set the five provider environment variable prefixes: `QWEN_*` (LLM), `IMAGE_QWEN_*` (image), `VIDEO_HAPPYHORSE_*` (video), `TTS_QWEN_TOKEN_PLAN_*` (TTS), and `ASR_QWEN_TOKEN_PLAN_*` (ASR). See [`server-providers.yml.example`](./server-providers.yml.example) for a YAML sample covering all five token-plan providers.
+
+The qwen-token-plan preset IDs are `qwen`, `qwen-image`, `happyhorse`, `qwen-token-plan-tts`, and `qwen-token-plan-asr`.
+
 
 ```env
 BEDROCK_REGION=us-east-1

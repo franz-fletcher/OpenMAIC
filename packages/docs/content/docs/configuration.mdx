@@ -79,11 +79,13 @@ TTS_QWEN_BASE_URL=         # optional override
 TTS_OPENAI_API_KEY=
 TTS_OPENAI_BASE_URL=
 
-# VoxCPM2 (self-hosted TTS with voice cloning; see the dedicated VoxCPM2 page)
-TTS_VOXCPM_BASE_URL=http://localhost:8000
-```
+# Qwen Token Plan TTS
+TTS_QWEN_TOKEN_PLAN_API_KEY=
+TTS_QWEN_TOKEN_PLAN_BASE_URL=     # optional override
 
-Supported TTS prefixes include `TTS_OPENAI_`, `TTS_AZURE_`, `TTS_GLM_`, `TTS_QWEN_`, `TTS_MINIMAX_`, `TTS_DOUBAO_`, `TTS_ELEVENLABS_`, `TTS_VOXCPM_`, and `TTS_LEMONADE_`. Local Lemonade TTS and VoxCPM2 do not require an API key. Browser-native TTS requires no server configuration.
+# Any OpenAI-compatible TTS endpoint
+
+Supported TTS prefixes include `TTS_OPENAI_`, `TTS_AZURE_`, `TTS_GLM_`, `TTS_QWEN_`, `TTS_QWEN_TOKEN_PLAN_`, `TTS_MINIMAX_`, `TTS_DOUBAO_`, `TTS_ELEVENLABS_`, `TTS_VOXCPM_`, and `TTS_LEMONADE_`.
 
 Administrators can force-disable a TTS provider on the server with `TTS_<PROVIDER>_ENABLED=false`. See the dedicated [VoxCPM2](./voxcpm.mdx) section for self-hosted TTS and voice cloning.
 
@@ -104,6 +106,10 @@ ASR_QWEN_BASE_URL=         # optional override
 ASR_AZURE_API_KEY=
 ASR_AZURE_BASE_URL=https://{region}.api.cognitive.microsoft.com
 
+# Qwen Token Plan ASR
+ASR_QWEN_TOKEN_PLAN_API_KEY=
+ASR_QWEN_TOKEN_PLAN_BASE_URL=     # optional override
+
 # FunASR (local, no key required)
 ASR_FUNASR_BASE_URL=http://localhost:8000/v1
 
@@ -113,9 +119,9 @@ ASR_LEMONADE_BASE_URL=http://localhost:13305/v1
 
 Start the OpenAI-compatible FunASR service with `funasr-server --device cuda`. It accepts WAV uploads at `/v1/audio/transcriptions` and provides SenseVoiceSmall, Paraformer, and Fun-ASR-Nano through the model selector.
 
-Browser-native ASR requires no server configuration.
+Supported provider prefixes for ASR include `ASR_OPENAI_`, `ASR_QWEN_`, `ASR_QWEN_TOKEN_PLAN_`, `ASR_AZURE_`, `ASR_FUNASR_`, and `ASR_LEMONADE_`.
 
-You can also add a custom OpenAI-compatible ASR provider in Settings by entering its Base URL, model, and supported languages; this configuration is stored in client settings.
+Browser-native ASR requires no server configuration.
 
 ## Image generation providers
 
@@ -251,9 +257,11 @@ LOG_FORMAT=pretty
 LLM_THINKING_DISABLED=false
 ```
 
-## Using a YAML configuration file
+### LLM and image/video token-plan providers
 
-In addition to environment variables, place configuration for providers registered in the code in `server-providers.yml` at the project root. The server loads it at startup, and its structure follows the environment variable categories:
+The `QWEN_*`, `IMAGE_QWEN_*`, and `VIDEO_HAPPYHORSE_*` prefixes cover the LLM, image, and video modalities of the token plan. See the [Token Plan](#token-plan) section or use the Settings preset for a one-key setup.
+
+## Using a YAML configuration file
 
 ```yaml title="server-providers.yml"
 providers:
@@ -296,3 +304,34 @@ web-search:
 ```
 
 Environment variables override matching YAML provider fields one by one. Keys must use provider IDs registered in the code, such as `openai`, `doubao-tts`, `openai-whisper`, `mineru`, `alidocmind`, `seedream`, `seedance`, `tavily`, or `searxng`. Unknown IDs cannot register custom LLM providers here.
+
+### Token-plan YAML example
+
+You can configure token-plan providers in YAML. See [`server-providers.yml.example`](https://github.com/THU-MAIC/OpenMAIC/blob/main/server-providers.yml.example) for a complete sample.
+
+```yaml title="server-providers.yml"
+providers:
+  qwen:
+    apiKey: sk-sp-...
+    baseUrl: https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1
+
+image:
+  qwen-image:
+    apiKey: sk-sp-...
+    baseUrl: https://token-plan.ap-southeast-1.maas.aliyuncs.com
+
+video:
+  happyhorse:
+    apiKey: sk-sp-...
+    baseUrl: https://token-plan.ap-southeast-1.maas.aliyuncs.com
+
+tts:
+  qwen-token-plan-tts:
+    apiKey: sk-sp-...
+    baseUrl: wss://token-plan.ap-southeast-1.maas.aliyuncs.com/api-ws/v1/inference
+
+asr:
+  qwen-token-plan-asr:
+    apiKey: sk-sp-...
+    baseUrl: https://token-plan.ap-southeast-1.maas.aliyuncs.com/api/v1
+```
