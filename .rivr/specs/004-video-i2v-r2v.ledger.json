@@ -4,7 +4,7 @@
   "spec": {
     "reference": "docs/specs/004-video-i2v-r2v.md",
     "title": "Batch 004 spec: happyhorse i2v and r2v media input",
-    "hash": "3ff54244f7e2ba54ab0d2b758fda86a02ba91c7bed24bb1f6d48d954a9c5874b"
+    "hash": "e3bca6dfb66be5584b2f16f4260c110610d079754b043512b2d8cf0ac2b514fd"
   },
   "tracker": {
     "mode": "none"
@@ -1288,7 +1288,18 @@
       "oracle": "cb5c0a4ab10c8dfc1a194ffe02707429573e2d4e301f96394ca31d109b9e51a4",
       "evidence": "cd4d74576b319f0a230a11c833ee3842398799062a6317ff26cbce25e5484a76",
       "fileHash": "5baf614ba7b9354d278264e8792dda418f59fbbb6ad75f724733b24c9ca93c85"
+    },
+    {
+      "seq": 54,
+      "id": "7459dda8-e66f-4770-b2cb-ca773cea7fd1",
+      "at": "2026-09-02T00:54:05.506Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:respecify:stage 4 research update: shipped file:lines, six learnings, paid-gate double-run",
+      "slice": null,
+      "hash": "bd6c204143a2d19d64a0f51f4ea9e17158b01c42ee16c987624fd3063e769046",
+      "fileHash": "ec4e4ea503456cd5b08670c20fb278b480faf90a03b5b6a7ca7a4682dcd177f3"
     }
   ],
-  "fileHash": "ec4e4ea503456cd5b08670c20fb278b480faf90a03b5b6a7ca7a4682dcd177f3"
+  "fileHash": "e814a8f58bf28fd72938e5a45f403c5dff8f0f9be2ff48df0158363c97aab4b9"
 }
