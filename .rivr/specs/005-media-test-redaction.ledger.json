@@ -1,0 +1,492 @@
+{
+  "schema_version": 2,
+  "$schema": "https://rivr.dev/schemas/ledger/v2",
+  "spec": {
+    "reference": "docs/specs/005-media-test-redaction.md",
+    "title": "Batch 005 spec: media-test redaction",
+    "hash": "6f3239f24ee142519bcb1ba376f2c87cb146ea3ddbc48b7188673a238962b861"
+  },
+  "tracker": {
+    "mode": "none"
+  },
+  "stage": "implementation",
+  "retry": {
+    "count": 0,
+    "max": 5,
+    "consecutive_same_cause": 0,
+    "escalate_at": 3
+  },
+  "slices": [
+    {
+      "id": "S01",
+      "title": "YAML hermeticity for both server files",
+      "intent": "Pin resolveServerProvidersPath in the classroom and capability-force-off suites so host YAML cannot beat env stubs. Root-cause fix for the live-key leak.",
+      "user_stories": [
+        1,
+        4
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "tests/server/classroom-media-generation.test.ts",
+          "symbols": [
+            {
+              "name": "yamlOverride",
+              "kind": "variable",
+              "expectation": "module-level let yamlOverride exists and the fs mock reads it lazily",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "INSPECTED"
+            },
+            {
+              "name": "slideScene",
+              "kind": "function",
+              "expectation": "fixture builder untouched by the interception",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  elements: Array<{ id: string; type: string; src?: string; mediaRef?: string }>,\n)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function"
+              },
+              "postcondition_quality": "INSPECTED"
+            }
+          ]
+        },
+        {
+          "path": "tests/server/capability-force-off-routes.test.ts",
+          "symbols": [
+            {
+              "name": "yamlOverride",
+              "kind": "variable",
+              "expectation": "new fs mock exposes a lazily-read yamlOverride returning null by default",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "INSPECTED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 3,
+      "uuid": "4beb1a48-55c4-49ba-a4f1-f12004700ce6",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "Both suites answer null for the YAML path regardless of host files. Classroom and force-off suites pass. Full suite runs with no exclusion.",
+      "gates": [
+        {
+          "id": "G01",
+          "check": "npx vitest run tests/server/classroom-media-generation.test.ts",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "classroom suite green with pinned path"
+        },
+        {
+          "id": "G02",
+          "check": "npx vitest run tests/server/capability-force-off-routes.test.ts",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "force-off suite green with new fs mock"
+        },
+        {
+          "id": "G03",
+          "check": "npx vitest run",
+          "expect": "passed",
+          "type": "integration",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "full suite, no exclusion flags: batch-001 G5.1 retirement proof"
+        }
+      ]
+    },
+    {
+      "id": "S02",
+      "title": "Paired redaction guard test",
+      "intent": "Guard test with fixture key proves capture (whole-init message contains the key) and closure (scalar-leg message does not).",
+      "user_stories": [
+        2,
+        3
+      ],
+      "blocked_by": [
+        "S01"
+      ],
+      "targets": [
+        {
+          "path": "tests/server/classroom-media-generation.test.ts",
+          "symbols": [
+            {
+              "name": "slideScene",
+              "kind": "function",
+              "expectation": "file gains the guard test; existing fixture builder stays capturable",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  elements: Array<{ id: string; type: string; src?: string; mediaRef?: string }>,\n)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function"
+              },
+              "postcondition_quality": "INSPECTED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "95e59331-b2c5-44e5-817e-e17fb00bdd14",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "Guard passes with both legs. Test name contains the byte-pinned substring guard: fixture key.",
+      "gates": [
+        {
+          "id": "G01",
+          "check": "npx vitest run tests/server/classroom-media-generation.test.ts -t \"guard: fixture key\"",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "paired guard legs pass"
+        },
+        {
+          "id": "G02",
+          "check": "npx vitest run tests/server/classroom-media-generation.test.ts",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "full classroom file green"
+        }
+      ]
+    },
+    {
+      "id": "S03",
+      "title": "tests/audio scalar conversions",
+      "intent": "One whole-init matcher site (qwen-voice-clone) plus four hygiene files convert to scalar reads; the leak idiom dies suite-wide.",
+      "user_stories": [
+        2
+      ],
+      "blocked_by": [
+        "S02"
+      ],
+      "targets": [
+        {
+          "path": "tests/audio/qwen-voice-clone.test.ts",
+          "symbols": [
+            {
+              "name": "CONFIG",
+              "kind": "variable",
+              "expectation": "file converts init matchers to scalar reads; fixture config const stays",
+              "before": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "INSPECTED"
+            },
+            {
+              "name": "pcmWav",
+              "kind": "function",
+              "expectation": "helper unchanged and still capturable",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(seconds = 1): Uint8Array"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function"
+              },
+              "postcondition_quality": "INSPECTED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "f6c16e82-d0a8-411b-91ef-c1c7a4c1581a",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "grep canary prints AUDIO_SCALARS_OK; tests/audio suite green after conversions.",
+      "gates": [
+        {
+          "id": "G01",
+          "check": "! grep -rqF \"mock.calls[0][1]).toMatchObject\" tests/audio && echo AUDIO_SCALARS_OK",
+          "expect": "AUDIO_SCALARS_OK",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "whole-init idiom absent from tests/audio"
+        },
+        {
+          "id": "G02",
+          "check": "npx vitest run tests/audio",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "audio suite green"
+        }
+      ]
+    }
+  ],
+  "audit": [
+    {
+      "seq": 1,
+      "id": "95e50f34-fea9-4db2-838b-717bb90d09b7",
+      "at": "2026-09-02T02:40:02.757Z",
+      "actor": "orchestrator",
+      "command": "init",
+      "transition": "spec-approved:docs/specs/005-media-test-redaction.md",
+      "slice": null,
+      "hash": "fd59ddb4707906aac39f98957dc2e48b30f0518c5c51917d5a53248ab7ee2f55"
+    },
+    {
+      "seq": 2,
+      "id": "3253643a-3440-458c-aef6-f6c9104b8382",
+      "at": "2026-09-02T02:40:02.757Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect",
+      "slice": "S01",
+      "hash": "8972db5f8d9ebbd9f71f76d549e9dd5f1aa946f98b05531f74be93ed19144438",
+      "expectationHash": "e7039e0e64573f0ac09e442b7e1b4d12cf6372a7bff4697b3b40b943ba5f8ff3"
+    },
+    {
+      "seq": 3,
+      "id": "0310e297-338f-4e4f-86b6-f1c085c14fd5",
+      "at": "2026-09-02T02:40:02.757Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect-symbol:tests/server/classroom-media-generation.test.ts::yamlOverride",
+      "slice": "S01",
+      "hash": "5dcdf5b0f823dda332543f4d6c8d53bebb95d3af9e14d8a7e4dcfbb4669354ee",
+      "expectationHash": "5a89d1ed1c1869855c17940461ae6467bc8cc708ff90e0fae66ae9c2be720742"
+    },
+    {
+      "seq": 4,
+      "id": "537fa3e4-5f7d-456d-aaa9-5787a9bafdae",
+      "at": "2026-09-02T02:40:02.757Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect-symbol:tests/server/classroom-media-generation.test.ts::slideScene",
+      "slice": "S01",
+      "hash": "54b107d8e22b5e457f76de018d2e53bf248594f15ee608c2ec81e57bc5b5ef6a",
+      "expectationHash": "64293864efca4752e7488133d5c0afe4b074d4e43287357dce4afb8ca42b7d4f"
+    },
+    {
+      "seq": 5,
+      "id": "53f43469-8daa-4663-b7c2-10b27d8bc2ed",
+      "at": "2026-09-02T02:40:02.757Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect-symbol:tests/server/capability-force-off-routes.test.ts::yamlOverride",
+      "slice": "S01",
+      "hash": "4d4467d0bba6453bb0cb454498872574e4a77ee94973abe5bb1c12e30a78d22d",
+      "expectationHash": "632fc2d7aaeff0aa1dd1e3c95662563ff10190c916a158dee3b6fd043e1ab4f8"
+    },
+    {
+      "seq": 6,
+      "id": "a2904005-5d6a-4ce9-b4df-875189730671",
+      "at": "2026-09-02T02:40:02.757Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S02:expect",
+      "slice": "S02",
+      "hash": "c9f366b3bd2cd53db6f49c2fd4601a74e9edd30285f706f716495abef29ce95c",
+      "expectationHash": "68f06be375381d05cc12a5942b57b138c233ac68c704a1d5322381239496489a"
+    },
+    {
+      "seq": 7,
+      "id": "35a62b95-8ba9-47ea-bb10-a02ba329b25c",
+      "at": "2026-09-02T02:40:02.757Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S02:expect-symbol:tests/server/classroom-media-generation.test.ts::slideScene",
+      "slice": "S02",
+      "hash": "d352d01587005609143a2ab27e307651765e2737585653682e771abdecba7dd0",
+      "expectationHash": "9538219ebc3bb7ad7e11fa8f7008946e385e4ce02162229e0854c7054b1097a2"
+    },
+    {
+      "seq": 8,
+      "id": "b40fcfb3-d45b-4340-bb29-02f56b8bf0d5",
+      "at": "2026-09-02T02:40:02.757Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S03:expect",
+      "slice": "S03",
+      "hash": "62486202531a773ea431633f3e371cf7d20a6ed1b4edc767de6170eae4c6a4d8",
+      "expectationHash": "c9c6b92e34ada08650eaf4754f1cb68229799067050b4fbddcc45547bce6e256"
+    },
+    {
+      "seq": 9,
+      "id": "b1334735-d77b-4ca2-aa71-9a455419f85e",
+      "at": "2026-09-02T02:40:02.757Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S03:expect-symbol:tests/audio/qwen-voice-clone.test.ts::CONFIG",
+      "slice": "S03",
+      "hash": "65b40c354dc32ee94e8525f996590ea01eeb1eb9bdfcc54331200862ac7932bc",
+      "expectationHash": "4c6e4dd901302c7ead4614a9bb51b190c883108878698f687132888c17572471"
+    },
+    {
+      "seq": 10,
+      "id": "230507db-1040-46fe-837b-6e7f4dea4943",
+      "at": "2026-09-02T02:40:02.757Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S03:expect-symbol:tests/audio/qwen-voice-clone.test.ts::pcmWav",
+      "slice": "S03",
+      "hash": "7e4f6c997575a1d960ffca49a8c798308320ec6243d93df4687d44b0bfdf4b11",
+      "expectationHash": "6b8464d269255365d1f74c2280a1ee8a53eedd0c1008374e740064eccbec8049"
+    },
+    {
+      "seq": 11,
+      "id": "4394b135-cf09-41e0-bc9c-c635411ab975",
+      "at": "2026-09-02T02:40:02.757Z",
+      "actor": "orchestrator",
+      "command": "init_batch",
+      "transition": "batch-init:S01,S02,S03",
+      "slice": null,
+      "hash": "2c12340e88020bc777cd685017caef8d4834cecffe8831433162b26b700e36f5"
+    },
+    {
+      "seq": 12,
+      "id": "f4de3bef-e185-45ff-9211-2f964c08d98a",
+      "at": "2026-09-02T02:40:02.817Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S01:capture",
+      "slice": "S01",
+      "hash": "0c9356d9855111cc3713f5bc20f37613d1d226590566f6e52da494a2270e6e2f",
+      "fileHash": "57c12fc997d13165171d3df6b75ab4917570d0170a982e6f2f7e14570d3eb255"
+    },
+    {
+      "seq": 13,
+      "id": "abe4d6c9-58bd-47c0-9fea-b0709ec8d07b",
+      "at": "2026-09-02T02:40:02.872Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S02:capture",
+      "slice": "S02",
+      "hash": "71c90b38941577c5695189d0e6856659b3f99ce8a665b52f147257df378f92ea",
+      "fileHash": "a80344fa26178d38daab3d9d26965797b15ae029fa7e5afbda0c8118e2241c73"
+    },
+    {
+      "seq": 14,
+      "id": "33b10735-c5a0-4153-badc-4f560398a4e7",
+      "at": "2026-09-02T02:40:02.939Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S03:capture",
+      "slice": "S03",
+      "hash": "11fefab21915e21d78adf7fe9d12e579192041393528d960979a5fc735925ee8",
+      "fileHash": "028ac36021c4b5339ece9b83a26c1bad9369529ec9d3b8cc24c20dff99d19b45"
+    },
+    {
+      "seq": 15,
+      "id": "5cd0e7ad-a8f2-484f-953b-acb86487ccfa",
+      "at": "2026-09-02T02:40:34.187Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S01:postcondition:tests/server/classroom-media-generation.test.ts::yamlOverride",
+      "slice": "S01",
+      "hash": "f91079fadcedb29e199bbf92c6837aeb1f45fad560450336d6e16d2854f1f00d",
+      "fileHash": "3d095cf2e63db64c4609cc1f19b5fb219abe9756632ed2af8e648e27a3f7705e"
+    },
+    {
+      "seq": 16,
+      "id": "431536d7-1c6a-4325-9cc8-5cecc0824625",
+      "at": "2026-09-02T02:40:34.225Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S01:postcondition:tests/server/classroom-media-generation.test.ts::slideScene",
+      "slice": "S01",
+      "hash": "9eb4bcf67bcf049886c7e1e2cf8bc2b963d920a62fea84ab67dc61ca6924b730",
+      "fileHash": "0094b5dc658a96e4c3270dca9c9827b0123a0e2c329d74111c5f2e9ad1e8aeb9"
+    },
+    {
+      "seq": 17,
+      "id": "fbd48f59-9ca9-4116-8faf-94c305510908",
+      "at": "2026-09-02T02:40:34.269Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S01:postcondition:tests/server/capability-force-off-routes.test.ts::yamlOverride",
+      "slice": "S01",
+      "hash": "cc43e9b51deec89fcc71763c36b20dae44463dd9c260932256604ab19336efd5",
+      "fileHash": "71573bcd598c7b604e14cb111f02749bcdd5d7c046a03b53c93ffb39af07cf02"
+    },
+    {
+      "seq": 18,
+      "id": "adb35250-3774-48fd-ae21-7dd8a82964cb",
+      "at": "2026-09-02T02:40:34.331Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S02:postcondition:tests/server/classroom-media-generation.test.ts::slideScene",
+      "slice": "S02",
+      "hash": "468ff14e1a247c4c2797c0ca4666c16a76acfa03cd8bb7ebc3f5906564bab821",
+      "fileHash": "0db6a2a1017040a8988f32c304c57149142f848fc3c37a1e584592d83585ec80"
+    },
+    {
+      "seq": 19,
+      "id": "0232b544-7136-4e75-be00-206bcd6f91c7",
+      "at": "2026-09-02T02:40:34.372Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S03:postcondition:tests/audio/qwen-voice-clone.test.ts::CONFIG",
+      "slice": "S03",
+      "hash": "65b2d31a9ca43bd1f8a1b17b277896dc9d5f8bb327319c6f287cae4cd2c965bf",
+      "fileHash": "f5ffdabc838fd264b0efa0410fb5fc1e5043060d7e028c498c1890e95942dea8"
+    },
+    {
+      "seq": 20,
+      "id": "828c1504-fb4b-4c6e-bd5e-efad5fcd6a5a",
+      "at": "2026-09-02T02:40:34.416Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S03:postcondition:tests/audio/qwen-voice-clone.test.ts::pcmWav",
+      "slice": "S03",
+      "hash": "a67b59e268469fcb043350d0be73d8111d25d763691d25b070638bcd0f0a0fcd",
+      "fileHash": "f829fd7a323347d794d5780a205e32a405881ece9124248e5ff28a54c9795d24"
+    },
+    {
+      "seq": 21,
+      "id": "3fe6525d-5e19-4ecc-b18b-a994247eb5da",
+      "at": "2026-09-02T02:40:34.460Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "5054c623210148b4ae7cf8b3fdf95146cbebfae93c580416d14de9ec9fc2cedd",
+      "fileHash": "753d6d6785ec4d491f603feb4fc53a9dc47d159d92b7855364a9a4a31047d4e6"
+    }
+  ],
+  "fileHash": "fd65b99260fc5091d7d590fbcec97c7281d8dbb7b70c513449d2274a0c89f29b"
+}

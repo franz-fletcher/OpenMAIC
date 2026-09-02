@@ -1,6 +1,6 @@
 # Batch 005 spec: media-test redaction
 
-Spec status: research
+Spec status: implementation
 
 ## Problem Statement
 
