@@ -3,6 +3,17 @@ import { replaceMediaPlaceholders } from '@/lib/server/classroom-media-generatio
 import type { Scene } from '@/lib/types/stage';
 import type { SceneOutline } from '@/lib/types/generation';
 
+// Close the ENV VECTOR: a bun-compiled gate runner auto-loads .env.local, so
+// inherited provider env keys (VIDEO_HAPPYHORSE_API_KEY, etc.) leak into test
+// assertions. Delete every provider-related env key before any import or stub.
+// vitest isolates files per worker, so intra-file deletion is safe.
+const _envSnapshot = Object.keys(process.env);
+for (const key of _envSnapshot) {
+  if (/_API_KEY|_BASE_URL|_MODELS|_ENABLED$/.test(key)) {
+    delete process.env[key];
+  }
+}
+
 // Intercept fs to keep writes off the worktree and to pin the YAML path to
 // null. Without this, a host server-providers.yml would leak provider keys
 // into test failure output.

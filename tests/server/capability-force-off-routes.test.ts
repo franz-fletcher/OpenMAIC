@@ -6,6 +6,16 @@ import { NextRequest } from 'next/server';
 // generation logic runs, and a disabled provider is never picked as the
 // server-side default.
 
+// Close the ENV VECTOR: a bun-compiled gate runner auto-loads .env.local, so
+// inherited provider env keys leak into route resolution. Delete every
+// provider-related env key before any import or stub.
+const _envSnapshot = Object.keys(process.env);
+for (const key of _envSnapshot) {
+  if (/_API_KEY|_BASE_URL|_MODELS|_ENABLED$/.test(key)) {
+    delete process.env[key];
+  }
+}
+
 // Pin server-providers.yml to null so host-machine YAML never leaks keys into
 // test failure output.
 let yamlOverride: string | null = null;
