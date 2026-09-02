@@ -52,8 +52,10 @@
       "riskTier": 2,
       "uuid": "3af2b5d5-e443-4df5-b59d-9cf614d72b0f",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "170c00239ae240f0421a23f5e713f759495e54fb15a6d5ba7297275a9d2e7882",
+        "actor": "implementer",
+        "at": "2026-09-02T04:35:25.348Z"
       },
       "verification": {
         "status": "pending",
@@ -122,8 +124,10 @@
       "riskTier": 3,
       "uuid": "0b86dec0-238d-4f1c-bae2-41f85c335db9",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "9b2141013cb1e98cbefd81fca0e746b48a628770ed074b508f7837a3cfcbb603",
+        "actor": "implementer",
+        "at": "2026-09-02T04:38:27.966Z"
       },
       "verification": {
         "status": "pending",
@@ -277,7 +281,29 @@
       "slice": null,
       "hash": "37cd00a04c18b2a6959421de363b77c612caf0a4ac1a5db85de78748158180a6",
       "fileHash": "79f4d5492e72ea03745392bff1a7175feb302ed034d014116cc78c5b1aced30f"
+    },
+    {
+      "seq": 12,
+      "id": "1a386087-dfeb-4807-9b37-5e4e3d1a153f",
+      "at": "2026-09-02T04:35:25.348Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S01:impl:pending->ready_for_verification",
+      "slice": "S01",
+      "hash": "2f5c0f0c4a43b7652557c7107f85b0bd5dfd08cc259187d366ddf1cf14a92f78",
+      "fileHash": "7be405cdf415598ee1e0940d1ecf13b1a7cbe5973bd2e77662992a41be754555"
+    },
+    {
+      "seq": 13,
+      "id": "b22aed25-6531-4cf3-bf4e-165b60e5396c",
+      "at": "2026-09-02T04:38:27.966Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S02:impl:pending->ready_for_verification",
+      "slice": "S02",
+      "hash": "3e29471433fb6595a7047ed7e6bc748557bc779afa8a5b27dd655655c50b56ec",
+      "fileHash": "2af578b596e2b767e3a4cc2f7ff7ca803eb4083936945551f046967d7618b2c1"
     }
   ],
-  "fileHash": "7be405cdf415598ee1e0940d1ecf13b1a7cbe5973bd2e77662992a41be754555"
+  "fileHash": "2faf5a2743cb06fbdde4ea895627201f0189b67b8143414b2d35a71a3ebb72a4"
 }
