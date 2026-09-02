@@ -1,6 +1,6 @@
 # Batch 005 spec: media-test redaction
 
-Spec status: verification
+Spec status: research_update
 
 ## Problem Statement
 
@@ -76,4 +76,18 @@ S03 (2 gates):
 - The batch-001 ledger carries the exclusion in gate G5.1 at `001-qwen-token-plan-tts.ledger.json:650`. Closed ledger text is historical evidence and is not rewritten (operator Q3a).
 - Batch 006 is unaffected: it touches `app/api/transcription/route.ts`, a neutral file, with its own debt entry.
 
-Status: Draft
+Status: Implemented (batch 005, commits `fef5af9a..0cab7d59` on `feat/media-test-redaction`). Post-implementation learnings below.
+
+## Research update (post-implementation)
+
+**What shipped.** `tests/server/classroom-media-generation.test.ts` and `tests/server/capability-force-off-routes.test.ts` gained two hermeticity layers: a module-top delete loop clearing every inherited `*_API_KEY` / `*_BASE_URL` / `*_MODELS` / `*_ENABLED` variable (14 cleared from this machine's runner snapshot), and the `yamlOverride` fs interception from the plan. A paired guard test named `guard: fixture key ...` now proves capture-then-closure with the literal fixture `sk-LIVE-FIXTURE-9876543210`. `tests/audio/qwen-voice-clone.test.ts:141` and `:238` became scalar field reads. The whole-init idiom is dead in `tests/audio` (canary `AUDIO_SCALARS_OK`). The batch-001 exclusion is retired: the full suite passes with no `--exclude`.
+
+**The spec's premise was incomplete, in a good way.** The plan pinned the YAML vector. Round-1 verification reproduced a second, stronger vector: the compiled bun gate runner loads `.env.local` into gate children, and under that env the classroom suite really called happyhorse and serialized a live Bearer header in a gate failure. Same leak class, different door. The correction (commit `76cba659`) grew S01/S02 scope to env-vector hermeticity, and the fix round closed both vectors. The YAML canary and the bun-spawn hostile reproduction now both run green with zero `sk-` hits.
+
+**G03 env semantics, decided by the orchestrator.** Under the hostile runner env, G03 fails on nine pre-existing, env-shaped tests in six files outside the batch (agent-runtime registrations, provider-config, qwen-voice-route). Those files legitimately assume the repo's documented hermetic vitest. The gate therefore executes with the rivr process started from a neutral cwd (gates pin repo root via their `cwd` field), which matches `pnpm test` exactly. Hostile-env coverage stays on the two suites the batch owns. Recorded here so the choice is not mistaken for a weakening.
+
+**Ledger mechanics.** Six symbol anchors with per-symbol expectations at creation (the batch-003 lesson) held; no accept-time backfill was needed. Two function postconditions (`slideScene`, `pcmWav`) stayed kind-only because capture reports an empty signature for them, so diff keeps the known cosmetic signature artifact; bodies proved byte-identical to `main`. Citations drift again: the spec's `:137` force-disabled assertion lives at `:204`, and the fs-mock precedent is `tests/providers/provider-config.test.ts` while the interception pattern first shipped in `tests/server/provider-config.test.ts`.
+
+**Verification trail.** Round 1: S03 verified; S01/S02 rejected for the env vector (audited, reproduced via `spawnSync` under bun, trigger isolated to `VIDEO_HAPPYHORSE_*`). Round 2: hostile reproduction green; S02 verified; S01's G03 hit the env-semantics question. Round 3: S01 rejected on G03 definition only (code fix confirmed effective). Final round after the orchestrator decision: S01 verified first attempt, chain 40 entries, retry 3/5 with the cause change resetting the escalation counter.
+
+**Test totals.** Classroom file 9/9 (incl. guard), force-off 10/10, tests/audio 267/267, full suite 7237 passing hermetic, tsc and prettier clean whole-branch.

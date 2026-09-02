@@ -4,12 +4,12 @@
   "spec": {
     "reference": "docs/specs/005-media-test-redaction.md",
     "title": "Batch 005 spec: media-test redaction",
-    "hash": "a5f0f4d26c1ca9cec5e09619f1a73cad55b00047d9a2b136c385f2e02ebc258d"
+    "hash": "8b3f5d88187e61eb87e1160976c743f141b11bd3642f688d00abb52b723ab398"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "implementation",
+  "stage": "research_update",
   "retry": {
     "count": 3,
     "max": 5,
@@ -89,13 +89,47 @@
         "at": "2026-09-02T04:22:09.139Z"
       },
       "verification": {
-        "status": "rejected",
-        "hash": "52b93e7a87d63e972f0b2383da165cd2966cc5a6718faf6d6f1c568df7ac52e1",
+        "status": "verified",
+        "hash": "31c3f59b570fb7da57b093fec27a4e569edefd580e87770ff8d23a37fc6869a9",
         "actor": "verifier",
-        "at": "2026-09-02T04:20:32.443Z",
+        "at": "2026-09-02T04:24:15.563Z",
         "deficiencies": [
           "G01 and G02 now pass under the hostile runner env (classroom 9/9, force-off 10/10, zero sk-/Bearer hits), so the round-1 env-vector finding is fixed. The block is gate G03 (npx vitest run, expect passed). This round's single recorded attempt failed G03 with a NEW failure class, not the tolerated F2 database-chat-cutover 5s flake (that test passed this attempt). The failure is 9 deterministic tests in 6 files byte-identical to main and not imported by any batch file: tests/agent-runtime/dsl-tools.test.ts (expects generate_video excluded, fails when VIDEO_* env present), tests/agent-runtime/runner-skills-registration.test.ts, tests/agent-runtime/runner-voice-registration.test.ts (2 tests), tests/agent-runtime/runner-web-search-registration.test.ts (2 tests), tests/server/provider-config.test.ts (video default returns undefined / web-search preference chain returns undefined when disabled), tests/server/qwen-voice-route.test.ts (shared Qwen base URL). All 9 pass under a stripped provider env and fail only because the bun gate runner inherits .env.local provider keys. They are outside the batch's declared scope (spec scopes fixes to tests/server classroom + force-off). G03 as defined cannot record green under the runner env until either those 6 files are also made env-hermetic (scope expansion) or the gate runs under a neutral env / excludes the pre-existing env-driven class (orchestrator decision). Verifier cannot verify while G03 as defined fails."
-        ]
+        ],
+        "evidence": {
+          "gates": [
+            {
+              "id": "G01",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/server/classroom-media-generation.test.ts\u001b[2m > \u001b[22m\u001b[2mgenerateMediaForClassroom model fallback\u001b[2m > \u001b[22m\u001b[2mguard: fixture key — whole-init matcher captures headers, scalar assertion does not\n\u001b[22m\u001b[39m[2026-09-02T04:23:14.401Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 0 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 0 Video, 0 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/server/classroom-media-generation.test.ts\u001b[2m > \u001b[22m\u001b[2mgenerateMediaForClassroom model fallback\u001b[2m > \u001b[22m\u001b[2mgracefully skips media when every configured provider is force-disabled\n\u001b[22m\u001b[39m[2026-09-02T04:23:14.409Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 0 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 1 Video,",
+              "passed": true
+            },
+            {
+              "id": "G02",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/server/capability-force-off-routes.test.ts \u001b[2m(\u001b[22m\u001b[2m10 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 220\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m10 passed\u001b[39m\u001b[22m\u001b[90m (10)\u001b[39m\n\u001b[2m   Start at \u001b[22m 16:23:14\n\u001b[2m   Duration \u001b[22m 347ms\u001b[2m (transform 133ms, setup 11ms, import 51ms, tests 220ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G03",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/server/provider-config.test.ts\u001b[2m > \u001b[22m\u001b[2mprovider-config\u001b[2m > \u001b[22m\u001b[2mresolveApiKey\u001b[2m > \u001b[22m\u001b[2mreturns server key from env when no client key\n\u001b[22m\u001b[39m[2026-09-02T04:23:16.052Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 0 Video, 0 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/server/provider-config.test.ts\u001b[2m > \u001b[22m\u001b[2mprovider-config\u001b[2m > \u001b[22m\u001b[2mresolveApiKey\u001b[2m > \u001b[22m\u001b[2mignores client key for a server-managed provider (server is authoritative)\n\u001b[22m\u001b[39m[2026-09-02T04:23:16.059Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 0 Video, 0 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "both suites green with hostile YAML present AND with live-shaped provider env injected (runner-equivalent)",
       "gates": [
@@ -105,7 +139,7 @@
           "expect": "passed",
           "type": "unit",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "classroom suite green with pinned path"
+          "evidence": "{\"id\":\"G01\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/classroom-media-generation.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mgenerateMediaForClassroom model fallback\\u001b[2m > \\u001b[22m\\u001b[2mguard: fixture key — whole-init matcher captures headers, scalar assertion does not\\n\\u001b[22m\\u001b[39m[2026-09-02T04:23:14.401Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 0 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 0 Video, 0 WebSearch providers\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/classroom-media-generation.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mgenerateMediaForClassroom model fallback\\u001b[2m > \\u001b[22m\\u001b[2mgracefully skips media when every configured provider is force-disabled\\n\\u001b[22m\\u001b[39m[2026-09-02T04:23:14.409Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 0 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 1 Video,\",\"passed\":true}"
         },
         {
           "id": "G02",
@@ -113,7 +147,7 @@
           "expect": "passed",
           "type": "unit",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "force-off suite green with new fs mock"
+          "evidence": "{\"id\":\"G02\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/server/capability-force-off-routes.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m10 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 220\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m10 passed\\u001b[39m\\u001b[22m\\u001b[90m (10)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 16:23:14\\n\\u001b[2m   Duration \\u001b[22m 347ms\\u001b[2m (transform 133ms, setup 11ms, import 51ms, tests 220ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}"
         },
         {
           "id": "G03",
@@ -121,7 +155,7 @@
           "expect": "passed",
           "type": "integration",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "full suite, no exclusion flags: batch-001 G5.1 retirement proof"
+          "evidence": "{\"id\":\"G03\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/provider-config.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mprovider-config\\u001b[2m > \\u001b[22m\\u001b[2mresolveApiKey\\u001b[2m > \\u001b[22m\\u001b[2mreturns server key from env when no client key\\n\\u001b[22m\\u001b[39m[2026-09-02T04:23:16.052Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 0 Video, 0 WebSearch providers\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/provider-config.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mprovider-config\\u001b[2m > \\u001b[22m\\u001b[2mresolveApiKey\\u001b[2m > \\u001b[22m\\u001b[2mignores client key for a server-managed provider (server is authoritative)\\n\\u001b[22m\\u001b[39m[2026-09-02T04:23:16.059Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 0 Video, 0 WebSearch providers\\n\\n\\u001b[90mstdout\\u001b[2m | tests/\",\"passed\":true}"
         }
       ],
       "findings": [
@@ -785,7 +819,53 @@
       "slice": "S01",
       "hash": "710c37bb24da19e08258e7e45c692e4399809d45aa5762fcec074a07b0ea8ef6",
       "fileHash": "2041d0a678c4ef6e5b38223b3642ec263a1f83b6cccedacb2710b825bc365689"
+    },
+    {
+      "seq": 39,
+      "id": "3dc051ad-0fde-4f0c-8ddf-e6ab3cff214a",
+      "at": "2026-09-02T04:22:38.289Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "76a95488c1daddab97cfdcf6f63d5ead3fd5dccf62818f5affc237cae31118f5",
+      "fileHash": "e7a6c443c13c08ac1b821c33d5643f7f555282f31967865ff472a83131dde523"
+    },
+    {
+      "seq": 40,
+      "id": "a629e315-c0bc-41d6-af6e-a60f5a606a43",
+      "at": "2026-09-02T04:24:15.563Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S01:verification:pending->verified",
+      "slice": "S01",
+      "hash": "e5f1e73027cbc0a63df203801b219fae70f026a12936e55375bd05f395c02b0e",
+      "oracle": "efb59d19bd294c12c41bdad5ce37d7ea314f273f43307e4f81062e9f72576cd8",
+      "evidence": "84861cea0efdd6674939ea5b4ed8e0fb02f393006eb2320be1480276da7cd1a7",
+      "fileHash": "e03cf9610b37235af71fe4f08d4b104077d4dcb5ebc12079f60fcedf5b16a79b"
+    },
+    {
+      "seq": 41,
+      "id": "e39e94d6-8f23-4bef-87ce-8ab1e4394ac9",
+      "at": "2026-09-02T04:25:34.007Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:respecify:stage 4 research update: env-vector discovery, G03 env decision, final file lines and totals",
+      "slice": null,
+      "hash": "7393b986bf79ae57ad0bd4cc5a4ff73eeef4a2ea2ffa6effcf0b1cb80eccd2b1",
+      "fileHash": "48165c0dfed1148d8324c7873a8ca8e375a658026284373433b98b14fda85e43"
+    },
+    {
+      "seq": 42,
+      "id": "95d945be-3614-416e-bc67-0fc6f552455b",
+      "at": "2026-09-02T04:25:34.050Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:verification->research_update",
+      "slice": null,
+      "hash": "6b4474404dae0d68a36748b7b8da85f91d4e7052674c5a2eb8f937687e278c07",
+      "fileHash": "707fc7db874d2c699e68b280138fffd299acafa540c016f4900a2f5449ff4bd8"
     }
   ],
-  "fileHash": "e7a6c443c13c08ac1b821c33d5643f7f555282f31967865ff472a83131dde523"
+  "fileHash": "e47f7734a1f64d98676467865dc5be9285226b664b086f08bd8a31eaac89e3e4"
 }
