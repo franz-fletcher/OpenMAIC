@@ -4,12 +4,12 @@
   "spec": {
     "reference": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC/docs/specs/007-agent-session-friction.md",
     "title": "Batch 007 spec: agent-session-friction",
-    "hash": "f047dab548ec1e14f224893f6fd628f1e6e8ddb5e8f789afe6783e4c55bac992"
+    "hash": "f510a1becea5afa111c2e2767d6316e5243181ab5ccafdfcd71b979234547bfc"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "implementation",
+  "stage": "verification",
   "retry": {
     "count": 1,
     "max": 5,
@@ -62,12 +62,40 @@
       "riskTier": 2,
       "uuid": "dece5a74-b3fe-464c-b83c-9963bc757a7b",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "2c690250e02c349878932211daa89cae8163ee8de12b553641d5cb01ba17b0d3",
+        "actor": "implementer",
+        "at": "2026-09-02T09:31:23.923Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "verified",
+        "hash": "dd99585c4438d1d7e8b87ac1408fb7e38121d80ae6eae64be6b62e84c9af43b0",
+        "actor": "verifier",
+        "at": "2026-09-02T10:30:54.345Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G01",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/generation-tools.test.ts \u001b[2m(\u001b[22m\u001b[2m16 tests\u001b[22m\u001b[2m | \u001b[22m\u001b[33m15 skipped\u001b[39m\u001b[2m)\u001b[22m\u001b[32m 5\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[2m | \u001b[22m\u001b[33m15 skipped\u001b[39m\u001b[90m (16)\u001b[39m\n\u001b[2m   Start at \u001b[22m 22:30:48\n\u001b[2m   Duration \u001b[22m 980ms\u001b[2m (transform 510ms, setup 11ms, import 905ms, tests 5ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G02",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "generate_scene.execute parses a string widgetOutline with JSON.parse before the object guard. A parsed plain non-null non-array object replaces the param and proceeds. Any other outcome keeps the rejection path with error code invalid-widget-outline and a message that requires a plain JSON object, not a stringified one. No other param is coerced.",
       "gates": [
@@ -77,7 +105,7 @@
           "expect": "passed",
           "type": "unit",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "Full-name filter is byte-pinned because the shorter -t widgetOutline filter matched two tests that already pass, too weak as a RED-first gate. Expect the literal passed marker."
+          "evidence": "{\"id\":\"G01\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/agent-runtime/generation-tools.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m16 tests\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[33m15 skipped\\u001b[39m\\u001b[2m)\\u001b[22m\\u001b[32m 5\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[33m15 skipped\\u001b[39m\\u001b[90m (16)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 22:30:48\\n\\u001b[2m   Duration \\u001b[22m 980ms\\u001b[2m (transform 510ms, setup 11ms, import 905ms, tests 5ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}"
         },
         {
           "id": "G02",
@@ -85,7 +113,7 @@
           "expect": "TSC_OK",
           "type": "smoke",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "Whole-repo type check. Silent-success command echoes the literal TSC_OK marker."
+          "evidence": "{\"id\":\"G02\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}"
         }
       ]
     },
@@ -134,12 +162,50 @@
       "riskTier": 3,
       "uuid": "1335a658-f61c-4e46-8867-e1a00dd9aa32",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "ea5dca45b98c2dd650474a804b76852aa328f33680a3a02a3618ecc0dcbd9046",
+        "actor": "implementer",
+        "at": "2026-09-02T09:31:30.520Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "verified",
+        "hash": "f8f235aeed7f78dda92784ab2f9eac0f360e16b5bfbd9cf132e06312aea9d1a7",
+        "actor": "verifier",
+        "at": "2026-09-02T10:31:23.984Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G01",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/roster-tools.test.ts \u001b[2m(\u001b[22m\u001b[2m21 tests\u001b[22m\u001b[2m | \u001b[22m\u001b[33m17 skipped\u001b[39m\u001b[2m)\u001b[22m\u001b[32m 4\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m4 passed\u001b[39m\u001b[22m\u001b[2m | \u001b[22m\u001b[33m17 skipped\u001b[39m\u001b[90m (21)\u001b[39m\n\u001b[2m   Start at \u001b[22m 22:31:16\n\u001b[2m   Duration \u001b[22m 1.32s\u001b[2m (transform 591ms, setup 17ms, import 1.22s, tests 4ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G02",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/roster-tools.test.ts \u001b[2m(\u001b[22m\u001b[2m21 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 10\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m21 passed\u001b[39m\u001b[22m\u001b[90m (21)\u001b[39m\n\u001b[2m   Start at \u001b[22m 22:31:18\n\u001b[2m   Duration \u001b[22m 971ms\u001b[2m (transform 515ms, setup 12ms, import 891ms, tests 10ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G03",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "A roster with one or several out-of-catalog voices persists with each affected agent unbound and the surviving bindings bound. The tool returns success with details.warnings that name dropped voices, cap any binding sample at 10 entries plus the total count, and point at list_voices. The three pinned tests re-pin to the success-with-warnings contract with test names carrying the literal warnings.",
       "gates": [
@@ -149,7 +215,7 @@
           "expect": "passed",
           "type": "unit",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "The verify run must match at least 3 tests (Tests 3 passed or more). The three re-pinned test names each carry the literal warnings and the gate filters on it. Expect the literal passed marker."
+          "evidence": "{\"id\":\"G01\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/agent-runtime/roster-tools.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m21 tests\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[33m17 skipped\\u001b[39m\\u001b[2m)\\u001b[22m\\u001b[32m 4\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m4 passed\\u001b[39m\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[33m17 skipped\\u001b[39m\\u001b[90m (21)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 22:31:16\\n\\u001b[2m   Duration \\u001b[22m 1.32s\\u001b[2m (transform 591ms, setup 17ms, import 1.22s, tests 4ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}"
         },
         {
           "id": "G02",
@@ -157,7 +223,7 @@
           "expect": "passed",
           "type": "integration",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "Whole-file roster-tools run. Integration tag satisfies the tier-3 requirement."
+          "evidence": "{\"id\":\"G02\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/agent-runtime/roster-tools.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m21 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 10\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m21 passed\\u001b[39m\\u001b[22m\\u001b[90m (21)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 22:31:18\\n\\u001b[2m   Duration \\u001b[22m 971ms\\u001b[2m (transform 515ms, setup 12ms, import 891ms, tests 10ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}"
         },
         {
           "id": "G03",
@@ -165,7 +231,7 @@
           "expect": "TSC_OK",
           "type": "smoke",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "Whole-repo type check. Silent-success command echoes the literal TSC_OK marker."
+          "evidence": "{\"id\":\"G03\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}"
         }
       ]
     },
@@ -203,12 +269,60 @@
       "riskTier": 3,
       "uuid": "fc483550-d41b-426e-95cc-4b96b4bd602b",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "9198389d25b60b2e5a85cd4d70cf999d63983d1adf9681c2d292f5c1c5d2e842",
+        "actor": "implementer",
+        "at": "2026-09-02T09:49:59.043Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "verified",
+        "hash": "fbcc888f8ac951b9d96a4d7000004f925cbe0c514ad86f5aa81f67e5935391c0",
+        "actor": "verifier",
+        "at": "2026-09-02T10:31:50.167Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G01",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/ai/llm-connection-retry.test.ts \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 7\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m6 passed\u001b[39m\u001b[22m\u001b[90m (6)\u001b[39m\n\u001b[2m   Start at \u001b[22m 22:31:41\n\u001b[2m   Duration \u001b[22m 239ms\u001b[2m (transform 67ms, setup 15ms, import 149ms, tests 7ms, environment 0ms)\u001b[22m\n\n\u001b[90mstderr\u001b[2m | tests/ai/llm-connection-retry.test.ts\u001b[2m > \u001b[22m\u001b[2mLLM connection retry\u001b[2m > \u001b[22m\u001b[2mretries transient connection error then succeeds\n\u001b[22m\u001b[39m[2026-09-02T10:31:42.056Z] [WARN] [LLM] [test-connection-retry] Connection error (attempt 1/3), retrying after backoff... AI_APICallError: Cannot connect to API: Headers Timeout Error\n    at /Users/franky/Projects/MyOpenMAIC/Source/openMAIC/tests/ai/llm-connection-retry.test.ts:36:40\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at VitestModuleEvaluator._runInlinedModule (file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/vitest@4.1.8_@opentelemetry+api@1.9.0_@types+node@20.19.37_jsdom@29.1.1_@noble+hashes@1_7b10633e961db4c458aa68acfaeb9e10/node_modules/vitest/dist/module-evaluator.js:206:4)\n    at VitestModuleRunner.directRequest (file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/vite@8.0.0_@emnapi+core@1.8.1_@emnapi+runtime@1.8.1_@types+node@20.19.37_esbuild@0.27.7_005eb5d6fab88ff2d576fe91ee62ddb8/node_modules/vite/dist/node/module-runner.js:1243:59)\n    at VitestModuleRunner.cachedRequest (file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/vite@8.0.0_@emnapi+core@1.8.1_@emnapi+runtime@1.8.1_@types+node@20.19.37_esbuild@0.27.7_005eb5d6fab88ff2d576fe91ee62ddb8/node_modules/vite/dist/node/module-runner.js:1150:73)\n    at VitestModuleRunner.import (file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/vite@8.0.0_@emnapi+core@1.8.1_@emnapi+runtime@1.8.1_@types+node@20.19.37_esbuild@0.27.7_005eb5d6fab88ff2d576fe91ee62ddb8/node_modules/vite/dist/node/module-runner.js:1100:10)\n    at file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/@vitest+runner@4.1.8/node_modules/@vitest/runner/dist/chunk-artifact.js:2457:5\n    at collectTests (file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/@vitest+runner@4.1.8/node_modules/@vitest/runner/dist/chunk-artifact.js:2433:3)\n    at startTests (file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/@vitest+runner@4.1.8/node_modules/@vitest/runner/dist/chunk-artifact.js:3278:17)\n    at file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/vitest@4.1.8_@opentelemetry+api@1.9.0_@types+node@20.19.37_jsdom@29.1.1_@noble+hashes@1_7b10633e961db4c458aa68acfaeb9e10/node_modules/vitest/dist/chunks/base.RR7zL1h0.js:90:5\n\n\u001b[90mstderr\u001b[2m | tests/ai/llm-connection-retry.test.ts\u001b[2m > \u001b[22m\u001b[2mLLM connection retry\u001b[2m > \u001b[22m\u001b[2mexhausts retries and throws with Retry the call guidance\n\u001b[22m\u001b[39m[2026-09-02T10:31:42.059Z] [WARN] [LLM] [test-connection-exhaust] Connection error (attempt 1/2), retrying after backoff... AI_APICallError: Cannot connect to API: Headers Timeout Error\n    at /Users/franky/Projects/MyOpenMAIC/Source/openMAIC/tests/ai/llm-connection-retry.test.ts:36:40\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at VitestModuleEvaluator._runInlinedModule (file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/vitest@4.1.8_@opentelemetry+api@1.9.0_@types+node@20.19.37_jsdom@29.1.1_@noble+hashes@1_7b10633e961db4c458aa68acfaeb9e10/node_modules/vitest/dist/module-evaluator.js:206:4)\n    at VitestModuleRunner.directRequest (file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/vite@8.0.0_@emnapi+core@1.8.1_@emnapi+runtime@1.8.1_@types+node@20.19.37_esbuild@0.27.7_005eb5d6fab88ff2d576fe91ee62ddb8/node_modules/vite/dist/node/module-runner.js:1243:59)\n    at Vite",
+              "passed": true
+            },
+            {
+              "id": "G02",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/ai/llm-thinking-options.test.ts \u001b[2m(\u001b[22m\u001b[2m12 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 268\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m12 passed\u001b[39m\u001b[22m\u001b[90m (12)\u001b[39m\n\u001b[2m   Start at \u001b[22m 22:31:42\n\u001b[2m   Duration \u001b[22m 468ms\u001b[2m (transform 65ms, setup 12ms, import 125ms, tests 268ms, environment 0ms)\u001b[22m\n\n\u001b[90mstderr\u001b[2m | tests/ai/llm-thinking-options.test.ts\u001b[2m > \u001b[22m\u001b[2mLLM thinking provider options\u001b[2m > \u001b[22m\u001b[2mrecords every attempt when a retry is configured, not just the accepted one\n\u001b[22m\u001b[39m[2026-09-02T10:31:42.771Z] [WARN] [LLM] [test] Validation failed (attempt 1/2), retrying...\n\n\u001b[90mstderr\u001b[2m | tests/ai/llm-thinking-options.test.ts\u001b[2m > \u001b[22m\u001b[2mLLM thinking provider options\u001b[2m > \u001b[22m\u001b[2mrecords the last attempt even when every attempt fails validation\n\u001b[22m\u001b[39m[2026-09-02T10:31:42.824Z] [WARN] [LLM] [test] Validation failed (attempt 1/2), retrying...\n\n\u001b[90mstderr\u001b[2m | tests/ai/llm-thinking-options.test.ts\u001b[2m > \u001b[22m\u001b[2mLLM thinking provider options\u001b[2m > \u001b[22m\u001b[2mrecords the last attempt even when every attempt fails validation\n\u001b[22m\u001b[39m[2026-09-02T10:31:42.824Z] [WARN] [LLM] [test] Validation failed (attempt 2/2), giving up\n\n",
+              "passed": true
+            },
+            {
+              "id": "G03",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            },
+            {
+              "id": "G04",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/lint-llm-entry-guard.test.ts \u001b[2m(\u001b[22m\u001b[2m32 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 1868\u001b[2mms\u001b[22m\u001b[39m\n     \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m blocks the named import in every guarded path (.ts) \u001b[33m 1141\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m32 passed\u001b[39m\u001b[22m\u001b[90m (32)\u001b[39m\n\u001b[2m   Start at \u001b[22m 22:31:48\n\u001b[2m   Duration \u001b[22m 2.06s\u001b[2m (transform 16ms, setup 12ms, import 121ms, tests 1.87s, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "callLLM retries connection-class AI_APICallError failures with env-tuned exponential backoff, resolves transient failures, and on exhaustion throws an error preserving name AI_APICallError and the original cause with a message containing 'Retry the call'. Errors carrying a numeric statusCode are not retried by the wrapper. Environment knobs of 0 retries disable the new retry path.",
       "gates": [
@@ -218,7 +332,29 @@
           "expect": "passed",
           "type": "unit",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "New connection-retry suite created by this batch. Whole-file gate. Expect the literal passed marker."
+          "evidence": "{\"id\":\"G01\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/ai/llm-connection-retry.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m6 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 7\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m6 passed\\u001b[39m\\u001b[22m\\u001b[90m (6)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 22:31:41\\n\\u001b[2m   Duration \\u001b[22m 239ms\\u001b[2m (transform 67ms, setup 15ms, import 149ms, tests 7ms, environment 0ms)\\u001b[22m\\n\\n\\u001b[90mstderr\\u001b[2m | tests/ai/llm-connection-retry.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mLLM connection retry\\u001b[2m > \\u001b[22m\\u001b[2mretries transient connection error then succeeds\\n\\u001b[22m\\u001b[39m[2026-09-02T10:31:42.056Z] [WARN] [LLM] [test-connection-retry] Connection error (attempt 1/3), retrying after backoff... AI_APICallError: Cannot connect to API: Headers Timeout Error\\n    at /Users/franky/Projects/MyOpenMAIC/Source/openMAIC/tests/ai/llm-connection-retry.test.ts:36:40\\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\\n    at VitestModuleEvaluator._runInlinedModule (file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/vitest@4.1.8_@opentelemetry+api@1.9.0_@types+node@20.19.37_jsdom@29.1.1_@noble+hashes@1_7b10633e961db4c458aa68acfaeb9e10/node_modules/vitest/dist/module-evaluator.js:206:4)\\n    at VitestModuleRunner.directRequest (file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/vite@8.0.0_@emnapi+core@1.8.1_@emnapi+runtime@1.8.1_@types+node@20.19.37_esbuild@0.27.7_005eb5d6fab88ff2d576fe91ee62ddb8/node_modules/vite/dist/node/module-runner.js:1243:59)\\n    at VitestModuleRunner.cachedRequest (file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/vite@8.0.0_@emnapi+core@1.8.1_@emnapi+runtime@1.8.1_@types+node@20.19.37_esbuild@0.27.7_005eb5d6fab88ff2d576fe91ee62ddb8/node_modules/vite/dist/node/module-runner.js:1150:73)\\n    at VitestModuleRunner.import (file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/vite@8.0.0_@emnapi+core@1.8.1_@emnapi+runtime@1.8.1_@types+node@20.19.37_esbuild@0.27.7_005eb5d6fab88ff2d576fe91ee62ddb8/node_modules/vite/dist/node/module-runner.js:1100:10)\\n    at file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/@vitest+runner@4.1.8/node_modules/@vitest/runner/dist/chunk-artifact.js:2457:5\\n    at collectTests (file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/@vitest+runner@4.1.8/node_modules/@vitest/runner/dist/chunk-artifact.js:2433:3)\\n    at startTests (file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/@vitest+runner@4.1.8/node_modules/@vitest/runner/dist/chunk-artifact.js:3278:17)\\n    at file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/vitest@4.1.8_@opentelemetry+api@1.9.0_@types+node@20.19.37_jsdom@29.1.1_@noble+hashes@1_7b10633e961db4c458aa68acfaeb9e10/node_modules/vitest/dist/chunks/base.RR7zL1h0.js:90:5\\n\\n\\u001b[90mstderr\\u001b[2m | tests/ai/llm-connection-retry.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mLLM connection retry\\u001b[2m > \\u001b[22m\\u001b[2mexhausts retries and throws with Retry the call guidance\\n\\u001b[22m\\u001b[39m[2026-09-02T10:31:42.059Z] [WARN] [LLM] [test-connection-exhaust] Connection error (attempt 1/2), retrying after backoff... AI_APICallError: Cannot connect to API: Headers Timeout Error\\n    at /Users/franky/Projects/MyOpenMAIC/Source/openMAIC/tests/ai/llm-connection-retry.test.ts:36:40\\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\\n    at VitestModuleEvaluator._runInlinedModule (file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/vitest@4.1.8_@opentelemetry+api@1.9.0_@types+node@20.19.37_jsdom@29.1.1_@noble+hashes@1_7b10633e961db4c458aa68acfaeb9e10/node_modules/vitest/dist/module-evaluator.js:206:4)\\n    at VitestModuleRunner.directRequest (file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/vite@8.0.0_@emnapi+core@1.8.1_@emnapi+runtime@1.8.1_@types+node@20.19.37_esbuild@0.27.7_005eb5d6fab88ff2d576fe91ee62ddb8/node_modules/vite/dist/node/module-runner.js:1243:59)\\n    at Vite\",\"passed\":true}",
+          "captures": [
+            {
+              "captureId": "2af81951-5254-47f8-9bc0-a003705b7292",
+              "ts": "2026-09-02T10:32:09.158Z",
+              "actor": "verifier",
+              "stage": "verification",
+              "headSha": "",
+              "round": 39,
+              "oracleSignature": "8718c8870f0df99a8fa01433213229ab092c38df0ab6e25deaede508ca65b9ce",
+              "evidence": {
+                "id": "G01",
+                "shell": "/bin/sh",
+                "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+                "exit": 0,
+                "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+                "pathCount": 30,
+                "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/ai/llm-connection-retry.test.ts \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 8\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m6 passed\u001b[39m\u001b[22m\u001b[90m (6)\u001b[39m\n\u001b[2m   Start at \u001b[22m 22:32:08\n\u001b[2m   Duration \u001b[22m 231ms\u001b[2m (transform 70ms, setup 13ms, import 141ms, tests 8ms, environment 0ms)\u001b[22m\n\n\u001b[90mstderr\u001b[2m | tests/ai/llm-connection-retry.test.ts\u001b[2m > \u001b[22m\u001b[2mLLM connection retry\u001b[2m > \u001b[22m\u001b[2mretries transient connection error then succeeds\n\u001b[22m\u001b[39m[2026-09-02T10:32:09.095Z] [WARN] [LLM] [test-connection-retry] Connection error (attempt 1/3), retrying after backoff... AI_APICallError: Cannot connect to API: Headers Timeout Error\n    at /Users/franky/Projects/MyOpenMAIC/Source/openMAIC/tests/ai/llm-connection-retry.test.ts:36:40\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at VitestModuleEvaluator._runInlinedModule (file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/vitest@4.1.8_@opentelemetry+api@1.9.0_@types+node@20.19.37_jsdom@29.1.1_@noble+hashes@1_7b10633e961db4c458aa68acfaeb9e10/node_modules/vitest/dist/module-evaluator.js:206:4)\n    at VitestModuleRunner.directRequest (file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/vite@8.0.0_@emnapi+core@1.8.1_@emnapi+runtime@1.8.1_@types+node@20.19.37_esbuild@0.27.7_005eb5d6fab88ff2d576fe91ee62ddb8/node_modules/vite/dist/node/module-runner.js:1243:59)\n    at VitestModuleRunner.cachedRequest (file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/vite@8.0.0_@emnapi+core@1.8.1_@emnapi+runtime@1.8.1_@types+node@20.19.37_esbuild@0.27.7_005eb5d6fab88ff2d576fe91ee62ddb8/node_modules/vite/dist/node/module-runner.js:1150:73)\n    at VitestModuleRunner.import (file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/vite@8.0.0_@emnapi+core@1.8.1_@emnapi+runtime@1.8.1_@types+node@20.19.37_esbuild@0.27.7_005eb5d6fab88ff2d576fe91ee62ddb8/node_modules/vite/dist/node/module-runner.js:1100:10)\n    at file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/@vitest+runner@4.1.8/node_modules/@vitest/runner/dist/chunk-artifact.js:2457:5\n    at collectTests (file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/@vitest+runner@4.1.8/node_modules/@vitest/runner/dist/chunk-artifact.js:2433:3)\n    at startTests (file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/@vitest+runner@4.1.8/node_modules/@vitest/runner/dist/chunk-artifact.js:3278:17)\n    at file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/vitest@4.1.8_@opentelemetry+api@1.9.0_@types+node@20.19.37_jsdom@29.1.1_@noble+hashes@1_7b10633e961db4c458aa68acfaeb9e10/node_modules/vitest/dist/chunks/base.RR7zL1h0.js:90:5\n\n\u001b[90mstderr\u001b[2m | tests/ai/llm-connection-retry.test.ts\u001b[2m > \u001b[22m\u001b[2mLLM connection retry\u001b[2m > \u001b[22m\u001b[2mexhausts retries and throws with Retry the call guidance\n\u001b[22m\u001b[39m[2026-09-02T10:32:09.099Z] [WARN] [LLM] [test-connection-exhaust] Connection error (attempt 1/2), retrying after backoff... AI_APICallError: Cannot connect to API: Headers Timeout Error\n    at /Users/franky/Projects/MyOpenMAIC/Source/openMAIC/tests/ai/llm-connection-retry.test.ts:36:40\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at VitestModuleEvaluator._runInlinedModule (file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/vitest@4.1.8_@opentelemetry+api@1.9.0_@types+node@20.19.37_jsdom@29.1.1_@noble+hashes@1_7b10633e961db4c458aa68acfaeb9e10/node_modules/vitest/dist/module-evaluator.js:206:4)\n    at VitestModuleRunner.directRequest (file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/vite@8.0.0_@emnapi+core@1.8.1_@emnapi+runtime@1.8.1_@types+node@20.19.37_esbuild@0.27.7_005eb5d6fab88ff2d576fe91ee62ddb8/node_modules/vite/dist/node/module-runner.js:1243:59)\n    at Vite",
+                "passed": true
+              },
+              "consumed": false
+            }
+          ]
         },
         {
           "id": "G02",
@@ -226,7 +362,7 @@
           "expect": "passed",
           "type": "unit",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "Existing thinking-options suite must stay green because S03 edits lib/ai/llm.ts. Expect the literal passed marker."
+          "evidence": "{\"id\":\"G02\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/ai/llm-thinking-options.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m12 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 268\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m12 passed\\u001b[39m\\u001b[22m\\u001b[90m (12)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 22:31:42\\n\\u001b[2m   Duration \\u001b[22m 468ms\\u001b[2m (transform 65ms, setup 12ms, import 125ms, tests 268ms, environment 0ms)\\u001b[22m\\n\\n\\u001b[90mstderr\\u001b[2m | tests/ai/llm-thinking-options.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mLLM thinking provider options\\u001b[2m > \\u001b[22m\\u001b[2mrecords every attempt when a retry is configured, not just the accepted one\\n\\u001b[22m\\u001b[39m[2026-09-02T10:31:42.771Z] [WARN] [LLM] [test] Validation failed (attempt 1/2), retrying...\\n\\n\\u001b[90mstderr\\u001b[2m | tests/ai/llm-thinking-options.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mLLM thinking provider options\\u001b[2m > \\u001b[22m\\u001b[2mrecords the last attempt even when every attempt fails validation\\n\\u001b[22m\\u001b[39m[2026-09-02T10:31:42.824Z] [WARN] [LLM] [test] Validation failed (attempt 1/2), retrying...\\n\\n\\u001b[90mstderr\\u001b[2m | tests/ai/llm-thinking-options.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mLLM thinking provider options\\u001b[2m > \\u001b[22m\\u001b[2mrecords the last attempt even when every attempt fails validation\\n\\u001b[22m\\u001b[39m[2026-09-02T10:31:42.824Z] [WARN] [LLM] [test] Validation failed (attempt 2/2), giving up\\n\\n\",\"passed\":true}"
         },
         {
           "id": "G03",
@@ -234,7 +370,7 @@
           "expect": "TSC_OK",
           "type": "smoke",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "Whole-repo type check. Silent-success command echoes the literal TSC_OK marker."
+          "evidence": "{\"id\":\"G03\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}"
         },
         {
           "id": "G04",
@@ -242,7 +378,7 @@
           "expect": "passed",
           "type": "integration",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "Guard matrix pins the LLM entry boundary and is a required gate because S03 edits lib/ai/llm.ts. Integration tag satisfies the tier-3 requirement. Expect the literal passed marker."
+          "evidence": "{\"id\":\"G04\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/lint-llm-entry-guard.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m32 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[33m 1868\\u001b[2mms\\u001b[22m\\u001b[39m\\n     \\u001b[33m\\u001b[2m✓\\u001b[22m\\u001b[39m blocks the named import in every guarded path (.ts) \\u001b[33m 1141\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m32 passed\\u001b[39m\\u001b[22m\\u001b[90m (32)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 22:31:48\\n\\u001b[2m   Duration \\u001b[22m 2.06s\\u001b[2m (transform 16ms, setup 12ms, import 121ms, tests 1.87s, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}"
         }
       ]
     }
@@ -599,7 +735,103 @@
       "slice": null,
       "hash": "11278bb32d090c43fbdf83674ba7fd3c8d6df24327e5f2c6f5f567ea04ab8df1",
       "fileHash": "1f8af19260c04a268110875cb3f46c4b9562ecf6afeace2b35437fb206d7a327"
+    },
+    {
+      "seq": 33,
+      "id": "8afc4046-3bd7-47a3-9900-db95e195bb54",
+      "at": "2026-09-02T09:31:23.923Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S01:impl:pending->ready_for_verification",
+      "slice": "S01",
+      "hash": "ac054953ad6968043d4e8e9676c6cd0929964a887c100c85a0b40e14d6c7de9c",
+      "fileHash": "202550e8016cbed5ebc6d67f7c1193ef76d3ba7eaeb25db639a2b8003bda8fd2"
+    },
+    {
+      "seq": 34,
+      "id": "89fd3788-d2a8-47ce-91b8-506265cabce3",
+      "at": "2026-09-02T09:31:30.520Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S02:impl:pending->ready_for_verification",
+      "slice": "S02",
+      "hash": "406fdf6267b819954fa7fed28c4d04c2913e3d533e4a7cf2abd611a8a653c4c6",
+      "fileHash": "441d7f8f261c403a871ce6a7ca28c225860452ff1f94f3afd19a902ed8d20969"
+    },
+    {
+      "seq": 35,
+      "id": "b4cabb56-edce-4037-8e57-186312328a44",
+      "at": "2026-09-02T09:49:59.043Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S03:impl:pending->ready_for_verification",
+      "slice": "S03",
+      "hash": "4cf60acdf8ed2e1cbd5500fab3e62d00ca9554f325174f96af8a0027906f6e93",
+      "fileHash": "c7a2b7622f159b5e0ee5473292f8ef974e8dd25fea58d50df08009857a2da1aa"
+    },
+    {
+      "seq": 36,
+      "id": "b14de2c0-21ba-46d9-9410-29db6f69beb9",
+      "at": "2026-09-02T10:12:17.137Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "cee695889c713f6b50bfc993f79aa3728354e7a182ffc2ad285cf6fbcb2d87ca",
+      "fileHash": "edfa55d6dcaed6be40c1cb658c34850f3e6b2f1062d27dfda726fd1dca94770a"
+    },
+    {
+      "seq": 37,
+      "id": "cd984eac-7878-4fe1-8327-b04db502da1a",
+      "at": "2026-09-02T10:30:54.345Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S01:verification:pending->verified",
+      "slice": "S01",
+      "hash": "82b22bafa7ecea228b9b08d0c67bc6f7cfe3cc2989feae3bf4a5481d48a3917c",
+      "oracle": "e6bbd4a90ce6d04c5c61e002be17a5963fc0ec5753ded290f1714eda6a5fdf07",
+      "evidence": "b18651eacf7649567c4f40862086e9b809ad5f2dcc84e14fe299ea902326ef48",
+      "fileHash": "22e3a13a159fd75f0327fd6aa71805b5643f53887f2c93a3539684927a8afa6f"
+    },
+    {
+      "seq": 38,
+      "id": "f52a78bd-46a6-4884-913f-38be0c395c1d",
+      "at": "2026-09-02T10:31:23.984Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S02:verification:pending->verified",
+      "slice": "S02",
+      "hash": "1acbe0f5e2c7285281928cf89b562ed0aea9d743d92af88104d0ff3013dd159e",
+      "oracle": "8ed976e89a4b5e88baa0c34f3205466e57b7e8ea2186d0127f6cf23b61ec87be",
+      "evidence": "f00a1a58f9d426cbff9c197d5bf6637729d591550c75af44902a4ea9a1c32ec4",
+      "fileHash": "4047af84f025f8a359b6300bd4004898177dd63e1c28952c702a6fd9a7484597"
+    },
+    {
+      "seq": 39,
+      "id": "7e874758-1b30-45a3-b3bf-811cdf793e8f",
+      "at": "2026-09-02T10:31:50.167Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S03:verification:pending->verified",
+      "slice": "S03",
+      "hash": "0a6a7174759b2fb11807b81412f9e0ba51b93aec4147e7a61a96055e2ca8f654",
+      "oracle": "edaa6832df045a4b69e889dbe772d10aacde294b441bdbc54d4a2cb368b6e199",
+      "evidence": "e7011d4801230f34f881d1fbb02074d10643252f6824ed9f534589781cc27df7",
+      "fileHash": "6cd7b47fb35f35f7547645cac8eb5dba78a30e60291131fb3517174158e40cf6"
+    },
+    {
+      "seq": 40,
+      "id": "8dafc77c-17ec-40ea-9562-9f8fe7ea55b3",
+      "at": "2026-09-02T10:32:09.158Z",
+      "actor": "verifier",
+      "command": "gate_run",
+      "transition": "slice:S03:gate-run:G01:2af81951-5254-47f8-9bc0-a003705b7292",
+      "slice": "S03",
+      "hash": "e46fe92478e326a36cb6bc515d58e4796dc1d11dcd0e162fc0e236f3e38b320a",
+      "oracle": "8718c8870f0df99a8fa01433213229ab092c38df0ab6e25deaede508ca65b9ce",
+      "evidence": "6a36c89884d26aa29ad7da5e24b8205dacdad42952567e4cfae4f83733309301",
+      "fileHash": "ce063999fb388cf433ed787e68afec25bc524841b969acf8addfbf56fa6d21ac"
     }
   ],
-  "fileHash": "202550e8016cbed5ebc6d67f7c1193ef76d3ba7eaeb25db639a2b8003bda8fd2"
+  "fileHash": "3d36a361732ed60e56219432160d252b4b5c803bc44ddecb9cdd3b548e9262b2"
 }

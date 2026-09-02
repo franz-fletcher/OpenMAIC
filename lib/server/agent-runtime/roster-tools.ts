@@ -298,33 +298,28 @@ export function buildRosterTools(deps: RosterToolDeps): AgentTool<never, never>[
       // bind a catalog voice, or omit `voice`.
       const catalog = agentVoiceCatalog(deps.registeredVoices);
       const catalogBindings = new Set(catalog.map((voice) => voice.binding));
-      const unusableBinding = params.agents
-        .map((agent) => parseVoiceConfig(agent.voice))
-        .find(
-          (config) => config && !catalogBindings.has(`${config.providerId}::${config.voiceId}`),
-        );
-      if (unusableBinding) {
-        return {
-          content: [
-            {
-              type: 'text',
-              text:
-                `set_roster got voice "${unusableBinding.providerId}::${unusableBinding.voiceId}", which is not in this deployment's available voice catalog. ` +
-                `Call list_voices for the exact bindable pairs (a cloned voice appears there only after register_voice returns it), or omit \`voice\` to leave the agent unbound.`,
-            },
-          ],
-          details: {
-            error: 'voice-not-in-catalog',
-            voice: `${unusableBinding.providerId}::${unusableBinding.voiceId}`,
-            availableBindings: [...catalogBindings],
-          },
-          isError: true,
-        };
+
+      // Collect ALL out-of-catalog bindings in one pass.
+      const droppedBindings: Array<{ agent: string; voice: string }> = [];
+      for (const agent of params.agents) {
+        const config = parseVoiceConfig(agent.voice);
+        if (config && !catalogBindings.has(`${config.providerId}::${config.voiceId}`)) {
+          droppedBindings.push({
+            agent: agent.name,
+            voice: `${config.providerId}::${config.voiceId}`,
+          });
+        }
       }
+
+      // Build a set of agent names with dropped voices for easy lookup.
+      const droppedAgentNames = new Set(droppedBindings.map((d) => d.agent));
 
       const roster: GeneratedAgentConfig[] = params.agents.map((agent, index) => {
         const voiceDesign = normalizeVoiceDesign(agent.voiceDesign);
-        const voiceConfig = parseVoiceConfig(agent.voice);
+        // Drop voice binding for agents with out-of-catalog voices.
+        const voiceConfig = droppedAgentNames.has(agent.name)
+          ? undefined
+          : parseVoiceConfig(agent.voice);
         return {
           id: agent.id?.trim() || `gen-${nanoid(8)}`,
           name: agent.name,
@@ -360,14 +355,32 @@ export function buildRosterTools(deps: RosterToolDeps): AgentTool<never, never>[
             }`,
         )
         .join(' | ');
+
+      // Build warnings when voices were dropped.
+      const warnings =
+        droppedBindings.length > 0
+          ? {
+              droppedBindings,
+              totalAvailableBindings: catalogBindings.size,
+              sampleBindings: [...catalogBindings].slice(0, 10),
+              hint: 'Call list_voices for the full catalog of bindable pairs.',
+            }
+          : undefined;
+
+      const warningText =
+        droppedBindings.length > 0
+          ? `\n\nDropped voice bindings: ${droppedBindings.map((d) => `${d.agent} -> ${d.voice}`).join(', ')}. ` +
+            `Call list_voices for valid providerId::voiceId pairs, or omit voice to leave the agent unbound.`
+          : '';
+
       return {
         content: [
           {
             type: 'text',
-            text: `Classroom roster set: ${roster.length} agents, teacher "${teacher?.name}". ${summary}.`,
+            text: `Classroom roster set: ${roster.length} agents, teacher "${teacher?.name}". ${summary}.${warningText}`,
           },
         ],
-        details: { roster },
+        details: { roster, ...(warnings ? { warnings } : {}) },
       };
     },
   };

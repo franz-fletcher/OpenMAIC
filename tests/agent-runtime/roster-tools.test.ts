@@ -197,8 +197,8 @@ describe('set_roster', () => {
     expect(result.details?.blocked).toBe('no-document');
   });
 
-  it('rejects a voice that is not in the deployment voice catalog', async () => {
-    mocks.enabledServerTTSProviderIds.mockReturnValue(['qwen-tts']);
+  it('returns warnings for a voice not in the deployment voice catalog and persists the rest', async () => {
+    mocks.enabledServerTTSProviderIds.mockReturnValue(['doubao-tts']);
     const store = makeStore(makeDoc());
     const result = await runTool(store, 'set_roster', {
       stageId: 'stage-test',
@@ -207,16 +207,32 @@ describe('set_roster', () => {
           name: 'Andrew Ng',
           role: 'teacher',
           persona: 'Explains supervised learning from first principles.',
-          voice: 'qwen-tts::enda',
+          voice: 'qwen-token-plan-tts::loongjameszhao',
         },
         { name: 'Leo', role: 'student', persona: 'Asks basic questions.' },
       ],
     });
 
-    expect(result.isError).toBe(true);
-    expect(result.details?.error).toBe('voice-not-in-catalog');
-    // Nothing may be persisted: a half-applied roster is worse than none.
-    expect((await store.loadDocument('stage-test'))?.stage?.generatedAgentConfigs).toBeUndefined();
+    expect(result.isError).toBeUndefined();
+    const roster = (await store.loadDocument('stage-test'))?.stage?.generatedAgentConfigs ?? [];
+    expect(roster).toHaveLength(2);
+    // Teacher voice was dropped (unbound)
+    expect(roster[0]?.voiceConfig).toBeUndefined();
+    expect(roster[0]?.name).toBe('Andrew Ng');
+    // Student remains unbound (no voice passed)
+    expect(roster[1]?.voiceConfig).toBeUndefined();
+    // Content names the dropped voice
+    expect(result.content[0].text).toContain('loongjameszhao');
+    expect(result.content[0].text).toContain('list_voices');
+    // details.warnings present
+    expect(result.details?.warnings).toBeDefined();
+    const warnings = result.details?.warnings as Record<string, unknown>;
+    expect(warnings.droppedBindings).toEqual([
+      { agent: 'Andrew Ng', voice: 'qwen-token-plan-tts::loongjameszhao' },
+    ]);
+    expect(typeof warnings.totalAvailableBindings).toBe('number');
+    expect(Array.isArray(warnings.sampleBindings)).toBe(true);
+    expect((warnings.sampleBindings as unknown[]).length).toBeLessThanOrEqual(10);
   });
 
   it('binds a voice from the deployment catalog and reports it in the summary', async () => {
@@ -298,7 +314,7 @@ describe('set_roster', () => {
     expect(result.content[0].text).not.toContain('::');
   });
 
-  it('rejects a voice bound to a provider this deployment does not serve', async () => {
+  it('returns warnings for a voice bound to a provider this deployment does not serve', async () => {
     mocks.enabledServerTTSProviderIds.mockReturnValue(['qwen-tts']);
     const store = makeStore(makeDoc());
     const result = await runTool(store, 'set_roster', {
@@ -314,17 +330,27 @@ describe('set_roster', () => {
       ],
     });
 
-    expect(result.isError).toBe(true);
-    expect(result.details?.error).toBe('voice-not-in-catalog');
-    expect((await store.loadDocument('stage-test'))?.stage?.generatedAgentConfigs).toBeUndefined();
+    expect(result.isError).toBeUndefined();
+    const roster = (await store.loadDocument('stage-test'))?.stage?.generatedAgentConfigs ?? [];
+    expect(roster).toHaveLength(2);
+    // Teacher voice was dropped (unbound)
+    expect(roster[0]?.voiceConfig).toBeUndefined();
+    expect(roster[0]?.name).toBe('Teacher');
+    // Content names the dropped voice
+    expect(result.content[0].text).toContain('some-other-provider::enda');
+    expect(result.content[0].text).toContain('list_voices');
+    // details.warnings present
+    expect(result.details?.warnings).toBeDefined();
+    const warnings = result.details?.warnings as Record<string, unknown>;
+    expect(warnings.droppedBindings).toEqual([
+      { agent: 'Teacher', voice: 'some-other-provider::enda' },
+    ]);
   });
 
   // A served-but-keyless provider is the subtler half: synthesis drops the
   // binding and falls back to the default voice with only a log line, so its
-  // voices are excluded from the catalog and the binding is refused —
-  // persisting it would store a roster that says one voice while every
-  // synthesis produces another.
-  it('rejects a voice whose provider is served but has no API key', async () => {
+  // voices are excluded from the catalog and the binding is refused.
+  it('returns warnings for a voice whose provider is served but has no API key', async () => {
     mocks.enabledServerTTSProviderIds.mockReturnValue(['qwen-tts']);
     mocks.resolveTTSApiKey.mockReturnValue('');
     const store = makeStore(makeDoc());
@@ -341,9 +367,62 @@ describe('set_roster', () => {
       ],
     });
 
-    expect(result.isError).toBe(true);
-    expect(result.details?.error).toBe('voice-not-in-catalog');
-    expect((await store.loadDocument('stage-test'))?.stage?.generatedAgentConfigs).toBeUndefined();
+    expect(result.isError).toBeUndefined();
+    const roster = (await store.loadDocument('stage-test'))?.stage?.generatedAgentConfigs ?? [];
+    expect(roster).toHaveLength(2);
+    // Teacher voice was dropped (unbound)
+    expect(roster[0]?.voiceConfig).toBeUndefined();
+    expect(roster[0]?.name).toBe('Teacher');
+    // Content names the dropped voice
+    expect(result.content[0].text).toContain('qwen-tts::enda');
+    expect(result.content[0].text).toContain('list_voices');
+    // details.warnings present
+    expect(result.details?.warnings).toBeDefined();
+    const warnings = result.details?.warnings as Record<string, unknown>;
+    expect(warnings.droppedBindings).toEqual([{ agent: 'Teacher', voice: 'qwen-tts::enda' }]);
+  });
+
+  it('returns warnings for multiple bad voices in a single pass', async () => {
+    mocks.enabledServerTTSProviderIds.mockReturnValue(['doubao-tts']);
+    const store = makeStore(makeDoc());
+    const result = await runTool(store, 'set_roster', {
+      stageId: 'stage-test',
+      agents: [
+        {
+          name: 'Teacher',
+          role: 'teacher',
+          persona: 'p',
+          voice: 'qwen-token-plan-tts::loongjameszhao',
+        },
+        {
+          name: 'Assistant',
+          role: 'assistant',
+          persona: 'p',
+          voice: 'qwen-token-plan-tts::loongolivialin',
+        },
+        { name: 'Student', role: 'student', persona: 'p' },
+      ],
+    });
+
+    expect(result.isError).toBeUndefined();
+    const roster = (await store.loadDocument('stage-test'))?.stage?.generatedAgentConfigs ?? [];
+    expect(roster).toHaveLength(3);
+    // Both voices were dropped (unbound)
+    expect(roster[0]?.voiceConfig).toBeUndefined();
+    expect(roster[0]?.name).toBe('Teacher');
+    expect(roster[1]?.voiceConfig).toBeUndefined();
+    expect(roster[1]?.name).toBe('Assistant');
+    // Content names both dropped voices
+    expect(result.content[0].text).toContain('loongjameszhao');
+    expect(result.content[0].text).toContain('loongolivialin');
+    expect(result.content[0].text).toContain('list_voices');
+    // details.warnings present with both dropped bindings
+    expect(result.details?.warnings).toBeDefined();
+    const warnings = result.details?.warnings as Record<string, unknown>;
+    expect(warnings.droppedBindings).toEqual([
+      { agent: 'Teacher', voice: 'qwen-token-plan-tts::loongjameszhao' },
+      { agent: 'Assistant', voice: 'qwen-token-plan-tts::loongolivialin' },
+    ]);
   });
 });
 
