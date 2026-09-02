@@ -1,6 +1,6 @@
 # Qwen Token Plan Integration (meta-spec)
 
-Meta-spec status: research
+Meta-spec status: closed
 
 ## 1. Purpose
 
