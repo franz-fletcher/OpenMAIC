@@ -133,3 +133,23 @@ Realtime vision flags: `capabilities.vision` is not present for the new LLM ids 
 ---
 
 Status: Reviewed for soundness (docs/research/001-spec-soundness-review.md). Blockers B1-B3 and concerns C1-C5 folded in. Awaiting human approval.
+
+## Certification Report
+
+Certified: 2026-09-02T04:46:48.716Z
+Signature: 2241066bf95f3338257505323df8a7b7f03b26bb881757bfb32b48e7502aea3e
+
+### Summary
+
+Slices: 0
+Symbols: 0
+Gates: 0
+
+### Implemented Symbols
+
+
+### Gates Passed
+
+
+Certification hash: 2241066bf95f3338257505323df8a7b7f03b26bb881757bfb32b48e7502aea3e
+Certified: 2026-09-02T04:46:48.716Z | Signature: 2241066bf95f3338257505323df8a7b7f03b26bb881757bfb32b48e7502aea3e | Certifier: verifier
