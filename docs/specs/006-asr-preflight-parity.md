@@ -18,18 +18,21 @@ Add a key preflight at route entry in `app/api/transcription/route.ts`, after th
 
 ## Slices
 
-**S01 preflight helper and route wiring (tier 2).** Inline `assertASRKeyConfigured` in the route file (TTS precedent, minimal diff, no growth of the guarded provider-config surface). It consults the `ASR_PROVIDERS` registry `requiresApiKey` flag and `resolveASRApiKey` (`provider-config.ts:785-787`). Keyed providers with no key return 400. Keyless providers (`browser-native`, `funasr-asr`, `lemonade-asr`) and custom providers skip, matching the library throw condition. No existing test pins the current 500 missing-key path, so no test contract breaks.
+**S01 preflight and route wiring (tier 2).** Add the key check at route entry in `app/api/transcription/route.ts` (TTS precedent: an inline conditional, no new export; a module-scope helper may be used but stays unexported and untested directly). The check consults the `ASR_PROVIDERS` registry `requiresApiKey` flag and `resolveASRApiKey` (`provider-config.ts:785-787`). It runs after the managed flag and after the SSRF block, mirroring TTS order (reviewer C1). Keyed providers with no key return 400. Keyless providers (`browser-native`, `funasr-asr`, `lemonade-asr`) and custom providers skip, matching the library throw condition. No existing test pins the current 500 missing-key path, so no test contract breaks.
 
 **S02 per-provider missing-key matrix (tier 3, integration).** New `tests/server/transcription-route-missing-key.test.ts` mirroring `tests/server/tts-route-missing-key.test.ts`, including its env-clear helper pattern over all six `ASR_ENV_MAP` prefixes plus `ASR_BROWSER_NATIVE`. Matrix: four keyed built-ins return 400 and never reach `transcribeAudio`; three keyless built-ins still dispatch; managed server key passes without a client key; unmanaged client key passes; disabled provider still 403; no-enabled-backend still 400 `MISSING_PROVIDER`; downstream failure still 500.
 
 ### Proposed gates
 
-S01 (2): helper unit truth-table (`passed`); route 400 + no-dispatch assertion (`passed`).
+S01 (2, both route-level per reviewer B1: the inline check is not importable, the TTS precedent tests through `POST`):
+- G01 `npx vitest run tests/server/transcription-route-missing-key.test.ts -t "MISSING_API_KEY"` expect `passed`
+- G02 `npx vitest run tests/server/transcription-route-missing-key.test.ts -t "never dispatches"` expect `passed`
 S02 (3, one integration): full matrix (`passed`, type integration); managed/client-key pass cases (`passed`); unchanged error contracts (`passed`).
 
 ## Implementation Decisions
 
 - Code and status: 400 `MISSING_API_KEY` (TTS parity; `MISSING_REQUIRED_FIELD` stays for actual missing body fields at `route.ts:35`).
+- Placement (reviewer C1 resolved): after provider resolution, `MISSING_PROVIDER`, `PROVIDER_DISABLED`, the `managed` flag (`:55`), and the SSRF block (`:57-62`); compute the effective key as the config build does (`resolveASRApiKey(effectiveProviderId, managed ? undefined : apiKey || undefined)`, same expression as `:72`), then check `requiresApiKey && !effectiveKey`. Identical observable order to the TTS route.
 - Helper inlined in the route; promoted to provider-config only if a third route needs it.
 - No i18n key: dev-facing API text, matching the TTS route's inline string, avoiding a 12-locale parity edit.
 - Custom `custom-asr-*` providers keep the existing 500 path. The library's own guard skips them (`provider?.requiresApiKey` is undefined there), so guarding them would exceed parity scope. Recorded as an intentional non-change.
@@ -39,6 +42,7 @@ S02 (3, one integration): full matrix (`passed`, type integration); managed/clie
 ## Testing Decisions
 
 - Mirror `tts-route-missing-key.test.ts` structure: mock `@/lib/audio/asr-providers`, assert non-dispatch (`:98` precedent).
+- Test names are gate contracts: the matrix file must contain tests named with the substrings `MISSING_API_KEY` and `never dispatches` (byte-pinned at ledger build; S01 gates filter on them with `-t`).
 - Clear all ASR env prefixes so a host machine cannot leak config into the matrix.
 - Zero paid gates. Hermetic only. Ledger discipline identical to batch 005 lessons (symbol expectations at anchor creation, beforeSignature for the named `POST` if targeted, literal oracles, cwd repo root, prettier explicit-list sweep before marking).
 

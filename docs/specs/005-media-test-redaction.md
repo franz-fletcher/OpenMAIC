@@ -29,9 +29,9 @@ Error taxonomy for spy failures, proven live: `not.toHaveBeenCalled()` and `toHa
 
 **S01 `hermetic-yaml-isolation` (tier 3).** The classroom media test and the capability force-off route test intercept `server-providers.yml` in their fs mocks (`yamlOverride` fixture, copied from `tests/server/provider-config.test.ts:82-99`). No host-machine key can enter the pipeline.
 
-**S02 `redaction-guard` (tier 2).** A hermetic guard test configures a fixture YAML with a live-shaped key, runs a failing path, captures serialized output, and asserts the key is absent. `qwen-voice-route.test.ts:141,238` move from whole-init `toMatchObject` to scalar field reads, so a failure cannot serialize a header-bearing init. Blocked by S01.
+**S02 `redaction-guard` (tier 2).** A hermetic guard test in `classroom-media-generation.test.ts` proves the property with a paired assertion (recipe in Implementation Decisions). Blocked by S01.
 
-**S03 `audio-suite-scalars` (tier 2, operator Q1 extension).** The five `tests/audio` files with the same whole-init assertion shape (`qwen-voice-clone`, `lemonade-tts`, `lemonade-asr`, `funasr-asr`, `doubao-tts`) swap to scalar field reads. The leak class dies program-wide instead of half-dying. Blocked by S02 (same assertion idiom, one lesson applied once).
+**S03 `audio-suite-scalars` (tier 2, operator Q1 extension).** One whole-init matcher site (`qwen-voice-clone.test.ts:141,238`) converts to scalar reads. Four sibling files (`lemonade-tts`, `lemonade-asr`, `funasr-asr`, `doubao-tts`) carry partial matchers or destructured reads with test-literal keys; they convert for hygiene so the idiom is uniform. Blocked by S02 (same assertion idiom, one lesson applied once).
 
 ### Proposed gates
 
@@ -42,16 +42,17 @@ S01 (3 gates, one integration):
 
 S02 (2 gates):
 - G01 guard test by exact name (byte-pinned at ledger build), expect `passed`
-- G02 `npx vitest run tests/server/qwen-voice-route.test.ts` expect `passed`
+- G02 `npx vitest run tests/server/classroom-media-generation.test.ts` expect `passed`
 
 S03 (2 gates):
 - G01 `npx vitest run tests/audio` expect `passed`
-- G02 `! grep -rqF "mock.calls[0][1]).toMatchObject" tests/audio && echo AUDIO_SCALARS_OK` expect `AUDIO_SCALARS_OK` (fixed-string scan proves the init-matcher idiom is gone from the suite)
+- G02 `! grep -rqF "mock.calls[0][1]).toMatchObject" tests/audio && echo AUDIO_SCALARS_OK` expect `AUDIO_SCALARS_OK` (canary for the whole-init idiom; reviewer C2 note: it proves the one dangerous site is gone, not the four hygiene conversions, which G01's suite run covers)
 
 ## Implementation Decisions
 
 - Copy the `readFileSync`/`existsSync` interception shape from `provider-config.test.ts:82-99` exactly; keep existing env stubs and module mocks.
-- `qwen-voice-route.test.ts`: `expect((fetchSpy.mock.calls[0][1] as RequestInit).redirect).toBe('error')` at both sites.
+- Guard test recipe, proven by reviewer micro-experiment: a caught `AssertionError` from `expect(spy).not.toHaveBeenCalled()` embeds the full serialized call args, including `Authorization: "Bearer <key>"`, in `err.message`. The guard runs a paired check with fixture key `sk-LIVE-FIXTURE-9876543210`: (1) sensitivity leg - deliberately fail a whole-init matcher, catch the message, assert it DOES contain the fixture key (proves capture works); (2) fixed leg - fail a scalar assertion on a non-secret field (`redirect` or `method`), catch, assert the message does NOT contain the fixture key. The pair proves capture and closure. Scalar assertions never target the Authorization header itself, since that would print the secret by design.
+- The prior draft cited `qwen-voice-route.test.ts:141,238`; that was a phantom (reviewer B1: file is 172 lines, has no init matcher). The real whole-init site is `tests/audio/qwen-voice-clone.test.ts:141,238`, fixed under S03. Class A server sites are two: classroom `:137` and capability-force-off `:301`.
 - Guard test lives in `classroom-media-generation.test.ts` inside the existing describe block, as a named helper plus a test; the helper is a real outline symbol for the ledger.
 - No sanitizer exists. Hermeticity plus scalar assertions keep live material out of output entirely (operator Q2a). The repo's only redactor (`personal-history-tools.ts:107-119`) stays private and untouched.
 
@@ -66,7 +67,7 @@ S03 (2 gates):
 - No product code changes under `lib/`.
 - No neutrality-debt table edit. Batch 005 touches no neutral file. (The meta's `qwen: 20` line is stale prose versus the live `24`; the research update fixes the prose.)
 - No batch-001 closed-ledger gate-text edit. That ledger is history; the 005 G02 proves retirement (see open questions).
-- The batch fixes the three Class A server sites plus the five Class C `tests/audio` sites (operator Q1 extension). Nothing in the swept class is left unfixed.
+- The batch fixes the two Class A server sites plus the five Class C `tests/audio` sites (operator Q1 extension). Nothing in the swept class is left unfixed. (Class C detail: one live-capable whole-init site, four hygiene sites.)
 
 ## Further Notes
 
