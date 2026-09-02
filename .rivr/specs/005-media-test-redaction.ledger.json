@@ -4,12 +4,12 @@
   "spec": {
     "reference": "docs/specs/005-media-test-redaction.md",
     "title": "Batch 005 spec: media-test redaction",
-    "hash": "6f3239f24ee142519bcb1ba376f2c87cb146ea3ddbc48b7188673a238962b861"
+    "hash": "436d1196f6702d57b321b14035d301bd3aed823b5416a14794c5c4725d00c871"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "implementation",
+  "stage": "verification",
   "retry": {
     "count": 0,
     "max": 5,
@@ -525,7 +525,18 @@
       "slice": "S03",
       "hash": "4e50a88c68f60950f96b35e9f1b2b76ab937a730a253a01a400db0b4f54fefff",
       "fileHash": "dd94c2caa793ae2e438264a414e9e2e22ebf326d9b5930a3653c25495a135dc0"
+    },
+    {
+      "seq": 25,
+      "id": "1e522f07-d288-485e-9463-a45ccdb87d48",
+      "at": "2026-09-02T02:49:57.528Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "ccca8678c409211088274a9bbc6f632c53ae037e22ed49a9f742dd7795436bb8",
+      "fileHash": "b242f52683ecb306a6d7994072d7a51f8016493747f3c7742775fced97971d4f"
     }
   ],
-  "fileHash": "b242f52683ecb306a6d7994072d7a51f8016493747f3c7742775fced97971d4f"
+  "fileHash": "c00f49d1216d25c9fe88740984cecabe96b40400df94d8df11ef6a9a318de6de"
 }
