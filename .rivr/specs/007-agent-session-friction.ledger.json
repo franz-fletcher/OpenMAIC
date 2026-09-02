@@ -1,0 +1,605 @@
+{
+  "schema_version": 2,
+  "$schema": "https://rivr.dev/schemas/ledger/v2",
+  "spec": {
+    "reference": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC/docs/specs/007-agent-session-friction.md",
+    "title": "Batch 007 spec: agent-session-friction",
+    "hash": "f047dab548ec1e14f224893f6fd628f1e6e8ddb5e8f789afe6783e4c55bac992"
+  },
+  "tracker": {
+    "mode": "none"
+  },
+  "stage": "implementation",
+  "retry": {
+    "count": 1,
+    "max": 5,
+    "consecutive_same_cause": 0,
+    "escalate_at": 3
+  },
+  "slices": [
+    {
+      "id": "S01",
+      "title": "Coerce stringified widgetOutline in generate_scene",
+      "intent": "Coerce a stringified widgetOutline before the existing object guard in generate_scene. generate_scene.execute parses a string widgetOutline with JSON.parse before the guard. A parsed plain non-null non-array object replaces the param and proceeds. Any other outcome keeps the rejection path with error code invalid-widget-outline and a message that requires a plain JSON object, not a stringified one. No other param is coerced.",
+      "user_stories": [
+        1
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/server/agent-runtime/generation-tools.ts",
+          "symbols": [
+            {
+              "name": "generateScene",
+              "kind": "variable",
+              "expectation": "A JSON-encoded object string lands in SceneOutline.widgetOutline as the parsed object, and the interactive page persists with that outline. The existing passing-through test (widgetOutline: { concept: 'Water cycle', diagramType: 'mindmap' }) stays green. The existing null and 'mindmap' rejection tests stay green on the error code, and assert the new message text.",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": false
+              },
+              "postcondition_quality": "INSPECTED"
+            },
+            {
+              "name": "buildGenerationTools",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(deps: GenerationToolDeps): AgentTool<never, never>[]"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(deps: GenerationToolDeps): AgentTool<never, never>[]"
+              },
+              "postcondition_quality": "INSPECTED",
+              "expectation": "A JSON-encoded object string lands in SceneOutline.widgetOutline as the parsed object. Existing tests stay green: the plain-object pass-through, and the null and 'mindmap' rejections on error code invalid-widget-outline with the new message."
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "dece5a74-b3fe-464c-b83c-9963bc757a7b",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "generate_scene.execute parses a string widgetOutline with JSON.parse before the object guard. A parsed plain non-null non-array object replaces the param and proceeds. Any other outcome keeps the rejection path with error code invalid-widget-outline and a message that requires a plain JSON object, not a stringified one. No other param is coerced.",
+      "gates": [
+        {
+          "id": "G01",
+          "check": "npx vitest run tests/agent-runtime/generation-tools.test.ts -t \"coerces a JSON-encoded widgetOutline string\"",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "Full-name filter is byte-pinned because the shorter -t widgetOutline filter matched two tests that already pass, too weak as a RED-first gate. Expect the literal passed marker."
+        },
+        {
+          "id": "G02",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "type": "smoke",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "Whole-repo type check. Silent-success command echoes the literal TSC_OK marker."
+        }
+      ]
+    },
+    {
+      "id": "S02",
+      "title": "Resilient set_roster voice binding",
+      "intent": "Make set_roster resilient to out-of-catalog voices. setRoster.execute collects every out-of-catalog binding, not just the first. Each affected agent is persisted unbound, the roster persists with the surviving bindings, and the tool returns success. Content names each dropped agent and voice, gives valid-pair guidance, and points at list_voices. details.warnings carries dropped voices, the binding count, a sample capped at the first 10, and the list_voices hint. Unparseable providerId::voiceId pairs stay unbound silently as today.",
+      "user_stories": [
+        1
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/server/agent-runtime/roster-tools.ts",
+          "symbols": [
+            {
+              "name": "setRoster",
+              "kind": "variable",
+              "expectation": "A roster with one bad voice persists with that agent unbound and the other agents bound. A roster with several bad voices drops each bad binding and warns each. The warning sample never exceeds 10 entries and reports the total count. The three pinned tests are re-pinned to the success-with-warnings contract. Their intent changes from 'half-applied roster is worse than none' to 'partial binding beats a dead session', and the keyless-provider case (lines 327-347) now proves the roster never carries a lying binding because the agent is unbound.",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": false
+              },
+              "postcondition_quality": "INSPECTED"
+            },
+            {
+              "name": "buildRosterTools",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(deps: RosterToolDeps): AgentTool<never, never>[]"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(deps: RosterToolDeps): AgentTool<never, never>[]"
+              },
+              "postcondition_quality": "INSPECTED",
+              "expectation": "A roster with one or several bad voices persists with each affected agent unbound and the survivors bound. Warnings name dropped voices, sample at most 10 with the total count, and hint at list_voices."
+            }
+          ]
+        }
+      ],
+      "riskTier": 3,
+      "uuid": "1335a658-f61c-4e46-8867-e1a00dd9aa32",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "A roster with one or several out-of-catalog voices persists with each affected agent unbound and the surviving bindings bound. The tool returns success with details.warnings that name dropped voices, cap any binding sample at 10 entries plus the total count, and point at list_voices. The three pinned tests re-pin to the success-with-warnings contract with test names carrying the literal warnings.",
+      "gates": [
+        {
+          "id": "G01",
+          "check": "npx vitest run tests/agent-runtime/roster-tools.test.ts -t \"warnings\"",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "The verify run must match at least 3 tests (Tests 3 passed or more). The three re-pinned test names each carry the literal warnings and the gate filters on it. Expect the literal passed marker."
+        },
+        {
+          "id": "G02",
+          "check": "npx vitest run tests/agent-runtime/roster-tools.test.ts",
+          "expect": "passed",
+          "type": "integration",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "Whole-file roster-tools run. Integration tag satisfies the tier-3 requirement."
+        },
+        {
+          "id": "G03",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "type": "smoke",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "Whole-repo type check. Silent-success command echoes the literal TSC_OK marker."
+        }
+      ]
+    },
+    {
+      "id": "S03",
+      "title": "Bounded connection-error retry in callLLM",
+      "intent": "Add a bounded retry-with-backoff for connection-class APICallError failures inside the callLLM wrapper. callLLM retries generateText when the thrown error ducks as name === 'AI_APICallError', isRetryable === true, and no numeric statusCode. Retry count and base delay come from env knobs OPENMAIC_LLM_CONNECTION_RETRIES (default 2) and OPENMAIC_LLM_CONNECTION_RETRY_BASE_MS (default 1000), with exponential backoff. Abort signals stay respected. Usage accounting, thinking resolution, LLM_THINKING_DISABLED, and streamLLM stay unchanged. On exhaustion callLLM throws an error preserving name AI_APICallError with the original as cause and a message that tells the agent to retry the call.",
+      "user_stories": [
+        1
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/ai/llm.ts",
+          "symbols": [
+            {
+              "name": "callLLM",
+              "kind": "function",
+              "expectation": "A transient connection-class AI_APICallError followed by success resolves with the successful text. A persistent connection-class AI_APICallError surfaces a message containing 'Retry the call' after the bounded budget, and only after the configured attempt count. A non-connection error is not retried, including an APICallError that carries a numeric statusCode. The retry-exhausted error preserves the original message text and the original error as cause. Environment knobs of 0 retries disable the new retry path.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  params: T,\n  source: string,\n  retryOptions?: LLMRetryOptions,\n  thinking?: ThinkingConfig,\n  // eslint-disable-next-line @typescript-eslint/no-explicit-any\n): Promise<GenerateTextResult<any, any>>"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(params: T, source: string, retryOptions?: LLMRetryOptions, thinking?: ThinkingConfig): Promise<GenerateTextResult<any, any>>"
+              },
+              "postcondition_quality": "INSPECTED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 3,
+      "uuid": "fc483550-d41b-426e-95cc-4b96b4bd602b",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "callLLM retries connection-class AI_APICallError failures with env-tuned exponential backoff, resolves transient failures, and on exhaustion throws an error preserving name AI_APICallError and the original cause with a message containing 'Retry the call'. Errors carrying a numeric statusCode are not retried by the wrapper. Environment knobs of 0 retries disable the new retry path.",
+      "gates": [
+        {
+          "id": "G01",
+          "check": "npx vitest run tests/ai/llm-connection-retry.test.ts",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "New connection-retry suite created by this batch. Whole-file gate. Expect the literal passed marker."
+        },
+        {
+          "id": "G02",
+          "check": "npx vitest run tests/ai/llm-thinking-options.test.ts",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "Existing thinking-options suite must stay green because S03 edits lib/ai/llm.ts. Expect the literal passed marker."
+        },
+        {
+          "id": "G03",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "type": "smoke",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "Whole-repo type check. Silent-success command echoes the literal TSC_OK marker."
+        },
+        {
+          "id": "G04",
+          "check": "npx vitest run tests/lint-llm-entry-guard.test.ts",
+          "expect": "passed",
+          "type": "integration",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "Guard matrix pins the LLM entry boundary and is a required gate because S03 edits lib/ai/llm.ts. Integration tag satisfies the tier-3 requirement. Expect the literal passed marker."
+        }
+      ]
+    }
+  ],
+  "audit": [
+    {
+      "seq": 1,
+      "id": "252fdf8b-6e2d-4807-89e7-9c71413576a2",
+      "at": "2026-09-02T08:49:09.181Z",
+      "actor": "orchestrator",
+      "command": "init",
+      "transition": "spec-approved:/Users/franky/Projects/MyOpenMAIC/Source/openMAIC/docs/specs/007-agent-session-friction.md",
+      "slice": null,
+      "hash": "64b42efcd7e515c86dfe5a64dde2c81d21db81a61ac27aff4facc61fe358ff06"
+    },
+    {
+      "seq": 2,
+      "id": "efea938c-732b-4d64-af6d-99692fff3e5e",
+      "at": "2026-09-02T08:49:09.181Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect",
+      "slice": "S01",
+      "hash": "afa0af41564c71b88429bf7fb5b525c264dba787a516a06b78434b225280cb09",
+      "expectationHash": "5859abbf3e4283524c08d65a173a5c694ba8cd658e774e973573ae2b4708ebb3"
+    },
+    {
+      "seq": 3,
+      "id": "38e093c3-c671-4a04-b664-5c0643c29f22",
+      "at": "2026-09-02T08:49:09.181Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect-symbol:lib/server/agent-runtime/generation-tools.ts::generateScene",
+      "slice": "S01",
+      "hash": "6accb7e6f4cd405c45a9efd8d47da73bac9be8a5588c4c9cb9d3b87caf0578fd",
+      "expectationHash": "4ec71dcbd97299229fc5a68380bdfdca8009f84665426cb90f4d40dbd8ffdeb9"
+    },
+    {
+      "seq": 4,
+      "id": "c3c2b280-3856-43ca-bd3c-89a75912d194",
+      "at": "2026-09-02T08:49:09.181Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S02:expect",
+      "slice": "S02",
+      "hash": "e5738848b78bdd5110c467264ec061812b07b997236572b51a1e2f1b32fb034b",
+      "expectationHash": "d164e3d263f5e1a130b9d8812018d7c69971df958d324515160c10b752e26340"
+    },
+    {
+      "seq": 5,
+      "id": "ae70e49d-b09c-4445-9d99-1033342f9930",
+      "at": "2026-09-02T08:49:09.181Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S02:expect-symbol:lib/server/agent-runtime/roster-tools.ts::setRoster",
+      "slice": "S02",
+      "hash": "23f2f2b8f60c2c19f02a2e56563fe18195b6d849ce9397de47f6fffd3bb01e04",
+      "expectationHash": "60ee01590f05a2b4fb269ec1edc7d4aba2e8091d7a5dfe4d3908397fbf076d1e"
+    },
+    {
+      "seq": 6,
+      "id": "2530cdd1-389b-4e44-afae-93b97844ba40",
+      "at": "2026-09-02T08:49:09.181Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S03:expect",
+      "slice": "S03",
+      "hash": "b6fe388a2a424254c01a696ee563f967a1bbad06e5b4473fde059e3456ec3b75",
+      "expectationHash": "102670d39007ba2125fe0c669f330f28e8ba97ffececf816b942e00d8a2822ec"
+    },
+    {
+      "seq": 7,
+      "id": "061b3adf-b065-41a8-906d-9444f0c33827",
+      "at": "2026-09-02T08:49:09.181Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S03:expect-symbol:lib/ai/llm.ts::callLLM",
+      "slice": "S03",
+      "hash": "cdfe7ec6808eca01e5fa6c0773252b22fcad933a96fcd072c4ec50eb16ce9cb6",
+      "expectationHash": "a2853aa99e3fe2137d61c8f2e45f3c8f5ebffcd436de294b1fd1b14f751365fd"
+    },
+    {
+      "seq": 8,
+      "id": "b3bbe96d-5145-4459-99b8-7a4c7ef67db6",
+      "at": "2026-09-02T08:49:09.181Z",
+      "actor": "orchestrator",
+      "command": "init_batch",
+      "transition": "batch-init:S01,S02,S03",
+      "slice": null,
+      "hash": "362ddbca850d52edfa1df3fe2ac35cd9de8cc2198a7030338e961d01d4faeecd"
+    },
+    {
+      "seq": 9,
+      "id": "3696e325-1486-44ba-805e-9dd3cd5e12a9",
+      "at": "2026-09-02T08:49:40.683Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S01:capture",
+      "slice": "S01",
+      "hash": "a18249aa32c476fa362dc7f3cdd64d372ff0b65466f7fe1842bb0b0493caa7bf",
+      "fileHash": "b4e7333ee4015fd006e3df6c65494c9f760bef23ddc171709fecdb698ac860fa"
+    },
+    {
+      "seq": 10,
+      "id": "2d8d0397-55af-4623-aa2b-4719f5f3c00e",
+      "at": "2026-09-02T08:49:40.727Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S02:capture",
+      "slice": "S02",
+      "hash": "5146d26c77193959394e1a8c888cae374293e0a67f1f72df1372698ff11b7d7a",
+      "fileHash": "3e12237098adeff51b12ed5d00ca25d2964e383e865083eeb6f16c581947a62d"
+    },
+    {
+      "seq": 11,
+      "id": "e4152f49-a9a7-4c52-8301-f6be4b3e994f",
+      "at": "2026-09-02T08:49:40.771Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S03:capture",
+      "slice": "S03",
+      "hash": "367cf40a66a834fd88568c261777c7c7f63efc87483a410710cd031c09ef72bd",
+      "fileHash": "d1f0c91f521d48f6e1727f452667b82a019ede7706e01e8a9621869d9ef0079b"
+    },
+    {
+      "seq": 12,
+      "id": "c7b30cd5-47f5-4d44-a1c2-fdd49657c017",
+      "at": "2026-09-02T08:50:08.944Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S01:capture",
+      "slice": "S01",
+      "hash": "a6bd0821aafee74130ad25f99b1ddacc79a269d2220b7afc2eb8ac652b5e1ad4",
+      "fileHash": "2f33cb88dfe9b1e5aff341bd3f2b16107065359329e2d90541bac30014c77717"
+    },
+    {
+      "seq": 13,
+      "id": "f89b0d52-101f-4d86-b54b-9dfaabfe488a",
+      "at": "2026-09-02T08:51:13.817Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S01:capture",
+      "slice": "S01",
+      "hash": "73bc7d183291f780cb4b749cd31591a0cae6ff0a0da5f90762650fbd0903c156",
+      "fileHash": "eca96f21af28f9a541b96da9a2a9d03b493fe7764f29922e9bf2a8d5f028d9af"
+    },
+    {
+      "seq": 14,
+      "id": "d4f5d52f-9e44-42f8-95cf-8bdf1045579e",
+      "at": "2026-09-02T08:51:13.863Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S02:capture",
+      "slice": "S02",
+      "hash": "ce280ad7575c5f5f1811108e01d97e74de1936e8001b9425152e0438f239b352",
+      "fileHash": "e0be758189fdda32b4f8e5e20064a638cbe380e3123b07f570794807fe1e1d1c"
+    },
+    {
+      "seq": 15,
+      "id": "ca086280-9c65-45af-a376-eea5a48054b4",
+      "at": "2026-09-02T08:51:13.901Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S03:capture",
+      "slice": "S03",
+      "hash": "712a4bbe7925c459dda7b413cc5b6f4deb12243a0e0329867411afe6316f8c3e",
+      "fileHash": "ecfa26ee6ea6f60ac0b76fc0fadd79f5efcdeb9c2255c5e6c2164f3790de121c"
+    },
+    {
+      "seq": 16,
+      "id": "4eca5ea1-e6b0-4ab3-a10d-58d3e0a92b2a",
+      "at": "2026-09-02T08:52:42.398Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S02:capture",
+      "slice": "S02",
+      "hash": "366fec30c3e96d8075e79f54afb307700b81977ca1e7f9c28b2f423e5af09d32",
+      "fileHash": "f828e9073c326a303071eefb371936e85bf4f0f2f7a24c7fc066036c60d53941"
+    },
+    {
+      "seq": 17,
+      "id": "a56b1a58-9451-4ca8-8e7b-6fba6ad101ae",
+      "at": "2026-09-02T08:52:42.457Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S03:capture",
+      "slice": "S03",
+      "hash": "789dc5bbc0e54fefecf6afc2f8ea2ee7b4055b5924a3d3ea656592cd009a5770",
+      "fileHash": "4729fada4645925e663f04c9718b80a6ab5c714763f9f54479418357f0a776d2"
+    },
+    {
+      "seq": 18,
+      "id": "78a568f0-44b2-48f9-949a-469c13b0ac98",
+      "at": "2026-09-02T08:54:08.389Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S01:postcondition:lib/server/agent-runtime/generation-tools.ts::generateScene",
+      "slice": "S01",
+      "hash": "13b9ca5582a2e7d30bbe130f51641680b5c473ec29e44bfbd582dab648fe3731",
+      "fileHash": "9c8ac2682efc01bceb19185e8a3139e4f3bc3d51f12b6000f37bd28a89c71066"
+    },
+    {
+      "seq": 19,
+      "id": "80a8244f-c7e1-4ac8-9c28-579e0092d0bb",
+      "at": "2026-09-02T08:54:08.433Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S02:postcondition:lib/server/agent-runtime/roster-tools.ts::setRoster",
+      "slice": "S02",
+      "hash": "448da7cd50302067f097e2452267b9636f3908c4f9a359c0abd25dca6eed1ee7",
+      "fileHash": "b0e1db3a06727f8bcd2fbbba3bfc8b6f2292780b3d2881a1553eb672e0abf9b5"
+    },
+    {
+      "seq": 20,
+      "id": "d7e6c4be-a69e-47bb-ad0e-1d0c497c0e70",
+      "at": "2026-09-02T08:54:08.476Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S03:postcondition:lib/ai/llm.ts::callLLM",
+      "slice": "S03",
+      "hash": "20c77224780187e7fac41bbb8cb0c4fe7102bf8f2d395805873b0ea39c634d48",
+      "fileHash": "524707f4b9542c1e34c7f2b10e2479d21629b505ecedcbe5464abaf86007e7e9"
+    },
+    {
+      "seq": 21,
+      "id": "1d975fa9-4d8d-49b5-9f74-77408bc89971",
+      "at": "2026-09-02T09:06:29.149Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S01:postcondition:lib/server/agent-runtime/generation-tools.ts::generateScene",
+      "slice": "S01",
+      "hash": "3c59a6394a74c936695de02ba205306f37bbd535389d1afd7a125bbc95eab60e",
+      "fileHash": "2c4e1473df7b2750953ddc1575973e4a9db77dfabf7ad2b4befa2ea8778ae1d2"
+    },
+    {
+      "seq": 22,
+      "id": "75495abf-0073-4e30-893c-2598ecdffb91",
+      "at": "2026-09-02T09:06:29.186Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S02:postcondition:lib/server/agent-runtime/roster-tools.ts::setRoster",
+      "slice": "S02",
+      "hash": "9088a0c8ce73ff219d3685281da43bd007685f9c397b6c62a16a08d2bb19e373",
+      "fileHash": "c26ec10c6fff707c5769085b9f09de4ed7863217ec970e0ebcf231b02ea04753"
+    },
+    {
+      "seq": 23,
+      "id": "aa675476-6594-4828-92d0-32c3642040c0",
+      "at": "2026-09-02T09:06:29.242Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S01:target-add:lib/server/agent-runtime/generation-tools.ts::buildGenerationTools",
+      "slice": "S01",
+      "hash": "819e87dca67637c6dc14057e5f8e6be812ab1ccf7c4ed27f2693d47572299da9",
+      "fileHash": "b271253ceedabfd373ff7e9c9bc78b0017b7011041eb45f45852de9d6c48726f"
+    },
+    {
+      "seq": 24,
+      "id": "438f96d1-a9e3-4d26-8e8f-6bc4a507bbd7",
+      "at": "2026-09-02T09:06:29.309Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S02:target-add:lib/server/agent-runtime/roster-tools.ts::buildRosterTools",
+      "slice": "S02",
+      "hash": "714462a75875b8186e42d28a842550155a8aeb665bf25a4952b683d46b42e336",
+      "fileHash": "32acf31dabfb9a47dac99c429193254f8688af6b430b5849f735218981e6f96c"
+    },
+    {
+      "seq": 25,
+      "id": "77790707-35d4-40b0-a502-8c1713d6e132",
+      "at": "2026-09-02T09:06:37.603Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S01:capture",
+      "slice": "S01",
+      "hash": "5352642d2702a55523abb70c3c397e92d921dd8a1a5a617b19ff70eafc521186",
+      "fileHash": "8186f1f0475887b02ff7048b4c8b58cbedb0c2a284e664106821edfbbadd259d"
+    },
+    {
+      "seq": 26,
+      "id": "665c17d0-3b09-4581-b0e2-5f9c6076e876",
+      "at": "2026-09-02T09:06:37.657Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S02:capture",
+      "slice": "S02",
+      "hash": "f0e3d9677cf03574f933fc3372decf60503781c889cf60a4954d3fa663a33742",
+      "fileHash": "9cdb81b1ee4ef66545acc0c5a8ba0af7baa13653ce81b40bbb316fba55ec1da3"
+    },
+    {
+      "seq": 27,
+      "id": "8da35034-e3a6-456f-b607-917bedff94c2",
+      "at": "2026-09-02T09:06:37.700Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S01:postcondition:lib/server/agent-runtime/generation-tools.ts::buildGenerationTools",
+      "slice": "S01",
+      "hash": "996059a265702ce38c3122ee8b278eeb50d0b45d0085d56f2b0778f0d52bbb19",
+      "fileHash": "72cca0a218ce274e45bbbb14b907adefbb1d28c4d79b10d90ada4464fb6d0e8f"
+    },
+    {
+      "seq": 28,
+      "id": "274a95f2-81a1-4360-b413-585299e35ba5",
+      "at": "2026-09-02T09:06:37.739Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S02:postcondition:lib/server/agent-runtime/roster-tools.ts::buildRosterTools",
+      "slice": "S02",
+      "hash": "b1b270a7d1c143ed254be46da551c87ce6d8dd564fd1a9b4c9d49d82e368cd3a",
+      "fileHash": "dafc3b49054a6bbf0f4472a5bd380c5aee7f82bda4f8a2c94689e1efbbc48b27"
+    },
+    {
+      "seq": 29,
+      "id": "c25c8053-9b83-44db-af34-491aced9c729",
+      "at": "2026-09-02T09:06:43.875Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect-symbol:lib/server/agent-runtime/generation-tools.ts::buildGenerationTools",
+      "slice": "S01",
+      "hash": "64d5d359652571641c1b2648083811eed1a7054cb9837b65bf0266535efb706b",
+      "expectationHash": "3f4ac3a297424ec926fb6453be90f6f6baf0b2cd47b3c2099a192b68de2c24c7",
+      "fileHash": "3c9c89991bcae3142eb229f15a8074d824cbdbde784e4d984a182f235810b68a"
+    },
+    {
+      "seq": 30,
+      "id": "761aec4f-53d5-4153-b21f-baf613993d68",
+      "at": "2026-09-02T09:06:43.909Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S02:expect-symbol:lib/server/agent-runtime/roster-tools.ts::buildRosterTools",
+      "slice": "S02",
+      "hash": "5b4c3b0b309f92111d80a43bce065dbc4ab4050dfa0ea29d8af4315d2d940751",
+      "expectationHash": "d0c4278ed83d926824564d6b9db84b528fa9260033667e23b73b7cbaf8013c5d",
+      "fileHash": "63ee08488faa0ef5e53ea1947c6171d5b73918954b74f70a585022f65b90943f"
+    },
+    {
+      "seq": 31,
+      "id": "e9d62d40-9ceb-4fb3-abf1-15c9c302deb2",
+      "at": "2026-09-02T09:13:30.657Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:correction:Rebind S01/S02 targets to exported builders buildGenerationTools/buildRosterTools; phantom function-local consts superseded. Behavior text unchanged.",
+      "slice": null,
+      "hash": "fc0cbff7353d4e834427540cdc74ee0b5d40af0133eddd5e86a741fff1ef3eaa",
+      "fileHash": "e1487a2f1a12dc8bf23a8973ad65455ef883d0db94762cc5fbd4bdeecef4e032"
+    },
+    {
+      "seq": 32,
+      "id": "331e83ff-bba5-42d8-87eb-ec0bf9ea9574",
+      "at": "2026-09-02T09:13:30.721Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "11278bb32d090c43fbdf83674ba7fd3c8d6df24327e5f2c6f5f567ea04ab8df1",
+      "fileHash": "1f8af19260c04a268110875cb3f46c4b9562ecf6afeace2b35437fb206d7a327"
+    }
+  ],
+  "fileHash": "202550e8016cbed5ebc6d67f7c1193ef76d3ba7eaeb25db639a2b8003bda8fd2"
+}
