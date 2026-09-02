@@ -290,6 +290,7 @@ describe('generation and deck tools', () => {
       isError: true,
       details: { error: 'invalid-widget-outline' },
     });
+    expect((nullOutline.content[0] as { text: string }).text).toContain('plain JSON object');
     const stringOutline = await generate.execute('string-outline', {
       ...base,
       type: 'interactive',
@@ -299,6 +300,7 @@ describe('generation and deck tools', () => {
       isError: true,
       details: { error: 'invalid-widget-outline' },
     });
+    expect((stringOutline.content[0] as { text: string }).text).toContain('plain JSON object');
     const wrongType = await generate.execute('wrong-type', {
       ...base,
       type: 'slide',
@@ -309,6 +311,36 @@ describe('generation and deck tools', () => {
       details: { error: 'widget-requires-interactive' },
     });
     expect(current.get()?.scenes).toHaveLength(0);
+  });
+
+  it('coerces a JSON-encoded widgetOutline string into a plain object', async () => {
+    const current = state(document([]));
+    const prompts: string[] = [];
+    let calls = 0;
+    const aiCall = vi.fn(async (_system: string, user: string) => {
+      calls += 1;
+      prompts.push(user);
+      return calls === 1 ? '<!DOCTYPE html><html><body><div id="force"></div></body></html>' : '[]';
+    });
+    const generate = find(buildGenerationTools(deps(current.store, { aiCall })), 'generate_scene');
+    const stringifiedOutline = JSON.stringify({
+      concept: 'Resolving a 2D force into rectangular components',
+      keyVariables: ['Force magnitude', 'Angle', 'Fx component', 'Fy component'],
+    });
+    const response = await generate.execute('call', {
+      stageId: 'stage-test',
+      order: 1,
+      title: 'Force Resolution',
+      type: 'interactive',
+      brief: 'Resolve forces into components',
+      widgetOutline: stringifiedOutline,
+    } as never);
+    expect(response).not.toMatchObject({ isError: true });
+    const scene = current.get()?.scenes[0];
+    expect(scene).toMatchObject({ type: 'interactive' });
+    expect(scene?.content).toMatchObject({ widgetType: 'simulation' });
+    expect(prompts[0]).toContain('Resolving a 2D force into rectangular components');
+    expect(prompts[0]).toContain('Force magnitude');
   });
 
   it('mirrors the generator defaults when only one widget field is provided', async () => {

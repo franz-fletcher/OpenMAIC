@@ -284,6 +284,19 @@ export function buildGenerationTools(deps: GenerationToolDeps): AgentTool<never,
           true,
         );
       }
+      // Coerce a JSON-encoded widgetOutline string before the object guard.
+      // The model sometimes passes a stringified JSON object instead of a plain
+      // object. Parse it and accept only plain non-null non-array objects.
+      if (typeof params.widgetOutline === 'string') {
+        try {
+          const parsed = JSON.parse(params.widgetOutline);
+          if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
+            params = { ...params, widgetOutline: parsed };
+          }
+        } catch {
+          // Fall through to the guard below which rejects the string.
+        }
+      }
       if (
         params.widgetOutline !== undefined &&
         (typeof params.widgetOutline !== 'object' ||
@@ -291,7 +304,7 @@ export function buildGenerationTools(deps: GenerationToolDeps): AgentTool<never,
           Array.isArray(params.widgetOutline))
       ) {
         return result(
-          'generate_scene needs widgetOutline to be an object matching widgetType.',
+          'generate_scene needs widgetOutline to be a plain JSON object (not a stringified one) matching widgetType.',
           { error: 'invalid-widget-outline' },
           true,
         );

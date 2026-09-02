@@ -276,6 +276,64 @@ export interface LLMRetryOptions {
 const DEFAULT_VALIDATE = (text: string) => text.trim().length > 0;
 
 // ---------------------------------------------------------------------------
+// Connection-class retry
+//
+// The AI SDK's own maxRetries is zeroed at generation call sites
+// (generation-ai-call.ts:30, classroom-generation.ts:323/:373), which defeats
+// its built-in retry on network errors. This outer loop restores bounded
+// retry-with-backoff for connection-class failures only. It wraps the existing
+// validation retry loop; the two budgets stay independent.
+//
+// Detection is duck-typed: error.name === 'AI_APICallError' and
+// error.isRetryable === true, with no numeric statusCode. Errors that carry a
+// numeric statusCode (429 or 5xx) are not retried here because the SDK layer
+// already retries them for callers that did not zero maxRetries.
+// ---------------------------------------------------------------------------
+function readConnectionRetries(): number {
+  const raw = Number(process.env.OPENMAIC_LLM_CONNECTION_RETRIES);
+  return Number.isFinite(raw) && raw >= 0 ? Math.floor(raw) : 2;
+}
+
+function readConnectionRetryBaseMs(): number {
+  const raw = Number(process.env.OPENMAIC_LLM_CONNECTION_RETRY_BASE_MS);
+  return Number.isFinite(raw) && raw > 0 ? Math.floor(raw) : 1000;
+}
+
+/**
+ * Return true when the error is a connection-class failure eligible for the
+ * wrapper retry loop. Duck-typed on the thrown error object: no new imports.
+ */
+function isConnectionRetryable(error: unknown): boolean {
+  if (typeof error !== 'object' || error === null) return false;
+  const e = error as Record<string, unknown>;
+  return e.name === 'AI_APICallError' && e.isRetryable === true && typeof e.statusCode !== 'number';
+}
+
+/**
+ * Abortable delay that yields to the event loop without keeping the process
+ * alive. Capped at 30 s to satisfy the tool watchdog even if a caller passes
+ * an absurd base.
+ */
+function sleep(ms: number, signal?: AbortSignal): Promise<void> {
+  const capped = Math.min(ms, 30_000);
+  return new Promise<void>((resolve, reject) => {
+    if (signal?.aborted) {
+      reject(signal.reason ?? new DOMException('Aborted', 'AbortError'));
+      return;
+    }
+    const id = setTimeout(resolve, capped);
+    signal?.addEventListener(
+      'abort',
+      () => {
+        clearTimeout(id);
+        reject(signal.reason ?? new DOMException('Aborted', 'AbortError'));
+      },
+      { once: true },
+    );
+  });
+}
+
+// ---------------------------------------------------------------------------
 // Usage capture
 //
 // Every server-side LLM call funnels through callLLM/streamLLM, so usage is
@@ -314,14 +372,6 @@ function recordUsageSafe(
   })();
 }
 
-/**
- * Unified wrapper around `generateText`.
- *
- * @param params - Same parameters as AI SDK's `generateText`
- * @param source - A short label for log grouping (e.g. 'scene-stream', 'pbl-chat')
- * @param retryOptions - Optional retry-on-validation-failure settings
- * @param thinking - Optional per-call thinking config (overrides global LLM_THINKING_DISABLED)
- */
 export async function callLLM<T extends GenerateTextParams>(
   params: T,
   source: string,
@@ -329,59 +379,115 @@ export async function callLLM<T extends GenerateTextParams>(
   thinking?: ThinkingConfig,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<GenerateTextResult<any, any>> {
-  const maxAttempts = (retryOptions?.retries ?? 0) + 1;
-  const validate = retryOptions?.validate ?? (maxAttempts > 1 ? DEFAULT_VALIDATE : undefined);
+  // --- Connection-class retry (outer loop) ---
+  // Wraps the existing validation retry loop. The two budgets are independent.
+  const connectionRetries = readConnectionRetries();
+  const connectionRetryBaseMs = readConnectionRetryBaseMs();
+  const maxConnectionAttempts = connectionRetries + 1;
+  const abortSignal = params.abortSignal as AbortSignal | undefined;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let lastResult: GenerateTextResult<any, any> | undefined;
   let lastError: unknown;
 
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      // Resolve effective thinking config: per-call > global env > undefined
-      const effectiveThinking = thinking ?? getGlobalThinkingConfig();
-      const injectedParams = injectProviderOptions(params, effectiveThinking);
+  for (let connAttempt = 1; connAttempt <= maxConnectionAttempts; connAttempt++) {
+    // Do not retry if the caller's signal is already aborted.
+    if (abortSignal?.aborted) {
+      const reason = abortSignal.reason ?? new DOMException('Aborted', 'AbortError');
+      throw reason;
+    }
 
-      // Wrap in thinkingContext so the custom fetch wrapper in providers.ts
-      // can read the config and inject vendor-specific body params for
-      // OpenAI-compatible providers.
-      const result = await thinkingContext.run(effectiveThinking, () =>
-        generateText(injectedParams),
-      );
+    // --- Validation retry (inner loop) ---
+    const maxAttempts = (retryOptions?.retries ?? 0) + 1;
+    const validate = retryOptions?.validate ?? (maxAttempts > 1 ? DEFAULT_VALIDATE : undefined);
 
-      // Record before validating: every attempt that got this far was billed,
-      // including one that fails validation below and one that is handed back
-      // after the retries are exhausted. Recording on the success path only
-      // would drop both.
-      //
-      // `usage` is the LAST step only; on a multi-step tool run (`stopWhen`)
-      // every earlier step would go unaccounted. `totalUsage` aggregates across
-      // steps and equals `usage` for a single-step call. Mirrors streamLLM,
-      // which already prefers the aggregate.
-      recordUsageSafe(result.totalUsage ?? result.usage, buildUsageMeta(params, source));
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        // Resolve effective thinking config: per-call > global env > undefined
+        const effectiveThinking = thinking ?? getGlobalThinkingConfig();
+        const injectedParams = injectProviderOptions(params, effectiveThinking);
 
-      // Validate result (only when retries are configured)
-      if (validate && !validate(result.text)) {
-        log.warn(
-          `[${source}] Validation failed (attempt ${attempt}/${maxAttempts}), ${attempt < maxAttempts ? 'retrying...' : 'giving up'}`,
+        // Wrap in thinkingContext so the custom fetch wrapper in providers.ts
+        // can read the config and inject vendor-specific body params for
+        // OpenAI-compatible providers.
+        const result = await thinkingContext.run(effectiveThinking, () =>
+          generateText(injectedParams),
         );
-        lastResult = result;
-        continue;
-      }
 
-      return result;
-    } catch (error) {
-      lastError = error;
+        // Record before validating: every attempt that got this far was billed,
+        // including one that fails validation below and one that is handed back
+        // after the retries are exhausted. Recording on the success path only
+        // would drop both.
+        //
+        // `usage` is the LAST step only; on a multi-step tool run (`stopWhen`)
+        // every earlier step would go unaccounted. `totalUsage` aggregates across
+        // steps and equals `usage` for a single-step call. Mirrors streamLLM,
+        // which already prefers the aggregate.
+        recordUsageSafe(result.totalUsage ?? result.usage, buildUsageMeta(params, source));
 
-      if (attempt < maxAttempts) {
-        log.warn(`[${source}] Call failed (attempt ${attempt}/${maxAttempts}), retrying...`, error);
-        continue;
+        // Validate result (only when retries are configured)
+        if (validate && !validate(result.text)) {
+          log.warn(
+            `[${source}] Validation failed (attempt ${attempt}/${maxAttempts}), ${attempt < maxAttempts ? 'retrying...' : 'giving up'}`,
+          );
+          lastResult = result;
+          continue;
+        }
+
+        return result;
+      } catch (error) {
+        lastError = error;
+
+        if (attempt < maxAttempts) {
+          log.warn(
+            `[${source}] Call failed (attempt ${attempt}/${maxAttempts}), retrying...`,
+            error,
+          );
+          continue;
+        }
+
+        // Inner loop exhausted. Log connection-class errors for visibility.
+        if (isConnectionRetryable(error)) {
+          log.warn(
+            `[${source}] Connection error (attempt ${connAttempt}/${maxConnectionAttempts})` +
+              (connAttempt < maxConnectionAttempts ? ', retrying after backoff...' : ', giving up'),
+            error,
+          );
+        }
       }
     }
+
+    // Inner loop finished. If a result was validated, return it.
+    if (lastResult) return lastResult;
+
+    // Connection-class error eligible for outer retry?
+    if (isConnectionRetryable(lastError) && connAttempt < maxConnectionAttempts) {
+      const backoffMs = connectionRetryBaseMs * 2 ** (connAttempt - 1);
+      await sleep(backoffMs, abortSignal);
+      continue;
+    }
+
+    // Non-connection error or last connection attempt. Fall through to
+    // exhaustion wrapper below so the error shape is preserved.
+    break;
   }
 
-  // All attempts exhausted — return last result or throw last error
+  // All connection attempts exhausted.
   if (lastResult) return lastResult;
+
+  // Connection-class exhaustion: wrap with guidance so the agent retries.
+  // When retries=0 the loop never actually retried, so propagate as-is.
+  // Non-connection errors also propagate unchanged (original behavior).
+  if (connectionRetries > 0 && isConnectionRetryable(lastError)) {
+    const exhausted = lastError as Error;
+    const message = exhausted?.message
+      ? `${exhausted.message} Retry the call`
+      : 'LLM call failed after retries. Retry the call';
+    const err = new Error(message, { cause: lastError });
+    err.name = 'AI_APICallError';
+    throw err;
+  }
+
   throw lastError;
 }
 
