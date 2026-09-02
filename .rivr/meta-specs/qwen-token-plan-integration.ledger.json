@@ -54,6 +54,11 @@
       "batch": "006",
       "ledger": ".rivr/specs/006-asr-preflight-parity.ledger.json",
       "stage": "closed"
+    },
+    {
+      "batch": "003",
+      "ledger": ".rivr/specs/003-qwen-token-plan-preset.ledger.json",
+      "stage": "closed"
     }
   ],
   "audit": [
@@ -318,7 +323,29 @@
       "slice": null,
       "hash": "43b95a29d40d29fe999c681f87e3a55b1ef26093f4ce9a151ddbccc86117fe95",
       "fileHash": "62689107e1a09b1e36a137a2d9b95d0158b803807daabf234708d8144996c7b8"
+    },
+    {
+      "seq": 25,
+      "id": "b50b410d-df15-49d1-8ae8-c8de06b8b028",
+      "at": "2026-09-02T04:46:40.689Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:clarification:refresh stale child stage snapshot (003 closed)",
+      "slice": null,
+      "hash": "00b0551d7f1487b12bb6a049a9931fc0cb9a99740238bcce3517007c469e7959",
+      "fileHash": "d063f9c23901fc378157b5a8952a1ff08fd201bc12daf8ac94fb4e656197ed63"
+    },
+    {
+      "seq": 26,
+      "id": "1da98fa0-4edf-4b5c-b8d6-3598b53f1ef2",
+      "at": "2026-09-02T04:46:40.689Z",
+      "actor": "orchestrator",
+      "command": "metaspec_child_link",
+      "transition": "child-link:003:.rivr/specs/003-qwen-token-plan-preset.ledger.json:closed",
+      "slice": null,
+      "hash": "8c5c7e96550f054d55f1a6ae6a5529cd68ae2d0858baf47cc424ed7afa82f4b4",
+      "fileHash": "d063f9c23901fc378157b5a8952a1ff08fd201bc12daf8ac94fb4e656197ed63"
     }
   ],
-  "fileHash": "d063f9c23901fc378157b5a8952a1ff08fd201bc12daf8ac94fb4e656197ed63"
+  "fileHash": "c03d2788fe8cbb9a4a3d89b8d8c1dd304060deefbab588dea441f2b91becac90"
 }
