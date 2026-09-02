@@ -138,7 +138,7 @@ describe('Qwen voice cloning', () => {
     expect(String(fetchSpy.mock.calls[0][0])).toBe(
       'https://dashscope-result-bj.oss-cn-beijing.aliyuncs.com/result.wav?signature=value',
     );
-    expect(fetchSpy.mock.calls[0][1]).toMatchObject({ redirect: 'error' });
+    expect(fetchSpy.mock.calls[0][1]!.redirect).toBe('error');
   });
 
   it('allows international DashScope result hosts', async () => {
@@ -235,7 +235,7 @@ describe('Qwen voice cloning', () => {
       undefined,
       'https://proxy.example.com/api/v1',
     );
-    expect(fetchSpy.mock.calls[0][1]).toMatchObject({ redirect: 'error' });
+    expect(fetchSpy.mock.calls[0][1]!.redirect).toBe('error');
   });
 
   it('lists and deletes provider-side Qwen voices with documented request shapes', async () => {
