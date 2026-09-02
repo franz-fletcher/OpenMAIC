@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server';
 import { transcribeAudio } from '@/lib/audio/asr-providers';
+import { ASR_PROVIDERS } from '@/lib/audio/constants';
 import {
   isServerConfiguredProvider,
   isServerProviderDisabled,
@@ -61,6 +62,24 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Pre-flight the same key requirement the library enforces: a keyed provider
+    // with no key (server config AND client-supplied key both absent) is a
+    // client contract violation, not a server failure. Return the TTS route's
+    // MISSING_API_KEY envelope instead of falling through to a 500
+    // TRANSCRIPTION_FAILED. Unknown/custom providers keep their existing behavior.
+    const effectiveKey = resolveASRApiKey(
+      effectiveProviderId,
+      managed ? undefined : apiKey || undefined,
+    );
+    const asrProvider = ASR_PROVIDERS[effectiveProviderId as keyof typeof ASR_PROVIDERS];
+    if (asrProvider?.requiresApiKey && !effectiveKey) {
+      return apiError(
+        'MISSING_API_KEY',
+        400,
+        `No API key configured for ASR provider: ${effectiveProviderId}`,
+      );
+    }
+
     const config = {
       providerId: effectiveProviderId,
       // A managed provider may pin its model list server-side
@@ -69,7 +88,7 @@ export async function POST(req: NextRequest) {
       // client model directly.
       modelId: resolveASRModel(effectiveProviderId, modelId),
       language: language || 'auto',
-      apiKey: resolveASRApiKey(effectiveProviderId, managed ? undefined : apiKey || undefined),
+      apiKey: effectiveKey,
       baseUrl: resolveASRBaseUrl(effectiveProviderId, clientBaseUrl),
     };
     // Reflect the resolved (possibly server-pinned) model in failure logs.

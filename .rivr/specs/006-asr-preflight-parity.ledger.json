@@ -1,0 +1,452 @@
+{
+  "schema_version": 2,
+  "$schema": "https://rivr.dev/schemas/ledger/v2",
+  "spec": {
+    "reference": "docs/specs/006-asr-preflight-parity.md",
+    "title": "Batch 006 spec: ASR transcription route missing-key preflight parity",
+    "hash": "e753ba289410c1a72223dfa5e67e9857d0bfa0aed1eaae54f2ee23ce0d30f49d"
+  },
+  "tracker": {
+    "mode": "none"
+  },
+  "stage": "closed",
+  "retry": {
+    "count": 0,
+    "max": 5,
+    "consecutive_same_cause": 0,
+    "escalate_at": 3
+  },
+  "slices": [
+    {
+      "id": "S01",
+      "title": "Missing-key preflight in transcription route",
+      "intent": "Inline key check at route entry after managed and SSRF blocks, mirroring the TTS precedent. Keyed providers without key return 400 MISSING_API_KEY and never dispatch. S01 also creates the matrix test file with the first two named tests.",
+      "user_stories": [
+        1,
+        2
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "app/api/transcription/route.ts",
+          "symbols": [
+            {
+              "name": "POST",
+              "kind": "function",
+              "expectation": "signature unchanged; body gains the inline key check after managed and SSRF blocks",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest)"
+              },
+              "postcondition_quality": "INSPECTED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "3af2b5d5-e443-4df5-b59d-9cf614d72b0f",
+      "impl": {
+        "status": "ready_for_verification",
+        "hash": "170c00239ae240f0421a23f5e713f759495e54fb15a6d5ba7297275a9d2e7882",
+        "actor": "implementer",
+        "at": "2026-09-02T04:35:25.348Z"
+      },
+      "verification": {
+        "status": "verified",
+        "hash": "a716769a9da1cda93533037ea64d9e654ce42e4e87ea8ffcfbf86958ac472cc3",
+        "actor": "verifier",
+        "at": "2026-09-02T04:42:38.375Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G01",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/server/transcription-route-missing-key.test.ts\u001b[2m > \u001b[22m\u001b[2mPOST /api/transcription missing-key contract (batch 006)\u001b[2m > \u001b[22m\u001b[2mreturns 400 MISSING_API_KEY for 'openai-whisper' with no key (server or client)\n\u001b[22m\u001b[39m[2026-09-02T04:42:32.990Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 0 Image, 0 Video, 0 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/server/transcription-route-missing-key.test.ts\u001b[2m > \u001b[22m\u001b[2mPOST /api/transcription missing-key contract (batch 006)\u001b[2m > \u001b[22m\u001b[2mreturns 400 MISSING_API_KEY for 'qwen-asr' with no key (server or client)\n\u001b[22m\u001b[39m[2026-09-02T04:42:32.994Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM",
+              "passed": true
+            },
+            {
+              "id": "G02",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/server/transcription-route-missing-key.test.ts\u001b[2m > \u001b[22m\u001b[2mPOST /api/transcription missing-key contract (batch 006)\u001b[2m > \u001b[22m\u001b[2mnever dispatches transcribeAudio on the MISSING_API_KEY path\n\u001b[22m\u001b[39m[2026-09-02T04:42:33.614Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 0 Image, 0 Video, 0 WebSearch providers\n\n \u001b[32m✓\u001b[39m tests/server/transcription-route-missing-key.test.ts \u001b[2m(\u001b[22m\u001b[2m13 tests\u001b[22m\u001b[2m | \u001b[22m\u001b[33m12 skipped\u001b[39m\u001b[2m)\u001b[22m\u001b[32m 119\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[2m | \u001b[22m\u001b[33m12 skipped\u001b[39m\u001b[90m (13)\u001b[39m\n\u001b[2m   Start at \u001b[22m 16:42:33\n\u001b[2m   Duration \u001b[22m 2",
+              "passed": true
+            },
+            {
+              "id": "G03",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        }
+      },
+      "expectation": "route returns 400 MISSING_API_KEY for keyed providers with no key under route-level tests; keyless and custom paths unchanged; tests file exists with the two gate-named tests.",
+      "gates": [
+        {
+          "id": "G01",
+          "check": "npx vitest run tests/server/transcription-route-missing-key.test.ts -t \"MISSING_API_KEY\"",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G01\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/transcription-route-missing-key.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mPOST /api/transcription missing-key contract (batch 006)\\u001b[2m > \\u001b[22m\\u001b[2mreturns 400 MISSING_API_KEY for 'openai-whisper' with no key (server or client)\\n\\u001b[22m\\u001b[39m[2026-09-02T04:42:32.990Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 0 Image, 0 Video, 0 WebSearch providers\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/transcription-route-missing-key.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mPOST /api/transcription missing-key contract (batch 006)\\u001b[2m > \\u001b[22m\\u001b[2mreturns 400 MISSING_API_KEY for 'qwen-asr' with no key (server or client)\\n\\u001b[22m\\u001b[39m[2026-09-02T04:42:32.994Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM\",\"passed\":true}"
+        },
+        {
+          "id": "G02",
+          "check": "npx vitest run tests/server/transcription-route-missing-key.test.ts -t \"never dispatches\"",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G02\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/transcription-route-missing-key.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mPOST /api/transcription missing-key contract (batch 006)\\u001b[2m > \\u001b[22m\\u001b[2mnever dispatches transcribeAudio on the MISSING_API_KEY path\\n\\u001b[22m\\u001b[39m[2026-09-02T04:42:33.614Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 0 Image, 0 Video, 0 WebSearch providers\\n\\n \\u001b[32m✓\\u001b[39m tests/server/transcription-route-missing-key.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m13 tests\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[33m12 skipped\\u001b[39m\\u001b[2m)\\u001b[22m\\u001b[32m 119\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[33m12 skipped\\u001b[39m\\u001b[90m (13)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 16:42:33\\n\\u001b[2m   Duration \\u001b[22m 2\",\"passed\":true}"
+        },
+        {
+          "id": "G03",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G03\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}"
+        }
+      ]
+    },
+    {
+      "id": "S02",
+      "title": "Per-provider missing-key matrix and unchanged contracts",
+      "intent": "Extend the file to the seven-provider matrix plus managed/client-key pass cases and unchanged error contracts (403 disabled, MISSING_PROVIDER, 500 downstream).",
+      "user_stories": [
+        1,
+        2,
+        3
+      ],
+      "blocked_by": [
+        "S01"
+      ],
+      "targets": [
+        {
+          "path": "tests/server/transcription-route-missing-key.test.ts",
+          "symbols": [
+            {
+              "name": "KEYED_BUILTINS",
+              "kind": "variable",
+              "expectation": "top-level const listing the four keyed built-in provider ids",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "INSPECTED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 3,
+      "uuid": "0b86dec0-238d-4f1c-bae2-41f85c335db9",
+      "impl": {
+        "status": "ready_for_verification",
+        "hash": "9b2141013cb1e98cbefd81fca0e746b48a628770ed074b508f7837a3cfcbb603",
+        "actor": "implementer",
+        "at": "2026-09-02T04:38:27.966Z"
+      },
+      "verification": {
+        "status": "verified",
+        "hash": "f3417d3c6b3145571a8b7bf14bab2676a92cf8433c7379620dfc90ba7ad9c58d",
+        "actor": "verifier",
+        "at": "2026-09-02T04:42:50.649Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G01",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/server/transcription-route-missing-key.test.ts\u001b[2m > \u001b[22m\u001b[2mPOST /api/transcription missing-key contract (batch 006)\u001b[2m > \u001b[22m\u001b[2mreturns 400 MISSING_API_KEY for 'openai-whisper' with no key (server or client)\n\u001b[22m\u001b[39m[2026-09-02T04:42:49.358Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 0 Image, 0 Video, 0 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/server/transcription-route-missing-key.test.ts\u001b[2m > \u001b[22m\u001b[2mPOST /api/transcription missing-key contract (batch 006)\u001b[2m > \u001b[22m\u001b[2mreturns 400 MISSING_API_KEY for 'qwen-asr' with no key (server or client)\n\u001b[22m\u001b[39m[2026-09-02T04:42:49.363Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM",
+              "passed": true
+            },
+            {
+              "id": "G02",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/server/transcription-route-missing-key.test.ts\u001b[2m > \u001b[22m\u001b[2mPOST /api/transcription missing-key contract (batch 006)\u001b[2m > \u001b[22m\u001b[2mmanaged server key passes without client key\n\u001b[22m\u001b[39m[2026-09-02T04:42:49.979Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 1 ASR, 0 PDF, 0 Image, 0 Video, 0 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/server/transcription-route-missing-key.test.ts\u001b[2m > \u001b[22m\u001b[2mPOST /api/transcription missing-key contract (batch 006)\u001b[2m > \u001b[22m\u001b[2maccepts a client-supplied key for an unmanaged keyed provider\n\u001b[22m\u001b[39m[2026-09-02T04:42:49.984Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 0 Image, 0 Video, 0 WebS",
+              "passed": true
+            },
+            {
+              "id": "G03",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/server/transcription-route-missing-key.test.ts\u001b[2m > \u001b[22m\u001b[2mPOST /api/transcription missing-key contract (batch 006)\u001b[2m > \u001b[22m\u001b[2mdisabled provider still returns 403 unchanged\n\u001b[22m\u001b[39m[2026-09-02T04:42:50.598Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 0 Image, 0 Video, 0 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/server/transcription-route-missing-key.test.ts\u001b[2m > \u001b[22m\u001b[2mPOST /api/transcription missing-key contract (batch 006)\u001b[2m > \u001b[22m\u001b[2mno-enabled-backend still returns 400 MISSING_PROVIDER unchanged\n\u001b[22m\u001b[39m[2026-09-02T04:42:50.602Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 0 Image, 0 Video, 0 W",
+              "passed": true
+            }
+          ]
+        }
+      },
+      "expectation": "matrix covers four keyed built-ins (400), three keyless (dispatch), managed key, client key, disabled 403, no-backend 400, downstream 500; file exposes top-level const KEYED_BUILTINS with the four keyed ids.",
+      "gates": [
+        {
+          "id": "G01",
+          "check": "npx vitest run tests/server/transcription-route-missing-key.test.ts",
+          "expect": "passed",
+          "type": "integration",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G01\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/transcription-route-missing-key.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mPOST /api/transcription missing-key contract (batch 006)\\u001b[2m > \\u001b[22m\\u001b[2mreturns 400 MISSING_API_KEY for 'openai-whisper' with no key (server or client)\\n\\u001b[22m\\u001b[39m[2026-09-02T04:42:49.358Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 0 Image, 0 Video, 0 WebSearch providers\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/transcription-route-missing-key.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mPOST /api/transcription missing-key contract (batch 006)\\u001b[2m > \\u001b[22m\\u001b[2mreturns 400 MISSING_API_KEY for 'qwen-asr' with no key (server or client)\\n\\u001b[22m\\u001b[39m[2026-09-02T04:42:49.363Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM\",\"passed\":true}"
+        },
+        {
+          "id": "G02",
+          "check": "npx vitest run tests/server/transcription-route-missing-key.test.ts -t \"managed\"",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G02\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/transcription-route-missing-key.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mPOST /api/transcription missing-key contract (batch 006)\\u001b[2m > \\u001b[22m\\u001b[2mmanaged server key passes without client key\\n\\u001b[22m\\u001b[39m[2026-09-02T04:42:49.979Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 1 ASR, 0 PDF, 0 Image, 0 Video, 0 WebSearch providers\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/transcription-route-missing-key.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mPOST /api/transcription missing-key contract (batch 006)\\u001b[2m > \\u001b[22m\\u001b[2maccepts a client-supplied key for an unmanaged keyed provider\\n\\u001b[22m\\u001b[39m[2026-09-02T04:42:49.984Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 0 Image, 0 Video, 0 WebS\",\"passed\":true}"
+        },
+        {
+          "id": "G03",
+          "check": "npx vitest run tests/server/transcription-route-missing-key.test.ts -t \"unchanged\"",
+          "expect": "passed",
+          "type": "unit",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G03\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/transcription-route-missing-key.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mPOST /api/transcription missing-key contract (batch 006)\\u001b[2m > \\u001b[22m\\u001b[2mdisabled provider still returns 403 unchanged\\n\\u001b[22m\\u001b[39m[2026-09-02T04:42:50.598Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 0 Image, 0 Video, 0 WebSearch providers\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/transcription-route-missing-key.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mPOST /api/transcription missing-key contract (batch 006)\\u001b[2m > \\u001b[22m\\u001b[2mno-enabled-backend still returns 400 MISSING_PROVIDER unchanged\\n\\u001b[22m\\u001b[39m[2026-09-02T04:42:50.602Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 0 Image, 0 Video, 0 W\",\"passed\":true}"
+        }
+      ]
+    }
+  ],
+  "audit": [
+    {
+      "seq": 1,
+      "id": "93c2d838-c4c0-47cb-aa49-fb725b7deb02",
+      "at": "2026-09-02T04:28:35.887Z",
+      "actor": "orchestrator",
+      "command": "init",
+      "transition": "spec-approved:docs/specs/006-asr-preflight-parity.md",
+      "slice": null,
+      "hash": "1fcf0d268b3912efa7a82b0cd1f71ecaf3aaae875b634b70d665e69006c1108d"
+    },
+    {
+      "seq": 2,
+      "id": "37cb324f-9a38-45a2-b7eb-fbe77f3273c7",
+      "at": "2026-09-02T04:28:35.888Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect",
+      "slice": "S01",
+      "hash": "bbbe15cb921e1931644066986c99b8287e25864d7cb08a6efe4e8f92a2a9c258",
+      "expectationHash": "a521dce488f723bccf06c713995fc5067b65cdc2a90bf99973aed7da7dc92517"
+    },
+    {
+      "seq": 3,
+      "id": "2e893428-ddcb-46ae-a644-57973f788263",
+      "at": "2026-09-02T04:28:35.888Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect-symbol:app/api/transcription/route.ts::POST",
+      "slice": "S01",
+      "hash": "60b0c2f5f8120add245bda1f6c54e2cdf0b2447da8f84eff9581706453cbbdea",
+      "expectationHash": "a589103b2ee2b6a5918d9d8f1d7ec02890ddea1f074fa0373b8fd0995465b66f"
+    },
+    {
+      "seq": 4,
+      "id": "ebff1e1d-8266-42cd-99d0-ed93d0a11462",
+      "at": "2026-09-02T04:28:35.888Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S02:expect",
+      "slice": "S02",
+      "hash": "3c599e6288840636e1e9377852ac3d649bd2f71e78b3f2b0080b984caf11dc68",
+      "expectationHash": "1632d321d0998a817870181e24df6bae0424251d69f7488988eeb311a1293dc1"
+    },
+    {
+      "seq": 5,
+      "id": "692454ee-b475-49df-9803-2480259596c6",
+      "at": "2026-09-02T04:28:35.888Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S02:expect-symbol:tests/server/transcription-route-missing-key.test.ts::KEYED_BUILTINS",
+      "slice": "S02",
+      "hash": "4c9dda20110c6139683c85cbc4a57a27e12c3105ea49f385fba4b1a87f779819",
+      "expectationHash": "5034d6263333446de8a0a51296af1b02b4492830c05cf5baba9aeb112ecd764f"
+    },
+    {
+      "seq": 6,
+      "id": "2f2b5440-076f-485e-8bad-031b8f986e33",
+      "at": "2026-09-02T04:28:35.888Z",
+      "actor": "orchestrator",
+      "command": "init_batch",
+      "transition": "batch-init:S01,S02",
+      "slice": null,
+      "hash": "89608d0691974ea9cd9dbc5ee6747e30b301e3b39a5b295ab5e0bb5c439ea447"
+    },
+    {
+      "seq": 7,
+      "id": "717ed5df-b89a-447b-a0c0-6e616bd42e15",
+      "at": "2026-09-02T04:28:35.934Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S01:capture",
+      "slice": "S01",
+      "hash": "6d0168e07d30ac2eb4ab9757898dc9132c2b1c3ce7bb515affba6caf5e4fbbf4",
+      "fileHash": "c953c940c29d36182fdf07c483a3109730d6467cd07c5d4106f72f3b08fc7a17"
+    },
+    {
+      "seq": 8,
+      "id": "fcdcc67e-1ea1-45e8-a0ff-c8fbd815358f",
+      "at": "2026-09-02T04:28:35.976Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S02:capture",
+      "slice": "S02",
+      "hash": "1e3e1370543aac1a2e24276c04feb3ef7598cd01ec3b15f4e201e333b29324f3",
+      "fileHash": "72b3393f6d92a599eb6c9c8368393bc689950a8498ac9a77501e6dd1487e145b"
+    },
+    {
+      "seq": 9,
+      "id": "a938995e-217a-408d-9ba9-de01b1fb68af",
+      "at": "2026-09-02T04:29:04.451Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S01:postcondition:app/api/transcription/route.ts::POST",
+      "slice": "S01",
+      "hash": "d600ff52ba4924271aede35f851f25ce26cdb8862d20134bc541db9efb2c8866",
+      "fileHash": "7ec982d6b9c08bfe8a5d4c20aebbe5498c7adfc7e941302f9133e954281017ce"
+    },
+    {
+      "seq": 10,
+      "id": "9d8ff7ae-9ec3-4033-af44-59a1aa92fdef",
+      "at": "2026-09-02T04:29:04.491Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S02:postcondition:tests/server/transcription-route-missing-key.test.ts::KEYED_BUILTINS",
+      "slice": "S02",
+      "hash": "571d407633861419da1098db12f407f31a802a2829071cdc38360722acb3f126",
+      "fileHash": "edf4cef741a883271f97c1413d543f80265bbadf70c9800b8144f7af8cc73e99"
+    },
+    {
+      "seq": 11,
+      "id": "4e90994e-dec2-4cda-a24f-7c7fe3636c9f",
+      "at": "2026-09-02T04:29:04.534Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "37cd00a04c18b2a6959421de363b77c612caf0a4ac1a5db85de78748158180a6",
+      "fileHash": "79f4d5492e72ea03745392bff1a7175feb302ed034d014116cc78c5b1aced30f"
+    },
+    {
+      "seq": 12,
+      "id": "1a386087-dfeb-4807-9b37-5e4e3d1a153f",
+      "at": "2026-09-02T04:35:25.348Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S01:impl:pending->ready_for_verification",
+      "slice": "S01",
+      "hash": "2f5c0f0c4a43b7652557c7107f85b0bd5dfd08cc259187d366ddf1cf14a92f78",
+      "fileHash": "7be405cdf415598ee1e0940d1ecf13b1a7cbe5973bd2e77662992a41be754555"
+    },
+    {
+      "seq": 13,
+      "id": "b22aed25-6531-4cf3-bf4e-165b60e5396c",
+      "at": "2026-09-02T04:38:27.966Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S02:impl:pending->ready_for_verification",
+      "slice": "S02",
+      "hash": "3e29471433fb6595a7047ed7e6bc748557bc779afa8a5b27dd655655c50b56ec",
+      "fileHash": "2af578b596e2b767e3a4cc2f7ff7ca803eb4083936945551f046967d7618b2c1"
+    },
+    {
+      "seq": 14,
+      "id": "06cbcf3c-0737-4e67-b2d1-9d687190d242",
+      "at": "2026-09-02T04:39:55.167Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "fb5db28c4ef3f75262f7b44cbb0271ec50d9d43477d1872b04062f5db7e51f49",
+      "fileHash": "2faf5a2743cb06fbdde4ea895627201f0189b67b8143414b2d35a71a3ebb72a4"
+    },
+    {
+      "seq": 15,
+      "id": "b505d849-6918-4380-9c50-51a0491cf891",
+      "at": "2026-09-02T04:42:38.375Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S01:verification:pending->verified",
+      "slice": "S01",
+      "hash": "15fc09d5e45395b298ad947a7729f7958d4eeebbd7b481de5817b4f6ce4d9ef1",
+      "oracle": "c0d1f3831f18d79161e0f2eb59777517a231c5bdafdfd38fa7f85114607803d3",
+      "evidence": "3c8ea4ece754d9acfc45554811502a7ca9babb972a8ad874e22373e083effcdc",
+      "fileHash": "4abcd17b8ce25f2e55f9dea14f7bbdd478b7b7bdbde8ad83fa5c15b0fdfec1c1"
+    },
+    {
+      "seq": 16,
+      "id": "1847cf11-9f13-467f-811f-3b41d7876e37",
+      "at": "2026-09-02T04:42:50.649Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S02:verification:pending->verified",
+      "slice": "S02",
+      "hash": "4c55a0f73f82d7bb7990136d58d4f6f15db5a817d1283571af6835faaaeffeac",
+      "oracle": "740de364703373dbdc4f4f4117e201876ac60e8975f5138d354872824defa333",
+      "evidence": "9ef6581b17d2b33510ca01ed74a47c67d1267f13cac08fe1f1bf40f12a999fbb",
+      "fileHash": "c7e271c9a835a8872421a48e9044a43f4c649dd246b5f3fbdcaf89993adcb7ca"
+    },
+    {
+      "seq": 17,
+      "id": "3876fcce-671c-41bf-b886-fed9ff6353b7",
+      "at": "2026-09-02T04:44:50.555Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:respecify:stage 4 research update: final lines, predicate mirror, zero-rejection process notes",
+      "slice": null,
+      "hash": "4829ca71bd8b70d8b00093eb9aa5cf66ddf644ed36391efe75b7328b51101775",
+      "fileHash": "1f7c26e07c9d1659824b36a616a7d3b2fd6f9e908fd2152490de7400433dcffd"
+    },
+    {
+      "seq": 18,
+      "id": "ac374ed7-91a1-40b2-998b-5fe0d8ff4e3b",
+      "at": "2026-09-02T04:44:50.602Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:verification->research_update",
+      "slice": null,
+      "hash": "bb7389c8efd40a62dbcc4352a56ea5997ae66e073ba782e6d4334882bdecf8e9",
+      "fileHash": "0b44e07218f9d3cb2b44b4414de9a57116f760917c7653eeab573692a3a89f11"
+    },
+    {
+      "seq": 19,
+      "id": "5a92548e-d678-406c-bd1f-f4f77a1c6330",
+      "at": "2026-09-02T04:45:26.062Z",
+      "actor": "verifier",
+      "command": "certify",
+      "transition": "certify:62193746ba54dc356933d42f90c57654c753964aa39438ad99704888ca6ca738",
+      "slice": null,
+      "hash": "0d2779ca661668f23b7cf54f713ae3cb6da6e12b751959be46dfc2a8a48bc8fb",
+      "oracle": "62193746ba54dc356933d42f90c57654c753964aa39438ad99704888ca6ca738",
+      "fileHash": "38601d7b2a27af7a466dcc5bd1ad2a03691bce979319efaee98646f388228f84"
+    }
+  ],
+  "fileHash": "9ea166d989b041ed50d28601fdc51767150d0c2c7c7a67d11848c7adfdad0f61"
+}

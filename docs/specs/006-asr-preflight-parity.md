@@ -1,6 +1,6 @@
 # Batch 006 spec: ASR transcription route missing-key preflight parity
 
-Spec status: research
+Spec status: research_update
 
 ## Problem Statement
 
@@ -60,4 +60,48 @@ S02 (3, one integration): full matrix (`passed`, type integration); managed/clie
 - Program boundary (operator Q4): capability routes now split 400 (tts, transcription after this batch) versus 401 (image, video) for the same missing-key case. Normalizing the split is a separate future decision, recorded in the meta-spec, not work deferred by this batch.
 - Custom `custom-asr-*` providers keep the existing 500 path by design (operator Q5a); the route guard mirrors the library condition exactly.
 
-Status: Draft
+Status: Implemented (batch 006, commits `091f8f3c..pending-head` on `feat/asr-preflight-parity`). Post-implementation learnings below.
+
+## Research update (post-implementation)
+
+**What shipped.** `app/api/transcription/route.ts:70-81` gained the missing-key preflight: `asrProvider?.requiresApiKey && !effectiveKey` returns `apiError('MISSING_API_KEY', 400, ...)` — the same envelope as the TTS route at `app/api/generate/tts/route.ts:112-117`. Placement honors the frozen order: disable check (51), managed + SSRF (56-63), then key check, then dispatch. `effectiveKey` computes once and feeds both guard and config. The new `tests/server/transcription-route-missing-key.test.ts` carries 13 tests: the four-keyed `it.each` matrix over `KEYED_BUILTINS` (69), three keyless dispatch proofs, managed and client-key pass-throughs, and the three unchanged-contract regressions (403 disabled, 400 MISSING_PROVIDER, 500 downstream). The guard predicate mirrors the library throw at `lib/audio/asr-providers.ts:171` exactly, so custom providers (absent from `ASR_PROVIDERS`) skip identically. The verifier's predicate diff confirms zero behavior change for keyless and custom paths.
+
+**Deviation, one:** the spec described browser-native as a keyless dispatch proof; the concrete test asserts the route-side dispatch attempt (guard skip) rather than a successful transcription, since the library path for browser-native is client-side. Contract met.
+
+**Hermeticity by construction.** The env-clear helper covers exactly the six `ASR_ENV_MAP` prefixes plus `ASR_BROWSER_NATIVE`; the batch-005 hostile-runner reproduction passes 13/13 with zero `sk-` hits without any new fix — batch 005's discipline paid forward.
+
+**Process notes.** First cycle of the program with zero rejections and zero correction amendments: 2 slices, 6 gates, 16-entry chain, round-1 verification, all gates hermetic. The pre-baked lessons (symbol expectations at anchor creation, `(req: NextRequest)` style before-signatures, literal `TSC_OK` oracles, neutral-cwd gate runs, `-t` name contracts frozen in the ledger) removed whole failure classes that cost rounds 2 and 3 in batches 004 and 005.
+
+**Test totals.** 13/13 matrix file, tsc clean, prettier clean whole-branch, hostile-env reproduction green.
+
+## Certification Report
+
+Certified: 2026-09-02T04:45:26.062Z
+Signature: 62193746ba54dc356933d42f90c57654c753964aa39438ad99704888ca6ca738
+
+### Summary
+
+Slices: 2
+Symbols: 2
+Gates: 6
+
+### Implemented Symbols
+
+- **S01** (Missing-key preflight in transcription route):
+  - app/api/transcription/route.ts::POST
+- **S02** (Per-provider missing-key matrix and unchanged contracts):
+  - tests/server/transcription-route-missing-key.test.ts::KEYED_BUILTINS
+
+### Gates Passed
+
+- **S01**:
+  - G01: {"id":"G01","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9","pathCount":30,"output":"\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/server/transcription-route-missing-key.test.ts\u001b[2m > \u001b[22m\u001b[2mPOST /api/transcription missing-key contract (batch 006)\u001b[2m > \u001b[22m\u001b[2mreturns 400 MISSING_API_KEY for 'openai-whisper' with no key (server or client)\n\u001b[22m\u001b[39m[2026-09-02T04:42:32.990Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 0 Image, 0 Video, 0 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/server/transcription-route-missing-key.test.ts\u001b[2m > \u001b[22m\u001b[2mPOST /api/transcription missing-key contract (batch 006)\u001b[2m > \u001b[22m\u001b[2mreturns 400 MISSING_API_KEY for 'qwen-asr' with no key (server or client)\n\u001b[22m\u001b[39m[2026-09-02T04:42:32.994Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM","passed":true}
+  - G02: {"id":"G02","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9","pathCount":30,"output":"\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/server/transcription-route-missing-key.test.ts\u001b[2m > \u001b[22m\u001b[2mPOST /api/transcription missing-key contract (batch 006)\u001b[2m > \u001b[22m\u001b[2mnever dispatches transcribeAudio on the MISSING_API_KEY path\n\u001b[22m\u001b[39m[2026-09-02T04:42:33.614Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 0 Image, 0 Video, 0 WebSearch providers\n\n \u001b[32m✓\u001b[39m tests/server/transcription-route-missing-key.test.ts \u001b[2m(\u001b[22m\u001b[2m13 tests\u001b[22m\u001b[2m | \u001b[22m\u001b[33m12 skipped\u001b[39m\u001b[2m)\u001b[22m\u001b[32m 119\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[2m | \u001b[22m\u001b[33m12 skipped\u001b[39m\u001b[90m (13)\u001b[39m\n\u001b[2m   Start at \u001b[22m 16:42:33\n\u001b[2m   Duration \u001b[22m 2","passed":true}
+  - G03: {"id":"G03","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9","pathCount":30,"output":"TSC_OK\n","passed":true}
+- **S02**:
+  - G01: {"id":"G01","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9","pathCount":30,"output":"\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/server/transcription-route-missing-key.test.ts\u001b[2m > \u001b[22m\u001b[2mPOST /api/transcription missing-key contract (batch 006)\u001b[2m > \u001b[22m\u001b[2mreturns 400 MISSING_API_KEY for 'openai-whisper' with no key (server or client)\n\u001b[22m\u001b[39m[2026-09-02T04:42:49.358Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 0 Image, 0 Video, 0 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/server/transcription-route-missing-key.test.ts\u001b[2m > \u001b[22m\u001b[2mPOST /api/transcription missing-key contract (batch 006)\u001b[2m > \u001b[22m\u001b[2mreturns 400 MISSING_API_KEY for 'qwen-asr' with no key (server or client)\n\u001b[22m\u001b[39m[2026-09-02T04:42:49.363Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM","passed":true}
+  - G02: {"id":"G02","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9","pathCount":30,"output":"\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/server/transcription-route-missing-key.test.ts\u001b[2m > \u001b[22m\u001b[2mPOST /api/transcription missing-key contract (batch 006)\u001b[2m > \u001b[22m\u001b[2mmanaged server key passes without client key\n\u001b[22m\u001b[39m[2026-09-02T04:42:49.979Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 1 ASR, 0 PDF, 0 Image, 0 Video, 0 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/server/transcription-route-missing-key.test.ts\u001b[2m > \u001b[22m\u001b[2mPOST /api/transcription missing-key contract (batch 006)\u001b[2m > \u001b[22m\u001b[2maccepts a client-supplied key for an unmanaged keyed provider\n\u001b[22m\u001b[39m[2026-09-02T04:42:49.984Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 0 Image, 0 Video, 0 WebS","passed":true}
+  - G03: {"id":"G03","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9","pathCount":30,"output":"\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/server/transcription-route-missing-key.test.ts\u001b[2m > \u001b[22m\u001b[2mPOST /api/transcription missing-key contract (batch 006)\u001b[2m > \u001b[22m\u001b[2mdisabled provider still returns 403 unchanged\n\u001b[22m\u001b[39m[2026-09-02T04:42:50.598Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 0 Image, 0 Video, 0 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/server/transcription-route-missing-key.test.ts\u001b[2m > \u001b[22m\u001b[2mPOST /api/transcription missing-key contract (batch 006)\u001b[2m > \u001b[22m\u001b[2mno-enabled-backend still returns 400 MISSING_PROVIDER unchanged\n\u001b[22m\u001b[39m[2026-09-02T04:42:50.602Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 1 LLM, 0 TTS, 0 ASR, 0 PDF, 0 Image, 0 Video, 0 W","passed":true}
+
+Certification hash: 62193746ba54dc356933d42f90c57654c753964aa39438ad99704888ca6ca738
+Certified: 2026-09-02T04:45:26.062Z | Signature: 62193746ba54dc356933d42f90c57654c753964aa39438ad99704888ca6ca738 | Certifier: verifier
