@@ -6,6 +6,28 @@ import { NextRequest } from 'next/server';
 // generation logic runs, and a disabled provider is never picked as the
 // server-side default.
 
+// Pin server-providers.yml to null so host-machine YAML never leaks keys into
+// test failure output.
+let yamlOverride: string | null = null;
+vi.mock('fs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('fs')>();
+  const isYaml = (p: unknown) => typeof p === 'string' && p.endsWith('server-providers.yml');
+  return {
+    ...actual,
+    default: {
+      ...actual,
+      existsSync: (p: string) => (isYaml(p) ? yamlOverride !== null : actual.existsSync(p)),
+      readFileSync: (p: string, ...args: unknown[]) =>
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        isYaml(p) ? (yamlOverride ?? '') : (actual.readFileSync as any)(p, ...args),
+    },
+    existsSync: (p: string) => (isYaml(p) ? yamlOverride !== null : actual.existsSync(p)),
+    readFileSync: (p: string, ...args: unknown[]) =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      isYaml(p) ? (yamlOverride ?? '') : (actual.readFileSync as any)(p, ...args),
+  };
+});
+
 const mocks = vi.hoisted(() => ({
   generateImage: vi.fn(),
   testImageConnectivity: vi.fn(),
@@ -103,6 +125,7 @@ function transcriptionRequest(providerId: string): NextRequest {
 
 describe('capability force-off route guards (#665)', () => {
   beforeEach(() => {
+    yamlOverride = null;
     vi.resetModules();
     vi.unstubAllEnvs();
     clearCapabilityEnv();

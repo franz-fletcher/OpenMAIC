@@ -5,7 +5,7 @@
   "spec": {
     "reference": "docs/meta-specs/qwen-token-plan-integration.md",
     "title": "Qwen Token Plan Integration (meta-spec)",
-    "hash": "86cc9f9522e107c1d26206693b533aca78511cd1842d21830bfc1c3d9eaa89cf"
+    "hash": "9bc7eef9c9f397d1b2d1b6bd14db1361e25bfaf68383c7281c87c6d4fc925502"
   },
   "tracker": {
     "mode": "none"
@@ -231,7 +231,18 @@
       "slice": null,
       "hash": "cd30020ba14e79e5d4bfd28b49c327f224fd64ef2e3f12141aed229f7699b1c5",
       "fileHash": "90df9318cd9308a1ebecc2402aee566ffb17805f69f135b001fdcbfc90aba1e1"
+    },
+    {
+      "seq": 18,
+      "id": "b75b891b-1d16-48b7-ae15-af2533408491",
+      "at": "2026-09-02T02:07:38.625Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:correction:batch 005 scope refreshed from sentinel repro plus operator extension; neutrality counts corrected; route status-code boundary recorded",
+      "slice": null,
+      "hash": "f4a6e02c0c1eba61504af42521b334b2c883db8052cf6e483a51824d262ef0bb",
+      "fileHash": "a722b8c93f3d2ace94f4fb5614a4ebb969d85a853f794f5318cce8cf058b654d"
     }
   ],
-  "fileHash": "a722b8c93f3d2ace94f4fb5614a4ebb969d85a853f794f5318cce8cf058b654d"
+  "fileHash": "15520fff10b9557ee6d1ad6ddaa5b37b75c9969edda124e6f45bb17403cded04"
 }
