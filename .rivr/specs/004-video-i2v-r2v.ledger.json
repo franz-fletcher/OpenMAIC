@@ -4,17 +4,18 @@
   "spec": {
     "reference": "docs/specs/004-video-i2v-r2v.md",
     "title": "Batch 004 spec: happyhorse i2v and r2v media input",
-    "hash": "1f9869240f6d0c3a793ad414a208b2d1d41accce01c051c62ca9e4e0453bdc91"
+    "hash": "3ff54244f7e2ba54ab0d2b758fda86a02ba91c7bed24bb1f6d48d954a9c5874b"
   },
   "tracker": {
     "mode": "none"
   },
   "stage": "implementation",
   "retry": {
-    "count": 0,
+    "count": 1,
     "max": 5,
-    "consecutive_same_cause": 0,
-    "escalate_at": 3
+    "consecutive_same_cause": 1,
+    "escalate_at": 3,
+    "last_cause": "format-gate"
   },
   "slices": [
     {
@@ -107,13 +108,18 @@
       "uuid": "68755789-8d16-4cf4-9a6e-df501202fdc9",
       "impl": {
         "status": "ready_for_verification",
-        "hash": "b8274ce2de931ca162a9a0eb1503235ba1decd1f2feebd22ba94a20632e0c30b",
+        "hash": "9e8bd0ed93274d97434630d9e0a52b275c3aee3c138c7e25f7434a66ef07fe4d",
         "actor": "implementer",
-        "at": "2026-09-01T23:50:42.096Z"
+        "at": "2026-09-02T00:24:36.235Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "rejected",
+        "hash": "df71679a418fd683a2cdacfb9562fbc4f2d1a2f843284eec81570f7bd460f7b6",
+        "actor": "verifier",
+        "at": "2026-09-02T00:18:40.290Z",
+        "deficiencies": [
+          "Prettier format gate fails on tests/media/happyhorse-adapter.test.ts. npx prettier --check --config .prettierrc exits non-zero; the main baseline is clean. The repo CI gate pnpm check (.github/workflows/ci.yml:125) fails on merge. Fix: run pnpm format (or npx prettier --write) on the touched files, then re-mark S01."
+        ]
       },
       "expectation": "i2v sends one first_frame entry, r2v sends one-to-nine reference_image entries, t2v stays byte-identical; adversarial poll-failure unit test named rejects unreachable image on poll passes.",
       "gates": [
@@ -145,6 +151,19 @@
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
           "evidence": "FAILED download surfaces structured error",
           "type": "adversarial"
+        }
+      ],
+      "findings": [
+        {
+          "id": 1,
+          "correlation": "5e428247b54d35c552fcdc12a29251fc6efb4326655e426fa9571beaf490f548",
+          "at": "2026-09-02T00:18:40.290Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "Prettier format gate fails on tests/media/happyhorse-adapter.test.ts. npx prettier --check --config .prettierrc exits non-zero; the main baseline is clean. The repo CI gate pnpm check (.github/workflows/ci.yml:125) fails on merge. Fix: run pnpm format (or npx prettier --write) on the touched files, then re-mark S01.",
+          "evidence": "format-gate"
         }
       ]
     },
@@ -180,13 +199,18 @@
       "uuid": "46c16185-e539-4c8d-b3e8-18357eb8e732",
       "impl": {
         "status": "ready_for_verification",
-        "hash": "2f42c9c7861524d1a388c9b67a0b97833f0e575eae01fa6bca04789c4d06e4f2",
+        "hash": "d231ec5d20a652e98a712e8a649e3b9e30e2ea5eae08af23c28fb05c703afbd4",
         "actor": "implementer",
-        "at": "2026-09-01T23:59:09.057Z"
+        "at": "2026-09-02T00:24:41.857Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "rejected",
+        "hash": "267651795a86ca1447a634c69f5526a84db2bca3df56bd73464b7a759949444c",
+        "actor": "verifier",
+        "at": "2026-09-02T00:18:40.290Z",
+        "deficiencies": [
+          "Prettier format gate fails on app/api/generate/video/route.ts and tests/server/video-route-preflight.test.ts. The getVideoModelSourceRequirement import stays single-line past the 100-column limit and the two apiError preflight calls are wrapped where prettier collapses them. Fix: run pnpm format, then re-mark S02."
+        ]
       },
       "expectation": "400 MISSING_REQUIRED_FIELD when requirement first_frame and no firstFrameUrl, or reference_images and empty referenceImageUrls; orchestrator body carries both fields when present.",
       "gates": [
@@ -203,6 +227,19 @@
           "expect": "passed",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
           "evidence": "pass-through assertions"
+        }
+      ],
+      "findings": [
+        {
+          "id": 1,
+          "correlation": "26a3b483e5a3b5dc4d53ec2f992201b30de443d03c0422b010090c09f0e9126c",
+          "at": "2026-09-02T00:18:40.291Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "Prettier format gate fails on app/api/generate/video/route.ts and tests/server/video-route-preflight.test.ts. The getVideoModelSourceRequirement import stays single-line past the 100-column limit and the two apiError preflight calls are wrapped where prettier collapses them. Fix: run pnpm format, then re-mark S02.",
+          "evidence": "format-gate"
         }
       ]
     },
@@ -271,13 +308,18 @@
       "uuid": "2e862d4c-7917-46e0-9a82-8d6c5d7ed75d",
       "impl": {
         "status": "ready_for_verification",
-        "hash": "0d37bac57bca0f54ff4dedb2a8dfc6310bfaed8ed35497c3f287069fe311900a",
+        "hash": "24d77fd793b95bd56935feaead0cc234ddf75bcc3c392f59a7a8b8e24e1f979e",
         "actor": "implementer",
-        "at": "2026-09-01T23:52:31.066Z"
+        "at": "2026-09-02T00:24:53.574Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "rejected",
+        "hash": "a7bc9822daf5c8b794e9e477797d6bf298a3edd2e306f2efa26db91264dba7c3",
+        "actor": "verifier",
+        "at": "2026-09-02T00:18:40.291Z",
+        "deficiencies": [
+          "Prettier format gate fails on lib/media/video-providers.ts. The happyhorse-1.1-r2v model entry stays multi-line where prettier collapses it. Fix: run pnpm format, then re-mark S03."
+        ]
       },
       "expectation": "Helper returns undefined for t2v ids, first_frame for i2v, reference_images for r2v; preset video defaultModels lists three 1.1 ids in catalog order.",
       "gates": [
@@ -294,6 +336,19 @@
           "expect": "PRESET_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
           "evidence": "preset extended"
+        }
+      ],
+      "findings": [
+        {
+          "id": 1,
+          "correlation": "3456e0bd6a301e080acd1728c2a03ad386e65848bc48da43f90b72cd166f1ff0",
+          "at": "2026-09-02T00:18:40.291Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "Prettier format gate fails on lib/media/video-providers.ts. The happyhorse-1.1-r2v model entry stays multi-line where prettier collapses it. Fix: run pnpm format, then re-mark S03.",
+          "evidence": "format-gate"
         }
       ]
     },
@@ -335,8 +390,44 @@
         "at": "2026-09-02T00:04:00.447Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "verified",
+        "hash": "bc212acfe92b13cc0c662950fbd2c67d12fec21298cda587dccfead394189625",
+        "actor": "verifier",
+        "at": "2026-09-02T00:16:55.153Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G4.1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/server/server-providers-example.test.ts\u001b[2m > \u001b[22m\u001b[2mserver-providers.yml.example\u001b[2m > \u001b[22m\u001b[2mresolves all five token-plan ids through isServerConfiguredProvider\n\u001b[22m\u001b[39m[2026-09-02T00:16:55.083Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 2 LLM, 2 TTS, 2 ASR, 0 PDF, 1 Image, 1 Video, 1 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/server/server-providers-example.test.ts\u001b[2m > \u001b[22m\u001b[2mserver-providers.yml.example\u001b[2m > \u001b[22m\u001b[2mspot-checks one base_url per token-plan section\n\u001b[22m\u001b[39m[2026-09-02T00:16:55.086Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 2 LLM, 2 TTS, 2 ASR, 0 PDF, 1 Image, 1 Video, 1 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/server/server-provid",
+              "passed": true
+            },
+            {
+              "id": "G4.2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "YML_OK\n",
+              "passed": true
+            },
+            {
+              "id": "G4.3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "DOCS6_OK\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "Example test passes with three video models; docs grep counts six files carrying the new ids; managed allowlist path proven.",
       "gates": [
@@ -345,7 +436,7 @@
           "check": "npx vitest run tests/server/server-providers-example.test.ts",
           "expect": "passed",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "yml parses, provider resolves three models",
+          "evidence": "{\"id\":\"G4.1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/server-providers-example.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mserver-providers.yml.example\\u001b[2m > \\u001b[22m\\u001b[2mresolves all five token-plan ids through isServerConfiguredProvider\\n\\u001b[22m\\u001b[39m[2026-09-02T00:16:55.083Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 2 LLM, 2 TTS, 2 ASR, 0 PDF, 1 Image, 1 Video, 1 WebSearch providers\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/server-providers-example.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mserver-providers.yml.example\\u001b[2m > \\u001b[22m\\u001b[2mspot-checks one base_url per token-plan section\\n\\u001b[22m\\u001b[39m[2026-09-02T00:16:55.086Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 2 LLM, 2 TTS, 2 ASR, 0 PDF, 1 Image, 1 Video, 1 WebSearch providers\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/server-provid\",\"passed\":true}",
           "type": "integration"
         },
         {
@@ -353,14 +444,14 @@
           "check": "grep -q \"happyhorse-1.1-r2v\" server-providers.yml.example && echo YML_OK",
           "expect": "YML_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "yml rows"
+          "evidence": "{\"id\":\"G4.2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"YML_OK\\n\",\"passed\":true}"
         },
         {
           "id": "G4.3",
           "check": "grep -l \"happyhorse-1.1-r2v\" packages/docs/content/docs/supported-models*.mdx | wc -l | tr -d ' ' | grep -qx 6 && echo DOCS6_OK",
           "expect": "DOCS6_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "six docs files exact-count gate per review B2"
+          "evidence": "{\"id\":\"G4.3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"DOCS6_OK\\n\",\"passed\":true}"
         }
       ]
     },
@@ -397,13 +488,18 @@
       "uuid": "2cecdcd5-2b63-4e0f-9d6d-ad9697ed2924",
       "impl": {
         "status": "ready_for_verification",
-        "hash": "3ed0c05b92f6e6325c843c48fc1d4818d25e53dd592a672fea2249315be06c6a",
+        "hash": "df9de67fb141ade22733d7895d7fc64b9da72637a66f0b12237aaa55a0bc8b4f",
         "actor": "implementer",
-        "at": "2026-09-02T00:10:19.637Z"
+        "at": "2026-09-02T00:25:03.230Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "rejected",
+        "hash": "e4934226443d94ac1f92be605bbf7cd9bbfddc1d2c6350a8612bec1c8a90cb25",
+        "actor": "verifier",
+        "at": "2026-09-02T00:18:40.291Z",
+        "deficiencies": [
+          "Prettier format gate fails on tests/media/happyhorse-live.test.ts. The paid G5.1 certification run is deferred to the fix round to preserve the operator-budgeted single paid generation; a run now would be discarded evidence under the fresh-evidence rule. G5.2 and G5.3 passed fresh as standalone diagnostics this round and must be recorded fresh via rivr slice verify next round. Fix: run pnpm format, then re-mark S05."
+        ]
       },
       "expectation": "i2v completes SUCCEEDED with a real video URL for the pinned sample image; r2v download-failure proves array acceptance; missing-media proves Field required; live file skips without TEST_LOAD_LOCAL_ENV.",
       "gates": [
@@ -437,6 +533,19 @@
           "expect": "passed",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
           "evidence": "scoped re-run of touched suites per review cost note"
+        }
+      ],
+      "findings": [
+        {
+          "id": 1,
+          "correlation": "af71466307956d9a4cfb916abf3642a663a75a0381b83dee59e0b1ce0735a6b9",
+          "at": "2026-09-02T00:18:40.291Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "Prettier format gate fails on tests/media/happyhorse-live.test.ts. The paid G5.1 certification run is deferred to the fix round to preserve the operator-budgeted single paid generation; a run now would be discarded evidence under the fresh-evidence rule. G5.2 and G5.3 passed fresh as standalone diagnostics this round and must be recorded fresh via rivr slice verify next round. Fix: run pnpm format, then re-mark S05.",
+          "evidence": "format-gate"
         }
       ]
     }
@@ -857,7 +966,86 @@
       "slice": "S05",
       "hash": "c5cbc51c7e32e16deb5914411bd7cf05856a6cdb27df10b658d29d76bce8b095",
       "fileHash": "0877b43b440d2121f9482f114370497b79cad67465f0be8a3e11cab98d40fd3e"
+    },
+    {
+      "seq": 39,
+      "id": "f4f38f7a-2d08-466b-a100-ee8e0046a89f",
+      "at": "2026-09-02T00:10:47.117Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "5c33921f8f3db5cf8ec8965c270362704902ba50b7d510b3eae478c2c2fc232b",
+      "fileHash": "8e97a005603dd8f6232ce85c4b7eda353328fe7db690ae57768af178569177d0"
+    },
+    {
+      "seq": 40,
+      "id": "208a6697-c589-4ce6-8fbf-fbc036c3ebe1",
+      "at": "2026-09-02T00:16:55.153Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S04:verification:pending->verified",
+      "slice": "S04",
+      "hash": "f54bd9d7d5a13e03ddcfcf786db613cbcdf17c7606495caada621ed8cebb1c69",
+      "oracle": "ee6a1fb1642aca71e8b39314db176e3792fd1a0bb72be2b9079d9878c77fadc2",
+      "evidence": "a113409953ece316cf6f957117e03f74cdf36ee65422a01beb15e222e8a75a65",
+      "fileHash": "199dbe07f3ba23ac9dcacce21cb5bc3cd1e9faffdc888618624e4071472112c4"
+    },
+    {
+      "seq": 41,
+      "id": "b168070e-66e0-40f8-8e51-5545d0d1719d",
+      "at": "2026-09-02T00:18:40.291Z",
+      "actor": "verifier",
+      "command": "slice_reject_batch",
+      "transition": "reject-batch:S01,S02,S03,S05",
+      "slice": null,
+      "hash": "eac7a8e4a3320ca0068a31756280c1e482c18db3a27b6df368a69f3d03de3064",
+      "fileHash": "271bce1c6e5e4053d314669f09e09147135cf257a9522e4208f6eed1f3a7b58d"
+    },
+    {
+      "seq": 42,
+      "id": "97a0925d-0acd-432b-98b0-78bc09c48052",
+      "at": "2026-09-02T00:24:36.235Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S01:impl:pending->ready_for_verification",
+      "slice": "S01",
+      "hash": "4c4d5f437e4cf855801d6dfec41afe770763817b3e7ce50a49cb5f8666a09636",
+      "fileHash": "cf5c0867bc52e73d35e3d0b0e44ba18ac3bbe799d387016923a535eb61ef5391"
+    },
+    {
+      "seq": 43,
+      "id": "003e9489-76c4-411a-abbe-e2c76ac86874",
+      "at": "2026-09-02T00:24:41.857Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S02:impl:pending->ready_for_verification",
+      "slice": "S02",
+      "hash": "5f446905c1c4501b8f7e232bcfe4fabe51a517edf5eedd517be5cb129a1f9b0d",
+      "fileHash": "39146c1585f73c2f9dc42417478a1760f9f6010225dd339b90584e719b82f07c"
+    },
+    {
+      "seq": 44,
+      "id": "af2c7e1c-91e9-4327-a75c-7a97869c27df",
+      "at": "2026-09-02T00:24:53.574Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S03:impl:pending->ready_for_verification",
+      "slice": "S03",
+      "hash": "adcb2cb25ed54b313ac59334b0705e56f13a25ce4372538c69b4e3e6ba2ab229",
+      "fileHash": "0e1e06a9d0791dcb15f75af4124db4ed1fb1901d5d2232c428902b9a69813213"
+    },
+    {
+      "seq": 45,
+      "id": "6989f247-eb83-4a45-aede-e208ffb623bc",
+      "at": "2026-09-02T00:25:03.230Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S05:impl:pending->ready_for_verification",
+      "slice": "S05",
+      "hash": "145a99f5a39f30d8cd418d8e7bc0c6685b3a30d7bf09106f12b4a75cf0674a70",
+      "fileHash": "a43a0f4f7d705b8b9c75a57fcb1658a1ae7b5532f38bc4c92f57e2254a940b73"
     }
   ],
-  "fileHash": "8e97a005603dd8f6232ce85c4b7eda353328fe7db690ae57768af178569177d0"
+  "fileHash": "6448d78df7533fd45b6357030e7a0077c93ab53a622f5200f256f8affd057ce5"
 }

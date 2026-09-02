@@ -353,7 +353,6 @@ describe('classic media orchestrator', () => {
     expect(source).not.toContain('.rekeyDone(');
   });
 
-
   it('forwards firstFrameUrl and referenceImageUrls in video request body', async () => {
     serveVideo();
 

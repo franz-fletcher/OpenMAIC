@@ -18,7 +18,11 @@
 
 import { NextRequest } from 'next/server';
 import { recordGenerationUsage } from '@/lib/server/usage-storage';
-import { generateVideo, normalizeVideoOptions, getVideoModelSourceRequirement } from '@/lib/media/video-providers';
+import {
+  generateVideo,
+  normalizeVideoOptions,
+  getVideoModelSourceRequirement,
+} from '@/lib/media/video-providers';
 import {
   isServerConfiguredProvider,
   isServerProviderDisabled,
@@ -99,10 +103,18 @@ export async function POST(request: NextRequest) {
     // return 400 before any vendor call runs.
     const sourceRequirement = getVideoModelSourceRequirement(providerId, model);
     if (sourceRequirement === 'first_frame' && !body.firstFrameUrl) {
-      return apiError('MISSING_REQUIRED_FIELD', 400, 'Missing firstFrameUrl for image-to-video model');
+      return apiError(
+        'MISSING_REQUIRED_FIELD',
+        400,
+        'Missing firstFrameUrl for image-to-video model',
+      );
     }
     if (sourceRequirement === 'reference_images' && !body.referenceImageUrls?.length) {
-      return apiError('MISSING_REQUIRED_FIELD', 400, 'Missing referenceImageUrls for reference-to-video model');
+      return apiError(
+        'MISSING_REQUIRED_FIELD',
+        400,
+        'Missing referenceImageUrls for reference-to-video model',
+      );
     }
 
     // Normalize options against provider capabilities

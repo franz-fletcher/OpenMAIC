@@ -116,10 +116,7 @@ describe('HappyHorse video adapter', () => {
       { ...config, model: 'happyhorse-1.1-r2v' },
       {
         prompt: 'A landscape transformation',
-        referenceImageUrls: [
-          'https://example.com/ref1.jpg',
-          'https://example.com/ref2.jpg',
-        ],
+        referenceImageUrls: ['https://example.com/ref1.jpg', 'https://example.com/ref2.jpg'],
       },
     );
 

@@ -103,35 +103,31 @@ describeOrSkip('HappyHorse live protocol', () => {
     expect(lastError!.message).toContain('Failed to download');
   });
 
-  test(
-    'i2v completes',
-    async () => {
-      // The single paid generation.
-      // firstFrameUrl=LIVE_IMAGE_URL, default duration, poll to SUCCEEDED.
-      const taskId = await submitHappyHorseTask(config, {
-        prompt: 'A happy dog playing with a girl in a park',
-        duration: 5,
-        firstFrameUrl: LIVE_IMAGE_URL,
-      });
+  test('i2v completes', async () => {
+    // The single paid generation.
+    // firstFrameUrl=LIVE_IMAGE_URL, default duration, poll to SUCCEEDED.
+    const taskId = await submitHappyHorseTask(config, {
+      prompt: 'A happy dog playing with a girl in a park',
+      duration: 5,
+      firstFrameUrl: LIVE_IMAGE_URL,
+    });
 
-      expect(taskId).toBeTruthy();
+    expect(taskId).toBeTruthy();
 
-      // Poll until SUCCEEDED or timeout (10 minutes)
+    // Poll until SUCCEEDED or timeout (10 minutes)
       const startTime = Date.now();
-      let result: ReturnType<typeof pollHappyHorseTask> extends Promise<infer R> ? R : never;
+      let result: Awaited<ReturnType<typeof pollHappyHorseTask>> = null;
 
-      while (Date.now() - startTime < 600000) {
-        result = await pollHappyHorseTask(config, taskId);
-        if (result !== null) {
-          break;
-        }
-        await new Promise((resolve) => setTimeout(resolve, 15000));
+    while (Date.now() - startTime < 600000) {
+      result = await pollHappyHorseTask(config, taskId);
+      if (result !== null) {
+        break;
       }
+      await new Promise((resolve) => setTimeout(resolve, 15000));
+    }
 
-      expect(result).toBeTruthy();
-      expect(result!.url).toBeTruthy();
-      expect(result!.url).toMatch(/^https?:\/\//);
-    },
-    600000,
-  );
+    expect(result).toBeTruthy();
+    expect(result!.url).toBeTruthy();
+    expect(result!.url).toMatch(/^https?:\/\//);
+  }, 600000);
 });

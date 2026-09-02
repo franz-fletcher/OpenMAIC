@@ -26,11 +26,7 @@ vi.mock('@/lib/logger', () => ({
   }),
 }));
 
-function jsonRequest(
-  url: string,
-  body: unknown,
-  headers?: Record<string, string>,
-): NextRequest {
+function jsonRequest(url: string, body: unknown, headers?: Record<string, string>): NextRequest {
   return new NextRequest(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...headers },
@@ -112,25 +108,27 @@ describe('video route preflight', () => {
     });
   });
 
-  it.each(PREFLIGHT_MATRIX)('$name', async ({ model, provider, body, expectedStatus, expectedCode }) => {
-    vi.stubEnv('VIDEO_HAPPYHORSE_API_KEY', 'test-key');
+  it.each(PREFLIGHT_MATRIX)(
+    '$name',
+    async ({ model, provider, body, expectedStatus, expectedCode }) => {
+      vi.stubEnv('VIDEO_HAPPYHORSE_API_KEY', 'test-key');
 
-    const { POST } = await import('@/app/api/generate/video/route');
-    const res = await POST(
-      jsonRequest(
-        'http://localhost/api/generate/video',
-        body,
-        { 'x-video-provider': provider, 'x-video-model': model },
-      ),
-    );
-    const json = await res.json();
+      const { POST } = await import('@/app/api/generate/video/route');
+      const res = await POST(
+        jsonRequest('http://localhost/api/generate/video', body, {
+          'x-video-provider': provider,
+          'x-video-model': model,
+        }),
+      );
+      const json = await res.json();
 
-    expect(res.status).toBe(expectedStatus);
-    if (expectedCode) {
-      expect(json).toMatchObject({ success: false, errorCode: expectedCode });
-      expect(mocks.generateVideo).not.toHaveBeenCalled();
-    } else {
-      expect(json).toMatchObject({ success: true });
-    }
-  });
+      expect(res.status).toBe(expectedStatus);
+      if (expectedCode) {
+        expect(json).toMatchObject({ success: false, errorCode: expectedCode });
+        expect(mocks.generateVideo).not.toHaveBeenCalled();
+      } else {
+        expect(json).toMatchObject({ success: true });
+      }
+    },
+  );
 });

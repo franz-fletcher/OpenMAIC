@@ -8,6 +8,7 @@ import type {
   VideoGenerationOptions,
   VideoGenerationResult,
   VideoProviderConfig,
+  VideoModelSourceRequirement,
 } from './types';
 import { generateWithSeedance, testSeedanceConnectivity } from './adapters/seedance-adapter';
 import { generateWithKling, testKlingConnectivity } from './adapters/kling-adapter';
@@ -118,7 +119,11 @@ export const VIDEO_PROVIDERS: Record<VideoProviderId, VideoProviderConfig> = {
       { id: 'happyhorse-1.0-t2v', name: 'HappyHorse 1.0 T2V' },
       { id: 'happyhorse-1.1-t2v', name: 'HappyHorse 1.1 T2V' },
       { id: 'happyhorse-1.1-i2v', name: 'HappyHorse 1.1 I2V', sourceRequirement: 'first_frame' },
-      { id: 'happyhorse-1.1-r2v', name: 'HappyHorse 1.1 R2V', sourceRequirement: 'reference_images' },
+      {
+        id: 'happyhorse-1.1-r2v',
+        name: 'HappyHorse 1.1 R2V',
+        sourceRequirement: 'reference_images',
+      },
     ],
     supportedAspectRatios: ['16:9', '9:16', '1:1', '4:3', '3:4'],
     supportedDurations: [5, 10, 15],
@@ -222,7 +227,7 @@ export async function generateVideo(
 export function getVideoModelSourceRequirement(
   providerId: string,
   modelId: string,
-): 'first_frame' | 'reference_images' | undefined {
+): VideoModelSourceRequirement | undefined {
   const provider = VIDEO_PROVIDERS[providerId as VideoProviderId];
   if (!provider) return undefined;
   const model = provider.models.find((m) => m.id === modelId);
