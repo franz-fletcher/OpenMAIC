@@ -4,12 +4,12 @@
   "spec": {
     "reference": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC/docs/specs/007-agent-session-friction.md",
     "title": "Batch 007 spec: agent-session-friction",
-    "hash": "f510a1becea5afa111c2e2767d6316e5243181ab5ccafdfcd71b979234547bfc"
+    "hash": "d532a680d2445cfe0d573242b6ae0287e1494ca925d7bded1d7195611113843e"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "verification",
+  "stage": "closed",
   "retry": {
     "count": 1,
     "max": 5,
@@ -831,7 +831,108 @@
       "oracle": "8718c8870f0df99a8fa01433213229ab092c38df0ab6e25deaede508ca65b9ce",
       "evidence": "6a36c89884d26aa29ad7da5e24b8205dacdad42952567e4cfae4f83733309301",
       "fileHash": "ce063999fb388cf433ed787e68afec25bc524841b969acf8addfbf56fa6d21ac"
+    },
+    {
+      "seq": 41,
+      "id": "21a1620d-a3f4-4666-8572-a819058ab790",
+      "at": "2026-09-02T10:34:09.557Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:verification->research_update",
+      "slice": null,
+      "hash": "5779509a995040d051398a2dbe8af490552ce61ec2bbc9197f9fb5f1bd59d638",
+      "fileHash": "3d36a361732ed60e56219432160d252b4b5c803bc44ddecb9cdd3b548e9262b2"
+    },
+    {
+      "seq": 42,
+      "id": "3334003f-f5a7-4603-9bc1-ad4a9d4f050f",
+      "at": "2026-09-02T10:40:46.998Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:respecify:Stage 4 research update: deviations, surprises, evidence, and commit 8c810aab folded into spec",
+      "slice": null,
+      "hash": "e9d6b4b02b78a449ddb5bdd436fc5261aa7b591eb578b643a8e0232e945f1b15",
+      "fileHash": "829f85b90bebb637f634dfee21caeb88c5e60f5526faa5b17514fa8a085145c4"
+    },
+    {
+      "seq": 43,
+      "id": "68937918-f873-4a02-9b49-748f22298369",
+      "at": "2026-09-02T10:40:47.034Z",
+      "actor": "verifier",
+      "command": "certify",
+      "transition": "certify:c7995dd51ec8a9571d9ea9d813cf52033155e797e0c02527e9b370bf9d80bd3f",
+      "slice": null,
+      "hash": "b9989355083c2bd795a0da02711a4b66f84783b0cbbcecc53bba8bf0ea86595f",
+      "oracle": "c7995dd51ec8a9571d9ea9d813cf52033155e797e0c02527e9b370bf9d80bd3f",
+      "fileHash": "94b39439ad54271e20074753a4eaf37369fcf40ecc7df28f54468ad575d9cb7f"
+    },
+    {
+      "seq": 44,
+      "id": "7a460159-2074-4935-ae06-983166de11a6",
+      "at": "2026-09-02T10:45:52.171Z",
+      "actor": "orchestrator",
+      "command": "stage_reopen",
+      "transition": "reopen:Close sequencing defect: accept ran while spec marker was research_update, leaving stale hash binding and a stray cert block; reopening to re-close in correct order",
+      "slice": null,
+      "hash": "c7c542f8feed9607dd3610c4a5bc63591cbf6de9d680b088256c3b121b4a2631",
+      "fileHash": "64def0c2d4e0235e539425ab6750b9e31eec645a75022388e76779cf524a9162"
+    },
+    {
+      "seq": 45,
+      "id": "3d9071b3-5b48-4b3c-b613-0a1d0ab83105",
+      "at": "2026-09-02T10:46:00.966Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "2f137bea02c1134a650b941f54fc1546736a15697f43dddc468abce5d6053ed0",
+      "fileHash": "f02a4e6bb46bda8a312317b44004d95b3b2d4d17a4e2bd900dc2ce557348ca16"
+    },
+    {
+      "seq": 46,
+      "id": "6cd77c24-7c63-46d1-a626-3e189192f090",
+      "at": "2026-09-02T10:46:01.098Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "58d9a581e8a68887ed32fb1985024d5a534c27cd1c3b4d5577c79b706625422e",
+      "fileHash": "d6617c482c229116de5df5210dd237d1c26b862c02894336783a0d8f55875a6a"
+    },
+    {
+      "seq": 47,
+      "id": "89d2d910-2803-4276-b40b-598829fddbd6",
+      "at": "2026-09-02T10:46:01.182Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:verification->research_update",
+      "slice": null,
+      "hash": "d8fd4ccdb54c7091e4b978267a9505148e7e7e136d1067a03b040f9f70ee24ad",
+      "fileHash": "48152367ffdf6d4f1e5d5433e8ffb568daeffd894a43562925aa5b9ff20672b9"
+    },
+    {
+      "seq": 48,
+      "id": "10875246-7bd8-458c-8142-e20b89c99d60",
+      "at": "2026-09-02T10:46:01.266Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research_update->closed",
+      "slice": null,
+      "hash": "b4a3aba82f1f90af80bb44627af519d54a211ade56c3148b24acce85102382a4",
+      "fileHash": "1a5c692bb797b88bc2d58bb1d09ea9e81b9951e9128df845b11257be6fcb9a2c"
+    },
+    {
+      "seq": 49,
+      "id": "8aab6253-d3f5-4573-8603-86df92b61b06",
+      "at": "2026-09-02T10:46:07.796Z",
+      "actor": "verifier",
+      "command": "certify",
+      "transition": "certify:12285c033a2377a2754ef18154f007fa758048f07ae39dc0b6c640b0fca79629",
+      "slice": null,
+      "hash": "59c196ead50cd05d4d3182ba60678ccb4013970906d7a26e4f6a048538e0962b",
+      "oracle": "12285c033a2377a2754ef18154f007fa758048f07ae39dc0b6c640b0fca79629",
+      "fileHash": "0806b17339bc52190106c851d49e1cad20c4acdd1081e339fd46e517021bdea4"
     }
   ],
-  "fileHash": "3d36a361732ed60e56219432160d252b4b5c803bc44ddecb9cdd3b548e9262b2"
+  "fileHash": "12b047bace5fb945929a00ba829210c3cf59b049b96923c18d9099ea4eeddc2d"
 }
