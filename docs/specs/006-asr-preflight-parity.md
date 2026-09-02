@@ -1,6 +1,6 @@
 # Batch 006 spec: ASR transcription route missing-key preflight parity
 
-Spec status: research
+Spec status: implementation
 
 ## Problem Statement
 
