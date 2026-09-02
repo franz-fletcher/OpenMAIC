@@ -353,6 +353,59 @@ describe('classic media orchestrator', () => {
     expect(source).not.toContain('.rekeyDone(');
   });
 
+  it('forwards firstFrameUrl and referenceImageUrls in video request body', async () => {
+    serveVideo();
+
+    await generateMediaForOutlines(
+      [
+        outlineWith({
+          type: 'video',
+          prompt: 'A cat sleeping',
+          elementId: videoRef,
+          firstFrameUrl: 'https://example.com/cat.jpg',
+          referenceImageUrls: ['https://example.com/ref1.jpg', 'https://example.com/ref2.jpg'],
+        }),
+      ],
+      stageId,
+    );
+
+    const videoCall = fetchMock.mock.calls.find(
+      (call: unknown[]) => String(call[0]) === '/api/generate/video',
+    );
+    expect(videoCall).toBeDefined();
+    const body = JSON.parse(String(videoCall![1]?.body)) as {
+      prompt: string;
+      firstFrameUrl?: string;
+      referenceImageUrls?: string[];
+    };
+    expect(body.firstFrameUrl).toBe('https://example.com/cat.jpg');
+    expect(body.referenceImageUrls).toEqual([
+      'https://example.com/ref1.jpg',
+      'https://example.com/ref2.jpg',
+    ]);
+  });
+
+  it('omits firstFrameUrl and referenceImageUrls when not set', async () => {
+    serveVideo();
+
+    await generateMediaForOutlines(
+      [outlineWith({ type: 'video', prompt: 'A cardboard city', elementId: videoRef })],
+      stageId,
+    );
+
+    const videoCall = fetchMock.mock.calls.find(
+      (call: unknown[]) => String(call[0]) === '/api/generate/video',
+    );
+    expect(videoCall).toBeDefined();
+    const body = JSON.parse(String(videoCall![1]?.body)) as {
+      prompt: string;
+      firstFrameUrl?: string;
+      referenceImageUrls?: string[];
+    };
+    expect(body.firstFrameUrl).toBeUndefined();
+    expect(body.referenceImageUrls).toBeUndefined();
+  });
+
   it('retains renderer retry targeting as a read-side compatibility seam', () => {
     expect(mediaRetryTarget('image-element', 'scene-1', { canvas: { id: 'slide-1' } })).toEqual({
       elementId: 'image-element',

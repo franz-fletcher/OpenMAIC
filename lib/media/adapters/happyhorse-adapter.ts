@@ -95,6 +95,28 @@ export async function submitHappyHorseTask(
   options: VideoGenerationOptions,
 ): Promise<string> {
   const baseUrl = normalizeBaseUrl(config.baseUrl);
+
+  // Build input.media from options when set.
+  // firstFrameUrl wins for i2v semantics; referenceImageUrls for r2v.
+  // If both absent, omit media entirely (t2v byte-identical).
+  const media: Array<{ type: string; url: string }> = [];
+  if (options.firstFrameUrl) {
+    media.push({ type: 'first_frame', url: options.firstFrameUrl });
+  } else if (options.referenceImageUrls?.length) {
+    // Cap nine references per vendor constraint.
+    const refs = options.referenceImageUrls.slice(0, 9);
+    for (const url of refs) {
+      media.push({ type: 'reference_image', url });
+    }
+  }
+
+  const input: { prompt: string; media?: Array<{ type: string; url: string }> } = {
+    prompt: options.prompt,
+  };
+  if (media.length > 0) {
+    input.media = media;
+  }
+
   const response = await fetch(`${baseUrl}/api/v1/services/aigc/video-generation/video-synthesis`, {
     method: 'POST',
     headers: {
@@ -103,9 +125,7 @@ export async function submitHappyHorseTask(
     },
     body: JSON.stringify({
       model: requireModel(config.model, 'HappyHorse'),
-      input: {
-        prompt: options.prompt,
-      },
+      input,
       parameters: {
         resolution: toHappyHorseResolution(options.resolution),
         ratio: options.aspectRatio || '16:9',

@@ -241,7 +241,7 @@ export const TOKEN_PLAN_PRESETS: TokenPlanPreset[] = [
       video: {
         providerId: 'happyhorse',
         baseUrl: 'https://token-plan.ap-southeast-1.maas.aliyuncs.com',
-        defaultModels: ['happyhorse-1.1-t2v'],
+        defaultModels: ['happyhorse-1.1-t2v', 'happyhorse-1.1-i2v', 'happyhorse-1.1-r2v'],
       },
       tts: {
         providerId: 'qwen-token-plan-tts',

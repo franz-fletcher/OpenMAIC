@@ -18,7 +18,11 @@
 
 import { NextRequest } from 'next/server';
 import { recordGenerationUsage } from '@/lib/server/usage-storage';
-import { generateVideo, normalizeVideoOptions } from '@/lib/media/video-providers';
+import {
+  generateVideo,
+  normalizeVideoOptions,
+  getVideoModelSourceRequirement,
+} from '@/lib/media/video-providers';
 import {
   isServerConfiguredProvider,
   isServerProviderDisabled,
@@ -90,6 +94,26 @@ export async function POST(request: NextRequest) {
         'MISSING_MODEL',
         400,
         `No model configured for video provider: ${providerId}`,
+      );
+    }
+
+    // Preflight: reject missing source images for i2v/r2v models.
+    // The registry declares sourceRequirement per model. When the requirement
+    // is first_frame or reference_images and the matching option is absent,
+    // return 400 before any vendor call runs.
+    const sourceRequirement = getVideoModelSourceRequirement(providerId, model);
+    if (sourceRequirement === 'first_frame' && !body.firstFrameUrl) {
+      return apiError(
+        'MISSING_REQUIRED_FIELD',
+        400,
+        'Missing firstFrameUrl for image-to-video model',
+      );
+    }
+    if (sourceRequirement === 'reference_images' && !body.referenceImageUrls?.length) {
+      return apiError(
+        'MISSING_REQUIRED_FIELD',
+        400,
+        'Missing referenceImageUrls for reference-to-video model',
       );
     }
 

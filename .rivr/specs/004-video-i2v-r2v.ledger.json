@@ -1,0 +1,1350 @@
+{
+  "schema_version": 2,
+  "$schema": "https://rivr.dev/schemas/ledger/v2",
+  "spec": {
+    "reference": "docs/specs/004-video-i2v-r2v.md",
+    "title": "Batch 004 spec: happyhorse i2v and r2v media input",
+    "hash": "e3bca6dfb66be5584b2f16f4260c110610d079754b043512b2d8cf0ac2b514fd"
+  },
+  "tracker": {
+    "mode": "none"
+  },
+  "stage": "closed",
+  "retry": {
+    "count": 2,
+    "max": 5,
+    "consecutive_same_cause": 2,
+    "escalate_at": 3,
+    "last_cause": "format-gate"
+  },
+  "slices": [
+    {
+      "id": "S01",
+      "title": "Adapter media input",
+      "intent": "VideoGenerationOptions gains firstFrameUrl and referenceImageUrls; submitHappyHorseTask builds input.media; t2v body unchanged.",
+      "user_stories": [
+        2,
+        3
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/media/types.ts",
+          "symbols": [
+            {
+              "name": "VideoGenerationOptions",
+              "kind": "interface",
+              "expectation": "Optional firstFrameUrl and referenceImageUrls string fields.",
+              "before": {
+                "exists": true,
+                "kind": "interface"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "interface"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "lib/media/adapters/happyhorse-adapter.ts",
+          "symbols": [
+            {
+              "name": "submitHappyHorseTask",
+              "kind": "function",
+              "expectation": "Builds input.media from options when set; signature unchanged.",
+              "beforeSignature": "( config: VideoGenerationConfig, options: VideoGenerationOptions, ): Promise<string>",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  config: VideoGenerationConfig,\n  options: VideoGenerationOptions,\n): Promise<string>"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "( config: VideoGenerationConfig, options: VideoGenerationOptions, ): Promise<string>"
+              },
+              "postcondition_quality": "VERIFIED"
+            },
+            {
+              "name": "pollHappyHorseTask",
+              "kind": "function",
+              "expectation": "Behavior unchanged; failure rendering stays code colon message.",
+              "beforeSignature": "( config: VideoGenerationConfig, taskId: string, ): Promise<VideoGenerationResult | null>",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  config: VideoGenerationConfig,\n  taskId: string,\n): Promise<VideoGenerationResult | null>"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "( config: VideoGenerationConfig, taskId: string, ): Promise<VideoGenerationResult | null>"
+              },
+              "postcondition_quality": "VERIFIED"
+            },
+            {
+              "name": "generateWithHappyHorse",
+              "kind": "function",
+              "expectation": "Signature unchanged; media flows through options.",
+              "beforeSignature": "( config: VideoGenerationConfig, options: VideoGenerationOptions, ): Promise<VideoGenerationResult>",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  config: VideoGenerationConfig,\n  options: VideoGenerationOptions,\n): Promise<VideoGenerationResult>"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "( config: VideoGenerationConfig, options: VideoGenerationOptions, ): Promise<VideoGenerationResult>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 4,
+      "uuid": "68755789-8d16-4cf4-9a6e-df501202fdc9",
+      "impl": {
+        "status": "ready_for_verification",
+        "hash": "9e8bd0ed93274d97434630d9e0a52b275c3aee3c138c7e25f7434a66ef07fe4d",
+        "actor": "implementer",
+        "at": "2026-09-02T00:24:36.235Z"
+      },
+      "verification": {
+        "status": "verified",
+        "hash": "d34ca97d48ca8ca2914b43d5e4ed7ab6f3af221e336044e8ece20ccce3371480",
+        "actor": "verifier",
+        "at": "2026-09-02T00:30:02.206Z",
+        "deficiencies": [
+          "Prettier format gate fails on tests/media/happyhorse-adapter.test.ts. npx prettier --check --config .prettierrc exits non-zero; the main baseline is clean. The repo CI gate pnpm check (.github/workflows/ci.yml:125) fails on merge. Fix: run pnpm format (or npx prettier --write) on the touched files, then re-mark S01."
+        ],
+        "evidence": {
+          "gates": [
+            {
+              "id": "G1.1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/media/happyhorse-adapter.test.ts \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 3\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m6 passed\u001b[39m\u001b[22m\u001b[90m (6)\u001b[39m\n\u001b[2m   Start at \u001b[22m 12:29:56\n\u001b[2m   Duration \u001b[22m 106ms\u001b[2m (transform 31ms, setup 15ms, import 26ms, tests 3ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G1.2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            },
+            {
+              "id": "G1.3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> node scripts/check-i18n-keys.mjs\n\ni18n key alignment check passed (12 locale files, source: en-US.json).\n",
+              "passed": true
+            },
+            {
+              "id": "G1.4",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/media/happyhorse-adapter.test.ts \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m | \u001b[22m\u001b[33m5 skipped\u001b[39m\u001b[2m)\u001b[22m\u001b[32m 2\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[2m | \u001b[22m\u001b[33m5 skipped\u001b[39m\u001b[90m (6)\u001b[39m\n\u001b[2m   Start at \u001b[22m 12:30:02\n\u001b[2m   Duration \u001b[22m 99ms\u001b[2m (transform 26ms, setup 12ms, import 24ms, tests 2ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            }
+          ]
+        }
+      },
+      "expectation": "i2v sends one first_frame entry, r2v sends one-to-nine reference_image entries, t2v stays byte-identical; adversarial poll-failure unit test named rejects unreachable image on poll passes.",
+      "gates": [
+        {
+          "id": "G1.1",
+          "check": "npx vitest run tests/media/happyhorse-adapter.test.ts",
+          "expect": "passed",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G1.1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/media/happyhorse-adapter.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m6 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 3\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m6 passed\\u001b[39m\\u001b[22m\\u001b[90m (6)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 12:29:56\\n\\u001b[2m   Duration \\u001b[22m 106ms\\u001b[2m (transform 31ms, setup 15ms, import 26ms, tests 3ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}"
+        },
+        {
+          "id": "G1.2",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G1.2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}"
+        },
+        {
+          "id": "G1.3",
+          "check": "pnpm check:i18n-keys",
+          "expect": "passed",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G1.3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> node scripts/check-i18n-keys.mjs\\n\\ni18n key alignment check passed (12 locale files, source: en-US.json).\\n\",\"passed\":true}"
+        },
+        {
+          "id": "G1.4",
+          "check": "npx vitest run tests/media/happyhorse-adapter.test.ts -t \"rejects unreachable image on poll\"",
+          "expect": "passed",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G1.4\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/media/happyhorse-adapter.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m6 tests\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[33m5 skipped\\u001b[39m\\u001b[2m)\\u001b[22m\\u001b[32m 2\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[33m5 skipped\\u001b[39m\\u001b[90m (6)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 12:30:02\\n\\u001b[2m   Duration \\u001b[22m 99ms\\u001b[2m (transform 26ms, setup 12ms, import 24ms, tests 2ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}",
+          "type": "adversarial"
+        }
+      ],
+      "findings": [
+        {
+          "id": 1,
+          "correlation": "5e428247b54d35c552fcdc12a29251fc6efb4326655e426fa9571beaf490f548",
+          "at": "2026-09-02T00:18:40.290Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "Prettier format gate fails on tests/media/happyhorse-adapter.test.ts. npx prettier --check --config .prettierrc exits non-zero; the main baseline is clean. The repo CI gate pnpm check (.github/workflows/ci.yml:125) fails on merge. Fix: run pnpm format (or npx prettier --write) on the touched files, then re-mark S01.",
+          "evidence": "format-gate"
+        }
+      ]
+    },
+    {
+      "id": "S02",
+      "title": "Route preflight and pass-through",
+      "intent": "Named POST preflights missing source images via registry capability; callVideoApi forwards both fields.",
+      "user_stories": [
+        4
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "tests/server/video-route-preflight.test.ts",
+          "symbols": [
+            {
+              "name": "PREFLIGHT_MATRIX",
+              "kind": "variable",
+              "expectation": "Matrix of model requirement x payload combos with expected codes.",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "46c16185-e539-4c8d-b3e8-18357eb8e732",
+      "impl": {
+        "status": "ready_for_verification",
+        "hash": "d231ec5d20a652e98a712e8a649e3b9e30e2ea5eae08af23c28fb05c703afbd4",
+        "actor": "implementer",
+        "at": "2026-09-02T00:24:41.857Z"
+      },
+      "verification": {
+        "status": "verified",
+        "hash": "2e39d61136f69951ce303f0665355c948b4b89c762ba389441203bf92ba5d7e5",
+        "actor": "verifier",
+        "at": "2026-09-02T00:30:07.012Z",
+        "deficiencies": [
+          "Prettier format gate fails on app/api/generate/video/route.ts and tests/server/video-route-preflight.test.ts. The getVideoModelSourceRequirement import stays single-line past the 100-column limit and the two apiError preflight calls are wrapped where prettier collapses them. Fix: run pnpm format, then re-mark S02."
+        ],
+        "evidence": {
+          "gates": [
+            {
+              "id": "G2.1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/server/video-route-preflight.test.ts \u001b[2m(\u001b[22m\u001b[2m7 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 99\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m7 passed\u001b[39m\u001b[22m\u001b[90m (7)\u001b[39m\n\u001b[2m   Start at \u001b[22m 12:30:06\n\u001b[2m   Duration \u001b[22m 203ms\u001b[2m (transform 88ms, setup 10ms, import 37ms, tests 99ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G2.2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/media/media-orchestrator.test.ts \u001b[2m(\u001b[22m\u001b[2m12 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 19\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m12 passed\u001b[39m\u001b[22m\u001b[90m (12)\u001b[39m\n\u001b[2m   Start at \u001b[22m 12:30:06\n\u001b[2m   Duration \u001b[22m 133ms\u001b[2m (transform 37ms, setup 10ms, import 43ms, tests 19ms, environment 0ms)\u001b[22m\n\n\u001b[90mstderr\u001b[2m | tests/media/media-orchestrator.test.ts\u001b[2m > \u001b[22m\u001b[2mclassic media orchestrator\u001b[2m > \u001b[22m\u001b[2mpersists structured terminal errors under the placeholder for reload\n\u001b[22m\u001b[39m[2026-09-02T00:30:06.968Z] [ERROR] [MediaOrchestrator] Failed gen_img_classic: Sensitive content\n\n\u001b[90mstderr\u001b[2m | tests/media/media-orchestrator.test.ts\u001b[2m > \u001b[22m\u001b[2mclassic media orchestrator\u001b[2m > \u001b[22m",
+              "passed": true
+            }
+          ]
+        }
+      },
+      "expectation": "400 MISSING_REQUIRED_FIELD when requirement first_frame and no firstFrameUrl, or reference_images and empty referenceImageUrls; orchestrator body carries both fields when present.",
+      "gates": [
+        {
+          "id": "G2.1",
+          "check": "npx vitest run tests/server/video-route-preflight.test.ts",
+          "expect": "passed",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G2.1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/server/video-route-preflight.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m7 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 99\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m7 passed\\u001b[39m\\u001b[22m\\u001b[90m (7)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 12:30:06\\n\\u001b[2m   Duration \\u001b[22m 203ms\\u001b[2m (transform 88ms, setup 10ms, import 37ms, tests 99ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}"
+        },
+        {
+          "id": "G2.2",
+          "check": "npx vitest run tests/media/media-orchestrator.test.ts",
+          "expect": "passed",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G2.2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/media/media-orchestrator.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m12 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 19\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m12 passed\\u001b[39m\\u001b[22m\\u001b[90m (12)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 12:30:06\\n\\u001b[2m   Duration \\u001b[22m 133ms\\u001b[2m (transform 37ms, setup 10ms, import 43ms, tests 19ms, environment 0ms)\\u001b[22m\\n\\n\\u001b[90mstderr\\u001b[2m | tests/media/media-orchestrator.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mclassic media orchestrator\\u001b[2m > \\u001b[22m\\u001b[2mpersists structured terminal errors under the placeholder for reload\\n\\u001b[22m\\u001b[39m[2026-09-02T00:30:06.968Z] [ERROR] [MediaOrchestrator] Failed gen_img_classic: Sensitive content\\n\\n\\u001b[90mstderr\\u001b[2m | tests/media/media-orchestrator.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mclassic media orchestrator\\u001b[2m > \\u001b[22m\",\"passed\":true}"
+        }
+      ],
+      "findings": [
+        {
+          "id": 1,
+          "correlation": "26a3b483e5a3b5dc4d53ec2f992201b30de443d03c0422b010090c09f0e9126c",
+          "at": "2026-09-02T00:18:40.291Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "Prettier format gate fails on app/api/generate/video/route.ts and tests/server/video-route-preflight.test.ts. The getVideoModelSourceRequirement import stays single-line past the 100-column limit and the two apiError preflight calls are wrapped where prettier collapses them. Fix: run pnpm format, then re-mark S02.",
+          "evidence": "format-gate"
+        }
+      ]
+    },
+    {
+      "id": "S03",
+      "title": "Registry capability, model list, preset",
+      "intent": "VIDEO_PROVIDERS carries three 1.1 models with sourceRequirement metadata; exported getVideoModelSourceRequirement; preset defaultModels gains i2v and r2v.",
+      "user_stories": [
+        1
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/media/video-providers.ts",
+          "symbols": [
+            {
+              "name": "VIDEO_PROVIDERS",
+              "kind": "variable",
+              "expectation": "happyhorse models list includes i2v and r2v ids.",
+              "before": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "VERIFIED"
+            },
+            {
+              "name": "getVideoModelSourceRequirement",
+              "kind": "function",
+              "expectation": "New exported helper signature (providerId: string, modelId: string): VideoModelSourceRequirement | undefined.",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "lib/config/token-plan-presets.ts",
+          "symbols": [
+            {
+              "name": "TOKEN_PLAN_PRESETS",
+              "kind": "variable",
+              "expectation": "qwen-token-plan video defaultModels equals the three 1.1 ids.",
+              "before": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "2e862d4c-7917-46e0-9a82-8d6c5d7ed75d",
+      "impl": {
+        "status": "ready_for_verification",
+        "hash": "24d77fd793b95bd56935feaead0cc234ddf75bcc3c392f59a7a8b8e24e1f979e",
+        "actor": "implementer",
+        "at": "2026-09-02T00:24:53.574Z"
+      },
+      "verification": {
+        "status": "verified",
+        "hash": "18c2a922b874a39f84afb6e6ab2a7639226e5178b20c2c6084019bbaa373f172",
+        "actor": "verifier",
+        "at": "2026-09-02T00:30:11.899Z",
+        "deficiencies": [
+          "Prettier format gate fails on lib/media/video-providers.ts. The happyhorse-1.1-r2v model entry stays multi-line where prettier collapses it. Fix: run pnpm format, then re-mark S03."
+        ],
+        "evidence": {
+          "gates": [
+            {
+              "id": "G3.1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "REGISTRY_OK\n",
+              "passed": true
+            },
+            {
+              "id": "G3.2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "PRESET_OK\n",
+              "passed": true
+            }
+          ]
+        }
+      },
+      "expectation": "Helper returns undefined for t2v ids, first_frame for i2v, reference_images for r2v; preset video defaultModels lists three 1.1 ids in catalog order.",
+      "gates": [
+        {
+          "id": "G3.1",
+          "check": "grep -q \"happyhorse-1.1-i2v\" lib/media/video-providers.ts && grep -q \"happyhorse-1.1-r2v\" lib/media/video-providers.ts && echo REGISTRY_OK",
+          "expect": "REGISTRY_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G3.1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"REGISTRY_OK\\n\",\"passed\":true}"
+        },
+        {
+          "id": "G3.2",
+          "check": "grep -q \"happyhorse-1.1-r2v\" lib/config/token-plan-presets.ts && echo PRESET_OK",
+          "expect": "PRESET_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G3.2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"PRESET_OK\\n\",\"passed\":true}"
+        }
+      ],
+      "findings": [
+        {
+          "id": 1,
+          "correlation": "3456e0bd6a301e080acd1728c2a03ad386e65848bc48da43f90b72cd166f1ff0",
+          "at": "2026-09-02T00:18:40.291Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "Prettier format gate fails on lib/media/video-providers.ts. The happyhorse-1.1-r2v model entry stays multi-line where prettier collapses it. Fix: run pnpm format, then re-mark S03.",
+          "evidence": "format-gate"
+        }
+      ]
+    },
+    {
+      "id": "S04",
+      "title": "Yml example and docs rows",
+      "intent": "server-providers.yml.example video models gain i2v and r2v; six supported-models mdx files list the new models.",
+      "user_stories": [
+        5
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "tests/server/server-providers-example.test.ts",
+          "symbols": [
+            {
+              "name": "EXAMPLE_TOKEN_PLAN_IDS",
+              "kind": "variable",
+              "expectation": "Unchanged ids list; assertions extended to three video models.",
+              "before": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 3,
+      "uuid": "d8aa931d-a69b-4d82-b90b-638133aeb227",
+      "impl": {
+        "status": "ready_for_verification",
+        "hash": "4d9c9aa94302543fd6823957b88359135f9e06859acadd976f723978ae31b0c3",
+        "actor": "implementer",
+        "at": "2026-09-02T00:04:00.447Z"
+      },
+      "verification": {
+        "status": "verified",
+        "hash": "bc212acfe92b13cc0c662950fbd2c67d12fec21298cda587dccfead394189625",
+        "actor": "verifier",
+        "at": "2026-09-02T00:16:55.153Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G4.1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/server/server-providers-example.test.ts\u001b[2m > \u001b[22m\u001b[2mserver-providers.yml.example\u001b[2m > \u001b[22m\u001b[2mresolves all five token-plan ids through isServerConfiguredProvider\n\u001b[22m\u001b[39m[2026-09-02T00:16:55.083Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 2 LLM, 2 TTS, 2 ASR, 0 PDF, 1 Image, 1 Video, 1 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/server/server-providers-example.test.ts\u001b[2m > \u001b[22m\u001b[2mserver-providers.yml.example\u001b[2m > \u001b[22m\u001b[2mspot-checks one base_url per token-plan section\n\u001b[22m\u001b[39m[2026-09-02T00:16:55.086Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 2 LLM, 2 TTS, 2 ASR, 0 PDF, 1 Image, 1 Video, 1 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/server/server-provid",
+              "passed": true
+            },
+            {
+              "id": "G4.2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "YML_OK\n",
+              "passed": true
+            },
+            {
+              "id": "G4.3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "DOCS6_OK\n",
+              "passed": true
+            }
+          ]
+        }
+      },
+      "expectation": "Example test passes with three video models; docs grep counts six files carrying the new ids; managed allowlist path proven.",
+      "gates": [
+        {
+          "id": "G4.1",
+          "check": "npx vitest run tests/server/server-providers-example.test.ts",
+          "expect": "passed",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G4.1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/server-providers-example.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mserver-providers.yml.example\\u001b[2m > \\u001b[22m\\u001b[2mresolves all five token-plan ids through isServerConfiguredProvider\\n\\u001b[22m\\u001b[39m[2026-09-02T00:16:55.083Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 2 LLM, 2 TTS, 2 ASR, 0 PDF, 1 Image, 1 Video, 1 WebSearch providers\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/server-providers-example.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mserver-providers.yml.example\\u001b[2m > \\u001b[22m\\u001b[2mspot-checks one base_url per token-plan section\\n\\u001b[22m\\u001b[39m[2026-09-02T00:16:55.086Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 2 LLM, 2 TTS, 2 ASR, 0 PDF, 1 Image, 1 Video, 1 WebSearch providers\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/server-provid\",\"passed\":true}",
+          "type": "integration"
+        },
+        {
+          "id": "G4.2",
+          "check": "grep -q \"happyhorse-1.1-r2v\" server-providers.yml.example && echo YML_OK",
+          "expect": "YML_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G4.2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"YML_OK\\n\",\"passed\":true}"
+        },
+        {
+          "id": "G4.3",
+          "check": "grep -l \"happyhorse-1.1-r2v\" packages/docs/content/docs/supported-models*.mdx | wc -l | tr -d ' ' | grep -qx 6 && echo DOCS6_OK",
+          "expect": "DOCS6_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G4.3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"DOCS6_OK\\n\",\"passed\":true}"
+        }
+      ]
+    },
+    {
+      "id": "S05",
+      "title": "Live protocol proof",
+      "intent": "Zero-quota acceptance proofs first, then the single paid i2v completion; r2v proven via unreachable-reference download error.",
+      "user_stories": [
+        2,
+        3
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "tests/media/happyhorse-live.test.ts",
+          "symbols": [
+            {
+              "name": "LIVE_IMAGE_URL",
+              "kind": "variable",
+              "expectation": "Pinned public https URL constant used by both live proofs.",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 4,
+      "uuid": "2cecdcd5-2b63-4e0f-9d6d-ad9697ed2924",
+      "impl": {
+        "status": "ready_for_verification",
+        "hash": "368f27ea09478fd2bc38b301120e67069c8e42ed50aec099d6350dedcd68d859",
+        "actor": "implementer",
+        "at": "2026-09-02T00:34:38.928Z"
+      },
+      "verification": {
+        "status": "verified",
+        "hash": "2b9d32997f46c14725308966797d451801c5602192558ca4ec12e88a82ee4e58",
+        "actor": "verifier",
+        "at": "2026-09-02T00:44:24.817Z",
+        "deficiencies": [
+          "Prettier format gate still fails on tests/media/happyhorse-live.test.ts:118-119. The fix-round prettier pass collapsed the i2v-completes test wrapper but left the two poll-loop declarations at the old 6-space indent; prettier requires 4. CI gate pnpm check (prettier . --check, .github/workflows/ci.yml) fails on merge. G5.2 and G5.3 pass fresh standalone this round (1366 ms, 1363 ms). G5.1 (paid) not run: a rejecting round discards its evidence and would exhaust the single operator-budgeted paid generation before certification. Fix: run pnpm format (or npx prettier --write tests/media/happyhorse-live.test.ts), confirm npx prettier --check --config .prettierrc tests/media/happyhorse-live.test.ts exits 0, then re-mark S05."
+        ],
+        "evidence": {
+          "gates": [
+            {
+              "id": "G5.1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/media/happyhorse-live.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m | \u001b[22m\u001b[33m2 skipped\u001b[39m\u001b[2m)\u001b[22m\u001b[33m 81096\u001b[2mms\u001b[22m\u001b[39m\n     \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m i2v completes \u001b[33m 81095\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[2m | \u001b[22m\u001b[33m2 skipped\u001b[39m\u001b[90m (3)\u001b[39m\n\u001b[2m   Start at \u001b[22m 12:42:59\n\u001b[2m   Duration \u001b[22m 81.20s\u001b[2m (transform 24ms, setup 15ms, import 20ms, tests 81.10s, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G5.2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/media/happyhorse-live.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m | \u001b[22m\u001b[33m2 skipped\u001b[39m\u001b[2m)\u001b[22m\u001b[33m 1164\u001b[2mms\u001b[22m\u001b[39m\n     \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m r2v media array accepted \u001b[33m 1163\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[2m | \u001b[22m\u001b[33m2 skipped\u001b[39m\u001b[90m (3)\u001b[39m\n\u001b[2m   Start at \u001b[22m 12:44:21\n\u001b[2m   Duration \u001b[22m 1.26s\u001b[2m (transform 24ms, setup 11ms, import 21ms, tests 1.16s, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G5.3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/media/happyhorse-live.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m | \u001b[22m\u001b[33m2 skipped\u001b[39m\u001b[2m)\u001b[22m\u001b[33m 1468\u001b[2mms\u001b[22m\u001b[39m\n     \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m missing media rejected \u001b[33m 1467\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[2m | \u001b[22m\u001b[33m2 skipped\u001b[39m\u001b[90m (3)\u001b[39m\n\u001b[2m   Start at \u001b[22m 12:44:22\n\u001b[2m   Duration \u001b[22m 1.56s\u001b[2m (transform 27ms, setup 15ms, import 21ms, tests 1.47s, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G5.4",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/media/happyhorse-adapter.test.ts \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 3\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m tests/media/media-orchestrator.test.ts \u001b[2m(\u001b[22m\u001b[2m12 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 20\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m tests/server/video-route-preflight.test.ts \u001b[2m(\u001b[22m\u001b[2m7 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 97\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m3 passed\u001b[39m\u001b[22m\u001b[90m (3)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m25 passed\u001b[39m\u001b[22m\u001b[90m (25)\u001b[39m\n\u001b[2m   Start at \u001b[22m 12:44:24\n\u001b[2m   Duration \u001b[22m 233ms\u001b[2m (transform 199ms, setup 42ms, import 157ms, tests 121ms, environment 0ms)\u001b[22m\n\n\u001b[90mstderr\u001b[2m | tests/media/media-orchestrator.test.ts\u001b[2m > \u001b[22m\u001b[2mclassic media orchestrator\u001b[2m > \u001b[22m\u001b[2mpersists structured terminal errors under the placehold",
+              "passed": true
+            }
+          ]
+        }
+      },
+      "expectation": "i2v completes SUCCEEDED with a real video URL for the pinned sample image; r2v download-failure proves array acceptance; missing-media proves Field required; live file skips without TEST_LOAD_LOCAL_ENV.",
+      "gates": [
+        {
+          "id": "G5.1",
+          "check": "TEST_LOAD_LOCAL_ENV=1 npx vitest run tests/media/happyhorse-live.test.ts -t \"i2v completes\"",
+          "expect": "passed",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G5.1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/media/happyhorse-live.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m3 tests\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[33m2 skipped\\u001b[39m\\u001b[2m)\\u001b[22m\\u001b[33m 81096\\u001b[2mms\\u001b[22m\\u001b[39m\\n     \\u001b[33m\\u001b[2m✓\\u001b[22m\\u001b[39m i2v completes \\u001b[33m 81095\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[33m2 skipped\\u001b[39m\\u001b[90m (3)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 12:42:59\\n\\u001b[2m   Duration \\u001b[22m 81.20s\\u001b[2m (transform 24ms, setup 15ms, import 20ms, tests 81.10s, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}",
+          "type": "integration"
+        },
+        {
+          "id": "G5.2",
+          "check": "TEST_LOAD_LOCAL_ENV=1 npx vitest run tests/media/happyhorse-live.test.ts -t \"r2v media array accepted\"",
+          "expect": "passed",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G5.2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/media/happyhorse-live.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m3 tests\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[33m2 skipped\\u001b[39m\\u001b[2m)\\u001b[22m\\u001b[33m 1164\\u001b[2mms\\u001b[22m\\u001b[39m\\n     \\u001b[33m\\u001b[2m✓\\u001b[22m\\u001b[39m r2v media array accepted \\u001b[33m 1163\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[33m2 skipped\\u001b[39m\\u001b[90m (3)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 12:44:21\\n\\u001b[2m   Duration \\u001b[22m 1.26s\\u001b[2m (transform 24ms, setup 11ms, import 21ms, tests 1.16s, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}",
+          "type": "integration"
+        },
+        {
+          "id": "G5.3",
+          "check": "TEST_LOAD_LOCAL_ENV=1 npx vitest run tests/media/happyhorse-live.test.ts -t \"missing media rejected\"",
+          "expect": "passed",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G5.3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/media/happyhorse-live.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m3 tests\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[33m2 skipped\\u001b[39m\\u001b[2m)\\u001b[22m\\u001b[33m 1468\\u001b[2mms\\u001b[22m\\u001b[39m\\n     \\u001b[33m\\u001b[2m✓\\u001b[22m\\u001b[39m missing media rejected \\u001b[33m 1467\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[33m2 skipped\\u001b[39m\\u001b[90m (3)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 12:44:22\\n\\u001b[2m   Duration \\u001b[22m 1.56s\\u001b[2m (transform 27ms, setup 15ms, import 21ms, tests 1.47s, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}",
+          "type": "adversarial"
+        },
+        {
+          "id": "G5.4",
+          "check": "npx vitest run tests/media/happyhorse-adapter.test.ts tests/media/media-orchestrator.test.ts tests/server/video-route-preflight.test.ts",
+          "expect": "passed",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G5.4\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/media/happyhorse-adapter.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m6 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 3\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m tests/media/media-orchestrator.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m12 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 20\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m tests/server/video-route-preflight.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m7 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 97\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m3 passed\\u001b[39m\\u001b[22m\\u001b[90m (3)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m25 passed\\u001b[39m\\u001b[22m\\u001b[90m (25)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 12:44:24\\n\\u001b[2m   Duration \\u001b[22m 233ms\\u001b[2m (transform 199ms, setup 42ms, import 157ms, tests 121ms, environment 0ms)\\u001b[22m\\n\\n\\u001b[90mstderr\\u001b[2m | tests/media/media-orchestrator.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mclassic media orchestrator\\u001b[2m > \\u001b[22m\\u001b[2mpersists structured terminal errors under the placehold\",\"passed\":true}"
+        }
+      ],
+      "findings": [
+        {
+          "id": 1,
+          "correlation": "af71466307956d9a4cfb916abf3642a663a75a0381b83dee59e0b1ce0735a6b9",
+          "at": "2026-09-02T00:18:40.291Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "Prettier format gate fails on tests/media/happyhorse-live.test.ts. The paid G5.1 certification run is deferred to the fix round to preserve the operator-budgeted single paid generation; a run now would be discarded evidence under the fresh-evidence rule. G5.2 and G5.3 passed fresh as standalone diagnostics this round and must be recorded fresh via rivr slice verify next round. Fix: run pnpm format, then re-mark S05.",
+          "evidence": "format-gate"
+        },
+        {
+          "id": 2,
+          "correlation": "e1216e3ad66b8309d0356455477c48914ba896a169f985cf5cfd2aeaf6161c68",
+          "at": "2026-09-02T00:30:37.939Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "Prettier format gate still fails on tests/media/happyhorse-live.test.ts:118-119. The fix-round prettier pass collapsed the i2v-completes test wrapper but left the two poll-loop declarations at the old 6-space indent; prettier requires 4. CI gate pnpm check (prettier . --check, .github/workflows/ci.yml) fails on merge. G5.2 and G5.3 pass fresh standalone this round (1366 ms, 1363 ms). G5.1 (paid) not run: a rejecting round discards its evidence and would exhaust the single operator-budgeted paid generation before certification. Fix: run pnpm format (or npx prettier --write tests/media/happyhorse-live.test.ts), confirm npx prettier --check --config .prettierrc tests/media/happyhorse-live.test.ts exits 0, then re-mark S05.",
+          "evidence": "format-gate"
+        }
+      ]
+    }
+  ],
+  "audit": [
+    {
+      "seq": 1,
+      "id": "c3a83d23-387b-45cd-9a4b-1a9c1684dc6c",
+      "at": "2026-09-01T23:47:24.223Z",
+      "actor": "orchestrator",
+      "command": "init",
+      "transition": "spec-approved:docs/specs/004-video-i2v-r2v.md",
+      "slice": null,
+      "hash": "3c02e1fdf977c5a4cea82746d43e02623c51c0927966b451dc0809c598f4ef94"
+    },
+    {
+      "seq": 2,
+      "id": "7f049b0f-97cb-4623-8e2c-79badd0e7431",
+      "at": "2026-09-01T23:47:24.224Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect",
+      "slice": "S01",
+      "hash": "14fcb557810ddc5526fdaa5525d941796f0524324a2cd2cda7a82687be2c4509",
+      "expectationHash": "3407de48097b94d1dc51998c44382675665661af490a53ce6bc9e42a74d6f6b6"
+    },
+    {
+      "seq": 3,
+      "id": "9c3021b1-15be-4bfb-88b3-ff88d8884f0c",
+      "at": "2026-09-01T23:47:24.224Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect-symbol:lib/media/types.ts::VideoGenerationOptions",
+      "slice": "S01",
+      "hash": "9066555f5a44d436cce178488794946fca2b52dacc489d88cbb92cf3a47137a8",
+      "expectationHash": "c632a5ef138c7596412d50b5ffacddf483aa1471872c25f886fb2f0b15adc217"
+    },
+    {
+      "seq": 4,
+      "id": "8eaa7e1b-7d31-4a6f-855f-7de8227b7d1d",
+      "at": "2026-09-01T23:47:24.224Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect-symbol:lib/media/adapters/happyhorse-adapter.ts::submitHappyHorseTask",
+      "slice": "S01",
+      "hash": "f4d45e63031b896be03444eb4128f427d7a79ebc3963b885b43087470a64ddf0",
+      "expectationHash": "5ea5840550bf9816e34bf9c87b90afd46d347fa60e078ee437d72b18ae357f09"
+    },
+    {
+      "seq": 5,
+      "id": "3e9237eb-beb9-4cde-b938-7fb3ddfa30a8",
+      "at": "2026-09-01T23:47:24.224Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect-symbol:lib/media/adapters/happyhorse-adapter.ts::pollHappyHorseTask",
+      "slice": "S01",
+      "hash": "ef4f655e2469cf19a651f18d331761e77687a69abf61f4464859c38d095355ad",
+      "expectationHash": "0cffd098d99bd0f9573d886719da344739f46e6b1a62e27f9180c4d41b251697"
+    },
+    {
+      "seq": 6,
+      "id": "caac0551-0254-43e3-863f-60c54559c81b",
+      "at": "2026-09-01T23:47:24.224Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect-symbol:lib/media/adapters/happyhorse-adapter.ts::generateWithHappyHorse",
+      "slice": "S01",
+      "hash": "2c8201752cb32af6b25c47acf68b1e4615569b7b15f3875759418ff72e15478b",
+      "expectationHash": "7648b4b88b7d6c3d6d6dc8209ce63e08bb944c3f8d033d7686d9f65f937c017e"
+    },
+    {
+      "seq": 7,
+      "id": "4983dbab-d351-40be-862f-b159666d597e",
+      "at": "2026-09-01T23:47:24.224Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S02:expect",
+      "slice": "S02",
+      "hash": "86c36a631083e37faacc0c3b707d8e989ec56c48a57144e8e17402c9552aa0ce",
+      "expectationHash": "6f2af424f6b3c1e5b395167bfb52b728c6b74e0a782be1f30b626491c0262428"
+    },
+    {
+      "seq": 8,
+      "id": "276aa4d4-1c55-44ea-b483-851e13eb3673",
+      "at": "2026-09-01T23:47:24.224Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S02:expect-symbol:tests/server/video-route-preflight.test.ts::PREFLIGHT_MATRIX",
+      "slice": "S02",
+      "hash": "80e764b76f49eecf6043de7054abe0521f8eb8e1e3be6fe92dd7341589b0c7d0",
+      "expectationHash": "583c6a14785288d1e334a3472c534edac0c4d8577fa33988cd4b4f85b6713566"
+    },
+    {
+      "seq": 9,
+      "id": "99c71226-96ea-4c54-b3ff-2f13fb47108c",
+      "at": "2026-09-01T23:47:24.224Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S03:expect",
+      "slice": "S03",
+      "hash": "8057ffa3209f1df2a96a4684f4049e03d2653551a2a710ca37583641379c0987",
+      "expectationHash": "5500ac13e74d3b58d6502466815976d98ba8aae0e2780c3b73c60eec9721c950"
+    },
+    {
+      "seq": 10,
+      "id": "ac77c3af-0fcf-4253-83f1-03f2f8f11dad",
+      "at": "2026-09-01T23:47:24.224Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S03:expect-symbol:lib/media/video-providers.ts::VIDEO_PROVIDERS",
+      "slice": "S03",
+      "hash": "ff89978331dccbf9615075b050e4081002bb6182b48f16d4739bc305093cb2df",
+      "expectationHash": "8efaf93387a6e098ec11e565cb2a1ab636190c95b47c0e443fdba5fa86b97726"
+    },
+    {
+      "seq": 11,
+      "id": "5c07036e-3185-4971-aada-3af85f9b107b",
+      "at": "2026-09-01T23:47:24.224Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S03:expect-symbol:lib/media/video-providers.ts::getVideoModelSourceRequirement",
+      "slice": "S03",
+      "hash": "8ed07060b120b64a8ceee073ac6e95e7d9ef6efe491da1948541da580ae781ba",
+      "expectationHash": "a0b6a7107782d6ac64939d5070b9074646722886ff32a45e91a3bc7561b91a36"
+    },
+    {
+      "seq": 12,
+      "id": "c4f2c86e-6c0e-4bfa-ae76-c50838335c68",
+      "at": "2026-09-01T23:47:24.224Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S03:expect-symbol:lib/config/token-plan-presets.ts::TOKEN_PLAN_PRESETS",
+      "slice": "S03",
+      "hash": "8b936d71c8418183b25b8ef055bfb3ad14659108799bfa6cc9a4ce97c42a9a46",
+      "expectationHash": "2691e687b5bf8c971a03204fe0b64f22962fd3cef709bc15869ac5753ad71903"
+    },
+    {
+      "seq": 13,
+      "id": "76760970-3f78-4689-b6aa-ac6965c84dc8",
+      "at": "2026-09-01T23:47:24.224Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S04:expect",
+      "slice": "S04",
+      "hash": "5400ae96fccbfc21d3a7ca9cd3005aa3d148a92356e18e27e83a6934c454df9c",
+      "expectationHash": "50c9cc7aa68a32da687fbc37bf83249a5d62218e9c024db9b41e0c4fef46c001"
+    },
+    {
+      "seq": 14,
+      "id": "8c821ab1-0167-490c-a6b7-96d6b0897ff1",
+      "at": "2026-09-01T23:47:24.224Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S04:expect-symbol:tests/server/server-providers-example.test.ts::EXAMPLE_TOKEN_PLAN_IDS",
+      "slice": "S04",
+      "hash": "d81d77c5be774bc7acf2d13e82a1bc4aadfbe057f47e58b0dea61dab78345025",
+      "expectationHash": "9495de5497af002f6930cb711e9c4d7229ae2541f74f0371823dec180d1d9b9e"
+    },
+    {
+      "seq": 15,
+      "id": "5977721c-277a-4745-bb75-00c9183b3fff",
+      "at": "2026-09-01T23:47:24.224Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S05:expect",
+      "slice": "S05",
+      "hash": "a80841152674997e455f3cb42664ccf002d2ee0e9bf58cb6f371bbd9b7b1c0b9",
+      "expectationHash": "d4a985e18c362b7027dcf5697baefa75796d8f01b206c2632968b6fe2d00e98d"
+    },
+    {
+      "seq": 16,
+      "id": "65921293-03aa-4a4c-b081-30a7dd9815ff",
+      "at": "2026-09-01T23:47:24.224Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S05:expect-symbol:tests/media/happyhorse-live.test.ts::LIVE_IMAGE_URL",
+      "slice": "S05",
+      "hash": "4f9ee6ba7f39a1b786e58bc0984e82e83309ca46a61cf161b7114695462c83f6",
+      "expectationHash": "4037a99bfb491a5c600759da5ff2848d50aeba5802e759eb56dfe24fa87a20ac"
+    },
+    {
+      "seq": 17,
+      "id": "445562af-ccab-48e9-820d-4d8dd82dbe9b",
+      "at": "2026-09-01T23:47:24.224Z",
+      "actor": "orchestrator",
+      "command": "init_batch",
+      "transition": "batch-init:S01,S02,S03,S04,S05",
+      "slice": null,
+      "hash": "647d6644be3d8b66428c21e815753f4e659ecc450ae9aeaecf4b22e2f8b4898e"
+    },
+    {
+      "seq": 18,
+      "id": "34fc0563-0eb7-4da0-a101-383df1e974eb",
+      "at": "2026-09-01T23:47:24.272Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S01:capture",
+      "slice": "S01",
+      "hash": "7870719cd5a5adb84b552b84172dc5c0213cc3de66aa04fc2d76d911873d51da",
+      "fileHash": "e93a5e4eb7b2cbc7b590ac3746e168fb27d4c4a044bfb2ac1ecec3c687599558"
+    },
+    {
+      "seq": 19,
+      "id": "8c66b3cd-b119-4347-ac30-b6b872fe4ea1",
+      "at": "2026-09-01T23:47:24.313Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S02:capture",
+      "slice": "S02",
+      "hash": "d1fcd0dccaf5d5c20b226f4d293457f4ee622d4a9553d1a660005d548fe60cf1",
+      "fileHash": "bb655c1c44212d4484f09439256dd9a721af7fd2af5b52e71ac8a0c4567aa986"
+    },
+    {
+      "seq": 20,
+      "id": "c704f1da-42ae-4f17-93d3-a77a81cd6293",
+      "at": "2026-09-01T23:47:24.357Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S03:capture",
+      "slice": "S03",
+      "hash": "58e0c845ce747ecbfd9dea13a83c76da70cf973b702596a6550bce097142a571",
+      "fileHash": "ea1fd5efd45820f560efa0ce373af8e02c1db81d1bae31b204e871a6945278c0"
+    },
+    {
+      "seq": 21,
+      "id": "65a6becd-c96e-4d94-bb0c-f35d17891c53",
+      "at": "2026-09-01T23:47:24.402Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S04:capture",
+      "slice": "S04",
+      "hash": "0814d9614fdd35dd8fb60eeb2e04e1f4a4f061ea5ca795baa15019fa06df8e23",
+      "fileHash": "baaf4b2b891c548a6511b86e59fdbbbbe3ddaf63105d59970eb2b522b1598a6c"
+    },
+    {
+      "seq": 22,
+      "id": "5dc1338b-7d3c-4682-9384-f21733e9f850",
+      "at": "2026-09-01T23:47:24.443Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S05:capture",
+      "slice": "S05",
+      "hash": "2153a187fe5828fcde6de3f277a00c150aa6aef64718b1493e09f3b065f77a4f",
+      "fileHash": "3f9b8264d1377994d5bfb155bc488db1082d53c92e0968a4e91c8abec6b2034a"
+    },
+    {
+      "seq": 23,
+      "id": "5114bd0b-0f8d-4773-a4d6-66a6bf860787",
+      "at": "2026-09-01T23:47:58.370Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S01:postcondition:lib/media/types.ts::VideoGenerationOptions",
+      "slice": "S01",
+      "hash": "3330e7d72e92d200905a50f6ad3aee47c9a01e872fd83161012da65c9cbdbb87",
+      "fileHash": "410dd87b345a19adbf4d60ee31e737c5162a71118bbc0dda83716d25ae9f911d"
+    },
+    {
+      "seq": 24,
+      "id": "da08d171-f7f6-4cf5-b417-3e153881a1e8",
+      "at": "2026-09-01T23:47:58.409Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S01:postcondition:lib/media/adapters/happyhorse-adapter.ts::submitHappyHorseTask",
+      "slice": "S01",
+      "hash": "5b318a99e58e49a38ec5eb5bd796a41d94d1c36d685abbae0da86788eefdbe91",
+      "fileHash": "2937049191e3291a18d240e134129412fd416cbf32d307dd7276c2bc43329a12"
+    },
+    {
+      "seq": 25,
+      "id": "c0b82be5-db81-4b2f-8392-44260c29a9c2",
+      "at": "2026-09-01T23:47:58.451Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S01:postcondition:lib/media/adapters/happyhorse-adapter.ts::pollHappyHorseTask",
+      "slice": "S01",
+      "hash": "1c636089f83fa7c1443b7cb8c9709f3ed15d152a56a653bab02e7cdf202acf0e",
+      "fileHash": "8e0f059b9b338e5b818cdae3449dbed5dbda6fa9f5f74728feee5fc9bad6d70c"
+    },
+    {
+      "seq": 26,
+      "id": "9af409ac-8b2b-4c04-baa7-f89f946f1aba",
+      "at": "2026-09-01T23:47:58.489Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S01:postcondition:lib/media/adapters/happyhorse-adapter.ts::generateWithHappyHorse",
+      "slice": "S01",
+      "hash": "3dec2b1481af89d5b794c87a93278302f00c142174cdca3782fc9beb47eab35e",
+      "fileHash": "17aaa7f72e29ed132c5a6e3cb3bd0ba2d54ebf0b6d648cb7d86869586f99c947"
+    },
+    {
+      "seq": 27,
+      "id": "a51d030c-2c14-490f-89ab-745ee484cf6e",
+      "at": "2026-09-01T23:47:58.527Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S02:postcondition:tests/server/video-route-preflight.test.ts::PREFLIGHT_MATRIX",
+      "slice": "S02",
+      "hash": "e85a2ea02db9b07427f6b1589817baccc60c3f8b8725e760e7c025ea672c7ced",
+      "fileHash": "88652b2e0cd5ec484f200c1c08dc7da7e28f244485125b3486b149abd6507313"
+    },
+    {
+      "seq": 28,
+      "id": "a62e96ba-0baf-430a-9e50-abe803d7c86a",
+      "at": "2026-09-01T23:47:58.567Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S03:postcondition:lib/media/video-providers.ts::getVideoModelSourceRequirement",
+      "slice": "S03",
+      "hash": "fb6c1da8f62624265dd9196f4970fbca8be77a4dedb4827e125ffb93e9f400f7",
+      "fileHash": "ea045a29e7bff5bda1baeb337e727b48be0c4e89fa8fa9e2fff35543d6f2ace0"
+    },
+    {
+      "seq": 29,
+      "id": "a45cb720-8ef6-4674-b2ac-d414a3f61956",
+      "at": "2026-09-01T23:47:58.606Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S03:postcondition:lib/media/video-providers.ts::VIDEO_PROVIDERS",
+      "slice": "S03",
+      "hash": "10a2bb939ea03225f5c76bc9e93f40acd14a26d222c682a8c4eb60eb2dbe091a",
+      "fileHash": "1be315a62183521a12583121e4ddac2b33d7aba8d20ff438fc5d38da62528ca5"
+    },
+    {
+      "seq": 30,
+      "id": "18d20869-e412-4ce2-a473-ffc476bea355",
+      "at": "2026-09-01T23:47:58.645Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S03:postcondition:lib/config/token-plan-presets.ts::TOKEN_PLAN_PRESETS",
+      "slice": "S03",
+      "hash": "d728296153772913fd17c35df216f01401e3e10a8bd3d7274f95ecea4bf1c296",
+      "fileHash": "1097a7a3bd816f83ad3bc45f3edb934c397e5827d338c3d73d84ed5cb4087622"
+    },
+    {
+      "seq": 31,
+      "id": "ea81170c-e1d8-482d-bada-22bb0e8559be",
+      "at": "2026-09-01T23:47:58.683Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S04:postcondition:tests/server/server-providers-example.test.ts::EXAMPLE_TOKEN_PLAN_IDS",
+      "slice": "S04",
+      "hash": "4f28ba5b93d9539dcf4f347974a3fc8fccb502491f6de65615860117f2f9fdba",
+      "fileHash": "a3a2d8338406a5f5fe108d54d903fce25681809a238bd01aab5616aaf2c3aeca"
+    },
+    {
+      "seq": 32,
+      "id": "f64d8d3c-9e22-4c27-9fe6-746b49f2fd12",
+      "at": "2026-09-01T23:47:58.722Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S05:postcondition:tests/media/happyhorse-live.test.ts::LIVE_IMAGE_URL",
+      "slice": "S05",
+      "hash": "c1e8c7b315ce390cbe7bafcc71fbe6effe72efe1b62478b88d4d02a3af58f4d9",
+      "fileHash": "27cff2abd7354d0699bed84481b929b78b73ec07991da8d1150e30d63ce45a59"
+    },
+    {
+      "seq": 33,
+      "id": "263385e0-949c-4bec-a5cf-2b4aaba66374",
+      "at": "2026-09-01T23:47:58.761Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "edb93228fd0480e22b9ce71d79282b82a6647290c42a88ff8e2047f42e41531c",
+      "fileHash": "2cb28f3b2e48ba66e2ef44b5b42295f1467c65c1f1dd72c9b17a659945a67269"
+    },
+    {
+      "seq": 34,
+      "id": "c5c1b3aa-4d93-422c-98ce-1d033483e188",
+      "at": "2026-09-01T23:50:42.096Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S01:impl:pending->ready_for_verification",
+      "slice": "S01",
+      "hash": "cb4eddd322a6ef8657d8dd6bb70a81a09d1b7ad84820ad4004e470f0483b7878",
+      "fileHash": "0b82aeb5a584725aecc949aaeda3afd6a5813d6bd39c6455f7c6f1fd4eda69b6"
+    },
+    {
+      "seq": 35,
+      "id": "f2198686-011c-423c-9564-fbe3708a27d5",
+      "at": "2026-09-01T23:52:31.066Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S03:impl:pending->ready_for_verification",
+      "slice": "S03",
+      "hash": "d4fe59b32ebef9fab5e87522130a00b111e40ba50651f1da6f8615ab879a4593",
+      "fileHash": "ba01a7c5f39b53a77770e6e7475fd8bcd74c429250354bc959f17f151b711198"
+    },
+    {
+      "seq": 36,
+      "id": "ff448fc4-7fbf-4958-a079-688c98de5eb9",
+      "at": "2026-09-01T23:59:09.057Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S02:impl:pending->ready_for_verification",
+      "slice": "S02",
+      "hash": "83ee0bb2ad0ddea5b9b2437a0ba13c1a8e24c2232f39323443db4e1476151f13",
+      "fileHash": "d4710c3c47435fd36687bcf3b8a06b05162142ba57e2ef68dca5b52456821c17"
+    },
+    {
+      "seq": 37,
+      "id": "6c9fda22-9a3d-46ce-a0be-db93ecb4a5ed",
+      "at": "2026-09-02T00:04:00.447Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S04:impl:pending->ready_for_verification",
+      "slice": "S04",
+      "hash": "45e24ea383e4577b550849e25a91d47a9ed209c2a183d3391cf43a17669bff80",
+      "fileHash": "6af47935d8317c1aecb32ff90cc5e3acd6125adf842d831e909a0a7c551be781"
+    },
+    {
+      "seq": 38,
+      "id": "7811643d-a0fd-4000-9a9d-07b362b43cf5",
+      "at": "2026-09-02T00:10:19.637Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S05:impl:pending->ready_for_verification",
+      "slice": "S05",
+      "hash": "c5cbc51c7e32e16deb5914411bd7cf05856a6cdb27df10b658d29d76bce8b095",
+      "fileHash": "0877b43b440d2121f9482f114370497b79cad67465f0be8a3e11cab98d40fd3e"
+    },
+    {
+      "seq": 39,
+      "id": "f4f38f7a-2d08-466b-a100-ee8e0046a89f",
+      "at": "2026-09-02T00:10:47.117Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "5c33921f8f3db5cf8ec8965c270362704902ba50b7d510b3eae478c2c2fc232b",
+      "fileHash": "8e97a005603dd8f6232ce85c4b7eda353328fe7db690ae57768af178569177d0"
+    },
+    {
+      "seq": 40,
+      "id": "208a6697-c589-4ce6-8fbf-fbc036c3ebe1",
+      "at": "2026-09-02T00:16:55.153Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S04:verification:pending->verified",
+      "slice": "S04",
+      "hash": "f54bd9d7d5a13e03ddcfcf786db613cbcdf17c7606495caada621ed8cebb1c69",
+      "oracle": "ee6a1fb1642aca71e8b39314db176e3792fd1a0bb72be2b9079d9878c77fadc2",
+      "evidence": "a113409953ece316cf6f957117e03f74cdf36ee65422a01beb15e222e8a75a65",
+      "fileHash": "199dbe07f3ba23ac9dcacce21cb5bc3cd1e9faffdc888618624e4071472112c4"
+    },
+    {
+      "seq": 41,
+      "id": "b168070e-66e0-40f8-8e51-5545d0d1719d",
+      "at": "2026-09-02T00:18:40.291Z",
+      "actor": "verifier",
+      "command": "slice_reject_batch",
+      "transition": "reject-batch:S01,S02,S03,S05",
+      "slice": null,
+      "hash": "eac7a8e4a3320ca0068a31756280c1e482c18db3a27b6df368a69f3d03de3064",
+      "fileHash": "271bce1c6e5e4053d314669f09e09147135cf257a9522e4208f6eed1f3a7b58d"
+    },
+    {
+      "seq": 42,
+      "id": "97a0925d-0acd-432b-98b0-78bc09c48052",
+      "at": "2026-09-02T00:24:36.235Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S01:impl:pending->ready_for_verification",
+      "slice": "S01",
+      "hash": "4c4d5f437e4cf855801d6dfec41afe770763817b3e7ce50a49cb5f8666a09636",
+      "fileHash": "cf5c0867bc52e73d35e3d0b0e44ba18ac3bbe799d387016923a535eb61ef5391"
+    },
+    {
+      "seq": 43,
+      "id": "003e9489-76c4-411a-abbe-e2c76ac86874",
+      "at": "2026-09-02T00:24:41.857Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S02:impl:pending->ready_for_verification",
+      "slice": "S02",
+      "hash": "5f446905c1c4501b8f7e232bcfe4fabe51a517edf5eedd517be5cb129a1f9b0d",
+      "fileHash": "39146c1585f73c2f9dc42417478a1760f9f6010225dd339b90584e719b82f07c"
+    },
+    {
+      "seq": 44,
+      "id": "af2c7e1c-91e9-4327-a75c-7a97869c27df",
+      "at": "2026-09-02T00:24:53.574Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S03:impl:pending->ready_for_verification",
+      "slice": "S03",
+      "hash": "adcb2cb25ed54b313ac59334b0705e56f13a25ce4372538c69b4e3e6ba2ab229",
+      "fileHash": "0e1e06a9d0791dcb15f75af4124db4ed1fb1901d5d2232c428902b9a69813213"
+    },
+    {
+      "seq": 45,
+      "id": "6989f247-eb83-4a45-aede-e208ffb623bc",
+      "at": "2026-09-02T00:25:03.230Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S05:impl:pending->ready_for_verification",
+      "slice": "S05",
+      "hash": "145a99f5a39f30d8cd418d8e7bc0c6685b3a30d7bf09106f12b4a75cf0674a70",
+      "fileHash": "a43a0f4f7d705b8b9c75a57fcb1658a1ae7b5532f38bc4c92f57e2254a940b73"
+    },
+    {
+      "seq": 46,
+      "id": "a73611a1-d6c9-4bea-8894-1c13fbc8bb0a",
+      "at": "2026-09-02T00:25:56.844Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "484ee3facade27fe3dbed04e0a5453d68e82bbe20adf37a6784ecf460265b2f0",
+      "fileHash": "6448d78df7533fd45b6357030e7a0077c93ab53a622f5200f256f8affd057ce5"
+    },
+    {
+      "seq": 47,
+      "id": "5483e8be-9c98-448d-b80c-becc52e73044",
+      "at": "2026-09-02T00:30:02.206Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S01:verification:pending->verified",
+      "slice": "S01",
+      "hash": "e6d7a6c9d0f100090decc6bc3c80a66a3e856540e447d5772ba605ab682bd615",
+      "oracle": "f49e252d8296e33190b05c2bacb9787985131b03485f33c0d0eaa3ba9c7c98bf",
+      "evidence": "71526a67aaba63e2d7e19518d6e31484423e4b5486049265a914244609ff7d44",
+      "fileHash": "29f84af5ac95a76315c87084648b4c565c08ac8155a3700f5190c52a83e9e4d7"
+    },
+    {
+      "seq": 48,
+      "id": "0e6ac232-e0be-4bf1-b5c5-5563b087efc1",
+      "at": "2026-09-02T00:30:07.012Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S02:verification:pending->verified",
+      "slice": "S02",
+      "hash": "9f9d24212e00f263e5334c7d1b40b26198ac6869939eb7f1ebe6aef1ee96d9ca",
+      "oracle": "4fd10830e92329a007e5ceb8f714de70370be199b5a549f0d75db1d406dae73f",
+      "evidence": "f300b51ce212484f9a45fc6d28564a39735ce3187800d4598d1b53aa7c5c0e19",
+      "fileHash": "86ce2c5dc25fb02a2a35352abfb0278f5001e95418f2baff00bf49b094ea3580"
+    },
+    {
+      "seq": 49,
+      "id": "a2078763-ffa7-4151-ad0d-22e37477d48f",
+      "at": "2026-09-02T00:30:11.899Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S03:verification:pending->verified",
+      "slice": "S03",
+      "hash": "af85fe0d369a6b1280670b3ab6b0e84fa9180584ddc4a40e7a34ac25d442cf07",
+      "oracle": "1d1aeec1308f29be9e61da177c04c2aca176e48823f23b2d7ff8541de638ba3a",
+      "evidence": "5eb3f7c70648148d23b70aa6f706c919aa3e18dde809145d8f65ea140598cb56",
+      "fileHash": "d3a2bbddd36b117a27bcf0d92894dfdb3e6f97f44c9edfa2e718c945994c9b09"
+    },
+    {
+      "seq": 50,
+      "id": "2d2422a9-fb66-4d50-ac09-6faff9af0ff9",
+      "at": "2026-09-02T00:30:37.939Z",
+      "actor": "verifier",
+      "command": "slice_reject_batch",
+      "transition": "reject-batch:S05",
+      "slice": null,
+      "hash": "289269bec22198da7a0a81683e92578b6f8b0e1642fcf11d98b584593a1444a5",
+      "fileHash": "a2ff37a36a8bd28f006086cb2ed4adf6fad36113f07aca7008cbf5752637eb54"
+    },
+    {
+      "seq": 51,
+      "id": "eb0ac916-04ec-4f6a-8403-ecd9a8d2a2f9",
+      "at": "2026-09-02T00:34:38.928Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S05:impl:pending->ready_for_verification",
+      "slice": "S05",
+      "hash": "391844eb0bb0f9d466e9a69b9ce3f63eb471f89294eb2d63aab69a3c49d23a6b",
+      "fileHash": "f5209a0ca484efd1a3747696c64cef0ea326e0b9307386de1529e4cb5afc7ef1"
+    },
+    {
+      "seq": 52,
+      "id": "d5e2c69e-459a-4b36-954e-7fbbaef00c79",
+      "at": "2026-09-02T00:34:57.222Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "077fb66dcd51a4329fed38822c63f033731b64239f69a43cfeb496c7e0597ed1",
+      "fileHash": "8bcbcc6eb911d551250adeb7b01da11f4576b81986988bbe96c10d0e3a41f6a3"
+    },
+    {
+      "seq": 53,
+      "id": "2da30883-89f0-4a93-8447-0fe481beabfd",
+      "at": "2026-09-02T00:44:24.817Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S05:verification:pending->verified",
+      "slice": "S05",
+      "hash": "89b10110c544ce0970795c2fde5239b4ff9d85fa3fe0b10d55ea83ca9480888f",
+      "oracle": "cb5c0a4ab10c8dfc1a194ffe02707429573e2d4e301f96394ca31d109b9e51a4",
+      "evidence": "cd4d74576b319f0a230a11c833ee3842398799062a6317ff26cbce25e5484a76",
+      "fileHash": "5baf614ba7b9354d278264e8792dda418f59fbbb6ad75f724733b24c9ca93c85"
+    },
+    {
+      "seq": 54,
+      "id": "7459dda8-e66f-4770-b2cb-ca773cea7fd1",
+      "at": "2026-09-02T00:54:05.506Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:respecify:stage 4 research update: shipped file:lines, six learnings, paid-gate double-run",
+      "slice": null,
+      "hash": "bd6c204143a2d19d64a0f51f4ea9e17158b01c42ee16c987624fd3063e769046",
+      "fileHash": "ec4e4ea503456cd5b08670c20fb278b480faf90a03b5b6a7ca7a4682dcd177f3"
+    },
+    {
+      "seq": 55,
+      "id": "12ec655c-9951-4417-9980-f51c1b1dfb19",
+      "at": "2026-09-02T00:54:34.060Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:respecify:rebind after CLI marker rewrite at research_update advance",
+      "slice": null,
+      "hash": "8cb726f50c0f6dd660631445b4f20dc1f18c5cf9232e65198199124cd752a8ae",
+      "fileHash": "e814a8f58bf28fd72938e5a45f403c5dff8f0f9be2ff48df0158363c97aab4b9"
+    },
+    {
+      "seq": 56,
+      "id": "97a918a3-5f89-4b21-8df8-4a8811ece312",
+      "at": "2026-09-02T00:54:41.268Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:verification->research_update",
+      "slice": null,
+      "hash": "feef3ef7aa629d7155ba65c4b25a515f4d9641e1590f7ac6f353e77c9afbd432",
+      "fileHash": "cefe432faff0bdf41f22be3a7ebace450814334080bcae9740c5bf92a870e2ab"
+    },
+    {
+      "seq": 57,
+      "id": "f9509b58-9d4f-4c94-bd45-7c4d158f6ee0",
+      "at": "2026-09-02T00:54:41.305Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:respecify:marker rewrite at research_update advance, final bind",
+      "slice": null,
+      "hash": "95b8b28222b8db3ca3ceb599aff04e4de8b56b68d1395b85916e0feda5a44f56",
+      "fileHash": "147389cf2c385ba7da4573f601339987912b121a2f2113d720a85360235584cd"
+    },
+    {
+      "seq": 58,
+      "id": "60a668d4-92b3-4287-b3c7-4c95f239d9b8",
+      "at": "2026-09-02T00:54:41.343Z",
+      "actor": "verifier",
+      "command": "certify",
+      "transition": "certify:f90474ab7630a709832e6ad8ba2827d71e78e1c678be12e04919d22d003eca8d",
+      "slice": null,
+      "hash": "331850f11519345c12915824fa801c9a942ba49a0befbcd0717fc1675174eeac",
+      "oracle": "f90474ab7630a709832e6ad8ba2827d71e78e1c678be12e04919d22d003eca8d",
+      "fileHash": "1e189e0ce05f294caad66e54d8973b2be3cb058fa977536c0c87faa67c45c1f5"
+    }
+  ],
+  "fileHash": "b4ddaa86b8d569048b46de9cf689b7956b183ab58b32e0e929acf886daef3b8d"
+}
