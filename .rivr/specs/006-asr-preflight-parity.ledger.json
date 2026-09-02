@@ -4,12 +4,12 @@
   "spec": {
     "reference": "docs/specs/006-asr-preflight-parity.md",
     "title": "Batch 006 spec: ASR transcription route missing-key preflight parity",
-    "hash": "f2bee9b3178584813b6d67ea6bb11a94d548e46bf26a53a31870af0ac495a70d"
+    "hash": "4220e3a785a791bd96fc0e03f9f36d8a118e1442dbeacdc410b78aaaca54ba4e"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "implementation",
+  "stage": "verification",
   "retry": {
     "count": 0,
     "max": 5,
@@ -303,7 +303,18 @@
       "slice": "S02",
       "hash": "3e29471433fb6595a7047ed7e6bc748557bc779afa8a5b27dd655655c50b56ec",
       "fileHash": "2af578b596e2b767e3a4cc2f7ff7ca803eb4083936945551f046967d7618b2c1"
+    },
+    {
+      "seq": 14,
+      "id": "06cbcf3c-0737-4e67-b2d1-9d687190d242",
+      "at": "2026-09-02T04:39:55.167Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "fb5db28c4ef3f75262f7b44cbb0271ec50d9d43477d1872b04062f5db7e51f49",
+      "fileHash": "2faf5a2743cb06fbdde4ea895627201f0189b67b8143414b2d35a71a3ebb72a4"
     }
   ],
-  "fileHash": "2faf5a2743cb06fbdde4ea895627201f0189b67b8143414b2d35a71a3ebb72a4"
+  "fileHash": "4abcd17b8ce25f2e55f9dea14f7bbdd478b7b7bdbde8ad83fa5c15b0fdfec1c1"
 }
