@@ -9,7 +9,7 @@
   "tracker": {
     "mode": "none"
   },
-  "stage": "research_update",
+  "stage": "closed",
   "retry": {
     "count": 0,
     "max": 5,
@@ -434,7 +434,19 @@
       "slice": null,
       "hash": "bb7389c8efd40a62dbcc4352a56ea5997ae66e073ba782e6d4334882bdecf8e9",
       "fileHash": "0b44e07218f9d3cb2b44b4414de9a57116f760917c7653eeab573692a3a89f11"
+    },
+    {
+      "seq": 19,
+      "id": "5a92548e-d678-406c-bd1f-f4f77a1c6330",
+      "at": "2026-09-02T04:45:26.062Z",
+      "actor": "verifier",
+      "command": "certify",
+      "transition": "certify:62193746ba54dc356933d42f90c57654c753964aa39438ad99704888ca6ca738",
+      "slice": null,
+      "hash": "0d2779ca661668f23b7cf54f713ae3cb6da6e12b751959be46dfc2a8a48bc8fb",
+      "oracle": "62193746ba54dc356933d42f90c57654c753964aa39438ad99704888ca6ca738",
+      "fileHash": "38601d7b2a27af7a466dcc5bd1ad2a03691bce979319efaee98646f388228f84"
     }
   ],
-  "fileHash": "38601d7b2a27af7a466dcc5bd1ad2a03691bce979319efaee98646f388228f84"
+  "fileHash": "9ea166d989b041ed50d28601fdc51767150d0c2c7c7a67d11848c7adfdad0f61"
 }

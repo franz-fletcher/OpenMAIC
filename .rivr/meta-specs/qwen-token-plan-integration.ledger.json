@@ -49,6 +49,11 @@
       "batch": "005",
       "ledger": ".rivr/specs/005-media-test-redaction.ledger.json",
       "stage": "closed"
+    },
+    {
+      "batch": "006",
+      "ledger": ".rivr/specs/006-asr-preflight-parity.ledger.json",
+      "stage": "closed"
     }
   ],
   "audit": [
@@ -280,7 +285,29 @@
       "slice": null,
       "hash": "dc7aa9daee928d16d6688b8a58f6b83be797c5187ce92dfc25c759d43a581c5a",
       "fileHash": "32720be0439364f49788a1cc9c84620204c69710986288ad28336a741bed84cc"
+    },
+    {
+      "seq": 22,
+      "id": "a3d29d50-f1a9-434c-8cce-587cc430a5ab",
+      "at": "2026-09-02T04:45:26.108Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:clarification:batch 006 closed and certified",
+      "slice": null,
+      "hash": "ab042136898d22c0cf93a53343fe0f6484d12dc1fe18284368d3a4bf6067dd5b",
+      "fileHash": "276425884e2979a74734343c03ca747a371356d4f060947ac34ceeeaf7f0e6bb"
+    },
+    {
+      "seq": 23,
+      "id": "9c1a03d9-7c18-4c22-933f-3cc1de1f8648",
+      "at": "2026-09-02T04:45:26.109Z",
+      "actor": "orchestrator",
+      "command": "metaspec_child_link",
+      "transition": "child-link:006:.rivr/specs/006-asr-preflight-parity.ledger.json:closed",
+      "slice": null,
+      "hash": "76dc7cf16ba8e662295348ecf94450164d7ce7c3a03106c0c95ede5ed369fefb",
+      "fileHash": "276425884e2979a74734343c03ca747a371356d4f060947ac34ceeeaf7f0e6bb"
     }
   ],
-  "fileHash": "276425884e2979a74734343c03ca747a371356d4f060947ac34ceeeaf7f0e6bb"
+  "fileHash": "62689107e1a09b1e36a137a2d9b95d0158b803807daabf234708d8144996c7b8"
 }
