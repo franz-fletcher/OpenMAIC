@@ -28,15 +28,17 @@ Vendor schema, pinned by live zero-quota probes on 2026-09-02 (full record in `d
 
 ## Slices
 
-| Slice | Title | Delivers | Risk tier | Proposed gates |
+| Slice | Title | Shipped reality | Risk tier | Gates |
 | --- | --- | --- | --- | --- |
-| S01 | Adapter media input | `VideoGenerationOptions` gains `firstFrameUrl?` and `referenceImageUrls?` (`lib/media/types.ts:260`). `submitHappyHorseTask` builds `input.media` from them; the t2v body stays byte-identical with neither set. New unit tests including the adversarial `rejects unreachable image on poll`. | 4 | 4 gates, one adversarial |
-| S02 | Route preflight and orchestrator pass-through | Named `POST` export (`app/api/generate/video/route.ts:39`) returns 400 `MISSING_REQUIRED_FIELD` via the registry capability check after `resolveVideoModel` (`:87-94`), before `generateVideo` (`:105`). No vendor token appears in the route (it is neutrality-scanned). `callVideoApi` (`lib/media/media-orchestrator.ts:311`) forwards both fields. | 2 | 2 gates |
-| S03 | Model list, capability metadata, preset extension | `VIDEO_PROVIDERS.happyhorse.models` carries all three 1.1 ids with per-model source-requirement metadata. New exported helper `getVideoModelSourceRequirement` in `lib/media/video-providers.ts` (registry file is the composition root, not neutral-scanned). Preset video `defaultModels` becomes the three 1.1 ids. | 2 | 2 gates |
-| S04 | Yml example and docs rows | `server-providers.yml.example` video models gain i2v and r2v (managed deployments need them, `resolveVideoModel` allowlist). All six `packages/docs/content/docs/supported-models*.mdx` files list the new models. `.env.example` stays untouched (no `VIDEO_*_MODELS` rows exist by design; the yml is the model-list home). | 3 | 3 gates, one integration |
-| S05 | Live protocol proof | Submit-acceptance and completion proof: i2v once to SUCCEEDED (the single paid generation, operator-approved), r2v proven with a controlled unreachable-reference flow that confirms array acceptance at zero quota, plus the missing-media adversarial proof. Contract symbol `generateWithHappyHorse` (`happyhorse-adapter.ts:172`) and the new `tests/media/happyhorse-live.test.ts::LIVE_IMAGE_URL`. | 4 | 4 gates, one adversarial |
+| S01 | Adapter media input | `VideoGenerationOptions` carries `firstFrameUrl?` (`lib/media/types.ts:277`) and `referenceImageUrls?` (`:279`). `submitHappyHorseTask` (`lib/media/adapters/happyhorse-adapter.ts:93`) builds `input.media` from them. One `first_frame` entry for i2v (`:104`). One to nine `reference_image` entries for r2v (`:105-110`). Media omitted when both are absent, so the t2v body stays byte-identical (`:116-118`). `getErrorMessage` renders `code: message` (`:87-91`). Tests: `sends i2v body with first_frame media entry` (`tests/media/happyhorse-adapter.test.ts:65`), `sends r2v body with two reference_image entries` (`:107`), adversarial `rejects unreachable image on poll` (`:197`). | 4 | 4, one adversarial. All passed |
+| S02 | Route preflight and orchestrator pass-through | Named `POST` export (`app/api/generate/video/route.ts:43`). It resolves the model (`:91`), then the capability check via `getVideoModelSourceRequirement` (`:104`) returns 400 `MISSING_REQUIRED_FIELD` when the required source is absent (`:107-116`), before `generateVideo` (`:129`). No vendor token appears in the route. `callVideoApi` (`lib/media/media-orchestrator.ts:311`) forwards both fields (`:338-339`). Matrix test `PREFLIGHT_MATRIX` (`tests/server/video-route-preflight.test.ts:38`). | 2 | 2. All passed |
+| S03 | Model list, capability metadata, preset extension | `VIDEO_PROVIDERS` (`lib/media/video-providers.ts:23`) lists `happyhorse-1.1-i2v` with `sourceRequirement: 'first_frame'` (`:121`) and `happyhorse-1.1-r2v` with `reference_images` (`:122-126`). New exported helper `getVideoModelSourceRequirement` (`:227-230`) returns the aliased `VideoModelSourceRequirement | undefined`. The alias is declared at `lib/media/types.ts:307`. Preset video `defaultModels` lists the three 1.1 ids (`lib/config/token-plan-presets.ts:244`). | 2 | 2. All passed |
+| S04 | Yml example and docs rows | `server-providers.yml.example` lists i2v and r2v (`:63-64`). All six `packages/docs/content/docs/supported-models*.mdx` files list the new models. `tests/server/server-providers-example.test.ts` asserts the three models through the real yml loader (`:110-120`). `.env.example` untouched. | 3 | 3, one integration. All passed |
+| S05 | Live protocol proof | `tests/media/happyhorse-live.test.ts` carries `LIVE_IMAGE_URL` (`:7-8`) and the skip guard (`:12-23`). Tests: `missing media rejected` (`:33`), `r2v media array accepted` (`:68`), `i2v completes` (`:106`). The paid i2v run completed SUCCEEDED with a real https video URL in 81.76 s. The r2v download-failure proved array acceptance at zero quota. The missing-media run proved `Field required: input.media`. The file skips without `TEST_LOAD_LOCAL_ENV=1`. | 4 | 4, one adversarial. All passed |
 
-### Proposed gate commands
+### Gate commands (shipped)
+
+All gates passed. Rounds 1 and 2 recorded the unit and zero-quota gates. Round 3 recorded the paid G5.1 certification run and verified S05. The ledger holds the per-gate evidence.
 
 S01
 - G1.1 `npx vitest run tests/media/happyhorse-adapter.test.ts` expect `passed`
@@ -69,10 +71,10 @@ All gates run with cwd pinned to the repo root. The live file skips cleanly with
 
 - Field names are `firstFrameUrl` and `referenceImageUrls` (operator Q2). The `Url` suffix states the public-URL requirement.
 - Source images must be public https URLs the vendor fetches. The app's own candidates: OSS CDN keys (`lib/utils/database.ts:234`), classroom-media serving URLs when publicly reachable, and provider-hosted image URLs (their output URLs are vendor-fetchable by construction).
-- Mode detection is provider-agnostic (operator Q3 + review C3): model registry entries declare an optional `sourceRequirement: 'first_frame' | 'reference_images'`. The route resolves it through `getVideoModelSourceRequirement(providerId, modelId)`. The signature is contract-pinned: `(providerId: string, modelId: string): VideoModelSourceRequirement | undefined`. No `happyhorse` literal appears in the route file.
+- Mode detection is provider-agnostic (operator Q3 + review C3): model registry entries declare an optional `sourceRequirement: 'first_frame' | 'reference_images'` (`lib/media/types.ts:214`). The route resolves it through `getVideoModelSourceRequirement`. The shipped helper at `lib/media/video-providers.ts:227-230` returns the aliased form `(providerId: string, modelId: string): VideoModelSourceRequirement | undefined`. The alias is declared at `lib/media/types.ts:307`. No `happyhorse` literal appears in the route file.
 - The preflight error reuses the existing `MISSING_REQUIRED_FIELD` shape from `capability-force-off-routes.test.ts` precedent.
 - Live URL pinned for S05: `https://dashscope.oss-cn-beijing.aliyuncs.com/images/dog_and_girl.jpeg` (vendor docs sample, same CDN family as the proven ASR sample). S05 sequencing makes drift cheap: the paid i2v run executes AFTER the two zero-quota proofs; a URL-fetch failure shows as `Failed to download` and stops the live round before any charge.
-- r2v proof design (review C1: no cancel endpoint is proven; the adapter also ignores `options.signal`, so abort does not stop vendor work): submit r2v with one unreachable reference URL. `Field required: input.media` on poll would mean a schema bug. `Failed to download` means the array was accepted, auth worked, and the vendor tried to fetch — full protocol proof at zero quota. No cancellation is needed or relied upon.
+- r2v proof design (review C1: no cancel endpoint is proven; the adapter also ignores `options.signal`, so abort does not stop vendor work): submit r2v with one unreachable reference URL. `Field required: input.media` on poll would mean a schema bug. `Failed to download` means the array was accepted, auth worked, and the vendor tried to fetch. Full protocol proof at zero quota. No cancellation is needed or relied upon.
 - The t2v regression anchor is the exact-body pin already in `tests/media/happyhorse-adapter.test.ts:40-62`.
 - Boundary (review C5, explicit): `packages/@openmaic/generation/src/outline-types.ts:61-67` keeps its copy of `MediaGenerationRequest` untouched (publishable exemption). The agent-runtime video tool (`lib/server/agent-runtime/generate-video.ts:296-302`) keeps its schema without source-image fields. Neither is a defect; both are boundaries.
 - Model ids stay literal strings in settings and popover UI (`components/settings/video-settings.tsx:266-267`, `media-popover.tsx:182-185`). Zero new i18n keys (review-verified across 12 locales).
@@ -102,6 +104,57 @@ All gates run with cwd pinned to the repo root. The live file skips cleanly with
 - SSRF posture: the vendor fetches the URL, not this server. No new egress surface is added.
 - The adapter ignores `options.signal`; a client abort does not stop vendor generation. Recorded for future UX work.
 - Probe facts from 2026-09-02 live in the review document and this spec; the S05 run adds the completion proof line to the verification report (review C6).
-- Meta-spec batch-004 row stays `queued` until the human approves this spec.
+- Meta-spec batch-004 row advancement is the orchestrator's step at close. The row update happens after this spec is rebound.
 
-Status: Draft
+### Implementation Learnings
+
+1. Vendor media schema, now shipped:
+   - i2v and r2v both require `input.media` entries shaped `{type, url}`.
+   - i2v takes exactly one `first_frame` entry. r2v takes one to nine `reference_image` entries.
+   - The vendor rejects base64 transport. `parameters.media_base64` does not exist on this product.
+   - Submit always answers 200 with a PENDING task. Schema and download errors surface on the first poll as FAILED, about 0.1 s later.
+   - The discriminator is the message: `Field required: input.media` versus `Failed to download <url>`.
+   - The adapter renders `code: message` at `lib/media/adapters/happyhorse-adapter.ts:87-91`.
+
+2. Capability-driven route design keeps the neutrality scan green:
+   - Registry entries declare `sourceRequirement` at `lib/media/types.ts:214`. The route reads it through `getVideoModelSourceRequirement`. No vendor token appears in `app/api/generate/video/route.ts`. The scan stays green.
+   - The preflight reuses the `MISSING_REQUIRED_FIELD` shape already proven by `capability-force-off-routes.test.ts`.
+
+3. The prettier double-rejection class:
+   - `pnpm format` formats the whole repo. `pnpm exec prettier --write <explicit list>` formats only the named files. The two commands behave differently.
+   - Round 1 rejected six files. Round 2 rejected one file, `tests/media/happyhorse-live.test.ts:118-119`, because the partial pass left two poll-loop declarations at the old indent.
+   - The fix is a whole-branch sweep. Then confirm `npx prettier --check` on every touched file exits 0. A per-file check after a partial format does not catch the residual indent.
+
+4. Paid-gate double-run:
+   - `rivr slice verify --run-gates` re-runs every gate of a slice. The CLI has no evidence-injection path. A diagnostic run plus the recording run spends a paid gate twice.
+   - Round 3 spent the paid generation twice. Once as the diagnostic certification run (81.76 s). Once inside the CLI recording.
+   - Future live gates must budget two paid generations, or the CLI must gain an evidence-injection path.
+
+5. Live file skip-guard reuse:
+   - `tests/media/happyhorse-live.test.ts:12-23` skips the whole describe block when `TEST_LOAD_LOCAL_ENV` or the video key is absent. The pattern comes from `tests/audio/qwen-token-plan-asr-live.test.ts`.
+   - CI stays green without live credentials. Prove zero-quota paths first. Spend paid quota last.
+
+6. Env activation truth:
+   - Before this batch, `VIDEO_HAPPYHORSE_*` was dead config. The `.env.example:273-274` row held an empty key and the public dashscope host. No test loaded `.env.local`, so the adapter never reached the vendor.
+   - Commit `5915f64e` activated the live path. `TEST_LOAD_LOCAL_ENV=1` loads `.env.local`. The same host answered submit, poll, and completion.
+
+### Shipped state
+
+Test totals: `npx vitest run tests/media/` passes 33 files and skips 1 (the live file). 364 tests pass, 3 skip. Provider suites pass: `happyhorse-registry`, `apply-token-plan`, and `server-providers-example`. 3 files, 24 tests. `npx tsc --noEmit` exits 0.
+
+Commits, `main..HEAD` (8):
+
+- `9b269b12` chore(rivr): open batch 004 ledger and branch for happyhorse i2v/r2v
+- `c88ae532` chore(rivr): batch 004 postconditions and stage gate
+- `88e70f7a` feat(media): happyhorse media input, registry capability, preset models (batch 004 S01+S03)
+- `446ee6ae` feat(media): video route preflight and orchestrator pass-through (batch 004 S02)
+- `7fe98cb5` feat(media): extend yml example and six docs rows to i2v and r2v (batch 004 S04)
+- `5915f64e` test(media): live happyhorse proofs and env activation (batch 004 S05)
+- `ea7665bc` style(media): prettier pass, source-requirement alias, yml header (batch 004 fix round)
+- `3e862932` style(media): complete prettier pass on batch 004 files (round 2 follow-up)
+
+Files touched: 12 TypeScript files, plus `server-providers.yml.example` and six docs mdx rows. No `packages/@openmaic` file changed. The publishable exemption holds.
+
+Verification record: `docs/research/004-verification-report-r1.md`, `004-verification-report-r2.md`, `004-verification-report-r3.md`.
+
+Status: Shipped. All 5 slices verified. The orchestrator rebinds the spec hash and advances the ledger to closed.

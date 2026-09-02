@@ -9,7 +9,7 @@
   "tracker": {
     "mode": "none"
   },
-  "stage": "implementation",
+  "stage": "verification",
   "retry": {
     "count": 2,
     "max": 5,
@@ -585,13 +585,57 @@
         "at": "2026-09-02T00:34:38.928Z"
       },
       "verification": {
-        "status": "rejected",
-        "hash": "c759bd267637fc8df88039171fde89bb00af68adb33d3b634fd41b3292934959",
+        "status": "verified",
+        "hash": "2b9d32997f46c14725308966797d451801c5602192558ca4ec12e88a82ee4e58",
         "actor": "verifier",
-        "at": "2026-09-02T00:30:37.939Z",
+        "at": "2026-09-02T00:44:24.817Z",
         "deficiencies": [
           "Prettier format gate still fails on tests/media/happyhorse-live.test.ts:118-119. The fix-round prettier pass collapsed the i2v-completes test wrapper but left the two poll-loop declarations at the old 6-space indent; prettier requires 4. CI gate pnpm check (prettier . --check, .github/workflows/ci.yml) fails on merge. G5.2 and G5.3 pass fresh standalone this round (1366 ms, 1363 ms). G5.1 (paid) not run: a rejecting round discards its evidence and would exhaust the single operator-budgeted paid generation before certification. Fix: run pnpm format (or npx prettier --write tests/media/happyhorse-live.test.ts), confirm npx prettier --check --config .prettierrc tests/media/happyhorse-live.test.ts exits 0, then re-mark S05."
-        ]
+        ],
+        "evidence": {
+          "gates": [
+            {
+              "id": "G5.1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/media/happyhorse-live.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m | \u001b[22m\u001b[33m2 skipped\u001b[39m\u001b[2m)\u001b[22m\u001b[33m 81096\u001b[2mms\u001b[22m\u001b[39m\n     \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m i2v completes \u001b[33m 81095\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[2m | \u001b[22m\u001b[33m2 skipped\u001b[39m\u001b[90m (3)\u001b[39m\n\u001b[2m   Start at \u001b[22m 12:42:59\n\u001b[2m   Duration \u001b[22m 81.20s\u001b[2m (transform 24ms, setup 15ms, import 20ms, tests 81.10s, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G5.2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/media/happyhorse-live.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m | \u001b[22m\u001b[33m2 skipped\u001b[39m\u001b[2m)\u001b[22m\u001b[33m 1164\u001b[2mms\u001b[22m\u001b[39m\n     \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m r2v media array accepted \u001b[33m 1163\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[2m | \u001b[22m\u001b[33m2 skipped\u001b[39m\u001b[90m (3)\u001b[39m\n\u001b[2m   Start at \u001b[22m 12:44:21\n\u001b[2m   Duration \u001b[22m 1.26s\u001b[2m (transform 24ms, setup 11ms, import 21ms, tests 1.16s, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G5.3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/media/happyhorse-live.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m | \u001b[22m\u001b[33m2 skipped\u001b[39m\u001b[2m)\u001b[22m\u001b[33m 1468\u001b[2mms\u001b[22m\u001b[39m\n     \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m missing media rejected \u001b[33m 1467\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[2m | \u001b[22m\u001b[33m2 skipped\u001b[39m\u001b[90m (3)\u001b[39m\n\u001b[2m   Start at \u001b[22m 12:44:22\n\u001b[2m   Duration \u001b[22m 1.56s\u001b[2m (transform 27ms, setup 15ms, import 21ms, tests 1.47s, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G5.4",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/media/happyhorse-adapter.test.ts \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 3\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m tests/media/media-orchestrator.test.ts \u001b[2m(\u001b[22m\u001b[2m12 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 20\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m tests/server/video-route-preflight.test.ts \u001b[2m(\u001b[22m\u001b[2m7 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 97\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m3 passed\u001b[39m\u001b[22m\u001b[90m (3)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m25 passed\u001b[39m\u001b[22m\u001b[90m (25)\u001b[39m\n\u001b[2m   Start at \u001b[22m 12:44:24\n\u001b[2m   Duration \u001b[22m 233ms\u001b[2m (transform 199ms, setup 42ms, import 157ms, tests 121ms, environment 0ms)\u001b[22m\n\n\u001b[90mstderr\u001b[2m | tests/media/media-orchestrator.test.ts\u001b[2m > \u001b[22m\u001b[2mclassic media orchestrator\u001b[2m > \u001b[22m\u001b[2mpersists structured terminal errors under the placehold",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "i2v completes SUCCEEDED with a real video URL for the pinned sample image; r2v download-failure proves array acceptance; missing-media proves Field required; live file skips without TEST_LOAD_LOCAL_ENV.",
       "gates": [
@@ -600,7 +644,7 @@
           "check": "TEST_LOAD_LOCAL_ENV=1 npx vitest run tests/media/happyhorse-live.test.ts -t \"i2v completes\"",
           "expect": "passed",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "single paid completion, ordered after zero-quota proofs",
+          "evidence": "{\"id\":\"G5.1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/media/happyhorse-live.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m3 tests\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[33m2 skipped\\u001b[39m\\u001b[2m)\\u001b[22m\\u001b[33m 81096\\u001b[2mms\\u001b[22m\\u001b[39m\\n     \\u001b[33m\\u001b[2m✓\\u001b[22m\\u001b[39m i2v completes \\u001b[33m 81095\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[33m2 skipped\\u001b[39m\\u001b[90m (3)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 12:42:59\\n\\u001b[2m   Duration \\u001b[22m 81.20s\\u001b[2m (transform 24ms, setup 15ms, import 20ms, tests 81.10s, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}",
           "type": "integration"
         },
         {
@@ -608,7 +652,7 @@
           "check": "TEST_LOAD_LOCAL_ENV=1 npx vitest run tests/media/happyhorse-live.test.ts -t \"r2v media array accepted\"",
           "expect": "passed",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "Failed to download proves acceptance, zero quota",
+          "evidence": "{\"id\":\"G5.2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/media/happyhorse-live.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m3 tests\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[33m2 skipped\\u001b[39m\\u001b[2m)\\u001b[22m\\u001b[33m 1164\\u001b[2mms\\u001b[22m\\u001b[39m\\n     \\u001b[33m\\u001b[2m✓\\u001b[22m\\u001b[39m r2v media array accepted \\u001b[33m 1163\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[33m2 skipped\\u001b[39m\\u001b[90m (3)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 12:44:21\\n\\u001b[2m   Duration \\u001b[22m 1.26s\\u001b[2m (transform 24ms, setup 11ms, import 21ms, tests 1.16s, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}",
           "type": "integration"
         },
         {
@@ -616,7 +660,7 @@
           "check": "TEST_LOAD_LOCAL_ENV=1 npx vitest run tests/media/happyhorse-live.test.ts -t \"missing media rejected\"",
           "expect": "passed",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "Field required proves preflightless path, zero quota",
+          "evidence": "{\"id\":\"G5.3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/media/happyhorse-live.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m3 tests\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[33m2 skipped\\u001b[39m\\u001b[2m)\\u001b[22m\\u001b[33m 1468\\u001b[2mms\\u001b[22m\\u001b[39m\\n     \\u001b[33m\\u001b[2m✓\\u001b[22m\\u001b[39m missing media rejected \\u001b[33m 1467\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[33m2 skipped\\u001b[39m\\u001b[90m (3)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 12:44:22\\n\\u001b[2m   Duration \\u001b[22m 1.56s\\u001b[2m (transform 27ms, setup 15ms, import 21ms, tests 1.47s, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}",
           "type": "adversarial"
         },
         {
@@ -624,7 +668,7 @@
           "check": "npx vitest run tests/media/happyhorse-adapter.test.ts tests/media/media-orchestrator.test.ts tests/server/video-route-preflight.test.ts",
           "expect": "passed",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "scoped re-run of touched suites per review cost note"
+          "evidence": "{\"id\":\"G5.4\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/media/happyhorse-adapter.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m6 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 3\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m tests/media/media-orchestrator.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m12 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 20\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m tests/server/video-route-preflight.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m7 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 97\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m3 passed\\u001b[39m\\u001b[22m\\u001b[90m (3)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m25 passed\\u001b[39m\\u001b[22m\\u001b[90m (25)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 12:44:24\\n\\u001b[2m   Duration \\u001b[22m 233ms\\u001b[2m (transform 199ms, setup 42ms, import 157ms, tests 121ms, environment 0ms)\\u001b[22m\\n\\n\\u001b[90mstderr\\u001b[2m | tests/media/media-orchestrator.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mclassic media orchestrator\\u001b[2m > \\u001b[22m\\u001b[2mpersists structured terminal errors under the placehold\",\"passed\":true}"
         }
       ],
       "findings": [
@@ -1220,7 +1264,31 @@
       "slice": "S05",
       "hash": "391844eb0bb0f9d466e9a69b9ce3f63eb471f89294eb2d63aab69a3c49d23a6b",
       "fileHash": "f5209a0ca484efd1a3747696c64cef0ea326e0b9307386de1529e4cb5afc7ef1"
+    },
+    {
+      "seq": 52,
+      "id": "d5e2c69e-459a-4b36-954e-7fbbaef00c79",
+      "at": "2026-09-02T00:34:57.222Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "077fb66dcd51a4329fed38822c63f033731b64239f69a43cfeb496c7e0597ed1",
+      "fileHash": "8bcbcc6eb911d551250adeb7b01da11f4576b81986988bbe96c10d0e3a41f6a3"
+    },
+    {
+      "seq": 53,
+      "id": "2da30883-89f0-4a93-8447-0fe481beabfd",
+      "at": "2026-09-02T00:44:24.817Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S05:verification:pending->verified",
+      "slice": "S05",
+      "hash": "89b10110c544ce0970795c2fde5239b4ff9d85fa3fe0b10d55ea83ca9480888f",
+      "oracle": "cb5c0a4ab10c8dfc1a194ffe02707429573e2d4e301f96394ca31d109b9e51a4",
+      "evidence": "cd4d74576b319f0a230a11c833ee3842398799062a6317ff26cbce25e5484a76",
+      "fileHash": "5baf614ba7b9354d278264e8792dda418f59fbbb6ad75f724733b24c9ca93c85"
     }
   ],
-  "fileHash": "8bcbcc6eb911d551250adeb7b01da11f4576b81986988bbe96c10d0e3a41f6a3"
+  "fileHash": "ec4e4ea503456cd5b08670c20fb278b480faf90a03b5b6a7ca7a4682dcd177f3"
 }
