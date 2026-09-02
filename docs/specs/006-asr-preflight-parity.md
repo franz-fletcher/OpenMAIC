@@ -1,6 +1,6 @@
 # Batch 006 spec: ASR transcription route missing-key preflight parity
 
-Spec status: verification
+Spec status: research_update
 
 ## Problem Statement
 
@@ -60,4 +60,16 @@ S02 (3, one integration): full matrix (`passed`, type integration); managed/clie
 - Program boundary (operator Q4): capability routes now split 400 (tts, transcription after this batch) versus 401 (image, video) for the same missing-key case. Normalizing the split is a separate future decision, recorded in the meta-spec, not work deferred by this batch.
 - Custom `custom-asr-*` providers keep the existing 500 path by design (operator Q5a); the route guard mirrors the library condition exactly.
 
-Status: Draft
+Status: Implemented (batch 006, commits `091f8f3c..pending-head` on `feat/asr-preflight-parity`). Post-implementation learnings below.
+
+## Research update (post-implementation)
+
+**What shipped.** `app/api/transcription/route.ts:70-81` gained the missing-key preflight: `asrProvider?.requiresApiKey && !effectiveKey` returns `apiError('MISSING_API_KEY', 400, ...)` — the same envelope as the TTS route at `app/api/generate/tts/route.ts:112-117`. Placement honors the frozen order: disable check (51), managed + SSRF (56-63), then key check, then dispatch. `effectiveKey` computes once and feeds both guard and config. The new `tests/server/transcription-route-missing-key.test.ts` carries 13 tests: the four-keyed `it.each` matrix over `KEYED_BUILTINS` (69), three keyless dispatch proofs, managed and client-key pass-throughs, and the three unchanged-contract regressions (403 disabled, 400 MISSING_PROVIDER, 500 downstream). The guard predicate mirrors the library throw at `lib/audio/asr-providers.ts:171` exactly, so custom providers (absent from `ASR_PROVIDERS`) skip identically. The verifier's predicate diff confirms zero behavior change for keyless and custom paths.
+
+**Deviation, one:** the spec described browser-native as a keyless dispatch proof; the concrete test asserts the route-side dispatch attempt (guard skip) rather than a successful transcription, since the library path for browser-native is client-side. Contract met.
+
+**Hermeticity by construction.** The env-clear helper covers exactly the six `ASR_ENV_MAP` prefixes plus `ASR_BROWSER_NATIVE`; the batch-005 hostile-runner reproduction passes 13/13 with zero `sk-` hits without any new fix — batch 005's discipline paid forward.
+
+**Process notes.** First cycle of the program with zero rejections and zero correction amendments: 2 slices, 6 gates, 16-entry chain, round-1 verification, all gates hermetic. The pre-baked lessons (symbol expectations at anchor creation, `(req: NextRequest)` style before-signatures, literal `TSC_OK` oracles, neutral-cwd gate runs, `-t` name contracts frozen in the ledger) removed whole failure classes that cost rounds 2 and 3 in batches 004 and 005.
+
+**Test totals.** 13/13 matrix file, tsc clean, prettier clean whole-branch, hostile-env reproduction green.
