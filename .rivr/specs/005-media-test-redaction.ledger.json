@@ -9,13 +9,13 @@
   "tracker": {
     "mode": "none"
   },
-  "stage": "verification",
+  "stage": "implementation",
   "retry": {
-    "count": 2,
+    "count": 3,
     "max": 5,
     "consecutive_same_cause": 1,
     "escalate_at": 3,
-    "last_cause": "env-vector-hermeticity"
+    "last_cause": "g03-fullsuite-env-hermeticity"
   },
   "slices": [
     {
@@ -83,18 +83,16 @@
       "riskTier": 3,
       "uuid": "4beb1a48-55c4-49ba-a4f1-f12004700ce6",
       "impl": {
-        "status": "ready_for_verification",
-        "hash": "d6828934585eead9520b31515b1e0108036cefb08f51731f0a49ca1ac2f5c516",
-        "actor": "implementer",
-        "at": "2026-09-02T03:45:15.326Z"
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
       },
       "verification": {
         "status": "rejected",
-        "hash": "e3b98403825bd3378e1a60362391a64abe75819a3915ee55728746f2434e67bb",
+        "hash": "52b93e7a87d63e972f0b2383da165cd2966cc5a6718faf6d6f1c568df7ac52e1",
         "actor": "verifier",
-        "at": "2026-09-02T03:37:01.366Z",
+        "at": "2026-09-02T04:20:32.443Z",
         "deficiencies": [
-          "Hermeticity covers only the YAML path, not env-provided provider keys. The rivr gate runner (bun runtime) auto-loads .env.local, so its spawned gates inherit live keys. In tests/server/classroom-media-generation.test.ts the force-disabled test stubs VIDEO_SEEDANCE_ENABLED=false but not VIDEO_HAPPYHORSE_ENABLED=false; with VIDEO_HAPPYHORSE_API_KEY/BASE_URL in env, resolveServerVideoProviderId() returns happyhorse, fetch is called, expect(fetchMock).not.toHaveBeenCalled() at line 204 fails, and vitest serializes the full init including Authorization Bearer sk-sp-... (a live key). Reproduced via spawnSync of the exact gate command under bun: status 1, leaked true. Unsetting VIDEO_HAPPYHORSE_API_KEY/BASE_URL makes it pass. Violates user story 2 (no failing assertion prints an sk- secret). Also capability-force-off-routes.test.ts ASR force-off test expects 400 but gets 200 because ASR_QWEN_TOKEN_PLAN_API_KEY resolves an enabled ASR provider (line 303)."
+          "G01 and G02 now pass under the hostile runner env (classroom 9/9, force-off 10/10, zero sk-/Bearer hits), so the round-1 env-vector finding is fixed. The block is gate G03 (npx vitest run, expect passed). This round's single recorded attempt failed G03 with a NEW failure class, not the tolerated F2 database-chat-cutover 5s flake (that test passed this attempt). The failure is 9 deterministic tests in 6 files byte-identical to main and not imported by any batch file: tests/agent-runtime/dsl-tools.test.ts (expects generate_video excluded, fails when VIDEO_* env present), tests/agent-runtime/runner-skills-registration.test.ts, tests/agent-runtime/runner-voice-registration.test.ts (2 tests), tests/agent-runtime/runner-web-search-registration.test.ts (2 tests), tests/server/provider-config.test.ts (video default returns undefined / web-search preference chain returns undefined when disabled), tests/server/qwen-voice-route.test.ts (shared Qwen base URL). All 9 pass under a stripped provider env and fail only because the bun gate runner inherits .env.local provider keys. They are outside the batch's declared scope (spec scopes fixes to tests/server classroom + force-off). G03 as defined cannot record green under the runner env until either those 6 files are also made env-hermetic (scope expansion) or the gate runs under a neutral env / excludes the pre-existing env-driven class (orchestrator decision). Verifier cannot verify while G03 as defined fails."
         ]
       },
       "expectation": "both suites green with hostile YAML present AND with live-shaped provider env injected (runner-equivalent)",
@@ -135,6 +133,17 @@
           "level": "error",
           "deficiency": "Hermeticity covers only the YAML path, not env-provided provider keys. The rivr gate runner (bun runtime) auto-loads .env.local, so its spawned gates inherit live keys. In tests/server/classroom-media-generation.test.ts the force-disabled test stubs VIDEO_SEEDANCE_ENABLED=false but not VIDEO_HAPPYHORSE_ENABLED=false; with VIDEO_HAPPYHORSE_API_KEY/BASE_URL in env, resolveServerVideoProviderId() returns happyhorse, fetch is called, expect(fetchMock).not.toHaveBeenCalled() at line 204 fails, and vitest serializes the full init including Authorization Bearer sk-sp-... (a live key). Reproduced via spawnSync of the exact gate command under bun: status 1, leaked true. Unsetting VIDEO_HAPPYHORSE_API_KEY/BASE_URL makes it pass. Violates user story 2 (no failing assertion prints an sk- secret). Also capability-force-off-routes.test.ts ASR force-off test expects 400 but gets 200 because ASR_QWEN_TOKEN_PLAN_API_KEY resolves an enabled ASR provider (line 303).",
           "evidence": "env-vector-hermeticity"
+        },
+        {
+          "id": 2,
+          "correlation": "3102adbd35318358faf76530efcf617f3e40e946fb4278a41e1cc16d806430be",
+          "at": "2026-09-02T04:20:32.444Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "G01 and G02 now pass under the hostile runner env (classroom 9/9, force-off 10/10, zero sk-/Bearer hits), so the round-1 env-vector finding is fixed. The block is gate G03 (npx vitest run, expect passed). This round's single recorded attempt failed G03 with a NEW failure class, not the tolerated F2 database-chat-cutover 5s flake (that test passed this attempt). The failure is 9 deterministic tests in 6 files byte-identical to main and not imported by any batch file: tests/agent-runtime/dsl-tools.test.ts (expects generate_video excluded, fails when VIDEO_* env present), tests/agent-runtime/runner-skills-registration.test.ts, tests/agent-runtime/runner-voice-registration.test.ts (2 tests), tests/agent-runtime/runner-web-search-registration.test.ts (2 tests), tests/server/provider-config.test.ts (video default returns undefined / web-search preference chain returns undefined when disabled), tests/server/qwen-voice-route.test.ts (shared Qwen base URL). All 9 pass under a stripped provider env and fail only because the bun gate runner inherits .env.local provider keys. They are outside the batch's declared scope (spec scopes fixes to tests/server classroom + force-off). G03 as defined cannot record green under the runner env until either those 6 files are also made env-hermetic (scope expansion) or the gate runs under a neutral env / excludes the pre-existing env-driven class (orchestrator decision). Verifier cannot verify while G03 as defined fails.",
+          "evidence": "g03-fullsuite-env-hermeticity"
         }
       ]
     },
@@ -180,13 +189,37 @@
         "at": "2026-09-02T03:45:20.432Z"
       },
       "verification": {
-        "status": "rejected",
-        "hash": "23a764505726366d9408666566d773b100cf4496f5e48a2ac59d6ff0d59869c0",
+        "status": "verified",
+        "hash": "a9d05636f781fb0aa1d3a96a8c7f8e7cd6e13627f92a62c522abe76531150ac9",
         "actor": "verifier",
-        "at": "2026-09-02T03:37:01.366Z",
+        "at": "2026-09-02T03:53:20.713Z",
         "deficiencies": [
           "Gate G02 (full classroom file green) fails under the runner env: the same env-vector leak as S01. The guard test itself (G01) passes, but the file is not green in a live-key environment because the force-disabled test leaks Authorization Bearer sk-sp-... when VIDEO_HAPPYHORSE_* env keys are present. The paired guard proves capture works but does not close the env-var leak path. Gate G02 expect=passed is not satisfiable on a machine with live provider keys in .env.local."
-        ]
+        ],
+        "evidence": {
+          "gates": [
+            {
+              "id": "G01",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/server/classroom-media-generation.test.ts\u001b[2m > \u001b[22m\u001b[2mgenerateMediaForClassroom model fallback\u001b[2m > \u001b[22m\u001b[2mguard: fixture key — whole-init matcher captures headers, scalar assertion does not\n\u001b[22m\u001b[39m[2026-09-02T03:53:20.016Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 0 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 0 Video, 0 WebSearch providers\n\n \u001b[32m✓\u001b[39m tests/server/classroom-media-generation.test.ts \u001b[2m(\u001b[22m\u001b[2m9 tests\u001b[22m\u001b[2m | \u001b[22m\u001b[33m8 skipped\u001b[39m\u001b[2m)\u001b[22m\u001b[32m 10\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[2m | \u001b[22m\u001b[33m8 skipped\u001b[39m\u001b[90m (9)\u001b[39m\n\u001b[2m   Start at \u001b[22m 15:53:19\n\u001b[2m   Duration \u001b[22m 239ms\u001b[2m",
+              "passed": true
+            },
+            {
+              "id": "G02",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/server/classroom-media-generation.test.ts\u001b[2m > \u001b[22m\u001b[2mgenerateMediaForClassroom model fallback\u001b[2m > \u001b[22m\u001b[2mguard: fixture key — whole-init matcher captures headers, scalar assertion does not\n\u001b[22m\u001b[39m[2026-09-02T03:53:20.657Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 0 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 0 Video, 0 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/server/classroom-media-generation.test.ts\u001b[2m > \u001b[22m\u001b[2mgenerateMediaForClassroom model fallback\u001b[2m > \u001b[22m\u001b[2mgracefully skips media when every configured provider is force-disabled\n\u001b[22m\u001b[39m[2026-09-02T03:53:20.665Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 0 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 1 Video,",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "guard legs pass; classroom file green under injected provider env",
       "gates": [
@@ -196,7 +229,7 @@
           "expect": "passed",
           "type": "unit",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "paired guard legs pass"
+          "evidence": "{\"id\":\"G01\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/classroom-media-generation.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mgenerateMediaForClassroom model fallback\\u001b[2m > \\u001b[22m\\u001b[2mguard: fixture key — whole-init matcher captures headers, scalar assertion does not\\n\\u001b[22m\\u001b[39m[2026-09-02T03:53:20.016Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 0 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 0 Video, 0 WebSearch providers\\n\\n \\u001b[32m✓\\u001b[39m tests/server/classroom-media-generation.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m9 tests\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[33m8 skipped\\u001b[39m\\u001b[2m)\\u001b[22m\\u001b[32m 10\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[33m8 skipped\\u001b[39m\\u001b[90m (9)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 15:53:19\\n\\u001b[2m   Duration \\u001b[22m 239ms\\u001b[2m\",\"passed\":true}"
         },
         {
           "id": "G02",
@@ -204,7 +237,7 @@
           "expect": "passed",
           "type": "unit",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "full classroom file green"
+          "evidence": "{\"id\":\"G02\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/classroom-media-generation.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mgenerateMediaForClassroom model fallback\\u001b[2m > \\u001b[22m\\u001b[2mguard: fixture key — whole-init matcher captures headers, scalar assertion does not\\n\\u001b[22m\\u001b[39m[2026-09-02T03:53:20.657Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 0 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 0 Video, 0 WebSearch providers\\n\\n\\u001b[90mstdout\\u001b[2m | tests/server/classroom-media-generation.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mgenerateMediaForClassroom model fallback\\u001b[2m > \\u001b[22m\\u001b[2mgracefully skips media when every configured provider is force-disabled\\n\\u001b[22m\\u001b[39m[2026-09-02T03:53:20.665Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 0 LLM, 0 TTS, 0 ASR, 0 PDF, 1 Image, 1 Video,\",\"passed\":true}"
         }
       ],
       "findings": [
@@ -715,7 +748,31 @@
       "slice": null,
       "hash": "15de7c814425f990b028f7f6af636bb037e4792bae5cd94b21e9d74250e21393",
       "fileHash": "099ad6031ed130d0166d0b93318787c4fbd77d0b9dedd1b3c98e10b1bac7b698"
+    },
+    {
+      "seq": 36,
+      "id": "33c6d127-da62-4082-8ce7-c086103a3f55",
+      "at": "2026-09-02T03:53:20.713Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S02:verification:pending->verified",
+      "slice": "S02",
+      "hash": "f761ce5e258634fe5fe54cbba868391a89873945823dacc94ee73cd6616b5a92",
+      "oracle": "b7d342560fa91942ff051a1c56ed4650efaf5c6e8bb7d21c606b416fa476ed51",
+      "evidence": "0d15ec055c6fb45996fa03ba809328692d8c6cd8cd04b82ba0eeb3f19d490d35",
+      "fileHash": "d7821b1e9bfe48c0188656aa8a7e3e56843451b450c0794e73dcb3bf1a71999e"
+    },
+    {
+      "seq": 37,
+      "id": "6be08eb2-fc10-4f3c-a6d5-81422ed8371e",
+      "at": "2026-09-02T04:20:32.444Z",
+      "actor": "verifier",
+      "command": "slice_reject_batch",
+      "transition": "reject-batch:S01",
+      "slice": null,
+      "hash": "d22767bd984b6e922d8ef0b7e574242624493f46a721ae9e503cae09dba14918",
+      "fileHash": "b1c1bad7750e49db463c3de6e0b31bc94580d4a8c066503f5d89113d2589860e"
     }
   ],
-  "fileHash": "d7821b1e9bfe48c0188656aa8a7e3e56843451b450c0794e73dcb3bf1a71999e"
+  "fileHash": "2041d0a678c4ef6e5b38223b3642ec263a1f83b6cccedacb2710b825bc365689"
 }
