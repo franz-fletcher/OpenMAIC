@@ -72,9 +72,9 @@ Video protocol facts:
 | 001 | `tts-ws-provider` | **Closed and certified 2026-08-31.** All 5 slices verified, live protocol proven, proof hash 955fea98. |
 | 002 | `asr-sync-provider` | **Closed and certified 2026-09-01.** All 4 slices verified in 2 rounds, live transcript proof, proof hash 1b751a68. |
 | 003 | `token-plan-preset-registration` | **Closed and certified 2026-09-01.** Five-target preset, asr modality, 4/4 slices, hermetic cycle, proof 1389e23f. |
-| 004 | `video-i2v-r2v` | queued. |
+| 004 | `video-i2v-r2v` | **Closed and certified 2026-09-01.** Media inputs via https URLs, registry capability, paid i2v completion proof, proof f90474ab. |
 | 005 | `media-test-redaction` | **Closed and certified 2026-09-02.** Both leak vectors (YAML + runner env) hermetic; batch-001 exclusion retired; proof 8a2242c9. |
-| 006 | `asr-preflight-parity` | queued. Final batch. |
+| 006 | `asr-preflight-parity` | **Closed and certified 2026-09-02.** Route preflight 400 MISSING_API_KEY, 13-test matrix, first zero-rejection cycle, proof 2026-09-02T04:45:26Z. Final child batch. |
 | blocked | `voice-cloning` | vendor gap, probe evidence. |
 | documented-only | `realtime` | no app surface. |
 
