@@ -115,8 +115,8 @@ describeOrSkip('HappyHorse live protocol', () => {
     expect(taskId).toBeTruthy();
 
     // Poll until SUCCEEDED or timeout (10 minutes)
-      const startTime = Date.now();
-      let result: Awaited<ReturnType<typeof pollHappyHorseTask>> = null;
+    const startTime = Date.now();
+    let result: Awaited<ReturnType<typeof pollHappyHorseTask>> = null;
 
     while (Date.now() - startTime < 600000) {
       result = await pollHappyHorseTask(config, taskId);
