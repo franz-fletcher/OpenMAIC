@@ -53,9 +53,13 @@ image:
       - wan2.7-image
 
 # --- Video Generation ---------------------------------------------------------
+# --- Video Generation ---------------------------------------------------------
+# Source images must be public https URLs the vendor can fetch.
 video:
   happyhorse:
     apiKey: sk-sp-REPLACE_ME
     baseUrl: https://token-plan.ap-southeast-1.maas.aliyuncs.com
     models:
       - happyhorse-1.1-t2v
+      - happyhorse-1.1-i2v
+      - happyhorse-1.1-r2v

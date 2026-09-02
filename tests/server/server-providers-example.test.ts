@@ -106,4 +106,17 @@ describe('server-providers.yml.example', () => {
       'https://token-plan.ap-southeast-1.maas.aliyuncs.com/api/v1',
     );
   });
+
+  it('resolves three happyhorse video models from the example yml', async () => {
+    const examplePath = path.join(process.cwd(), 'server-providers.yml.example');
+    const raw = fs.readFileSync(examplePath, 'utf-8');
+    yamlOverride = raw;
+
+    const { resolveVideoModel } = await import('@/lib/server/provider-config');
+
+    // Three 1.1 models in the managed video allowlist
+    expect(resolveVideoModel('happyhorse', 'happyhorse-1.1-t2v')).toBe('happyhorse-1.1-t2v');
+    expect(resolveVideoModel('happyhorse', 'happyhorse-1.1-i2v')).toBe('happyhorse-1.1-i2v');
+    expect(resolveVideoModel('happyhorse', 'happyhorse-1.1-r2v')).toBe('happyhorse-1.1-r2v');
+  });
 });
