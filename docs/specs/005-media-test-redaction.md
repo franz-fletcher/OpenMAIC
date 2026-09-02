@@ -31,6 +31,8 @@ Error taxonomy for spy failures, proven live: `not.toHaveBeenCalled()` and `toHa
 
 **S02 `redaction-guard` (tier 2).** A hermetic guard test configures a fixture YAML with a live-shaped key, runs a failing path, captures serialized output, and asserts the key is absent. `qwen-voice-route.test.ts:141,238` move from whole-init `toMatchObject` to scalar field reads, so a failure cannot serialize a header-bearing init. Blocked by S01.
 
+**S03 `audio-suite-scalars` (tier 2, operator Q1 extension).** The five `tests/audio` files with the same whole-init assertion shape (`qwen-voice-clone`, `lemonade-tts`, `lemonade-asr`, `funasr-asr`, `doubao-tts`) swap to scalar field reads. The leak class dies program-wide instead of half-dying. Blocked by S02 (same assertion idiom, one lesson applied once).
+
 ### Proposed gates
 
 S01 (3 gates, one integration):
@@ -42,12 +44,16 @@ S02 (2 gates):
 - G01 guard test by exact name (byte-pinned at ledger build), expect `passed`
 - G02 `npx vitest run tests/server/qwen-voice-route.test.ts` expect `passed`
 
+S03 (2 gates):
+- G01 `npx vitest run tests/audio` expect `passed`
+- G02 `! grep -rqF "mock.calls[0][1]).toMatchObject" tests/audio && echo AUDIO_SCALARS_OK` expect `AUDIO_SCALARS_OK` (fixed-string scan proves the init-matcher idiom is gone from the suite)
+
 ## Implementation Decisions
 
 - Copy the `readFileSync`/`existsSync` interception shape from `provider-config.test.ts:82-99` exactly; keep existing env stubs and module mocks.
 - `qwen-voice-route.test.ts`: `expect((fetchSpy.mock.calls[0][1] as RequestInit).redirect).toBe('error')` at both sites.
 - Guard test lives in `classroom-media-generation.test.ts` inside the existing describe block, as a named helper plus a test; the helper is a real outline symbol for the ledger.
-- No sanitizer function in product code. Hermeticity plus scalar assertions make live material unable to enter output at all (Reading A). The repo's only redactor (`personal-history-tools.ts:107-119`) stays private and untouched.
+- No sanitizer exists. Hermeticity plus scalar assertions keep live material out of output entirely (operator Q2a). The repo's only redactor (`personal-history-tools.ts:107-119`) stays private and untouched.
 
 ## Testing Decisions
 
@@ -60,11 +66,11 @@ S02 (2 gates):
 - No product code changes under `lib/`.
 - No neutrality-debt table edit. Batch 005 touches no neutral file. (The meta's `qwen: 20` line is stale prose versus the live `24`; the research update fixes the prose.)
 - No batch-001 closed-ledger gate-text edit. That ledger is history; the 005 G02 proves retirement (see open questions).
-- `tests/audio` Class C sites (same assertion shapes, five files): outside the operator's sweep bound until the operator rules (open question).
+- The batch fixes the three Class A server sites plus the five Class C `tests/audio` sites (operator Q1 extension). Nothing in the swept class is left unfixed.
 
 ## Further Notes
 
-- The batch-001 ledger carries the exclusion in gate G5.1 at `001-qwen-token-plan-tts.ledger.json:650`. Closed ledger text is historical evidence and is not rewritten.
+- The batch-001 ledger carries the exclusion in gate G5.1 at `001-qwen-token-plan-tts.ledger.json:650`. Closed ledger text is historical evidence and is not rewritten (operator Q3a).
 - Batch 006 is unaffected: it touches `app/api/transcription/route.ts`, a neutral file, with its own debt entry.
 
 Status: Draft

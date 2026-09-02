@@ -84,7 +84,7 @@ Batch 003 scope: the `TokenPlanModality` union gains `asr`. Today the union at `
 
 Batch 004 scope: `lib/media/adapters/happyhorse-adapter.ts:104-115` sends `input.prompt` only. The batch adds first-frame and reference-image inputs for `happyhorse-1.1-i2v` and `happyhorse-1.1-r2v`, the registry capability metadata, and the model rows in the yml example plus the six `supported-models*.mdx` docs files. It updates the model list at `lib/media/video-providers.ts:112-122`.
 
-Batch 005 scope (closes finding F5): `tests/server/classroom-media-generation.test.ts` prints a live bearer key in its failure output when the upstream call rejects. The evidence sits in `docs/research/001-verification-report.md` (finding F5, round 2). The batch redacts secret material from captured fetch-mock output and adds a hermetic guard test proving no key substring reaches test logs. No product code changes. The batch also removes the batch-001 gate exclusion for this file once fixed.
+Batch 005 scope (closes finding F5): `tests/server/classroom-media-generation.test.ts` prints a live bearer key in its failure output. The trigger is vitest serializing the fetch-mock call init when an assertion fails while a host `server-providers.yml` beats env stubs (`resolveSectionApiKey` returns YAML first); the sentinel reproduction is recorded in the batch-005 spec. The batch makes the affected server tests hermetic against the YAML file, replaces whole-init matchers with scalar reads, and adds a hermetic guard test proving a fixture key never reaches output. Operator extension: five same-shape `tests/audio` sites are fixed in the same batch, so the leak class closes program-wide. No product code changes. The full-suite gate runs without the batch-001 exclusion as the retirement proof; the closed 001 ledger text stays untouched. Evidence: `docs/research/001-verification-report.md` finding F5.
 
 Batch 006 scope (final batch, operator request 2026-09-01): transcription route key preflight parity. `app/api/transcription/route.ts` has no missing-key contract. A request without a configured ASR key takes the generic 500 error path for every ASR provider. The batch adds the 400 `MISSING_API_KEY` preflight that `app/api/generate/tts/route.ts:112-119` already enforces for TTS, then adds the per-provider missing-key test matrix across the ASR registry. It changes route behavior for all ASR providers, so it ships as its own cycle with its own approval.
 
@@ -100,7 +100,9 @@ The meta-ledger lives at `.rivr/meta-specs/qwen-token-plan-integration.ledger.js
 
 Publishable-package exemption: no touched file lives under `packages/@openmaic/*`. The version-bump check does not apply. The claim is grounded in grep over `lib/`, which finds zero WebSocket usage and no package references.
 
-Neutrality debt table: `tests/providers/provider-neutrality-guard.test.ts:164-213` pins vendor token counts in `lib/server/provider-config.ts`. Today `qwen` counts 20 and `minimax` counts 13. The same slice that adds an env prefix updates the table.
+Neutrality debt table: `tests/providers/provider-neutrality-guard.test.ts` pins vendor token counts in `lib/server/provider-config.ts`. Since batches 001-003 the live guard reads `qwen` 24, `minimax` 13, plus `token` and `plan` rows. The same slice that adds an env prefix updates the table.
+
+Route status-code boundary (batch 006 note): capability routes answer the missing-key case with 400 (tts, transcription) or 401 (image, video). Program-wide normalization is a future operator decision, not deferred batch work.
 
 i18n parity: `pnpm check:i18n-keys` enforces key parity across 12 locales.
 

@@ -53,5 +53,7 @@ S02 (3, one integration): full matrix (`passed`, type integration); managed/clie
 
 - Cross-batch: batches 001-003 shipped `qwen-token-plan-asr`; this batch makes its missing-key behavior identical to every other ASR provider at the HTTP boundary.
 - No publishable file touched, so no version bump.
+- Program boundary (operator Q4): capability routes now split 400 (tts, transcription after this batch) versus 401 (image, video) for the same missing-key case. Normalizing the split is a separate future decision, recorded in the meta-spec, not work deferred by this batch.
+- Custom `custom-asr-*` providers keep the existing 500 path by design (operator Q5a); the route guard mirrors the library condition exactly.
 
 Status: Draft
