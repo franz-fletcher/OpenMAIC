@@ -4,17 +4,18 @@
   "spec": {
     "reference": "docs/specs/005-media-test-redaction.md",
     "title": "Batch 005 spec: media-test redaction",
-    "hash": "436d1196f6702d57b321b14035d301bd3aed823b5416a14794c5c4725d00c871"
+    "hash": "1bacafefef47009402ee352519ff74d1bb612749add6dbb994e50efc69caa00c"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "verification",
+  "stage": "implementation",
   "retry": {
-    "count": 0,
+    "count": 2,
     "max": 5,
-    "consecutive_same_cause": 0,
-    "escalate_at": 3
+    "consecutive_same_cause": 1,
+    "escalate_at": 3,
+    "last_cause": "env-vector-hermeticity"
   },
   "slices": [
     {
@@ -82,16 +83,19 @@
       "riskTier": 3,
       "uuid": "4beb1a48-55c4-49ba-a4f1-f12004700ce6",
       "impl": {
-        "status": "ready_for_verification",
-        "hash": "14ee62311dac15b0f03f51e0cb1634503e565572dd33ca1544051e4b464aa725",
-        "actor": "implementer",
-        "at": "2026-09-02T02:44:55.764Z"
-      },
-      "verification": {
         "status": "pending",
         "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
       },
-      "expectation": "Both suites answer null for the YAML path regardless of host files. Classroom and force-off suites pass. Full suite runs with no exclusion.",
+      "verification": {
+        "status": "rejected",
+        "hash": "e3b98403825bd3378e1a60362391a64abe75819a3915ee55728746f2434e67bb",
+        "actor": "verifier",
+        "at": "2026-09-02T03:37:01.366Z",
+        "deficiencies": [
+          "Hermeticity covers only the YAML path, not env-provided provider keys. The rivr gate runner (bun runtime) auto-loads .env.local, so its spawned gates inherit live keys. In tests/server/classroom-media-generation.test.ts the force-disabled test stubs VIDEO_SEEDANCE_ENABLED=false but not VIDEO_HAPPYHORSE_ENABLED=false; with VIDEO_HAPPYHORSE_API_KEY/BASE_URL in env, resolveServerVideoProviderId() returns happyhorse, fetch is called, expect(fetchMock).not.toHaveBeenCalled() at line 204 fails, and vitest serializes the full init including Authorization Bearer sk-sp-... (a live key). Reproduced via spawnSync of the exact gate command under bun: status 1, leaked true. Unsetting VIDEO_HAPPYHORSE_API_KEY/BASE_URL makes it pass. Violates user story 2 (no failing assertion prints an sk- secret). Also capability-force-off-routes.test.ts ASR force-off test expects 400 but gets 200 because ASR_QWEN_TOKEN_PLAN_API_KEY resolves an enabled ASR provider (line 303)."
+        ]
+      },
+      "expectation": "both suites green with hostile YAML present AND with live-shaped provider env injected (runner-equivalent)",
       "gates": [
         {
           "id": "G01",
@@ -116,6 +120,19 @@
           "type": "integration",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
           "evidence": "full suite, no exclusion flags: batch-001 G5.1 retirement proof"
+        }
+      ],
+      "findings": [
+        {
+          "id": 1,
+          "correlation": "b1d1b5f8d3626c63989816caa29f05b655f80ef80918f4f1f23a1027a1d6ef13",
+          "at": "2026-09-02T03:37:01.366Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "Hermeticity covers only the YAML path, not env-provided provider keys. The rivr gate runner (bun runtime) auto-loads .env.local, so its spawned gates inherit live keys. In tests/server/classroom-media-generation.test.ts the force-disabled test stubs VIDEO_SEEDANCE_ENABLED=false but not VIDEO_HAPPYHORSE_ENABLED=false; with VIDEO_HAPPYHORSE_API_KEY/BASE_URL in env, resolveServerVideoProviderId() returns happyhorse, fetch is called, expect(fetchMock).not.toHaveBeenCalled() at line 204 fails, and vitest serializes the full init including Authorization Bearer sk-sp-... (a live key). Reproduced via spawnSync of the exact gate command under bun: status 1, leaked true. Unsetting VIDEO_HAPPYHORSE_API_KEY/BASE_URL makes it pass. Violates user story 2 (no failing assertion prints an sk- secret). Also capability-force-off-routes.test.ts ASR force-off test expects 400 but gets 200 because ASR_QWEN_TOKEN_PLAN_API_KEY resolves an enabled ASR provider (line 303).",
+          "evidence": "env-vector-hermeticity"
         }
       ]
     },
@@ -155,16 +172,19 @@
       "riskTier": 2,
       "uuid": "95e59331-b2c5-44e5-817e-e17fb00bdd14",
       "impl": {
-        "status": "ready_for_verification",
-        "hash": "258988d0e1476b4725b9e9e0f632f084e9c0eaad3f212ab138be64f572819305",
-        "actor": "implementer",
-        "at": "2026-09-02T02:46:58.602Z"
-      },
-      "verification": {
         "status": "pending",
         "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
       },
-      "expectation": "Guard passes with both legs. Test name contains the byte-pinned substring guard: fixture key.",
+      "verification": {
+        "status": "rejected",
+        "hash": "23a764505726366d9408666566d773b100cf4496f5e48a2ac59d6ff0d59869c0",
+        "actor": "verifier",
+        "at": "2026-09-02T03:37:01.366Z",
+        "deficiencies": [
+          "Gate G02 (full classroom file green) fails under the runner env: the same env-vector leak as S01. The guard test itself (G01) passes, but the file is not green in a live-key environment because the force-disabled test leaks Authorization Bearer sk-sp-... when VIDEO_HAPPYHORSE_* env keys are present. The paired guard proves capture works but does not close the env-var leak path. Gate G02 expect=passed is not satisfiable on a machine with live provider keys in .env.local."
+        ]
+      },
+      "expectation": "guard legs pass; classroom file green under injected provider env",
       "gates": [
         {
           "id": "G01",
@@ -181,6 +201,19 @@
           "type": "unit",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
           "evidence": "full classroom file green"
+        }
+      ],
+      "findings": [
+        {
+          "id": 1,
+          "correlation": "3540fb470f5617d94e6c46aacd5a51d59f630502c46fae867e91ebcddf26b985",
+          "at": "2026-09-02T03:37:01.366Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "Gate G02 (full classroom file green) fails under the runner env: the same env-vector leak as S01. The guard test itself (G01) passes, but the file is not green in a live-key environment because the force-disabled test leaks Authorization Bearer sk-sp-... when VIDEO_HAPPYHORSE_* env keys are present. The paired guard proves capture works but does not close the env-var leak path. Gate G02 expect=passed is not satisfiable on a machine with live provider keys in .env.local.",
+          "evidence": "env-vector-hermeticity"
         }
       ]
     },
@@ -239,8 +272,34 @@
         "at": "2026-09-02T02:49:26.497Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "verified",
+        "hash": "23e3a04fe735a240411fb25ddb3f3a31054e90c41b461441cf78c0fc516b181a",
+        "actor": "verifier",
+        "at": "2026-09-02T03:16:46.638Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G01",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "af140036d2daac0a8c6142d6bf1c3816b2d6a18f4eeee73b82c5e119f0a5e95d",
+              "pathCount": 31,
+              "output": "AUDIO_SCALARS_OK\n",
+              "passed": true
+            },
+            {
+              "id": "G02",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "af140036d2daac0a8c6142d6bf1c3816b2d6a18f4eeee73b82c5e119f0a5e95d",
+              "pathCount": 31,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/audio/audio-player-pool-first.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 65\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m tests/audio/qwen-token-plan-tts-protocol.test.ts \u001b[2m(\u001b[22m\u001b[2m8 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 60\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m tests/audio/qwen-token-plan-asr-protocol.test.ts \u001b[2m(\u001b[22m\u001b[2m5 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 125\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m tests/audio/audio-player-legacy-fetch.test.ts \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 201\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m tests/audio/qwen-token-plan-tts.test.ts \u001b[2m(\u001b[22m\u001b[2m14 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 170\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m tests/audio/qwen-voice-clone.test.ts \u001b[2m(\u001b[22m\u001b[2m38 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 149\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m tests/audio/voxcpm-registration.test.ts \u001b[2m(\u001b[22m\u001b[2m5 te",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "grep canary prints AUDIO_SCALARS_OK; tests/audio suite green after conversions.",
       "gates": [
@@ -250,7 +309,7 @@
           "expect": "AUDIO_SCALARS_OK",
           "type": "unit",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "whole-init idiom absent from tests/audio"
+          "evidence": "{\"id\":\"G01\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"af140036d2daac0a8c6142d6bf1c3816b2d6a18f4eeee73b82c5e119f0a5e95d\",\"pathCount\":31,\"output\":\"AUDIO_SCALARS_OK\\n\",\"passed\":true}"
         },
         {
           "id": "G02",
@@ -258,7 +317,7 @@
           "expect": "passed",
           "type": "unit",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "audio suite green"
+          "evidence": "{\"id\":\"G02\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"af140036d2daac0a8c6142d6bf1c3816b2d6a18f4eeee73b82c5e119f0a5e95d\",\"pathCount\":31,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/audio/audio-player-pool-first.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m3 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 65\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m tests/audio/qwen-token-plan-tts-protocol.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m8 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 60\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m tests/audio/qwen-token-plan-asr-protocol.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m5 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 125\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m tests/audio/audio-player-legacy-fetch.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m6 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 201\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m tests/audio/qwen-token-plan-tts.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m14 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 170\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m tests/audio/qwen-voice-clone.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m38 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 149\\u001b[2mms\\u001b[22m\\u001b[39m\\n \\u001b[32m✓\\u001b[39m tests/audio/voxcpm-registration.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m5 te\",\"passed\":true}"
         }
       ]
     }
@@ -536,7 +595,90 @@
       "slice": null,
       "hash": "ccca8678c409211088274a9bbc6f632c53ae037e22ed49a9f742dd7795436bb8",
       "fileHash": "b242f52683ecb306a6d7994072d7a51f8016493747f3c7742775fced97971d4f"
+    },
+    {
+      "seq": 26,
+      "id": "cf360dac-5406-4536-8dbb-c59928b969ab",
+      "at": "2026-09-02T02:57:37.332Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S03:verification:pending->verified",
+      "slice": "S03",
+      "hash": "d085ccec07803fa5d91a363bbcbac585c5488673ce5a05d39dcb74c4c2465269",
+      "oracle": "34855b3dc95b41b37d91e475fcdc162b9373fd6f7d739250c26a71a13b0634bc",
+      "evidence": "7d66db2ef68ddbfa0d1b63e8db905c3f59995923e054ba90f91309a3c103d839",
+      "fileHash": "c00f49d1216d25c9fe88740984cecabe96b40400df94d8df11ef6a9a318de6de"
+    },
+    {
+      "seq": 27,
+      "id": "bb6b06ea-9539-473e-9d25-112d06214b4f",
+      "at": "2026-09-02T03:16:46.638Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S03:verification:pending->verified",
+      "slice": "S03",
+      "hash": "da416deb4819f6f7f58199b021014834f602beb9f724b41d0749ec1bb7ad4b0d",
+      "oracle": "3f7718db1c2536c41987d9e91c91f2ebc6236b32206b3f857c9d718a7fede819",
+      "evidence": "240528b336cb8f189bbecb810fb1cdaa38428c1b535b0b19a9ce2cbf05a7f7b5",
+      "fileHash": "c18af5b93afa946f5d7b17c52d683d2fa64c0e3a52cf50a25ce1424ecf347a1a"
+    },
+    {
+      "seq": 28,
+      "id": "1b17781b-52dd-4f2a-a326-47a521a3fbc6",
+      "at": "2026-09-02T03:37:01.366Z",
+      "actor": "verifier",
+      "command": "slice_reject_batch",
+      "transition": "reject-batch:S01,S02",
+      "slice": null,
+      "hash": "c3cf8a6785a3968f053513f37a81ca1eaa53fe81cac936ff2ac73adccfef0f41",
+      "fileHash": "af296a17196d4cccd8b7c8ca7b838261fb0ec232be55e53496ee18214c4e13a6"
+    },
+    {
+      "seq": 29,
+      "id": "1360068a-811d-4033-9e89-51edeca02b3b",
+      "at": "2026-09-02T03:40:40.507Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:correction:round-1 verifier: bun gate runner inherits .env.local; S01/S02 scope grows to env-vector hermeticity",
+      "slice": null,
+      "hash": "80fa1f86a4f305b9988a67d72c4f9aae0fc4261eea38340cb0bd1c0445eb9156",
+      "fileHash": "29a9be534ef8ec870e810693025d5a0d3972bfef267edf2d3e0cc287c9680992"
+    },
+    {
+      "seq": 30,
+      "id": "4dd8014b-02c5-4710-a187-446d3c4b3cd9",
+      "at": "2026-09-02T03:40:40.545Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect",
+      "slice": "S01",
+      "hash": "7ee288ec7244f8679c6daa1179fb486be4c83d9533a7a29f151a6d4adc63b827",
+      "expectationHash": "2b01056058842c17132fb077c98fa713f1392267fe5733d31ef260f458b0ec58",
+      "fileHash": "2ae4f7d7c9ef3d30e13338339a694eb71eb05475d6e0b1faa928b39c88b4c8d4"
+    },
+    {
+      "seq": 31,
+      "id": "e8c48c7d-bc1f-44c9-86f9-7a7d679f0199",
+      "at": "2026-09-02T03:40:40.584Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S02:expect",
+      "slice": "S02",
+      "hash": "b9bf7517335c866ab0a274b87fa41323e2a6b8efefb53a36a1c019c707abcd2c",
+      "expectationHash": "6f5ee65f308bf1723efef2d3ad0f4fee9d99d5cbe68c73f25da04de173977bc3",
+      "fileHash": "9b1a13d9d7895f6b9899098bf9859557082e383603535e34ba30da0c680b0e1f"
+    },
+    {
+      "seq": 32,
+      "id": "8cb375dd-eeaf-4155-bf87-1b325b9b5b01",
+      "at": "2026-09-02T03:40:40.628Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "cb47e5e41f556292e7f3d52493d8d766a5d16af05ff19682b8015ae8939f725d",
+      "fileHash": "0f6865d7454143c79718663481d6fa3bfafc8f28ab05da1eded74dff53275f00"
     }
   ],
-  "fileHash": "c00f49d1216d25c9fe88740984cecabe96b40400df94d8df11ef6a9a318de6de"
+  "fileHash": "f0ef909a8f70897a333f5d5616af8176594657a5b1312d5d0897e525c6a47779"
 }

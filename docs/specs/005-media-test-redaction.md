@@ -1,6 +1,6 @@
 # Batch 005 spec: media-test redaction
 
-Spec status: verification
+Spec status: implementation
 
 ## Problem Statement
 
@@ -15,6 +15,7 @@ The leak mechanism, reproduced with a sentinel key (temp test, deleted; worktree
 1. `classroom-media-generation.test.ts:9-19` mocks only `mkdir`/`writeFile`. The YAML read of `server-providers.yml` reaches real fs (`lib/server/provider-config.ts:559`).
 2. `resolveSectionApiKey` (`provider-config.ts:604-612`) returns the YAML key first, so env stubs cannot override a host YAML entry.
 3. A host YAML with an enabled image or video provider makes fetch get called anyway. The force-disabled assertion at `:137` (`expect(fetchMock).not.toHaveBeenCalled()`) fails, and vitest serializes the first call, including `Authorization: Bearer <live key>`.
+4. Second vector, found live by the batch-005 round-1 verifier: a bun-compiled gate runner auto-loads `.env.local` into its process and gate children inherit it. Under that runner the classroom suite made a real happyhorse call and serialized a live Bearer header, and the force-off suite resolved an env-backed provider (400 became 200). Plain `pnpm test` is hermetic; the gate path is not.
 
 Error taxonomy for spy failures, proven live: `not.toHaveBeenCalled()` and `toHaveBeenCalledWith(...)` print the full init with headers; a failing assertion on a parsed body value prints only that value.
 
@@ -27,7 +28,7 @@ Error taxonomy for spy failures, proven live: `not.toHaveBeenCalled()` and `toHa
 
 ## Slices
 
-**S01 `hermetic-yaml-isolation` (tier 3).** The classroom media test and the capability force-off route test intercept `server-providers.yml` in their fs mocks (`yamlOverride` fixture, copied from `tests/server/provider-config.test.ts:82-99`). No host-machine key can enter the pipeline.
+**S01 `hermetic-yaml-isolation` (tier 3).** The classroom media test and the capability force-off route test intercept `server-providers.yml` in their fs mocks (`yamlOverride` fixture, copied from `tests/server/provider-config.test.ts:82-99`). Both files also clear inherited provider-shaped env (`*_API_KEY`, `*_BASE_URL`, `*_MODELS`, `*_ENABLED`) at module top, before their own stubs set what they need (env vector, round-1 verifier proof). No host-machine or runner-injected key can enter the pipeline. Orchestrator-side practice: gate-running rivr commands start from a neutral cwd (defense in depth).
 
 **S02 `redaction-guard` (tier 2).** A hermetic guard test in `classroom-media-generation.test.ts` proves the property with a paired assertion (recipe in Implementation Decisions). Blocked by S01.
 
@@ -61,6 +62,7 @@ S03 (2 gates):
 - The guard uses fixture key `sk-LIVE-FIXTURE-9876543210` and asserts the value is absent from captured failure text. If the fixture key ever reaches output, the guard fails.
 - Existing 8 tests stay hermetic. No live gate. `TEST_LOAD_LOCAL_ENV` is never set. Zero vendor spend.
 - Ledger discipline from batches 001-004: symbol expectations at anchor creation; `yamlOverride` (variable, new, after-exists true, quality INSPECTED) in both files; guard helper (function, new); literal oracles; cwd repo root; tier depth honored; whole-branch `pnpm exec prettier --write <explicit list>` before marking (batch-004 lesson).
+- Round-1 expectation updates (correction): S01 = both suites green with hostile YAML present AND with live-shaped provider env injected (runner-equivalent). S02 = classroom file green under injected env in addition to the paired guard legs.
 
 ## Out of Scope
 
