@@ -5,7 +5,7 @@
   "spec": {
     "reference": "docs/meta-specs/qwen-token-plan-integration.md",
     "title": "Qwen Token Plan Integration (meta-spec)",
-    "hash": "9bc7eef9c9f397d1b2d1b6bd14db1361e25bfaf68383c7281c87c6d4fc925502"
+    "hash": "3a993fd32fdb7d885e458fca35a91ebd89bf66e49478cdbdc61e88b313b69cb6"
   },
   "tracker": {
     "mode": "none"
@@ -43,6 +43,11 @@
     {
       "batch": "004",
       "ledger": ".rivr/specs/004-video-i2v-r2v.ledger.json",
+      "stage": "closed"
+    },
+    {
+      "batch": "005",
+      "ledger": ".rivr/specs/005-media-test-redaction.ledger.json",
       "stage": "closed"
     }
   ],
@@ -242,7 +247,40 @@
       "slice": null,
       "hash": "f4a6e02c0c1eba61504af42521b334b2c883db8052cf6e483a51824d262ef0bb",
       "fileHash": "a722b8c93f3d2ace94f4fb5614a4ebb969d85a853f794f5318cce8cf058b654d"
+    },
+    {
+      "seq": 19,
+      "id": "5d00547e-e712-4e52-9997-f660d5de5ebf",
+      "at": "2026-09-02T04:27:35.909Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:clarification:batch 005 closed and certified (proof 8a2242c9)",
+      "slice": null,
+      "hash": "b5ddd7513e66c8341e33ba00525ebc94474ab32e49da36300c9ea0a1937fc667",
+      "fileHash": "15520fff10b9557ee6d1ad6ddaa5b37b75c9969edda124e6f45bb17403cded04"
+    },
+    {
+      "seq": 20,
+      "id": "3b2dc493-fda2-427d-aa26-7f59b4c6ebbb",
+      "at": "2026-09-02T04:27:35.910Z",
+      "actor": "orchestrator",
+      "command": "metaspec_child_link",
+      "transition": "child-link:005:.rivr/specs/005-media-test-redaction.ledger.json:closed",
+      "slice": null,
+      "hash": "d360336ec5a27e6a071550610ec32ef17d19243556ffcd74ad9271d35f7e8cb4",
+      "fileHash": "15520fff10b9557ee6d1ad6ddaa5b37b75c9969edda124e6f45bb17403cded04"
+    },
+    {
+      "seq": 21,
+      "id": "f1656f8b-0320-4287-9719-25ef52587006",
+      "at": "2026-09-02T04:28:01.042Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:clarification:batch table row 005 closed; scope records shipped env-vector addition and G03 hermetic-exec decision",
+      "slice": null,
+      "hash": "dc7aa9daee928d16d6688b8a58f6b83be797c5187ce92dfc25c759d43a581c5a",
+      "fileHash": "32720be0439364f49788a1cc9c84620204c69710986288ad28336a741bed84cc"
     }
   ],
-  "fileHash": "15520fff10b9557ee6d1ad6ddaa5b37b75c9969edda124e6f45bb17403cded04"
+  "fileHash": "276425884e2979a74734343c03ca747a371356d4f060947ac34ceeeaf7f0e6bb"
 }
