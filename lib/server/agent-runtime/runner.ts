@@ -1323,6 +1323,15 @@ export async function runSession(ctx: RunContext, meta: ClaimedAgentSession): Pr
               throw new Error('compaction kept-entry resolution: durable prep returned no value');
             }
             const durableFirstKeptId = durablePrep.value.firstKeptEntryId;
+            // Hard guard: the resolved id MUST exist in the durable branch.
+            // A full-UUID phantom id means the branch was built from pi's
+            // in-memory model rather than the durable entry tree.
+            const durableIds = new Set(durableBranch.map((e) => e.id));
+            if (!durableIds.has(durableFirstKeptId)) {
+              throw new Error(
+                `compaction kept-entry resolution diverged: id ${durableFirstKeptId} not in durable branch`,
+              );
+            }
             // Content comparison: find the durable entry that the durable
             // preparation keeps and compare its message with the mirror cut.
             const durableKeptEntry = durableBranch.find((e) => e.id === durableFirstKeptId);

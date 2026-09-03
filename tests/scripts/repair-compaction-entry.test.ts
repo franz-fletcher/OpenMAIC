@@ -190,4 +190,39 @@ describe('planRepairs', () => {
     expect(plans).toHaveLength(1);
     expect(plans[0].entryId).toBe('comp05');
   });
+
+  // -----------------------------------------------------------------------
+  // (f) Full-UUID phantom id is detected and replanned (D3)
+  // -----------------------------------------------------------------------
+  it('detects full-UUID phantom id and plans a recomputed UPDATE', async () => {
+    const branch = [
+      msgEntry('aa000001', null, 'user', 'Hello'),
+      msgEntry('aa000002', 'aa000001', 'assistant', 'Hi there'),
+      msgEntry('aa000003', 'aa000002', 'user', 'Tell me more'),
+      msgEntry('aa000004', 'aa000003', 'assistant', 'Sure thing'),
+      msgEntry('aa000005', 'aa000004', 'user', 'Another message'),
+      // Compaction referencing a full-UUID phantom id (the production bug
+      // from session 13dd023b where firstKeptEntryId was a 36-char UUID
+      // while every entry_id is 8 chars).
+      compactionEntry(
+        'comp06',
+        'aa000005',
+        '01a0678e-1040-7aec-9044-6876e33cf710',
+        'Summary with full-UUID phantom',
+      ),
+    ];
+
+    const plans = await planRepairs(branch, SETTINGS);
+
+    expect(plans).toHaveLength(1);
+    expect(plans[0].entryId).toBe('comp06');
+    expect(plans[0].oldId).toBe('01a0678e-1040-7aec-9044-6876e33cf710');
+    // The new id must differ from the phantom and must exist in the branch
+    // prefix before the compaction row.
+    expect(plans[0].newId).not.toBe('01a0678e-1040-7aec-9044-6876e33cf710');
+    expect(plans[0].newId.length).toBeLessThan(20); // Not a full UUID
+    expect(branch.some((e) => e.id === plans[0].newId && e.type === 'message')).toBe(true);
+    expect(plans[0].sql).toContain('SET data');
+    expect(plans[0].sql).toContain('firstKeptEntryId');
+  });
 });

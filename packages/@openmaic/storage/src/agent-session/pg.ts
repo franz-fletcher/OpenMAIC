@@ -914,17 +914,17 @@ export class PgAgentSessionStore
   async pruneCompactionDeltas(sessionId: string, compactionEndSeq: number): Promise<number> {
     const result = await this.queryable.query<{ seq: number }>(
       `WITH completed_compaction AS (
-         SELECT end.seq AS end_seq, boundary.seq AS start_seq
-         FROM ${this.table('events')} end
+         SELECT end_event.seq AS end_seq, boundary.seq AS start_seq
+         FROM ${this.table('events')} end_event
          JOIN LATERAL (
            SELECT e.seq, e.type
            FROM ${this.table('events')} e
-           WHERE e.session_id = end.session_id AND e.seq < end.seq
+           WHERE e.session_id = end_event.session_id AND e.seq < end_event.seq
              AND e.type IN ('compaction_start', 'compaction_end')
            ORDER BY e.seq DESC LIMIT 1
          ) boundary ON boundary.type = 'compaction_start'
-         WHERE end.session_id = $1 AND end.seq = $2
-           AND end.type = 'compaction_end'
+         WHERE end_event.session_id = $1 AND end_event.seq = $2
+           AND end_event.type = 'compaction_end'
        ), compaction_events AS (
          SELECT e.seq, e.type
          FROM ${this.table('events')} e

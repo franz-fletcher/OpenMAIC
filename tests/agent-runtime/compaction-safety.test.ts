@@ -408,5 +408,52 @@ describe('compaction safety', () => {
       const firstMsg = history.messages[0]! as unknown as Record<string, unknown>;
       expect(firstMsg.role).toBe('compactionSummary');
     });
+
+    it('durable branch with 8-char ids: resolved id is one of them', async () => {
+      const { InMemorySessionRepo, prepareCompaction } =
+        await import('@earendil-works/pi-agent-core');
+
+      const repo = new InMemorySessionRepo();
+      const durableSession = await repo.create();
+
+      // Append 9 messages. Pi uses createEntryId() from the storage layer,
+      // which produces 8-char ids (randomUUID().slice(0, 8)).
+      for (let i = 0; i < 9; i += 1) {
+        await durableSession.appendMessage(fakeMessage(`durable-msg-${i}`));
+      }
+
+      const durableBranch = await durableSession.getBranch();
+
+      // Verify the branch has entries.
+      expect(durableBranch.length).toBeGreaterThanOrEqual(9);
+
+      const settings = {
+        enabled: true,
+        reserveTokens: 16_384,
+        keepRecentTokens: 16_384,
+      };
+
+      const durablePrep = prepareCompaction(durableBranch, settings);
+      expect(durablePrep.ok).toBe(true);
+      if (!durablePrep.ok || !durablePrep.value) return;
+
+      const durableFirstKeptId = durablePrep.value.firstKeptEntryId;
+      expect(typeof durableFirstKeptId).toBe('string');
+
+      // Hard guard: the resolved id MUST exist in the durable branch.
+      const durableIds = new Set(durableBranch.map((e) => e.id));
+      expect(durableIds.has(durableFirstKeptId)).toBe(true);
+
+      // Append compaction and verify the tree is valid.
+      await durableSession.appendCompaction('resolved summary', durableFirstKeptId, 100_000);
+
+      const history = await loadSessionEntryHistory(durableSession, {
+        sessionId: 'test-durable-ids',
+        hasPriorRun: true,
+      });
+      expect(history.messages.length).toBeGreaterThan(0);
+      const firstMsg = history.messages[0]! as unknown as Record<string, unknown>;
+      expect(firstMsg.role).toBe('compactionSummary');
+    });
   });
 });
