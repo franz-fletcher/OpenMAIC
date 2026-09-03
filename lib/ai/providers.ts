@@ -32,6 +32,7 @@ import { createAnthropic } from '@ai-sdk/anthropic';
 import { createAmazonBedrock } from '@ai-sdk/amazon-bedrock';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { wrapLanguageModel, extractReasoningMiddleware } from 'ai';
+import { Agent as UndiciAgent } from 'undici';
 import {
   createKimiReasoningPreservationMiddleware,
   restoreKimiReasoningInRequestBody,
@@ -1877,6 +1878,17 @@ function openAIStreamErrorStatus(error: Record<string, unknown>): number {
         : NaN;
   return Number.isInteger(status) && status >= 400 && status <= 599 ? status : 500;
 }
+/**
+ * Undici agent with headersTimeout and bodyTimeout disabled. Long-running
+ * LLM requests (scene generation, interactive widgets) can pause between
+ * bytes for minutes. The default 300 s caps kill the fetch before the
+ * tool-timeout heartbeat can act. This agent is shared across all LLM
+ * fetch calls in this module.
+ */
+const llmNoTimeoutAgent = new UndiciAgent({
+  headersTimeout: 0,
+  bodyTimeout: 0,
+});
 
 async function fetchCustomOpenAIChat(
   input: RequestInfo | URL,
@@ -2137,9 +2149,12 @@ export function getModel(config: ModelConfig): ModelWithInfo {
               /* leave body as-is */
             }
           }
+          // Inject the no-timeout dispatcher so long-running LLM requests
+          // are not killed by undici's default 300 s headers/body timeout.
+          const fetchInit = init ? { ...init, dispatcher: llmNoTimeoutAgent } : init;
           const response = useStreamingChatCompat
-            ? await fetchCustomOpenAIChat(url, init)
-            : await globalThis.fetch(url, init);
+            ? await fetchCustomOpenAIChat(url, fetchInit)
+            : await globalThis.fetch(url, fetchInit);
 
           // Recover reasoning that @ai-sdk/openai's chat schema drops: rewrite
           // streamed `reasoning_content` deltas into an inline <think> block
@@ -2256,7 +2271,8 @@ export function getModel(config: ModelConfig): ModelWithInfo {
             }
           }
 
-          return globalThis.fetch(url, init);
+          const fetchInit = init ? { ...init, dispatcher: llmNoTimeoutAgent } : init;
+          return globalThis.fetch(url, fetchInit);
         }) as typeof globalThis.fetch;
       }
 

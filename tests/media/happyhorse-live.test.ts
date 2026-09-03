@@ -19,7 +19,7 @@ const skipReason = (() => {
   return null;
 })();
 
-// eslint-disable-next-line no-restricted-syntax
+ 
 const describeOrSkip = skipReason ? describe.skip : describe;
 
 describeOrSkip('HappyHorse live protocol', () => {

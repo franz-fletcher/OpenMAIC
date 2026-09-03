@@ -57,6 +57,51 @@ describe('deriveToolProgress', () => {
     ).toBeNull();
   });
 
+  it('advances through generate_scene phase content vocabulary', () => {
+    const mid = deriveToolProgress({
+      toolName: 'generate_scene',
+      traces: ['generate_scene phase content start'],
+      running: true,
+      failed: false,
+    });
+    expect(mid?.steps.map((s) => `${s.id}:${s.state}`)).toEqual([
+      'prep:done',
+      'content:active',
+      'actions:pending',
+      'save:pending',
+    ]);
+  });
+
+  it('advances through generate_scene phase actions vocabulary', () => {
+    const later = deriveToolProgress({
+      toolName: 'generate_scene',
+      traces: [
+        'generate_scene phase content start',
+        'generate_scene phase content done',
+        'generate_scene phase actions start',
+      ],
+      running: true,
+      failed: false,
+    });
+    expect(later?.steps.find((s) => s.state === 'active')?.id).toBe('actions');
+  });
+
+  it('advances to save when generate_scene phase persist is present', () => {
+    const done = deriveToolProgress({
+      toolName: 'generate_scene',
+      traces: [
+        'generate_scene phase content start',
+        'generate_scene phase content done',
+        'generate_scene phase actions start',
+        'generate_scene phase actions done',
+        'generate_scene phase persist',
+      ],
+      running: true,
+      failed: false,
+    });
+    expect(done?.steps.find((s) => s.state === 'active')?.id).toBe('save');
+  });
+
   it('exposes the active step as the one-line bar tick', () => {
     const start = deriveToolProgress({
       toolName: 'generate_scene',

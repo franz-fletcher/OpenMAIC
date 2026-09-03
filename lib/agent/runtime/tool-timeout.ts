@@ -87,6 +87,12 @@ export class AgentToolAbortedError extends Error {
 }
 
 /**
+ * The maximum number of times the base budget can be extended through
+ * progress resets before the hard ceiling kicks in.
+ */
+const HEARTBEAT_CEILING_MULTIPLIER = 3;
+
+/**
  * Wrap a tool so every execution is bounded by the tool timeout and by the
  * caller's AbortSignal.
  *
@@ -94,6 +100,11 @@ export class AgentToolAbortedError extends Error {
  * signal fires, so abort is actually delivered to the tool's in-flight work
  * even though the agent loop itself keeps running after a timeout. Progress
  * updates emitted by a zombie tool after the race settles are dropped.
+ *
+ * When the tool reports progress via the onUpdate callback, the deadline
+ * timer resets to the base timeoutMs. A hard ceiling of
+ * timeoutMs * HEARTBEAT_CEILING_MULTIPLIER caps total elapsed time so a
+ * tool that reports progress forever still aborts.
  */
 export function withAgentToolTimeout(tool: AgentTool): AgentTool {
   const timeoutMs = resolveAgentToolTimeoutMs(tool.name);
@@ -125,7 +136,8 @@ async function executeWithToolBound(
   else signal?.addEventListener('abort', forwardAbort, { once: true });
 
   let settled = false;
-  let timer: ReturnType<typeof setTimeout> | undefined;
+  let deadlineTimer: ReturnType<typeof setTimeout> | undefined;
+  let ceilingTimer: ReturnType<typeof setTimeout> | undefined;
 
   // Abort delivery to the tool must never break the race settlement: a
   // throwing abort listener is a tool bug, not a reason to wedge the session.
@@ -138,7 +150,8 @@ async function executeWithToolBound(
   };
 
   const cleanup = (): void => {
-    if (timer !== undefined) clearTimeout(timer);
+    if (deadlineTimer !== undefined) clearTimeout(deadlineTimer);
+    if (ceilingTimer !== undefined) clearTimeout(ceilingTimer);
     if (signal) {
       signal.removeEventListener('abort', forwardAbort);
       signal.removeEventListener('abort', onCancelled);
@@ -163,7 +176,10 @@ async function executeWithToolBound(
     });
   };
 
-  const onTimeout = (): void => {
+  const onDeadline = (): void => {
+    // Guard: if the tool settled before the deadline fired (normal completion
+    // or caller abort), do not reject.
+    if (settled) return;
     const error = new AgentToolTimeoutError(toolName, timeoutMs);
     finish(() => {
       abortWork(error);
@@ -185,11 +201,36 @@ async function executeWithToolBound(
     }
     signal.addEventListener('abort', onCancelled, { once: true });
   }
-  if (timeoutMs > 0) timer = setTimeout(onTimeout, timeoutMs);
+
+  // Arm the deadline timer. On each onUpdate callback the timer resets to
+  // timeoutMs, but the ceiling timer below bounds total elapsed time.
+  if (timeoutMs > 0) deadlineTimer = setTimeout(onDeadline, timeoutMs);
+
+  // Hard ceiling: total elapsed time can never exceed this, even with
+  // progress resets. Scheduled once at start.
+  const ceilingMs = timeoutMs * HEARTBEAT_CEILING_MULTIPLIER;
+  if (ceilingMs > 0) {
+    ceilingTimer = setTimeout(() => {
+      // Guard: if the tool settled before the ceiling fired, do not reject.
+      if (settled) return;
+      const error = new AgentToolTimeoutError(toolName, ceilingMs);
+      finish(() => {
+        abortWork(error);
+        rejectRace(error);
+      });
+    }, ceilingMs);
+  }
 
   const guardedUpdate: AgentToolUpdateCallback | undefined = onUpdate
     ? (partial) => {
-        if (!settled) onUpdate(partial);
+        if (!settled) {
+          // Progress resets the deadline. The tool is alive and working.
+          if (timeoutMs > 0 && deadlineTimer !== undefined) {
+            clearTimeout(deadlineTimer);
+            deadlineTimer = setTimeout(onDeadline, timeoutMs);
+          }
+          onUpdate(partial);
+        }
       }
     : undefined;
 

@@ -98,7 +98,62 @@ function deps(store: CourseStore, extra: Record<string, unknown> = {}) {
   };
 }
 
-describe('generation and deck tools', () => {
+describe('generate_scene phase progress', () => {
+  it('calls onUpdate at five phase boundaries with generate_scene phase messages', async () => {
+    const current = state(document([]));
+    let contentCalls = 0;
+    const aiCall = vi.fn(async () => {
+      contentCalls += 1;
+      return contentCalls === 1
+        ? JSON.stringify([{ id: 'q1', type: 'short_answer', question: 'Try it?' }])
+        : JSON.stringify([{ type: 'text', content: 'Narration' }]);
+    });
+    const onUpdate = vi.fn();
+    const generate = find(buildGenerationTools(deps(current.store, { aiCall })), 'generate_scene');
+    await generate.execute(
+      'call',
+      {
+        stageId: 'stage-test',
+        order: 1,
+        title: 'Test',
+        type: 'quiz',
+        brief: 'Test brief',
+      } as never,
+      undefined,
+      onUpdate,
+    );
+    const messages = onUpdate.mock.calls
+      .map((c: unknown[]) => (c[0] as { message?: string })?.message)
+      .filter(Boolean);
+    expect(messages).toEqual([
+      'generate_scene phase content start',
+      'generate_scene phase content done',
+      'generate_scene phase actions start',
+      'generate_scene phase actions done',
+      'generate_scene phase persist',
+    ]);
+  });
+
+  it('does not throw when onUpdate is undefined', async () => {
+    const current = state(document([]));
+    let contentCalls = 0;
+    const aiCall = vi.fn(async () => {
+      contentCalls += 1;
+      return contentCalls === 1
+        ? JSON.stringify([{ id: 'q1', type: 'short_answer', question: 'Try it?' }])
+        : JSON.stringify([{ type: 'text', content: 'Narration' }]);
+    });
+    const generate = find(buildGenerationTools(deps(current.store, { aiCall })), 'generate_scene');
+    const response = await generate.execute('call', {
+      stageId: 'stage-test',
+      order: 1,
+      title: 'Test',
+      type: 'quiz',
+      brief: 'Test brief',
+    } as never);
+    expect(response).not.toMatchObject({ isError: true });
+  });
+
   it('reports active-skill diagnostics against the persisted stage after generation', async () => {
     const current = state(document([]));
     const onCheckpoint = vi.fn();

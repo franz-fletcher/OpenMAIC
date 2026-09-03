@@ -229,7 +229,7 @@ export function buildGenerationTools(deps: GenerationToolDeps): AgentTool<never,
     description:
       'Generate and durably persist one page from an explicit title, type, and brief. Reusing an order replaces that page. Interactive pages accept widgetType (simulation/diagram/code/game/visualization3d) plus a matching widgetOutline object; both are rejected for other page types.',
     parameters: SceneParams,
-    async execute(_callId, params, signal) {
+    async execute(_callId, params, signal, onUpdate?) {
       if (!Number.isInteger(params.order) || params.order < 1) {
         return result(
           'generate_scene needs a 1-based integer page order.',
@@ -391,7 +391,9 @@ export function buildGenerationTools(deps: GenerationToolDeps): AgentTool<never,
         imageMapping[id] = src;
       }
       const agents = doc.stage.generatedAgentConfigs;
+      const notify = (message: string) => onUpdate?.({ message } as never);
       let content: Awaited<ReturnType<typeof generateSceneContent>>;
+      notify('generate_scene phase content start');
       try {
         content = await generateSceneContent(outline, aiCallFor(sceneContentStage(params.type)), {
           agents,
@@ -420,12 +422,16 @@ export function buildGenerationTools(deps: GenerationToolDeps): AgentTool<never,
       }
       if (signal?.aborted) throw new Error('aborted');
       if (!content) return result('Page content generation failed; nothing was written.', {}, true);
+      notify('generate_scene phase content done');
+      notify('generate_scene phase actions start');
       const actions = filterKnownActions(
         await actionGenerator(outline, content, aiCallFor('scene-actions'), {
           agents,
           languageDirective: doc.stage.languageDirective ?? '',
         }),
       );
+      notify('generate_scene phase actions done');
+      notify('generate_scene phase persist');
       const built = buildCompleteScene(outline, content, actions, params.stageId, {
         sceneId: existing?.id ?? sceneIdFor(doc.scenes, params.order),
       });

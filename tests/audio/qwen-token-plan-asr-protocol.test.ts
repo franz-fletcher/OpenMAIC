@@ -205,7 +205,7 @@ describe('qwen-token-plan-asr protocol pin', () => {
       return new Response(JSON.stringify({ message: 'no speech' }), { status: 400 });
     }) as typeof fetch;
 
-    let result = await transcribeAudio(
+    const result = await transcribeAudio(
       {
         providerId: 'qwen-token-plan-asr',
         apiKey: 'sk-pin',

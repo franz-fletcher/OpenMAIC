@@ -26,6 +26,7 @@ import type { Scene, SlideContent } from '@/lib/types/stage';
 import { resolveAgentDriverModel } from './agent-driver-model';
 import { buildAskUserTool } from './ask-user';
 import { agentRuntimeConfig as config } from './config';
+import { traceMessageForUpdate } from './tool-progress';
 import { buildCreateSkillTool } from './create-skill';
 import {
   buildDslCourseToolset,
@@ -1505,6 +1506,10 @@ export async function runSession(ctx: RunContext, meta: ClaimedAgentSession): Pr
     const inFlightToolCalls = new Map<string, PendingToolCall>();
     const unsubscribe = agent.subscribe((event: AgentEvent) => {
       emit(event.type, event);
+      if (event.type === 'tool_execution_update') {
+        const trace = traceMessageForUpdate(event);
+        if (trace) emit(LIFECYCLE.trace, trace);
+      }
       if (event.type === 'message_end') {
         // A tool call becomes pending as soon as its assistant frame is
         // emitted, so an abort can queue its receipt even while that frame is

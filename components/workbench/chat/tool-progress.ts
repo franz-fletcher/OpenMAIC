@@ -49,14 +49,22 @@ function sceneProgress(
     { id: 'actions', label: t('workbench.tool.progress.scene.actions') },
     { id: 'save', label: t('workbench.tool.progress.scene.save') },
   ];
-  const hasContent = traces.some((t) => /generating content|llm\[scene-content/i.test(t));
-  const hasActions = traces.some((t) => /generating actions|llm\[scene-actions/i.test(t));
+  const hasContent = traces.some((t) =>
+    /generating content|llm\[scene-content|generate_scene phase content/i.test(t),
+  );
+  const hasActions = traces.some((t) =>
+    /generating actions|llm\[scene-actions|generate_scene phase actions/i.test(t),
+  );
+  const hasPersist = traces.some((t) => /generate_scene phase persist/i.test(t));
   const llmContent = lastMatching(traces, (t) => /llm\[scene-content/i.test(t));
   const llmActions = lastMatching(traces, (t) => /llm\[scene-actions/i.test(t));
 
   let active = 0;
   let caption = t('workbench.tool.progress.scene.aligning');
-  if (hasActions) {
+  if (hasPersist) {
+    active = 3;
+    caption = t('workbench.tool.progress.scene.done');
+  } else if (hasActions) {
     active = 2;
     caption = t(
       llmActions
