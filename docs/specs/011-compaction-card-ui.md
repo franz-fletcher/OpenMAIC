@@ -1,6 +1,6 @@
 # Batch 011 spec: compaction-card-ui
 
-Spec status: implementation
+Spec status: verification
 
 ## Problem Statement
 

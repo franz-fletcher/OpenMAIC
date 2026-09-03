@@ -8,6 +8,7 @@
 import { ChevronDown, ChevronRight, Shrink } from 'lucide-react';
 
 import { defaultWorkbenchTranslator, type WorkbenchTranslator } from '@/lib/i18n/workbench';
+import type React from 'react';
 import { wbStyles as styles } from './chat-styles';
 import {
   compactionBarPreview,
@@ -16,23 +17,17 @@ import {
 } from './compaction-bar-state';
 import type { ToolStackPosition } from './tool-card';
 
-export function CompactionBlock({
-  text,
-  streaming = false,
-  tokensBefore,
-  tokensAfter,
-  endedAt,
-  stackPosition = 'single',
-  t = defaultWorkbenchTranslator,
-}: {
-  text: string;
-  streaming?: boolean;
-  tokensBefore?: string;
-  tokensAfter?: string;
-  endedAt?: number;
-  stackPosition?: ToolStackPosition;
-  t?: WorkbenchTranslator;
-}) {
+// prettier-ignore
+export function CompactionBlock(props: { text: string; streaming?: boolean; tokensBefore?: string; tokensAfter?: string; endedAt?: number; stackPosition?: ToolStackPosition; t?: WorkbenchTranslator }): React.JSX.Element | null {
+  const {
+    text,
+    streaming = false,
+    tokensBefore,
+    tokensAfter,
+    endedAt,
+    stackPosition = 'single',
+    t = defaultWorkbenchTranslator,
+  } = props;
   const { expanded, toggle } = useCompactionBar();
 
   if (!text) return null;

@@ -12,21 +12,13 @@ import { useCallback, useState } from 'react';
 import { defaultWorkbenchTranslator, type WorkbenchTranslator } from '@/lib/i18n/workbench';
 
 /** Header text: activity while compacting, token label when done, plain done otherwise. */
-export function compactionBarSummary(
-  {
-    streaming,
-    before,
-    after,
-  }: {
-    streaming: boolean;
-    before?: string;
-    after?: string;
-  },
-  t: WorkbenchTranslator = defaultWorkbenchTranslator,
-): string {
-  if (streaming) return t('workbench.compaction.active');
-  if (before && after) return t('workbench.compaction.doneWithTokens', { before, after });
-  return t('workbench.compaction.done');
+// prettier-ignore
+export function compactionBarSummary(input: { streaming: boolean; before?: string; after?: string }, t?: WorkbenchTranslator): string {
+  const { streaming, before, after } = input;
+  const tx = t ?? defaultWorkbenchTranslator;
+  if (streaming) return tx('workbench.compaction.active');
+  if (before && after) return tx('workbench.compaction.doneWithTokens', { before, after });
+  return tx('workbench.compaction.done');
 }
 
 const PREVIEW_MAX = 200;

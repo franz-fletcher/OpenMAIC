@@ -4,12 +4,12 @@
   "spec": {
     "reference": "docs/specs/011-compaction-card-ui.md",
     "title": "Batch 011 spec: compaction-card-ui",
-    "hash": "5a020c23d345a229c281f907e1164027b4d5ad557b8b5e827cd87308be995c61"
+    "hash": "38183ff6302886ea2486f7da5f6b2d7d63276da809ad35056c57b9b8fbd2896b"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "implementation",
+  "stage": "verification",
   "retry": {
     "count": 0,
     "max": 5,
@@ -172,8 +172,64 @@
         "at": "2026-09-03T10:40:39.398Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "verified",
+        "hash": "683c2f49deb167c80fee93cfbc0e28d36355e11c90d8636f043ec20901cf8b0b",
+        "actor": "verifier",
+        "at": "2026-09-03T11:20:24.291Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G01",
+              "shell": "/bin/sh",
+              "cwd": ".",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/compaction-summary.test.ts \u001b[2m(\u001b[22m\u001b[2m5 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 187\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m5 passed\u001b[39m\u001b[22m\u001b[90m (5)\u001b[39m\n\u001b[2m   Start at \u001b[22m 23:20:14\n\u001b[2m   Duration \u001b[22m 290ms\u001b[2m (transform 28ms, setup 15ms, import 19ms, tests 187ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G02",
+              "shell": "/bin/sh",
+              "cwd": ".",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/compaction-runtime.test.ts \u001b[2m(\u001b[22m\u001b[2m13 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 126\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m13 passed\u001b[39m\u001b[22m\u001b[90m (13)\u001b[39m\n\u001b[2m   Start at \u001b[22m 23:20:15\n\u001b[2m   Duration \u001b[22m 340ms\u001b[2m (transform 38ms, setup 16ms, import 132ms, tests 126ms, environment 0ms)\u001b[22m\n\nWarning: A vi.mock(\"@/lib/ai/llm\") call in \"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC/tests/agent-runtime/compaction-runtime.test.ts\" is not at the top level of the module. Although it appears nested, it will be hoisted and executed before any tests run. Move it to the top level to reflect its actual execution order. This will become an error in a future version.\nSee: https://vitest.dev/guide/mocking/modules#how-it-works\nWarning: A vi.mock(\"@/lib/server/resolve-model\") call in \"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC/tests/agent-runtime/compaction-runtime.test.ts\" is not at the top level of the module. Although it appears nested, it will be hoisted and executed before any tests run. Move it to the top level to reflect its actual execution order. This will become an error in a future version.\nSee: https://vitest.dev/guide/mocking/modules#how-it-works\n",
+              "passed": true
+            },
+            {
+              "id": "G03",
+              "shell": "/bin/sh",
+              "cwd": ".",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/lint-llm-entry-guard.test.ts \u001b[2m(\u001b[22m\u001b[2m32 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 1896\u001b[2mms\u001b[22m\u001b[39m\n     \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m blocks the named import in every guarded path (.ts) \u001b[33m 1104\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m32 passed\u001b[39m\u001b[22m\u001b[90m (32)\u001b[39m\n\u001b[2m   Start at \u001b[22m 23:20:15\n\u001b[2m   Duration \u001b[22m 2.10s\u001b[2m (transform 19ms, setup 15ms, import 121ms, tests 1.90s, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G04",
+              "shell": "/bin/sh",
+              "cwd": ".",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/runner-event-order.test.ts \u001b[2m(\u001b[22m\u001b[2m1 test\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 11\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m   Start at \u001b[22m 23:20:18\n\u001b[2m   Duration \u001b[22m 1.59s\u001b[2m (transform 746ms, setup 16ms, import 1.50s, tests 11ms, environment 0ms)\u001b[22m\n\n\u001b[90mstderr\u001b[2m | tests/agent-runtime/runner-event-order.test.ts\u001b[2m > \u001b[22m\u001b[2mrunSession durable event ordering\u001b[2m > \u001b[22m\u001b[2mpersists a lifecycle frame before any other runner event\n\u001b[22m\u001b[39m[2026-09-03T11:20:19.963Z] [ERROR] [AgentRunner] session session-order failed during setup Error: driver setup unavailable\n    at /Users/franky/Projects/MyOpenMAIC/Source/openMAIC/tests/agent-runtime/runner-event-order.test.ts:52:11\n    at Mock (file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/@vitest+spy@4.1.8/node_modules/@vitest/spy/dist/index.js:332:34)\n    at Module.runSession (/Users/franky/Projects/MyOpenMAIC/Source/openMAIC/lib/server/agent-runtime/runner.ts:1276:26)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at /Users/franky/Projects/MyOpenMAIC/Source/openMAIC/tests/agent-runtime/runner-event-order.test.ts:77:5\n    at file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/@vitest+runner@4.1.8/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20\n\n",
+              "passed": true
+            },
+            {
+              "id": "G05",
+              "shell": "/bin/sh",
+              "cwd": ".",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "Compaction summarizer streams via streamLLM and the runtime emits durable compaction_start/delta/end lifecycle events with token metadata; deltas prune to first and last; failures emit no end event.",
       "gates": [
@@ -181,7 +237,7 @@
           "id": "G01",
           "check": "npx vitest run tests/agent-runtime/compaction-summary.test.ts",
           "expect": "passed",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G01\",\"shell\":\"/bin/sh\",\"cwd\":\".\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/agent-runtime/compaction-summary.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m5 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 187\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m5 passed\\u001b[39m\\u001b[22m\\u001b[90m (5)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 23:20:14\\n\\u001b[2m   Duration \\u001b[22m 290ms\\u001b[2m (transform 28ms, setup 15ms, import 19ms, tests 187ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}",
           "cwd": ".",
           "type": "unit"
         },
@@ -189,7 +245,7 @@
           "id": "G02",
           "check": "npx vitest run tests/agent-runtime/compaction-runtime.test.ts",
           "expect": "passed",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G02\",\"shell\":\"/bin/sh\",\"cwd\":\".\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/agent-runtime/compaction-runtime.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m13 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 126\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m13 passed\\u001b[39m\\u001b[22m\\u001b[90m (13)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 23:20:15\\n\\u001b[2m   Duration \\u001b[22m 340ms\\u001b[2m (transform 38ms, setup 16ms, import 132ms, tests 126ms, environment 0ms)\\u001b[22m\\n\\nWarning: A vi.mock(\\\"@/lib/ai/llm\\\") call in \\\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC/tests/agent-runtime/compaction-runtime.test.ts\\\" is not at the top level of the module. Although it appears nested, it will be hoisted and executed before any tests run. Move it to the top level to reflect its actual execution order. This will become an error in a future version.\\nSee: https://vitest.dev/guide/mocking/modules#how-it-works\\nWarning: A vi.mock(\\\"@/lib/server/resolve-model\\\") call in \\\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC/tests/agent-runtime/compaction-runtime.test.ts\\\" is not at the top level of the module. Although it appears nested, it will be hoisted and executed before any tests run. Move it to the top level to reflect its actual execution order. This will become an error in a future version.\\nSee: https://vitest.dev/guide/mocking/modules#how-it-works\\n\",\"passed\":true}",
           "cwd": ".",
           "type": "unit"
         },
@@ -197,7 +253,7 @@
           "id": "G03",
           "check": "npx vitest run tests/lint-llm-entry-guard.test.ts",
           "expect": "passed",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G03\",\"shell\":\"/bin/sh\",\"cwd\":\".\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/lint-llm-entry-guard.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m32 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[33m 1896\\u001b[2mms\\u001b[22m\\u001b[39m\\n     \\u001b[33m\\u001b[2m✓\\u001b[22m\\u001b[39m blocks the named import in every guarded path (.ts) \\u001b[33m 1104\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m32 passed\\u001b[39m\\u001b[22m\\u001b[90m (32)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 23:20:15\\n\\u001b[2m   Duration \\u001b[22m 2.10s\\u001b[2m (transform 19ms, setup 15ms, import 121ms, tests 1.90s, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}",
           "cwd": ".",
           "type": "integration"
         },
@@ -205,7 +261,7 @@
           "id": "G04",
           "check": "npx vitest run tests/agent-runtime/runner-event-order.test.ts",
           "expect": "passed",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G04\",\"shell\":\"/bin/sh\",\"cwd\":\".\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/agent-runtime/runner-event-order.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m1 test\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 11\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 23:20:18\\n\\u001b[2m   Duration \\u001b[22m 1.59s\\u001b[2m (transform 746ms, setup 16ms, import 1.50s, tests 11ms, environment 0ms)\\u001b[22m\\n\\n\\u001b[90mstderr\\u001b[2m | tests/agent-runtime/runner-event-order.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mrunSession durable event ordering\\u001b[2m > \\u001b[22m\\u001b[2mpersists a lifecycle frame before any other runner event\\n\\u001b[22m\\u001b[39m[2026-09-03T11:20:19.963Z] [ERROR] [AgentRunner] session session-order failed during setup Error: driver setup unavailable\\n    at /Users/franky/Projects/MyOpenMAIC/Source/openMAIC/tests/agent-runtime/runner-event-order.test.ts:52:11\\n    at Mock (file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/@vitest+spy@4.1.8/node_modules/@vitest/spy/dist/index.js:332:34)\\n    at Module.runSession (/Users/franky/Projects/MyOpenMAIC/Source/openMAIC/lib/server/agent-runtime/runner.ts:1276:26)\\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\\n    at /Users/franky/Projects/MyOpenMAIC/Source/openMAIC/tests/agent-runtime/runner-event-order.test.ts:77:5\\n    at file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/@vitest+runner@4.1.8/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20\\n\\n\",\"passed\":true}",
           "cwd": ".",
           "type": "integration"
         },
@@ -213,7 +269,7 @@
           "id": "G05",
           "check": "npx tsc --noEmit && echo TSC_OK",
           "expect": "TSC_OK",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G05\",\"shell\":\"/bin/sh\",\"cwd\":\".\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}",
           "cwd": ".",
           "type": "smoke"
         }
@@ -344,8 +400,54 @@
         "at": "2026-09-03T10:51:51.555Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "verified",
+        "hash": "d3a793fb26a38f78a887a71efcdf2c2091cd945b8da151567194f191065454f2",
+        "actor": "verifier",
+        "at": "2026-09-03T11:20:30.179Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G01",
+              "shell": "/bin/sh",
+              "cwd": ".",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/workbench/session-store.test.ts \u001b[2m(\u001b[22m\u001b[2m11 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 6\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m11 passed\u001b[39m\u001b[22m\u001b[90m (11)\u001b[39m\n\u001b[2m   Start at \u001b[22m 23:20:24\n\u001b[2m   Duration \u001b[22m 233ms\u001b[2m (transform 88ms, setup 17ms, import 100ms, tests 6ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G02",
+              "shell": "/bin/sh",
+              "cwd": ".",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/workbench/replay-compact.test.ts \u001b[2m(\u001b[22m\u001b[2m9 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 3\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m9 passed\u001b[39m\u001b[22m\u001b[90m (9)\u001b[39m\n\u001b[2m   Start at \u001b[22m 23:20:25\n\u001b[2m   Duration \u001b[22m 181ms\u001b[2m (transform 86ms, setup 16ms, import 98ms, tests 3ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G03",
+              "shell": "/bin/sh",
+              "cwd": ".",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/workbench/session-fold.test.ts \u001b[2m(\u001b[22m\u001b[2m121 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 16\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m121 passed\u001b[39m\u001b[22m\u001b[90m (121)\u001b[39m\n\u001b[2m   Start at \u001b[22m 23:20:25\n\u001b[2m   Duration \u001b[22m 229ms\u001b[2m (transform 111ms, setup 12ms, import 133ms, tests 16ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G04",
+              "shell": "/bin/sh",
+              "cwd": ".",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "Workbench fold learns the three compaction events: inline streaming card node, settle on end with tokens and summary, replay keeps first and last delta, live and replayed rows byte-identical.",
       "gates": [
@@ -353,7 +455,7 @@
           "id": "G01",
           "check": "npx vitest run tests/workbench/session-store.test.ts",
           "expect": "passed",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G01\",\"shell\":\"/bin/sh\",\"cwd\":\".\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/workbench/session-store.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m11 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 6\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m11 passed\\u001b[39m\\u001b[22m\\u001b[90m (11)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 23:20:24\\n\\u001b[2m   Duration \\u001b[22m 233ms\\u001b[2m (transform 88ms, setup 17ms, import 100ms, tests 6ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}",
           "cwd": ".",
           "type": "unit"
         },
@@ -361,7 +463,7 @@
           "id": "G02",
           "check": "npx vitest run tests/workbench/replay-compact.test.ts",
           "expect": "passed",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G02\",\"shell\":\"/bin/sh\",\"cwd\":\".\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/workbench/replay-compact.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m9 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 3\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m9 passed\\u001b[39m\\u001b[22m\\u001b[90m (9)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 23:20:25\\n\\u001b[2m   Duration \\u001b[22m 181ms\\u001b[2m (transform 86ms, setup 16ms, import 98ms, tests 3ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}",
           "cwd": ".",
           "type": "unit"
         },
@@ -369,7 +471,7 @@
           "id": "G03",
           "check": "npx vitest run tests/workbench/session-fold.test.ts",
           "expect": "passed",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G03\",\"shell\":\"/bin/sh\",\"cwd\":\".\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/workbench/session-fold.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m121 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 16\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m121 passed\\u001b[39m\\u001b[22m\\u001b[90m (121)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 23:20:25\\n\\u001b[2m   Duration \\u001b[22m 229ms\\u001b[2m (transform 111ms, setup 12ms, import 133ms, tests 16ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}",
           "cwd": ".",
           "type": "integration"
         },
@@ -377,7 +479,7 @@
           "id": "G04",
           "check": "npx tsc --noEmit && echo TSC_OK",
           "expect": "TSC_OK",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G04\",\"shell\":\"/bin/sh\",\"cwd\":\".\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}",
           "cwd": ".",
           "type": "smoke"
         }
@@ -554,8 +656,54 @@
         "at": "2026-09-03T11:09:19.531Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "verified",
+        "hash": "73ccc126fd9f2304b80e19d22996135b61fbd3dd31f996b8b1f1d3fce4377069",
+        "actor": "verifier",
+        "at": "2026-09-03T11:20:36.272Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G01",
+              "shell": "/bin/sh",
+              "cwd": ".",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/workbench/workbench-i18n.test.ts \u001b[2m(\u001b[22m\u001b[2m89 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 119\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m89 passed\u001b[39m\u001b[22m\u001b[90m (89)\u001b[39m\n\u001b[2m   Start at \u001b[22m 23:20:30\n\u001b[2m   Duration \u001b[22m 540ms\u001b[2m (transform 127ms, setup 16ms, import 292ms, tests 119ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G02",
+              "shell": "/bin/sh",
+              "cwd": ".",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/workbench/chat-timeline.test.ts \u001b[2m(\u001b[22m\u001b[2m24 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 24\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m24 passed\u001b[39m\u001b[22m\u001b[90m (24)\u001b[39m\n\u001b[2m   Start at \u001b[22m 23:20:31\n\u001b[2m   Duration \u001b[22m 564ms\u001b[2m (transform 214ms, setup 16ms, import 459ms, tests 24ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G03",
+              "shell": "/bin/sh",
+              "cwd": ".",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> node scripts/check-i18n-keys.mjs\n\ni18n key alignment check passed (12 locale files, source: en-US.json).\n",
+              "passed": true
+            },
+            {
+              "id": "G04",
+              "shell": "/bin/sh",
+              "cwd": ".",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "CompactionBlock renders the thinking-card shape with a Shrink icon: running label, settled token label, streamed preview, expandable full summary; three copy keys across all twelve workbench locales.",
       "gates": [
@@ -563,7 +711,7 @@
           "id": "G01",
           "check": "npx vitest run tests/workbench/workbench-i18n.test.ts",
           "expect": "passed",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G01\",\"shell\":\"/bin/sh\",\"cwd\":\".\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/workbench/workbench-i18n.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m89 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 119\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m89 passed\\u001b[39m\\u001b[22m\\u001b[90m (89)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 23:20:30\\n\\u001b[2m   Duration \\u001b[22m 540ms\\u001b[2m (transform 127ms, setup 16ms, import 292ms, tests 119ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}",
           "cwd": ".",
           "type": "unit"
         },
@@ -571,7 +719,7 @@
           "id": "G02",
           "check": "npx vitest run tests/workbench/chat-timeline.test.ts",
           "expect": "passed",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G02\",\"shell\":\"/bin/sh\",\"cwd\":\".\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/workbench/chat-timeline.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m24 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 24\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m24 passed\\u001b[39m\\u001b[22m\\u001b[90m (24)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 23:20:31\\n\\u001b[2m   Duration \\u001b[22m 564ms\\u001b[2m (transform 214ms, setup 16ms, import 459ms, tests 24ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}",
           "cwd": ".",
           "type": "integration"
         },
@@ -579,7 +727,7 @@
           "id": "G03",
           "check": "pnpm check:i18n-keys",
           "expect": "passed",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G03\",\"shell\":\"/bin/sh\",\"cwd\":\".\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> node scripts/check-i18n-keys.mjs\\n\\ni18n key alignment check passed (12 locale files, source: en-US.json).\\n\",\"passed\":true}",
           "cwd": ".",
           "type": "integration"
         },
@@ -587,7 +735,7 @@
           "id": "G04",
           "check": "npx tsc --noEmit && echo TSC_OK",
           "expect": "TSC_OK",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G04\",\"shell\":\"/bin/sh\",\"cwd\":\".\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}",
           "cwd": ".",
           "type": "smoke"
         }
@@ -1709,7 +1857,57 @@
       "slice": "S03",
       "hash": "8cb6789ca6148cf900e5420420f3ac01255ed98adb2dc4bec47e16d7cf96a83c",
       "fileHash": "ff2ad8ff3e345a6cf37ca1b8f23ef347924d20411093947470a7a2c137c53352"
+    },
+    {
+      "seq": 100,
+      "id": "4f1587fa-7be5-4046-b4a8-b61fffe8c70a",
+      "at": "2026-09-03T11:12:58.645Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "6bc1f1104733bd0fc29e891dfba9e19d7d5480360df826f9c2a7e25a10930442",
+      "fileHash": "3a996417c0536d74a737578dec70ef9688de7b81c29714b5abe95d03b6beb7fe"
+    },
+    {
+      "seq": 101,
+      "id": "25416a11-5090-4c26-9a67-c2403a817ff1",
+      "at": "2026-09-03T11:20:24.291Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S01:verification:pending->verified",
+      "slice": "S01",
+      "hash": "e521d3f9e359cb29c3d26670eb04b202b27afa6e0556aadd3d079bc724fcc236",
+      "oracle": "e7f49dc02dc2f9bde29add321511ba4a4566f2fd2f8a1e9c84ccb2d23689d84a",
+      "evidence": "6841c58d1c6764da972c38ab2aa0a5fed9e7e5e9be784eab99b896f455cfe27b",
+      "fileHash": "8b1c0750900b81ba5f47bf04d7c22bfffbb17e19ea9fc54226becea293bb685f"
+    },
+    {
+      "seq": 102,
+      "id": "cd7e2e35-38be-4a91-ab7e-633c56b04977",
+      "at": "2026-09-03T11:20:30.179Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S02:verification:pending->verified",
+      "slice": "S02",
+      "hash": "1320fec32ec2e478ae1b74b9c3f7a4df62eba8d9e3c5deb7c118974b277495d0",
+      "oracle": "48193432ebc770a8c92da3f35812ce5cb3c814605d187bb8ed5d4050d98c8082",
+      "evidence": "476eb176855cd935e42f8561adaa308bb6e9272a33d66fe56f9cee07b40a4412",
+      "fileHash": "11a48075337352b485c9f2cd6b1e1e20c608c7d2cea5574f3eb4c7eb149b576b"
+    },
+    {
+      "seq": 103,
+      "id": "166e0d54-d5e1-4843-a11f-ec3f6635d21d",
+      "at": "2026-09-03T11:20:36.272Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S03:verification:pending->verified",
+      "slice": "S03",
+      "hash": "9f119c0a1f4b013225178b9548c309f530a8bbccbb83079281cf0458e26485f1",
+      "oracle": "b3915d97a79d0d076b26ad2653b24eab5e4c66fa182f3b196004eb19eb6382e0",
+      "evidence": "764f8fb0aaf56fa337875accb43d9197d007bf303472c18895cbac73d7fc9dfe",
+      "fileHash": "cf97f33665d92f98127af4c89b6a18b135faadefcc01e9030518d39c629c0557"
     }
   ],
-  "fileHash": "3a996417c0536d74a737578dec70ef9688de7b81c29714b5abe95d03b6beb7fe"
+  "fileHash": "879fa4b684f0b83dd649aedaeb94c2f502a4750dc4eb62348c41d6074ad86adf"
 }
