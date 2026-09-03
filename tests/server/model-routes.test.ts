@@ -376,6 +376,7 @@ describe('model-routes', () => {
         'web-search-query-rewrite',
         'maic-agent',
         'maic-agent-driver',
+        'maic-agent-compaction',
       ]),
     );
   });

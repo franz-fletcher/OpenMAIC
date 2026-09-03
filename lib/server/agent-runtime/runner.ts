@@ -25,6 +25,7 @@ import type { Scene, SlideContent } from '@/lib/types/stage';
 
 import { resolveAgentDriverModel } from './agent-driver-model';
 import { buildAskUserTool } from './ask-user';
+import { makeCompactionRuntime } from './compaction';
 import { agentRuntimeConfig as config } from './config';
 import { traceMessageForUpdate } from './tool-progress';
 import { buildCreateSkillTool } from './create-skill';
@@ -1269,6 +1270,30 @@ export async function runSession(ctx: RunContext, meta: ClaimedAgentSession): Pr
       source: 'agent-runtime',
       abortSignal: abort.signal,
     });
+
+    // When compaction is enabled, construct the runtime with a durable append
+    // sink fenced through the serial write chain. The transformContext seam
+    // runs at model boundaries (pi invokes it before each LLM call), so a
+    // compaction write cannot land mid tool call.
+    const compactionRuntime = config.compaction.enabled
+      ? makeCompactionRuntime({
+          contextWindow: driver.piModel.contextWindow,
+          settings: {
+            reserveTokens: config.compaction.reserveTokens,
+            keepRecentTokens: config.compaction.keepRecentTokens,
+          },
+          appendSink: (entry) =>
+            writeRequiredSessionEntry(async () => {
+              await entrySession!.appendCompaction(
+                entry.summary,
+                entry.firstKeptEntryId,
+                entry.tokensBefore,
+              );
+            }, markLeaseLost),
+          emitTrace: (line) => emit(LIFECYCLE.trace, line),
+        })
+      : undefined;
+
     let questionEmitted = false;
     const askUserTool = buildAskUserTool({
       onUserQuestion: (question) => {
@@ -1491,6 +1516,7 @@ export async function runSession(ctx: RunContext, meta: ClaimedAgentSession): Pr
         ...(voiceRegistrationEnabled ? VOICE_CLONE_TOOL_NAMES : ['clip_audio']),
       ]),
       ...(plan.kind === 'start' ? {} : { history: modelMessages }),
+      ...(compactionRuntime ? { transformContext: compactionRuntime.transformContext } : {}),
       afterToolCall: (toolContext) => {
         toolCalls += 1;
         if (askUserLatch.shouldTerminate(toolContext.toolCall.name, toolContext.isError)) {

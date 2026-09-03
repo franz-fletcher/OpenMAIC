@@ -1,6 +1,6 @@
 # Batch 009 spec: agent-context-compaction
 
-Spec status: draft
+Spec status: implementation
 
 ## Problem Statement
 
@@ -72,7 +72,9 @@ The flag stays default OFF. The tandem run in the meta spec flips it with enviro
 **Proposed gates (cwd: repo root for every gate).**
 
 - G01 (unit): `npx vitest run tests/agent-runtime/compaction-trigger.test.ts` expect `passed`.
-- G02 (smoke): `npx tsc --noEmit && echo TSC_OK` expect `TSC_OK`.
+- G02 (unit): `npx vitest run tests/agent-runtime/runner-contract.test.ts` expect `passed`. The existing runner contract suite proves flags-default-OFF deployments are untouched, so the trigger policy lands with zero behavior change for deployments that leave the flags unset.
+- G03 (integration): `npx vitest run tests/agent-runtime/agent-driver-model.test.ts` expect `passed`. The trigger consumes the context window chain this suite pins, so it is part of the trigger's integration surface.
+- G04 (smoke): `npx tsc --noEmit && echo TSC_OK` expect `TSC_OK`.
 
 ### S02 Summarizer and entry writer (tier 3)
 
@@ -110,8 +112,9 @@ The flag stays default OFF. The tandem run in the meta spec flips it with enviro
 **Proposed gates (cwd: repo root for every gate).**
 
 - G01 (unit): `npx vitest run tests/agent-runtime/compaction-summary.test.ts` expect `passed`.
-- G02 (unit): `npx vitest run tests/server/model-routes.test.ts` expect `passed`.
-- G03 (smoke): `npx tsc --noEmit && echo TSC_OK` expect `TSC_OK`.
+- G02 (integration): `npx vitest run tests/server/model-routes.test.ts` expect `passed`. The re-pinned stage list plus `resolveModel` stage resolution form the route integration surface.
+- G03 (unit): `npx vitest run tests/agent-runtime/entry-tree-storage.test.ts` expect `passed`. The new compaction-entry tests prove the writer's shape against the shipped reader.
+- G04 (smoke): `npx tsc --noEmit && echo TSC_OK` expect `TSC_OK`.
 
 ### S03 transformContext wiring and read path (tier 3)
 
@@ -206,7 +209,7 @@ The flag stays default OFF. The tandem run in the meta spec flips it with enviro
 - **The write goes through pi `Session.appendCompaction`.** It emits the shape the shipped reader consumes. The write is a critical entry write fenced through `writeRequiredSessionEntry`, so lease loss aborts the run exactly like a message append.
 - **`transformContext` is the wiring seam.** Pi invokes it before each LLM call, so the compaction judgment runs at a model boundary, never inside a tool call. The runner passes it only when `agentRuntimeConfig.compaction.enabled` is true. Disabled mode is a pass through and changes no existing behavior.
 - **The trigger token source is the entry tree usage blocks.** Assistant message blobs carry a `usage` block (137 of 141 in the reference session). The last block of a run can be all zero, so the measurement uses the trailing heuristic fallback from the reference runtime, never the last block alone.
-- **Default OFF, tandem flips it.** `OPENMAIC_AGENT_COMPACTION_ENABLED` stays default OFF. The `.env.example:397-403` wording changes in the same PR to describe live semantics while keeping the OFF default, per the repo rule for operator facing vars. The tandem run sets it true with orchestrator monitoring. The new env flags have no effect on existing tests because the parse defaults to false.
+- **Default OFF, tandem flips it.** `OPENMAIC_AGENT_COMPACTION_ENABLED` stays default OFF. The `.env.example:401-403` wording changes in the same PR to describe live semantics while keeping the OFF default, per the repo rule for operator facing vars. The tandem run sets it true with orchestrator monitoring. The new env flags have no effect on existing tests because the parse defaults to false.
 - **Observability is the existing trace channel.** One `LIFECYCLE.trace` emit per compaction with before and after counts. The line is durable and replayable. No new event type and no i18n keys: the text is operator facing diagnostics.
 - **Repository constraints honored.** No `packages/@openmaic` changes. No provider vendor term enters a neutral file, so `tests/providers/provider-neutrality-guard.test.ts` debt counts stay untouched. Prettier 100 columns. No i18n keys.
 

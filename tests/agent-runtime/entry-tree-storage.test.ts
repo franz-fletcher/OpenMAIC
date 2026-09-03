@@ -1,4 +1,9 @@
-import { SessionError, type SessionTreeEntry } from '@earendil-works/pi-agent-core';
+import {
+  InMemorySessionRepo,
+  SessionError,
+  type AgentMessage,
+  type SessionTreeEntry,
+} from '@earendil-works/pi-agent-core';
 import {
   PgAgentSessionStore,
   ensureAgentSessionSchema,
@@ -8,7 +13,10 @@ import {
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { Pool } from 'pg';
 
-import { AgentSessionEntryStorage } from '@/lib/server/agent-runtime/entry-tree-storage';
+import {
+  loadSessionEntryHistory,
+  AgentSessionEntryStorage,
+} from '@/lib/server/agent-runtime/entry-tree-storage';
 
 const contractUrl = process.env.PG_CONTRACT_URL;
 
@@ -172,5 +180,96 @@ describe.skipIf(!contractUrl)('AgentSessionEntryStorage with PostgreSQL 16', () 
       name: 'SessionError',
       code: 'invalid_session',
     });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Hermetic compaction round-trip (no PG required)
+// ---------------------------------------------------------------------------
+
+describe('loadSessionEntryHistory compaction round-trip', () => {
+  function msg(text: string, role = 'user'): AgentMessage {
+    return { role, content: [{ type: 'text', text }] } as unknown as AgentMessage;
+  }
+
+  it('writes a compaction entry and reloads it with summary plus kept tail', async () => {
+    const repo = new InMemorySessionRepo();
+    const session = await repo.create({ id: 'compaction-round-trip' });
+
+    // Append 4 messages.
+    await session.appendMessage(msg('first'));
+    await session.appendMessage(msg('second'));
+    await session.appendMessage(msg('third'));
+    await session.appendMessage(msg('fourth'));
+
+    const branch = await session.getBranch();
+    expect(branch).toHaveLength(4);
+
+    // Compaction entry: firstKeptEntryId = branch[2].id (third message).
+    const firstKeptId = branch[2]!.id;
+    await session.appendCompaction('Summary of first two messages', firstKeptId, 500);
+
+    const history = await loadSessionEntryHistory(session, {
+      sessionId: 'compaction-round-trip',
+      hasPriorRun: true,
+    });
+
+    // Context view: summary message + third + fourth = 3 messages.
+    expect(history.messages).toHaveLength(3);
+    expect(history.messages[0]!.role).toBe('compactionSummary');
+
+    // Cursor messages stay the full raw stream (4 messages).
+    expect(history.cursorMessages).toHaveLength(4);
+  });
+
+  it('rejects a non-backward firstKeptEntryId', async () => {
+    const repo = new InMemorySessionRepo();
+    const session = await repo.create({ id: 'compaction-bad-keep' });
+
+    await session.appendMessage(msg('one'));
+    await session.appendMessage(msg('two'));
+
+    const branch = await session.getBranch();
+    // Insert a compaction whose firstKeptEntryId points to an entry
+    // that does NOT appear in the branch path (forward reference).
+    await session.appendCompaction('bad', 'non-existent-entry-id', 100);
+
+    await expect(
+      loadSessionEntryHistory(session, {
+        sessionId: 'compaction-bad-keep',
+        hasPriorRun: true,
+      }),
+    ).rejects.toMatchObject({
+      name: 'SessionEntryHistoryError',
+    });
+  });
+
+  it('rejects an empty tree after a prior run', async () => {
+    const repo = new InMemorySessionRepo();
+    const session = await repo.create({ id: 'compaction-empty-after-run' });
+
+    await expect(
+      loadSessionEntryHistory(session, {
+        sessionId: 'compaction-empty-after-run',
+        hasPriorRun: true,
+      }),
+    ).rejects.toMatchObject({
+      name: 'SessionEntryHistoryError',
+    });
+  });
+
+  it('returns empty arrays for a fresh session with no prior run', async () => {
+    const repo = new InMemorySessionRepo();
+    const session = await repo.create({ id: 'compaction-fresh' });
+
+    const history = await loadSessionEntryHistory(session, {
+      sessionId: 'compaction-fresh',
+      hasPriorRun: false,
+    });
+
+    expect(history.messages).toEqual([]);
+    expect(history.cursorMessages).toEqual([]);
+    expect(history.branch).toEqual([]);
+    expect(history.contextEntryIds).toEqual([]);
   });
 });
