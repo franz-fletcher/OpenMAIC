@@ -16,8 +16,12 @@
  *                    (max first-event ts across all sessions), then scan
  *                    abort rows for that session at/after its marker.
  *
- * Exported functions are pure or take a db-access callback so the
- * integration test can exercise the logic without a live database.
+ * Database-injection seam:
+ *   runWithConnection(clientFactory, argv) accepts an async clientFactory
+ *   that returns a pg-compatible client (must expose query() and
+ *   release()). This lets the hermetic test suite exercise all DB-touching
+ *   paths without a live database. main(argv) delegates to
+ *   runWithConnection after building the factory from DATABASE_URL.
  *
  * Exit codes:
  *   0 - pass (or --expect-incomplete with mismatch)
@@ -54,8 +58,6 @@ const ABORT_FRAGMENT = 'execution budget and was aborted';
 
 /**
  * Query stages and scene counts for the pinned folder.
- * Stage rows must have an id starting with 'stage-' and live in FOLDER_ID.
- * Only Stages 1 through 7 are relevant; others are ignored.
  *
  * @param {object} client - A pg-compatible client with query().
  * @returns {Promise<Array<{stage: number, label: string, sceneCount: number}>>}
@@ -88,8 +90,6 @@ async function queryStageSummaries(client) {
 
 /**
  * Derive the most recent session from agent_session_events.
- * "Most recent" means the session whose first lifecycle event (session_start)
- * has the highest ts across all sessions.
  *
  * @param {object} client - A pg-compatible client with query().
  * @returns {Promise<{sessionId: string, marker: number} | null>}
@@ -136,13 +136,10 @@ async function deriveSessionMarker(client, sessionId) {
 /**
  * Scan agent_session_events for the abort-fragment text.
  *
- * Returns true when at least one row matching the session (when provided)
- * has ts >= marker and data::text contains the fragment.
- *
  * @param {object} client - A pg-compatible client with query().
  * @param {object} opts
- * @param {string} [opts.sessionId] - When present, filter by this session.
- * @param {number} opts.marker - ts of the first lifecycle event of the session.
+ * @param {string} [opts.sessionId]
+ * @param {number} opts.marker
  * @returns {Promise<boolean>}
  */
 async function scanAbortFragmentDb(client, { sessionId, marker }) {
@@ -193,7 +190,7 @@ function buildDiffLines(stages) {
  * Rows before the marker are skipped.
  *
  * @param {Array<{session_id: string, ts: number, type: string, data: string}>} rows
- * @param {number} marker - ts of the first lifecycle event.
+ * @param {number} marker
  * @returns {boolean}
  */
 function scanAbortFragment(rows, marker) {
@@ -225,19 +222,20 @@ function checkStageCompletion(stages, eventRows, marker = 0) {
 }
 
 // ---------------------------------------------------------------------------
-// CLI
+// Database-injection seam: runWithConnection
 // ---------------------------------------------------------------------------
 
 /**
- * Main entry point. Accepts argv and an optional db-access override for testing.
+ * Run the completion gate against a client provided by clientFactory.
  *
- * When override is provided (test mode), skip the pg pool entirely.
- * When override is null (CLI mode), read DATABASE_URL from env, connect via pg.
+ * clientFactory is an async function that returns a pg-compatible client
+ * with query() and release(). The caller owns the lifecycle: create the
+ * client before calling, release it after.
  *
+ * @param {() => Promise<{query: Function, release: Function}>} clientFactory
  * @param {string[]} argv
- * @param {{stages: Array, events: Array, marker?: number, session?: string}} [override]
  */
-async function main(argv, override) {
+async function runWithConnection(clientFactory, argv) {
   // Parse arguments.
   let sessionId = null;
   let expectIncomplete = false;
@@ -250,70 +248,46 @@ async function main(argv, override) {
     }
   }
 
+  const client = await clientFactory();
   let stages, eventRows, marker, mode;
 
-  if (override) {
-    // Test mode: use injected fixtures.
-    stages = override.stages || [];
-    eventRows = override.events || [];
-    marker = override.marker || 0;
-    mode = override.session
-      ? `session=${override.session} marker=${marker}`
-      : `most-recent-session marker=${marker}`;
-  } else {
-    // CLI mode: read DATABASE_URL and connect.
-    const databaseUrl = process.env.DATABASE_URL;
-    if (!databaseUrl) {
-      console.error('ERROR: DATABASE_URL environment variable is not set.');
-      process.exit(2);
+  try {
+    stages = await queryStageSummaries(client);
+
+    if (sessionId) {
+      marker = await deriveSessionMarker(client, sessionId);
+      mode = `session=${sessionId} marker=${marker}`;
+    } else {
+      const recent = await deriveMostRecentSession(client);
+      if (recent) {
+        sessionId = recent.sessionId;
+        marker = recent.marker;
+        mode = `most-recent-session=${sessionId} marker=${marker}`;
+      } else {
+        marker = 0;
+        mode = 'no-sessions-found marker=0';
+      }
     }
 
-    const pg = require('pg');
-    const pool = new pg.Pool({ connectionString: databaseUrl });
-    const client = await pool.connect();
+    const abortFound = await scanAbortFragmentDb(client, {
+      sessionId: sessionId || undefined,
+      marker,
+    });
 
-    try {
-      stages = await queryStageSummaries(client);
-
-      if (sessionId) {
-        // Explicit --session: derive marker from that session.
-        marker = await deriveSessionMarker(client, sessionId);
-        mode = `session=${sessionId} marker=${marker}`;
-      } else {
-        // No --session: derive the most recent session.
-        const recent = await deriveMostRecentSession(client);
-        if (recent) {
-          sessionId = recent.sessionId;
-          marker = recent.marker;
-          mode = `most-recent-session=${sessionId} marker=${marker}`;
-        } else {
-          marker = 0;
-          mode = 'no-sessions-found marker=0';
-        }
-      }
-
-      // Scan abort fragments for the resolved session.
-      const abortFound = await scanAbortFragmentDb(client, {
-        sessionId: sessionId || undefined,
-        marker,
-      });
-
-      if (abortFound) {
-        eventRows = [
-          {
-            session_id: sessionId || '',
-            ts: marker,
-            type: 'abort_scan',
-            data: `{"found": true, "fragment": "${ABORT_FRAGMENT}"}`,
-          },
-        ];
-      } else {
-        eventRows = [];
-      }
-    } finally {
-      client.release();
-      await pool.end();
+    if (abortFound) {
+      eventRows = [
+        {
+          session_id: sessionId || '',
+          ts: marker,
+          type: 'abort_scan',
+          data: `{"found": true, "fragment": "${ABORT_FRAGMENT}"}`,
+        },
+      ];
+    } else {
+      eventRows = [];
     }
+  } finally {
+    client.release();
   }
 
   // Compute result.
@@ -350,6 +324,37 @@ async function main(argv, override) {
 }
 
 // ---------------------------------------------------------------------------
+// CLI
+// ---------------------------------------------------------------------------
+
+/**
+ * Main entry point. Reads DATABASE_URL from the environment and delegates
+ * to runWithConnection. Signature is (argv) per the frozen contract.
+ *
+ * @param {string[]} argv
+ */
+async function main(argv) {
+  const databaseUrl = process.env.DATABASE_URL;
+  if (!databaseUrl) {
+    console.error('ERROR: DATABASE_URL environment variable is not set.');
+    process.exit(2);
+  }
+
+  const pg = require('pg');
+  const pool = new pg.Pool({ connectionString: databaseUrl });
+
+  await runWithConnection(async () => {
+    const client = await pool.connect();
+    return {
+      query: (...args) => client.query(...args),
+      release: () => client.release(),
+    };
+  }, argv);
+
+  await pool.end();
+}
+
+// ---------------------------------------------------------------------------
 // CLI entry point.
 // ---------------------------------------------------------------------------
 
@@ -366,6 +371,7 @@ if (require.main === module) {
 
 module.exports = {
   main,
+  runWithConnection,
   scanAbortFragment,
   buildDiffLines,
   checkStageCompletion,

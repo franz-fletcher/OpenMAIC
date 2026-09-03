@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
-  main,
+  runWithConnection,
   scanAbortFragment,
   buildDiffLines,
   checkStageCompletion,
@@ -8,7 +8,7 @@ import {
 } from '../../scripts/check-stage-completion';
 
 // ---------------------------------------------------------------------------
-// Fixture types matching the shapes returned by the DB query functions.
+// Fixture types
 // ---------------------------------------------------------------------------
 
 interface StageRow {
@@ -86,18 +86,12 @@ describe('scanAbortFragment', () => {
   const marker = 1000;
 
   it('returns false for empty rows', () => {
-    const rows: EventRow[] = [];
-    expect(scanAbortFragment(rows, marker)).toBe(false);
+    expect(scanAbortFragment([], marker)).toBe(false);
   });
 
   it('returns false when no abort text in data', () => {
     const rows: EventRow[] = [
-      {
-        session_id: 's1',
-        ts: 2000,
-        type: 'tool_execution_end',
-        data: '{"message":"completed"}',
-      },
+      { session_id: 's1', ts: 2000, type: 'tool_execution_end', data: '{"message":"completed"}' },
     ];
     expect(scanAbortFragment(rows, marker)).toBe(false);
   });
@@ -146,12 +140,7 @@ describe('scanAbortFragment', () => {
         type: 'tool_execution_end',
         data: '{"message":"exceeded its 900000ms execution budget and was aborted"}',
       },
-      {
-        session_id: 's1',
-        ts: 2000,
-        type: 'tool_execution_end',
-        data: '{"message":"ok"}',
-      },
+      { session_id: 's1', ts: 2000, type: 'tool_execution_end', data: '{"message":"ok"}' },
     ];
     expect(scanAbortFragment(rows, marker)).toBe(false);
   });
@@ -218,30 +207,67 @@ describe('checkStageCompletion', () => {
 });
 
 // ---------------------------------------------------------------------------
-// main: CLI boundary tests with injected fixtures.
+// runWithConnection: DB-injection seam tests.
 //
-// The helper stubs process.exit, console.log/error, and DATABASE_URL.
-// When useOverride=true (default), main receives a fixture override and
-// skips the pg pool. When useOverride=false, main runs in CLI mode and
-// checks DATABASE_URL from env.
+// The helper builds a fake client factory whose query() returns canned rows
+// for the three query functions (queryStageSummaries, deriveMostRecentSession
+// or deriveSessionMarker, scanAbortFragmentDb). This exercises the full
+// DB-touching path without a live database.
 // ---------------------------------------------------------------------------
 
-describe('main', () => {
-  const originalEnv = process.env.DATABASE_URL;
+describe('runWithConnection', () => {
+  const origExit = process.exit;
 
-  async function runMain(
+  /** Build a fake client whose query() dispatches on the SQL text. */
+  function fakeClient(opts: {
+    stages?: { id: string; name: string; sceneCount: number }[];
+    marker?: { sessionId: string; marker: number } | null;
+    sessionMarker?: number;
+    abortFound?: boolean;
+  }) {
+    return {
+      query(sql: string, params?: unknown[]) {
+        if (sql.includes('document_stages')) {
+          return Promise.resolve({
+            rows: (opts.stages || []).map((s) => ({
+              id: s.id,
+              name: s.name,
+              sceneCount: s.sceneCount,
+            })),
+          });
+        }
+        if (sql.includes('session_start') && sql.includes('ORDER BY marker DESC')) {
+          // deriveMostRecentSession
+          return Promise.resolve({
+            rows: opts.marker
+              ? [{ session_id: opts.marker.sessionId, marker: opts.marker.marker }]
+              : [],
+          });
+        }
+        if (sql.includes('session_start') && sql.includes('session_id')) {
+          // deriveSessionMarker
+          return Promise.resolve({
+            rows: opts.sessionMarker != null ? [{ marker: opts.sessionMarker }] : [],
+          });
+        }
+        if (sql.includes('execution budget and was aborted')) {
+          return Promise.resolve({
+            rows: opts.abortFound ? [{}] : [],
+          });
+        }
+        return Promise.resolve({ rows: [] });
+      },
+      release() {},
+    };
+  }
+
+  async function run(
     argv: string[],
-    stages: StageRow[],
-    events: EventRow[],
-    marker: number,
-    envOverride: string | undefined,
-    useOverride: boolean,
-    session?: string,
+    clientOpts: Parameters<typeof fakeClient>[0],
   ): Promise<{ output: string; exitCode: number }> {
     const logs: string[] = [];
     const origLog = console.log;
-    const origError = console.error;
-    const origExit = process.exit;
+    const origErr = console.error;
 
     let capturedExitCode = 0;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -253,60 +279,50 @@ describe('main', () => {
     console.log = (...args: unknown[]) => logs.push(args.join(' '));
     console.error = (...args: unknown[]) => logs.push(args.join(' '));
 
-    if (envOverride !== undefined) {
-      process.env.DATABASE_URL = envOverride;
-    } else {
-      delete process.env.DATABASE_URL;
-    }
-
+    const client = fakeClient(clientOpts);
     let threw = false;
     try {
-      const overridePayload = useOverride ? { stages, events, marker, session } : undefined;
-      await main(argv, overridePayload);
+      await runWithConnection(async () => client, argv);
     } catch (e: unknown) {
       if (e instanceof Error && e.message === '__EXIT__') threw = true;
     }
 
-    // Restore everything.
     console.log = origLog;
-    console.error = origError;
+    console.error = origErr;
     process.exit = origExit;
-    if (originalEnv !== undefined) {
-      process.env.DATABASE_URL = originalEnv;
-    } else {
-      delete process.env.DATABASE_URL;
-    }
 
     return { output: logs.join('\n'), exitCode: threw ? capturedExitCode : 0 };
   }
 
   it('exits 0 and prints PASS on full match with no aborts', async () => {
-    const stages: StageRow[] = [
-      { stage: 1, label: 'Stage 1', sceneCount: 8 },
-      { stage: 2, label: 'Stage 2', sceneCount: 7 },
-      { stage: 3, label: 'Stage 3', sceneCount: 7 },
-      { stage: 4, label: 'Stage 4', sceneCount: 7 },
-      { stage: 5, label: 'Stage 5', sceneCount: 7 },
-      { stage: 6, label: 'Stage 6', sceneCount: 7 },
-      { stage: 7, label: 'Stage 7', sceneCount: 7 },
-    ];
-    const { output, exitCode } = await runMain([], stages, [], 0, 'pg://fake', true);
+    const { output, exitCode } = await run([], {
+      stages: [
+        { id: 'stage-1', name: 'Stage 1', sceneCount: 8 },
+        { id: 'stage-2', name: 'Stage 2', sceneCount: 7 },
+        { id: 'stage-3', name: 'Stage 3', sceneCount: 7 },
+        { id: 'stage-4', name: 'Stage 4', sceneCount: 7 },
+        { id: 'stage-5', name: 'Stage 5', sceneCount: 7 },
+        { id: 'stage-6', name: 'Stage 6', sceneCount: 7 },
+        { id: 'stage-7', name: 'Stage 7', sceneCount: 7 },
+      ],
+      marker: { sessionId: 'recent', marker: 1000 },
+      abortFound: false,
+    });
     expect(exitCode).toBe(0);
     expect(output).toContain('COMPLETION_GATE_PASS');
-    expect(output).toContain('mode:');
+    expect(output).toContain('mode: most-recent-session=recent marker=1000');
   });
 
   it('exits nonzero and prints FAIL on missing count with diff', async () => {
-    const stages: StageRow[] = [
-      { stage: 1, label: 'Stage 1', sceneCount: 8 },
-      { stage: 2, label: 'Stage 2', sceneCount: 7 },
-      { stage: 3, label: 'Stage 3', sceneCount: 0 },
-      { stage: 4, label: 'Stage 4', sceneCount: 0 },
-      { stage: 5, label: 'Stage 5', sceneCount: 0 },
-      { stage: 6, label: 'Stage 6', sceneCount: 0 },
-      { stage: 7, label: 'Stage 7', sceneCount: 0 },
-    ];
-    const { output, exitCode } = await runMain([], stages, [], 0, 'pg://fake', true);
+    const { output, exitCode } = await run([], {
+      stages: [
+        { id: 'stage-1', name: 'Stage 1', sceneCount: 8 },
+        { id: 'stage-2', name: 'Stage 2', sceneCount: 7 },
+        { id: 'stage-3', name: 'Stage 3', sceneCount: 0 },
+      ],
+      marker: { sessionId: 'recent', marker: 1000 },
+      abortFound: false,
+    });
     expect(exitCode).not.toBe(0);
     expect(output).toContain('COMPLETION_GATE_FAIL');
     expect(output).toContain('8/8');
@@ -314,32 +330,19 @@ describe('main', () => {
   });
 
   it('exits nonzero and prints FAIL on abort-fragment row (--session mode)', async () => {
-    const stages: StageRow[] = [
-      { stage: 1, label: 'Stage 1', sceneCount: 8 },
-      { stage: 2, label: 'Stage 2', sceneCount: 7 },
-      { stage: 3, label: 'Stage 3', sceneCount: 7 },
-      { stage: 4, label: 'Stage 4', sceneCount: 7 },
-      { stage: 5, label: 'Stage 5', sceneCount: 7 },
-      { stage: 6, label: 'Stage 6', sceneCount: 7 },
-      { stage: 7, label: 'Stage 7', sceneCount: 7 },
-    ];
-    const events: EventRow[] = [
-      {
-        session_id: 's1',
-        ts: 2000,
-        type: 'tool_execution_end',
-        data: '{"message":"exceeded its 900000ms execution budget and was aborted"}',
-      },
-    ];
-    const { output, exitCode } = await runMain(
-      ['--session', 's1'],
-      stages,
-      events,
-      1000,
-      'pg://fake',
-      true,
-      's1',
-    );
+    const { output, exitCode } = await run(['--session', 's1'], {
+      stages: [
+        { id: 'stage-1', name: 'Stage 1', sceneCount: 8 },
+        { id: 'stage-2', name: 'Stage 2', sceneCount: 7 },
+        { id: 'stage-3', name: 'Stage 3', sceneCount: 7 },
+        { id: 'stage-4', name: 'Stage 4', sceneCount: 7 },
+        { id: 'stage-5', name: 'Stage 5', sceneCount: 7 },
+        { id: 'stage-6', name: 'Stage 6', sceneCount: 7 },
+        { id: 'stage-7', name: 'Stage 7', sceneCount: 7 },
+      ],
+      sessionMarker: 1000,
+      abortFound: true,
+    });
     expect(exitCode).not.toBe(0);
     expect(output).toContain('COMPLETION_GATE_FAIL');
     expect(output).toContain('abort');
@@ -347,122 +350,108 @@ describe('main', () => {
   });
 
   it('exits 0 with --expect-incomplete on mismatch', async () => {
-    const stages: StageRow[] = [
-      { stage: 1, label: 'Stage 1', sceneCount: 8 },
-      { stage: 2, label: 'Stage 2', sceneCount: 7 },
-      { stage: 3, label: 'Stage 3', sceneCount: 0 },
-      { stage: 4, label: 'Stage 4', sceneCount: 0 },
-      { stage: 5, label: 'Stage 5', sceneCount: 0 },
-      { stage: 6, label: 'Stage 6', sceneCount: 0 },
-      { stage: 7, label: 'Stage 7', sceneCount: 0 },
-    ];
-    const { output, exitCode } = await runMain(
-      ['--expect-incomplete'],
-      stages,
-      [],
-      0,
-      'pg://fake',
-      true,
-    );
+    const { output, exitCode } = await run(['--expect-incomplete'], {
+      stages: [
+        { id: 'stage-1', name: 'Stage 1', sceneCount: 8 },
+        { id: 'stage-2', name: 'Stage 2', sceneCount: 7 },
+        { id: 'stage-3', name: 'Stage 3', sceneCount: 0 },
+      ],
+      marker: { sessionId: 'recent', marker: 1000 },
+      abortFound: false,
+    });
     expect(exitCode).toBe(0);
     expect(output).toContain('8/8');
     expect(output).toContain('0/7');
   });
 
-  it('exits nonzero when DATABASE_URL is missing', async () => {
-    const { output, exitCode } = await runMain([], [], [], 0, undefined, false);
-    expect(exitCode).not.toBe(0);
-    expect(output).toContain('DATABASE_URL');
+  it('exits nonzero when DATABASE_URL is missing (main path)', async () => {
+    const origEnv = process.env.DATABASE_URL;
+    delete process.env.DATABASE_URL;
+
+    const logs: string[] = [];
+    const origLog = console.log;
+    const origErr = console.error;
+    let capturedExitCode = 0;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (process as any).exit = (code?: number) => {
+      capturedExitCode = code ?? 0;
+      throw new Error('__EXIT__');
+    };
+    console.log = (...args: unknown[]) => logs.push(args.join(' '));
+    console.error = (...args: unknown[]) => logs.push(args.join(' '));
+
+    const { main } = await import('../../scripts/check-stage-completion');
+    let threw = false;
+    try {
+      await main([]);
+    } catch (e: unknown) {
+      if (e instanceof Error && e.message === '__EXIT__') threw = true;
+    }
+
+    console.log = origLog;
+    console.error = origErr;
+    process.exit = origExit;
+    if (origEnv !== undefined) process.env.DATABASE_URL = origEnv;
+
+    expect(capturedExitCode).not.toBe(0);
+    expect(logs.join('\n')).toContain('DATABASE_URL');
   });
 
-  // --- No-session mode: historical abort rows from other sessions ignored ---
-
   it('no-session mode ignores historical abort rows from other sessions', async () => {
-    const stages: StageRow[] = [
-      { stage: 1, label: 'Stage 1', sceneCount: 8 },
-      { stage: 2, label: 'Stage 2', sceneCount: 7 },
-      { stage: 3, label: 'Stage 3', sceneCount: 7 },
-      { stage: 4, label: 'Stage 4', sceneCount: 7 },
-      { stage: 5, label: 'Stage 5', sceneCount: 7 },
-      { stage: 6, label: 'Stage 6', sceneCount: 7 },
-      { stage: 7, label: 'Stage 7', sceneCount: 7 },
-    ];
-    // Only the recent session's events are passed (the CLI filters by session_id
-    // in SQL). The recent session has no abort rows, so the gate passes.
-    const events: EventRow[] = [];
-    // Marker derived from most recent session (simulates deriveMostRecentSession).
-    const { output, exitCode } = await runMain([], stages, events, 1000, 'pg://fake', true);
+    const { output, exitCode } = await run([], {
+      stages: [
+        { id: 'stage-1', name: 'Stage 1', sceneCount: 8 },
+        { id: 'stage-2', name: 'Stage 2', sceneCount: 7 },
+        { id: 'stage-3', name: 'Stage 3', sceneCount: 7 },
+        { id: 'stage-4', name: 'Stage 4', sceneCount: 7 },
+        { id: 'stage-5', name: 'Stage 5', sceneCount: 7 },
+        { id: 'stage-6', name: 'Stage 6', sceneCount: 7 },
+        { id: 'stage-7', name: 'Stage 7', sceneCount: 7 },
+      ],
+      marker: { sessionId: 'recent', marker: 1000 },
+      abortFound: false,
+    });
     expect(exitCode).toBe(0);
     expect(output).toContain('COMPLETION_GATE_PASS');
     expect(output).not.toContain('ABORT DETECTED');
-    expect(output).toContain('mode: most-recent-session');
+    expect(output).toContain('mode: most-recent-session=recent');
   });
 
   it('no-session mode still catches same-session post-marker abort', async () => {
-    const stages: StageRow[] = [
-      { stage: 1, label: 'Stage 1', sceneCount: 8 },
-      { stage: 2, label: 'Stage 2', sceneCount: 7 },
-      { stage: 3, label: 'Stage 3', sceneCount: 7 },
-      { stage: 4, label: 'Stage 4', sceneCount: 7 },
-      { stage: 5, label: 'Stage 5', sceneCount: 7 },
-      { stage: 6, label: 'Stage 6', sceneCount: 7 },
-      { stage: 7, label: 'Stage 7', sceneCount: 7 },
-    ];
-    // Abort from the recent session after its marker (ts=2000 >= marker 1000).
-    const events: EventRow[] = [
-      {
-        session_id: 'recent-session',
-        ts: 2000,
-        type: 'tool_execution_end',
-        data: '{"message":"exceeded its 900000ms execution budget and was aborted"}',
-      },
-    ];
-    const { output, exitCode } = await runMain([], stages, events, 0, 'pg://fake', true);
+    const { output, exitCode } = await run([], {
+      stages: [
+        { id: 'stage-1', name: 'Stage 1', sceneCount: 8 },
+        { id: 'stage-2', name: 'Stage 2', sceneCount: 7 },
+        { id: 'stage-3', name: 'Stage 3', sceneCount: 7 },
+        { id: 'stage-4', name: 'Stage 4', sceneCount: 7 },
+        { id: 'stage-5', name: 'Stage 5', sceneCount: 7 },
+        { id: 'stage-6', name: 'Stage 6', sceneCount: 7 },
+        { id: 'stage-7', name: 'Stage 7', sceneCount: 7 },
+      ],
+      marker: { sessionId: 'recent', marker: 1000 },
+      abortFound: true,
+    });
     expect(exitCode).not.toBe(0);
     expect(output).toContain('COMPLETION_GATE_FAIL');
     expect(output).toContain('ABORT DETECTED');
-    expect(output).toContain('mode: most-recent-session');
-  });
-
-  it('no-session mode ignores historical abort but catches post-marker abort in same events', async () => {
-    const stages: StageRow[] = [
-      { stage: 1, label: 'Stage 1', sceneCount: 8 },
-      { stage: 2, label: 'Stage 2', sceneCount: 7 },
-      { stage: 3, label: 'Stage 3', sceneCount: 7 },
-      { stage: 4, label: 'Stage 4', sceneCount: 7 },
-      { stage: 5, label: 'Stage 5', sceneCount: 7 },
-      { stage: 6, label: 'Stage 6', sceneCount: 7 },
-      { stage: 7, label: 'Stage 7', sceneCount: 7 },
-    ];
-    // Only the recent session's events are passed (the CLI filters by session_id
-    // in SQL before scanning). This simulates the SQL filter: the old session's
-    // abort row at ts=500 is excluded from the events array entirely.
-    const events: EventRow[] = [
-      {
-        session_id: 'recent-session',
-        ts: 2000,
-        type: 'tool_execution_end',
-        data: '{"message":"exceeded its 2700000ms execution budget and was aborted"}',
-      },
-    ];
-    const { output, exitCode } = await runMain([], stages, events, 1000, 'pg://fake', true);
-    expect(exitCode).not.toBe(0);
-    expect(output).toContain('COMPLETION_GATE_FAIL');
-    expect(output).toContain('ABORT DETECTED');
+    expect(output).toContain('mode: most-recent-session=recent');
   });
 
   it('output header always shows mode line', async () => {
-    const stages: StageRow[] = [
-      { stage: 1, label: 'Stage 1', sceneCount: 8 },
-      { stage: 2, label: 'Stage 2', sceneCount: 7 },
-      { stage: 3, label: 'Stage 3', sceneCount: 7 },
-      { stage: 4, label: 'Stage 4', sceneCount: 7 },
-      { stage: 5, label: 'Stage 5', sceneCount: 7 },
-      { stage: 6, label: 'Stage 6', sceneCount: 7 },
-      { stage: 7, label: 'Stage 7', sceneCount: 7 },
-    ];
-    const { output } = await runMain([], stages, [], 42, 'pg://fake', true, 'sess-abc');
+    const { output } = await run([], {
+      stages: [
+        { id: 'stage-1', name: 'Stage 1', sceneCount: 8 },
+        { id: 'stage-2', name: 'Stage 2', sceneCount: 7 },
+        { id: 'stage-3', name: 'Stage 3', sceneCount: 7 },
+        { id: 'stage-4', name: 'Stage 4', sceneCount: 7 },
+        { id: 'stage-5', name: 'Stage 5', sceneCount: 7 },
+        { id: 'stage-6', name: 'Stage 6', sceneCount: 7 },
+        { id: 'stage-7', name: 'Stage 7', sceneCount: 7 },
+      ],
+      marker: { sessionId: 'sess-abc', marker: 42 },
+      abortFound: false,
+    });
     const firstLine = output.split('\n')[0];
-    expect(firstLine).toBe('mode: session=sess-abc marker=42');
+    expect(firstLine).toBe('mode: most-recent-session=sess-abc marker=42');
   });
 });

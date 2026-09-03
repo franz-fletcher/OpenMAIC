@@ -19,7 +19,6 @@ const skipReason = (() => {
   return null;
 })();
 
- 
 const describeOrSkip = skipReason ? describe.skip : describe;
 
 describeOrSkip('HappyHorse live protocol', () => {
