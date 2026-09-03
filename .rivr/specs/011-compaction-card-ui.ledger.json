@@ -4,12 +4,12 @@
   "spec": {
     "reference": "docs/specs/011-compaction-card-ui.md",
     "title": "Batch 011 spec: compaction-card-ui",
-    "hash": "38183ff6302886ea2486f7da5f6b2d7d63276da809ad35056c57b9b8fbd2896b"
+    "hash": "7b9727e4d204bb8a136bd91da8ba5c8c3e574b0bff9c8acd4adfc73bf7f15e32"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "verification",
+  "stage": "closed",
   "retry": {
     "count": 0,
     "max": 5,
@@ -1907,7 +1907,40 @@
       "oracle": "b3915d97a79d0d076b26ad2653b24eab5e4c66fa182f3b196004eb19eb6382e0",
       "evidence": "764f8fb0aaf56fa337875accb43d9197d007bf303472c18895cbac73d7fc9dfe",
       "fileHash": "cf97f33665d92f98127af4c89b6a18b135faadefcc01e9030518d39c629c0557"
+    },
+    {
+      "seq": 104,
+      "id": "f53579de-5816-4553-80b3-21bf004c7b25",
+      "at": "2026-09-03T11:21:06.774Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:verification->research_update",
+      "slice": null,
+      "hash": "c4bfb9ea1b6ded1564fd8f435063c2fd89086f316e2f41a01d246a8dcfb53a64",
+      "fileHash": "879fa4b684f0b83dd649aedaeb94c2f502a4750dc4eb62348c41d6074ad86adf"
+    },
+    {
+      "seq": 105,
+      "id": "cb6bfb38-de80-45a7-9a01-a54c42bce03a",
+      "at": "2026-09-03T11:22:07.873Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:respecify:stage 4 research update: delivered evidence, corrected symbol names, contract deviations, held certification for live acceptance",
+      "slice": null,
+      "hash": "509601b342738bc00eef7244c8ebd445e2911791aa1cf34f30a9ac12109e4804",
+      "fileHash": "b7c332feb2da6f3decdd0e504f3dd047f39696771a48bacb79b74be184d4a8bf"
+    },
+    {
+      "seq": 106,
+      "id": "c341ce18-8ee2-4649-b32f-74851e3dc9d2",
+      "at": "2026-09-03T11:22:07.928Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research_update->closed",
+      "slice": null,
+      "hash": "329fac323607de6318b994e2a549e69da2a28c6000c82ea09850aaf2d25f1bc3",
+      "fileHash": "3260c90c4dc1a67c57eaad9ceefe6af3530bec13c74015ae78ae681b09d8f0c3"
     }
   ],
-  "fileHash": "879fa4b684f0b83dd649aedaeb94c2f502a4750dc4eb62348c41d6074ad86adf"
+  "fileHash": "d4d20b9fa3def7c9047d3b7baa256b364372558f467d989dcc989ee4679a1bd1"
 }

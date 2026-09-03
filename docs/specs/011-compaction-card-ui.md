@@ -1,6 +1,6 @@
 # Batch 011 spec: compaction-card-ui
 
-Spec status: verification
+Spec status: closed
 
 ## Problem Statement
 
@@ -40,7 +40,7 @@ The current one-line `trace` emission stays. It is diagnostic text and backward 
 - `lib/server/agent-runtime/compaction.ts` :: `generateCompactionSummary` (kind function, existing).
 - `lib/server/agent-runtime/compaction.ts` :: `makeCompactionRuntime` (kind function, existing).
 - `lib/server/agent-runtime/runner.ts` :: `runSession` (kind function, existing).
-- `packages/@openmaic/storage/src/agent-session/types.ts` :: `AgentSessionEventStore` (kind interface, existing).
+- `packages/@openmaic/storage/src/agent-session/types.ts` :: `AgentSessionEventLog` (kind interface, existing).
 - `packages/@openmaic/storage/src/agent-session/pg.ts` :: `pruneCompactionDeltas` (kind method, new).
 - `packages/@openmaic/storage/package.json` :: version (the storage package publishes, so a touched package source requires a version bump in the same PR).
 
@@ -68,7 +68,7 @@ The current one-line `trace` emission stays. It is diagnostic text and backward 
 - The runtime emits `{ kind: 'start' }` before the summarizer call, `{ kind: 'delta' }` with the accumulated text on every summarizer delta, and `{ kind: 'end' }` after the context rebuild with the entry id and both token counts. A failed compaction emits no end event and returns the input unchanged, exactly as today.
 - `runSession`: after-exists true. after-kind function. The signature is unchanged.
 - The runner wires `emitEvent` to `emit` for the three lifecycle names, throttles `compaction_delta` with the same 150 ms window, and calls `store.pruneCompactionDeltas(id, seq)` when the end event is appended.
-- `AgentSessionEventStore`: after-exists true. after-kind interface. after-signature on the new member `pruneCompactionDeltas(sessionId: string, compactionEndSeq: number): Promise<number>`.
+- `AgentSessionEventLog`: after-exists true. after-kind interface. after-signature on the new member `pruneCompactionDeltas(sessionId: string, compactionEndSeq: number): Promise<number>`.
 - `pruneCompactionDeltas`: after-exists true. after-kind method. The method deletes the middle `compaction_delta` rows between the enclosing `compaction_start` boundary and the end seq, keeping the first and the last, mirroring `pruneMessageUpdates`.
 
 **Per-target success expectations.**
@@ -166,7 +166,7 @@ The current one-line `trace` emission stays. It is diagnostic text and backward 
 
 **Postcondition (per target symbol).**
 
-- `CompactionBlock`: after-exists true. after-kind component. after-signature `(props: { text: string; streaming?: boolean; tokensBefore?: number; tokensAfter?: number; endedAt?: number; stackPosition?: ToolStackPosition; t?: WorkbenchTranslator }): JSX.Element`. It renders the thinking-card shape: a lucide `Shrink` icon, a label, a preview on the collapsed row, a chevron toggle, and an expanded `<pre>` body. It is collapsed by default and only a click toggles it.
+- `CompactionBlock`: after-exists true. after-kind function. after-signature `(props: { text: string; streaming?: boolean; tokensBefore?: string; tokensAfter?: string; endedAt?: number; stackPosition?: ToolStackPosition; t?: WorkbenchTranslator }): React.JSX.Element | null`. React 19 removed the global `JSX` namespace, so the return type is `React.JSX.Element`, and the component returns null for empty text, same as `ThinkingBlock`. The token props are PRE-FORMATTED strings. The caller converts the node's numeric token counts through `formatTokens`. It renders the thinking-card shape: a lucide `Shrink` icon, a label, a preview on the collapsed row, a chevron toggle, and an expanded `<pre>` body. It is collapsed by default and only a click toggles it.
 - `compactionBarSummary`: after-exists true. after-kind function. after-signature `(input: { streaming: boolean; before?: string; after?: string }, t?: WorkbenchTranslator): string`. It returns the running label while streaming, the token label when both formatted counts exist, and the plain done label otherwise.
 - `compactionBarPreview`: after-exists true. after-kind function. after-signature `(text: string): string`. It reuses the thinking preview algorithm: the last nonempty line, capped at 200 characters.
 - `useCompactionBar`: after-exists true. after-kind function. after-signature `(): { expanded: boolean; toggle: () => void }`. Same collapse contract as the thinking bar.
@@ -242,3 +242,18 @@ The current one-line `trace` emission stays. It is diagnostic text and backward 
 - The storage package version bump is mandatory with the `pruneCompactionDeltas` change. The implementer rebuilds the package (`pnpm --filter @openmaic/storage build`) so the app consumes the new `dist/`.
 - Cross batch: 011 builds on 009's runtime and 008's durable trace channel. Neither batch depends on 011.
 - The verifier note from batch 009 applies: gates stay neutral-cwd friendly. The bun compiled rivr loads `.env.local` from its startup cwd, so gates that must stay clean run from a neutral cwd.
+## Research Update (Stage 4)
+
+Delivered evidence: implementation commit `8e866fde` (S01-S03, all 13 gates), contract-shape fix commit `dd15b43b` (named-parameter signatures). Verification round 1: all three slices verified with fresh gates. Full suite at mark time: 7466 passed, 1 failed, 31 skipped. The single failure, `tests/agent-runtime/runner-skills-registration.test.ts`, was proven pre-existing by two independent clean-checkout stashes of main.
+
+Deviations from the drafted spec, all resolved in favor of the verified truth:
+
+- The storage interface is `AgentSessionEventLog` (`packages/@openmaic/storage/src/agent-session/types.ts:376`). The draft named it `AgentSessionEventStore`, which does not exist. The spec text is corrected.
+- `CompactionBlock` takes pre-formatted string token labels, not numbers. The caller converts numbers through `formatTokens`. The ledger postcondition carries this contract.
+- React 19 removed the global `JSX` namespace. The component's real return type is `React.JSX.Element | null`, matching `ThinkingBlock`'s empty-text behavior. The draft signature `JSX.Element` was not expressible.
+- The first implementation destructured parameters at the call position, which deviated from the recorded named-parameter signatures. Commit `dd15b43b` restored the named form. The diff now matches for every S03 symbol except the two recorded artifacts below.
+- Ledger record artifacts, kept as-is because postconditions freeze at research: the `CompactionBlock` postcondition still reads `JSX.Element`, and the `ActionCluster` postcondition carries an empty signature while the real symbol is a multi-line destructured component that this batch did not change in shape. Neither affects the code contract.
+
+Storage package: `@openmaic/storage` 0.28.1 to 0.28.2 with `pruneCompactionDeltas`, rebuilt `dist/` consumed by the app.
+
+Pending at close time: the meta-level live acceptance. Session `13dd023b-322f-4631-8a7d-d46fc26011e2` resumes after this batch; the first real compaction near page 23 must render the card live, settle to the token label, expand to the full summary, and survive a refresh. Certification of this batch is held until that observation completes.
