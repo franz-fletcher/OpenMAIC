@@ -107,6 +107,20 @@ const RUN: readonly WorkbenchEvent[] = [
   ev('stage_link', { stageId: 'stage-b' }),
   ev('library_changed', { change: 'stage_created', stageId: 'stage-c' }),
   ev('user_question', { question: '先做哪一版大纲？', options: [{ id: 'a', label: '按章节' }] }),
+  // Compaction: dirty compactionKey so the total-reset guard stays non-vacuous.
+  ev('compaction_start', { tokensBefore: 50000, messagesBefore: 120 }),
+  ev('compaction_delta', { text: 'Compacting context...' }),
+  ev('compaction_end', {
+    entryId: 'entry-1',
+    tokensBefore: 50000,
+    tokensAfter: 12000,
+    summary: 'Summarized context',
+  }),
+  // Second compaction to leave compactionKey non-null (it was cleared by the
+  // first end). The non-vacuity check needs every fold field dirty; compactionKey
+  // must differ from its initial null when the run snapshot is taken.
+  ev('compaction_start', { tokensBefore: 40000, messagesBefore: 100 }),
+  ev('compaction_delta', { text: 'Second compaction' }),
   // Queued: the session was idle, so this one opens the LLM gap indicator.
   ev('user_message', { text: '按章节', delivery: 'queued' }),
   // Steered: a run is live, so this one is owed an answer at the next boundary.

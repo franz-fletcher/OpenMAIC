@@ -27,6 +27,23 @@ export interface CompactionSettings {
 }
 
 /**
+ * Discriminated union of durable compaction card events.
+ *
+ * Emitted by `makeCompactionRuntime` through the `emitEvent` sink.
+ * The runner maps these to lifecycle frames in the durable log.
+ */
+export type CompactionCardEvent =
+  | { kind: 'start'; tokensBefore: number; messagesBefore: number }
+  | { kind: 'delta'; text: string }
+  | {
+      kind: 'end';
+      entryId: string;
+      tokensBefore: number;
+      tokensAfter: number;
+      summary: string;
+    };
+
+/**
  * Resolve compaction settings with floor semantics.
  *
  * When overrides omit reserveTokens or keepRecentTokens the floor policy
@@ -112,6 +129,7 @@ export interface CompactionRuntimeOptions {
     messages: AgentMessage[],
     focus: string,
     maxOutputTokens: number,
+    onDelta: (text: string) => void,
     signal?: AbortSignal,
   ) => Promise<string>;
   /** Durable append sink for compaction entries. */
@@ -123,6 +141,8 @@ export interface CompactionRuntimeOptions {
   }) => Promise<void>;
   /** Emit one diagnostic trace line per successful compaction. */
   emitTrace?: (line: { message: string }) => void;
+  /** Emit durable compaction card events for the workbench. */
+  emitEvent?: (event: CompactionCardEvent) => void;
 }
 
 /** The return type of makeCompactionRuntime. */
@@ -141,6 +161,7 @@ export function makeCompactionRuntime(opts: CompactionRuntimeOptions): Compactio
   const summarizer = opts.summarizer ?? generateCompactionSummary;
   const appendSink = opts.appendSink ?? (async () => {});
   const emitTrace = opts.emitTrace;
+  const emitEvent = opts.emitEvent;
   let sessionPromise = new InMemorySessionRepo().create();
   let syncedMessages: AgentMessage[] = [];
   let disposed = false;
@@ -198,10 +219,17 @@ export function makeCompactionRuntime(opts: CompactionRuntimeOptions): Compactio
         const preparation = prepareCompaction(branch, settings);
         if (!preparation.ok) throw preparation.error;
         if (!preparation.value) return beforeMessages;
+        // Emit start before the summarizer call
+        emitEvent?.({
+          kind: 'start',
+          tokensBefore,
+          messagesBefore: beforeMessages.length,
+        });
         const summary = await summarizer(
           preparation.value.messagesToSummarize,
           'Summarize the conversation history for context compaction.',
           preparation.value.settings.reserveTokens,
+          (text: string) => emitEvent?.({ kind: 'delta', text }),
           signal,
         );
         const entryId = await session.appendCompaction(
@@ -227,6 +255,14 @@ export function makeCompactionRuntime(opts: CompactionRuntimeOptions): Compactio
         });
         emitTrace?.({
           message: `compaction ${entryId} tokens ${tokensBefore}->${tokensAfter} summary ${summary.length}`,
+        });
+        // Emit end after the rebuild with real token counts
+        emitEvent?.({
+          kind: 'end',
+          entryId,
+          tokensBefore,
+          tokensAfter,
+          summary,
         });
         return afterContext.messages;
       } catch (error) {
@@ -255,12 +291,13 @@ export function makeCompactionRuntime(opts: CompactionRuntimeOptions): Compactio
  * @param messages - The assembled driver context messages.
  * @param focus - A guidance string for the summarizer.
  * @param maxOutputTokens - Token budget for the summary output.
+ * @param onDelta - Callback receiving accumulated text on each streaming delta.
  * @param signal - Optional abort signal forwarded to the LLM call.
  */
 // prettier-ignore
-export async function generateCompactionSummary(messages: AgentMessage[], focus: string, maxOutputTokens: number, signal?: AbortSignal): Promise<string> {
+export async function generateCompactionSummary(messages: AgentMessage[], focus: string, maxOutputTokens: number, onDelta: (text: string) => void, signal?: AbortSignal): Promise<string> {
   const { resolveModel } = await import('@/lib/server/resolve-model');
-  const { callLLM } = await import('@/lib/ai/llm');
+  const { streamLLM } = await import('@/lib/ai/llm');
   const transcript = messages
     .map((m) => {
       const role = m.role ?? 'unknown';
@@ -269,7 +306,7 @@ export async function generateCompactionSummary(messages: AgentMessage[], focus:
     })
     .join('\n');
   const resolved = await resolveModel({ stage: 'maic-agent-compaction' });
-  const result = await callLLM(
+  const result = streamLLM(
     {
       model: resolved.model,
       system: `Summarize the following conversation. Focus: ${focus}`,
@@ -279,8 +316,17 @@ export async function generateCompactionSummary(messages: AgentMessage[], focus:
       abortSignal: signal,
     },
     'maic-agent-compaction',
-    undefined,
     resolved.thinkingConfig,
   );
-  return result.text.trim();
+  let accumulated = '';
+  for await (const part of result.fullStream as AsyncIterable<Record<string, unknown>>) {
+    if (part.type === 'text-delta') {
+      const delta = (part.text ?? part.delta ?? part.textDelta ?? '') as string;
+      if (delta) {
+        accumulated += delta;
+        onDelta(accumulated);
+      }
+    }
+  }
+  return accumulated.trim();
 }

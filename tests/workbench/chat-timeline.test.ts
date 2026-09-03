@@ -363,3 +363,58 @@ describe('course rows', () => {
     expect(markup).toContain('stage-second');
   });
 });
+
+describe('compaction node grouping', () => {
+  function compaction(key: string, text = 'Compacted context'): ChatNode {
+    return {
+      key,
+      kind: 'compaction',
+      text,
+      streaming: false,
+      tokensBefore: 112000,
+      tokensAfter: 24000,
+    };
+  }
+
+  it('renders compaction nodes as their own action row', () => {
+    const rows = rowsForRender([
+      { key: 'u', kind: 'user', text: 'Continue' },
+      compaction('c1'),
+      { key: 'a', kind: 'assistant', text: 'Done' },
+    ]);
+    expect(rows).toHaveLength(3);
+    expect(rows[0]?.node?.kind).toBe('user');
+    expect(rows[1]?.node?.kind).toBe('compaction');
+    expect(rows[2]?.node?.kind).toBe('assistant');
+  });
+
+  it('does not merge compaction into an adjacent thinking bar run', () => {
+    const rows = rowsForRender([
+      thinking('th1', 'Thinking'),
+      compaction('c1'),
+      thinking('th2', 'Thinking more'),
+    ]);
+    expect(rows).toHaveLength(3);
+    expect(kindsOf(rows)).toEqual(['thinking', 'compaction', 'thinking']);
+  });
+
+  it('splits runs correctly beside tool runs', () => {
+    const rows = rowsForRender([
+      tool('read_scene', 'r1'),
+      compaction('c1'),
+      tool('generate_scene', 'g1'),
+    ]);
+    expect(rows).toHaveLength(3);
+    expect(kindsOf(rows)).toEqual(['read_scene', 'compaction', 'generate_scene']);
+  });
+
+  it('groups consecutive compaction nodes into one cluster', () => {
+    const rows = rowsForRender([
+      compaction('c1', 'First compaction'),
+      compaction('c2', 'Second compaction'),
+    ]);
+    expect(rows).toHaveLength(1);
+    expect(rows[0]?.group).toBeDefined();
+    expect(rows[0]?.group?.map((n) => n.kind)).toEqual(['compaction', 'compaction']);
+  });
+});

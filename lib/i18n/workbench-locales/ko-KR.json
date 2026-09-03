@@ -98,6 +98,11 @@
     "done": "생각을 마쳤습니다",
     "doneWithDuration": "{{duration}} 동안 생각했습니다"
   },
+  "compaction": {
+    "active": "컨텍스트 압축 중...",
+    "doneWithTokens": "압축 완료 {{before}} \u2192 {{after}}",
+    "done": "압축 완료"
+  },
   "system": {
     "technicalDetails": "기술 세부 정보",
     "repeated": "같은 알림이 연속 {{count}}회 발생",

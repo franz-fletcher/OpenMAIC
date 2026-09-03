@@ -98,6 +98,11 @@
     "done": "Nachgedacht",
     "doneWithDuration": "{{duration}} nachgedacht"
   },
+  "compaction": {
+    "active": "Kontext wird komprimiert...",
+    "doneWithTokens": "Komprimiert {{before}} \u2192 {{after}}",
+    "done": "Komprimiert"
+  },
   "system": {
     "technicalDetails": "Technische Details",
     "repeated": "Gleiche Meldung {{count}}× hintereinander",

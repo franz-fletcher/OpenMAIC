@@ -4,6 +4,7 @@ const mocks = vi.hoisted(() => ({
   appendRunEvent: vi.fn(async (..._args: unknown[]) => 1),
   finishSession: vi.fn(async () => true),
   releaseLease: vi.fn(async () => undefined),
+  pruneCompactionDeltas: vi.fn(async () => 0),
 }));
 
 vi.mock('@/lib/server/agent-runtime/store', () => ({
@@ -18,6 +19,7 @@ vi.mock('@/lib/server/agent-runtime/store', () => ({
     isCancelRequested: vi.fn(async () => false),
     listUserMessages: vi.fn(async () => []),
     releaseLease: mocks.releaseLease,
+    pruneCompactionDeltas: mocks.pruneCompactionDeltas,
     requeueForRetry: vi.fn(async () => false),
     requeueSession: vi.fn(async () => false),
   })),

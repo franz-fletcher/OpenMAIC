@@ -9,6 +9,7 @@ import {
   makeCompactionRuntime,
   type CompactionRuntimeOptions,
   type CompactionRuntime,
+  type CompactionCardEvent,
 } from '@/lib/server/agent-runtime/compaction';
 
 // ---------------------------------------------------------------------------
@@ -56,6 +57,43 @@ function buildDefaults(
   };
 }
 
+function buildStreamingSummarizer(): {
+  summarizer: CompactionRuntimeOptions['summarizer'];
+  resolveNext: (text: string) => void;
+  rejectNext: (error: Error) => void;
+} {
+  let resolveFn: (text: string) => void = () => {};
+  let rejectFn: (error: Error) => void = () => {};
+  let accumulated = '';
+  const summarizer: CompactionRuntimeOptions['summarizer'] = async (
+    _msgs,
+    _focus,
+    _maxTokens,
+    onDelta,
+    _signal,
+  ) => {
+    accumulated = '';
+    const chunk1 = await new Promise<string>((resolve, reject) => {
+      resolveFn = resolve;
+      rejectFn = reject;
+    });
+    accumulated += chunk1;
+    onDelta(accumulated);
+    const chunk2 = await new Promise<string>((resolve, reject) => {
+      resolveFn = resolve;
+      rejectFn = reject;
+    });
+    accumulated += chunk2;
+    onDelta(accumulated);
+    return accumulated;
+  };
+  return {
+    summarizer,
+    resolveNext: (text: string) => resolveFn(text),
+    rejectNext: (error: Error) => rejectFn(error),
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
@@ -82,6 +120,19 @@ describe('makeCompactionRuntime', () => {
       runtime.dispose();
     });
 
+    it('emits nothing when disabled', async () => {
+      const emitEvent = vi.fn();
+      const runtime = makeCompactionRuntime(
+        buildDefaults({ settings: { enabled: false }, emitEvent }),
+      );
+      const messages = messagesUnderThreshold();
+
+      await runtime.transformContext(messages);
+
+      expect(emitEvent).not.toHaveBeenCalled();
+      runtime.dispose();
+    });
+
     it('getTrace reports enabled=false, zero counts', () => {
       const runtime = makeCompactionRuntime(buildDefaults({ settings: { enabled: false } }));
       const trace = runtime.getTrace();
@@ -102,10 +153,12 @@ describe('makeCompactionRuntime', () => {
     it('does not trigger compaction and returns messages', async () => {
       const summarizer = vi.fn(async () => 'summary');
       const appendSink = vi.fn(async () => {});
+      const emitEvent = vi.fn();
       const runtime = makeCompactionRuntime(
         buildDefaults({
           summarizer,
           appendSink,
+          emitEvent,
           contextWindow: 128_000,
         }),
       );
@@ -115,6 +168,7 @@ describe('makeCompactionRuntime', () => {
 
       expect(summarizer).not.toHaveBeenCalled();
       expect(appendSink).not.toHaveBeenCalled();
+      expect(emitEvent).not.toHaveBeenCalled();
       expect(result.length).toBe(messages.length);
       expect(runtime.getTrace().checkCount).toBe(1);
       expect(runtime.getTrace().triggerCount).toBe(0);
@@ -201,6 +255,144 @@ describe('makeCompactionRuntime', () => {
   });
 
   // -----------------------------------------------------------------------
+  // emitEvent sink
+  // -----------------------------------------------------------------------
+
+  describe('emitEvent', () => {
+    it('emits start before summarizer runs and end after rebuild', async () => {
+      const events: CompactionCardEvent[] = [];
+      const summarizer = vi.fn(async () => 'done summary');
+      const appendSink = vi.fn(async () => {});
+
+      const runtime = makeCompactionRuntime(
+        buildDefaults({ summarizer, appendSink, emitEvent: (e) => events.push(e) }),
+      );
+
+      await runtime.transformContext(messagesOverThreshold());
+
+      expect(events.length).toBeGreaterThanOrEqual(2);
+      expect(events[0]!.kind).toBe('start');
+      expect(events[events.length - 1]!.kind).toBe('end');
+
+      const start = events[0] as Extract<CompactionCardEvent, { kind: 'start' }>;
+      expect(typeof start.tokensBefore).toBe('number');
+      expect(typeof start.messagesBefore).toBe('number');
+      expect(start.tokensBefore).toBeGreaterThan(0);
+
+      const end = events[events.length - 1] as Extract<CompactionCardEvent, { kind: 'end' }>;
+      expect(typeof end.entryId).toBe('string');
+      expect(typeof end.tokensBefore).toBe('number');
+      expect(typeof end.tokensAfter).toBe('number');
+      expect(typeof end.summary).toBe('string');
+      expect(end.summary).toBe('done summary');
+
+      runtime.dispose();
+    });
+
+    it('emits delta events with accumulated text from onDelta', async () => {
+      const { summarizer, resolveNext } = buildStreamingSummarizer();
+      const events: CompactionCardEvent[] = [];
+      const appendSink = vi.fn(async () => {});
+
+      const runtime = makeCompactionRuntime(
+        buildDefaults({
+          summarizer,
+          appendSink,
+          emitEvent: (e) => events.push(e),
+        }),
+      );
+
+      const transformPromise = runtime.transformContext(messagesOverThreshold());
+
+      // Wait for the start event, which means the summarizer has been called
+      await vi.waitFor(() => {
+        expect(events.some((e) => e.kind === 'start')).toBe(true);
+      });
+
+      // Now resolve the first chunk
+      resolveNext('Hello ');
+      await vi.waitFor(() => {
+        const deltas = events.filter((e) => e.kind === 'delta');
+        expect(deltas.length).toBeGreaterThanOrEqual(1);
+      });
+
+      // Resolve the second chunk
+      resolveNext('world');
+      await transformPromise;
+
+      const deltas = events.filter((e) => e.kind === 'delta') as Extract<
+        CompactionCardEvent,
+        { kind: 'delta' }
+      >[];
+      expect(deltas.length).toBe(2);
+      expect(deltas[0]!.text).toBe('Hello ');
+      expect(deltas[1]!.text).toBe('Hello world');
+
+      const startEvent = events.find((e) => e.kind === 'start');
+      const endEvent = events.find((e) => e.kind === 'end');
+      expect(startEvent).toBeDefined();
+      expect(endEvent).toBeDefined();
+
+      // Start must come before deltas, end must come after
+      const startIdx = events.indexOf(startEvent!);
+      const delta1Idx = events.indexOf(deltas[0]!);
+      const delta2Idx = events.indexOf(deltas[1]!);
+      const endIdx = events.indexOf(endEvent!);
+      expect(startIdx).toBeLessThan(delta1Idx);
+      expect(delta1Idx).toBeLessThan(delta2Idx);
+      expect(delta2Idx).toBeLessThan(endIdx);
+
+      runtime.dispose();
+    });
+
+    it('emits no end event when summarizer fails', async () => {
+      const summarizer = vi.fn(async () => {
+        throw new Error('model timeout');
+      });
+      const appendSink = vi.fn(async () => {});
+      const emitEvent = vi.fn();
+
+      const runtime = makeCompactionRuntime(buildDefaults({ summarizer, appendSink, emitEvent }));
+
+      const result = await runtime.transformContext(messagesOverThreshold());
+
+      // Failure returns the input messages unchanged
+      expect(result).toBeDefined();
+      expect(result.length).toBe(messagesOverThreshold().length);
+
+      const emitCalls = emitEvent.mock.calls.map((c) => c[0] as CompactionCardEvent);
+      expect(emitCalls.some((e) => e.kind === 'start')).toBe(true);
+      expect(emitCalls.some((e) => e.kind === 'end')).toBe(false);
+
+      // getTrace records the failure
+      const trace = runtime.getTrace();
+      expect(trace.failures.length).toBe(1);
+      expect(trace.failures[0]).toContain('model timeout');
+
+      runtime.dispose();
+    });
+
+    it('emits start event with correct tokensBefore and messagesBefore', async () => {
+      const summarizer = vi.fn(async () => 'summary');
+      const appendSink = vi.fn(async () => {});
+      const events: CompactionCardEvent[] = [];
+
+      const runtime = makeCompactionRuntime(
+        buildDefaults({ summarizer, appendSink, emitEvent: (e) => events.push(e) }),
+      );
+
+      await runtime.transformContext(messagesOverThreshold());
+
+      const start = events[0] as Extract<CompactionCardEvent, { kind: 'start' }>;
+      expect(start.kind).toBe('start');
+      expect(start.tokensBefore).toBeGreaterThan(0);
+      expect(start.messagesBefore).toBeGreaterThan(0);
+
+      runtime.dispose();
+    });
+  });
+
+  // -----------------------------------------------------------------------
   // Trace shape
   // -----------------------------------------------------------------------
 
@@ -242,7 +434,12 @@ describe('makeCompactionRuntime', () => {
       // generateCompactionSummary. That function calls resolveModel which
       // requires MODEL_ROUTES or DEFAULT_MODEL, so we mock both modules.
       vi.mock('@/lib/ai/llm', () => ({
-        callLLM: vi.fn(async () => ({ text: '  default summary  ' })),
+        streamLLM: vi.fn(() => ({
+          fullStream: (async function* () {
+            yield { type: 'text-delta', text: 'default summary' };
+            yield { type: 'finish' };
+          })(),
+        })),
       }));
       vi.mock('@/lib/server/resolve-model', () => ({
         resolveModel: vi.fn(async () => ({
@@ -252,6 +449,7 @@ describe('makeCompactionRuntime', () => {
           providerId: 'test',
           modelId: 'model',
           apiKey: 'key',
+          thinkingConfig: undefined,
         })),
       }));
 

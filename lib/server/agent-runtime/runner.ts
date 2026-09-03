@@ -955,6 +955,7 @@ export async function runSession(ctx: RunContext, meta: ClaimedAgentSession): Pr
   let runEventEmitted = false;
   let tripwireViolated = false;
   let lastMessageUpdateAt = 0;
+  let lastCompactionDeltaAt = 0;
   let messageHadThinking = false;
   let thinkingEndPending = false;
   let thinkingEndEmitted = false;
@@ -977,6 +978,13 @@ export async function runSession(ctx: RunContext, meta: ClaimedAgentSession): Pr
           await store.pruneMessageUpdates(id, seq);
         } catch (error) {
           log.error(`session ${id}: message update prune failed`, error);
+        }
+      }
+      if (type === 'compaction_end') {
+        try {
+          await store.pruneCompactionDeltas(id, seq);
+        } catch (error) {
+          log.error(`session ${id}: compaction delta prune failed`, error);
         }
       }
     });
@@ -1031,6 +1039,10 @@ export async function runSession(ctx: RunContext, meta: ClaimedAgentSession): Pr
       if (!hasRenderableAssistantUpdate(data)) return;
       if (now - lastMessageUpdateAt < MESSAGE_UPDATE_MIN_INTERVAL_MS) return;
       lastMessageUpdateAt = now;
+    }
+    if (type === 'compaction_delta') {
+      if (now - lastCompactionDeltaAt < MESSAGE_UPDATE_MIN_INTERVAL_MS) return;
+      lastCompactionDeltaAt = now;
     }
 
     appendEvent(type, data, now);
@@ -1291,6 +1303,27 @@ export async function runSession(ctx: RunContext, meta: ClaimedAgentSession): Pr
               );
             }, markLeaseLost),
           emitTrace: (line) => emit(LIFECYCLE.trace, line),
+          emitEvent: (event) => {
+            switch (event.kind) {
+              case 'start':
+                emit(LIFECYCLE.compactionStart, {
+                  tokensBefore: event.tokensBefore,
+                  messagesBefore: event.messagesBefore,
+                });
+                break;
+              case 'delta':
+                emit(LIFECYCLE.compactionDelta, { text: event.text });
+                break;
+              case 'end':
+                emit(LIFECYCLE.compactionEnd, {
+                  entryId: event.entryId,
+                  tokensBefore: event.tokensBefore,
+                  tokensAfter: event.tokensAfter,
+                  summary: event.summary,
+                });
+                break;
+            }
+          },
         })
       : undefined;
 

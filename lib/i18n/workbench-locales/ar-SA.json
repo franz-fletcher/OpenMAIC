@@ -98,6 +98,11 @@
     "done": "انتهى التفكير",
     "doneWithDuration": "فكّر لمدة {{duration}}"
   },
+  "compaction": {
+    "active": "جارٍ ضغط السياق...",
+    "doneWithTokens": "تم الضغط {{before}} \u2192 {{after}}",
+    "done": "تم الضغط"
+  },
   "system": {
     "technicalDetails": "تفاصيل تقنية",
     "repeated": "ظهر التنبيه نفسه {{count}} مرات متتالية",

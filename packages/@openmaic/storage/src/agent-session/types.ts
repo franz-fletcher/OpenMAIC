@@ -381,6 +381,8 @@ export interface AgentSessionEventLog {
   ): Promise<number | null>;
   /** Keeps only the first and last frame in the update run before a completed message. */
   pruneMessageUpdates(sessionId: string, messageEndSeq: number): Promise<number>;
+  /** Keeps only the first and last compaction_delta row between the start and end boundaries. */
+  pruneCompactionDeltas(sessionId: string, compactionEndSeq: number): Promise<number>;
   /**
    * Append a control-plane event without borrowing the runner's lease. The
    * stored attempt is the session's current generation, read under the session

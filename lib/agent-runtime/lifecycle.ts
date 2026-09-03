@@ -130,6 +130,9 @@ export const HOST_AGENT_LIFECYCLE = {
    * element still carrying the placeholder leaves its skeleton state.
    */
   mediaReady: 'media_ready',
+  compactionStart: 'compaction_start',
+  compactionDelta: 'compaction_delta',
+  compactionEnd: 'compaction_end',
 } as const;
 
 /** Every lifecycle event name the runner and control plane can write. */

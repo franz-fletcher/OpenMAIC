@@ -161,6 +161,11 @@ export const workbenchEn = {
     done: 'Thought',
     doneWithDuration: 'Thought for {{duration}}',
   },
+  compaction: {
+    active: 'Compacting context...',
+    doneWithTokens: 'Compacted {{before}} \u2192 {{after}}',
+    done: 'Compacted',
+  },
   system: {
     technicalDetails: 'Technical details',
     repeated: 'Same notice appeared {{count}} times in a row',
@@ -460,6 +465,11 @@ export const workbenchZh = {
     active: '思考中…',
     done: '已思考',
     doneWithDuration: '已思考 {{duration}}',
+  },
+  compaction: {
+    active: '正在压缩上下文...',
+    doneWithTokens: '已压缩 {{before}} \u2192 {{after}}',
+    done: '已压缩',
   },
   system: {
     technicalDetails: '技术详情',

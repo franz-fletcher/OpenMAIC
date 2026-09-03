@@ -18,3 +18,19 @@ export function formatDurationBetween(startedAt?: number, endedAt?: number): str
   if (startedAt === undefined || endedAt === undefined) return '';
   return formatDurationMs(endedAt - startedAt);
 }
+
+/**
+ * Format a token count for display in compact bar labels.
+ * Below 1000 renders raw. 1000-999999 renders as K. 1000000+ renders as M.
+ */
+export function formatTokens(tokens: number): string {
+  if (tokens >= 1_000_000) {
+    const m = tokens / 1_000_000;
+    return `${Number.isInteger(m) ? m : m.toFixed(1)}M`;
+  }
+  if (tokens >= 1_000) {
+    const k = tokens / 1_000;
+    return `${Number.isInteger(k) ? k : k.toFixed(1)}K`;
+  }
+  return String(tokens);
+}

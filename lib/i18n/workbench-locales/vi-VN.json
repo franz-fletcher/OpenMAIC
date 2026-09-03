@@ -98,6 +98,11 @@
     "done": "Đã suy nghĩ",
     "doneWithDuration": "Đã suy nghĩ {{duration}}"
   },
+  "compaction": {
+    "active": "Đang nén ngữ cảnh...",
+    "doneWithTokens": "Đã nén {{before}} \u2192 {{after}}",
+    "done": "Đã nén"
+  },
   "system": {
     "technicalDetails": "Chi tiết kỹ thuật",
     "repeated": "Cùng một thông báo xuất hiện {{count}} lần liên tiếp",

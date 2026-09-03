@@ -8,6 +8,8 @@
 import type { ChatNode, PlannedPage } from '@/lib/workbench/session-store';
 import { defaultWorkbenchTranslator, type WorkbenchTranslator } from '@/lib/i18n/workbench';
 import { wbStyles as styles } from './chat-styles';
+import { formatTokens } from './format';
+import { CompactionBlock } from './compaction-block';
 import { ThinkingBlock } from './thinking-block';
 import { ToolCard } from './tool-card';
 import { ToolGroup, stackPosition } from './tool-group';
@@ -40,6 +42,17 @@ export function ActionCluster({
             text={node.text}
             streaming={node.streaming}
             startedAt={node.startedAt}
+            endedAt={node.endedAt}
+            stackPosition={stackPosition(index, bars.length)}
+            t={t}
+          />
+        ) : node.kind === 'compaction' ? (
+          <CompactionBlock
+            key={node.key}
+            text={node.text}
+            streaming={node.streaming}
+            tokensBefore={node.tokensBefore != null ? formatTokens(node.tokensBefore) : undefined}
+            tokensAfter={node.tokensAfter != null ? formatTokens(node.tokensAfter) : undefined}
             endedAt={node.endedAt}
             stackPosition={stackPosition(index, bars.length)}
             t={t}

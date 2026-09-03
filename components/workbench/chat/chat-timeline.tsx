@@ -27,12 +27,14 @@ import { CircleSlash2 } from 'lucide-react';
 import type { ChatNode, PlannedPage } from '@/lib/workbench/session-store';
 import { defaultWorkbenchTranslator, type WorkbenchTranslator } from '@/lib/i18n/workbench';
 import { wbStyles as styles } from './chat-styles';
+import { formatTokens } from './format';
 import { ActionCluster } from './action-cluster';
 import { SessionCourseLink } from './course-link';
 import { QuestionCard } from './question-card';
 import { SystemNode } from './system-node';
 import { isSameNotice, presentSystemNotice, repeatLabel, repeatTitle } from './system-notice';
 import { TextBlock } from './text-block';
+import { CompactionBlock } from './compaction-block';
 import { ThinkingBlock } from './thinking-block';
 import { ToolGroup } from './tool-group';
 import { UserBubble } from './user-bubble';
@@ -53,7 +55,12 @@ interface ChatRow {
 }
 
 function isActionBar(node: ChatNode): boolean {
-  return node.kind === 'tool' || node.kind === 'thinking' || node.kind === 'waiting';
+  return (
+    node.kind === 'tool' ||
+    node.kind === 'thinking' ||
+    node.kind === 'waiting' ||
+    node.kind === 'compaction'
+  );
 }
 
 export function groupChat(chat: ChatNode[]): ChatRow[] {
@@ -259,6 +266,17 @@ function ChatNodeView({
           text={node.text}
           streaming={node.streaming}
           startedAt={node.startedAt}
+          endedAt={node.endedAt}
+          t={t}
+        />
+      );
+    case 'compaction':
+      return (
+        <CompactionBlock
+          text={node.text}
+          streaming={node.streaming}
+          tokensBefore={node.tokensBefore != null ? formatTokens(node.tokensBefore) : undefined}
+          tokensAfter={node.tokensAfter != null ? formatTokens(node.tokensAfter) : undefined}
           endedAt={node.endedAt}
           t={t}
         />

@@ -53,6 +53,7 @@ const blankFold: WorkbenchFold = {
   waitingKey: null,
   waitingArmed: false,
   stageId: null,
+  compactionKey: null,
 };
 
 function foldAll(events: WorkbenchEvent[], initial: WorkbenchFold = blankFold): WorkbenchFold {

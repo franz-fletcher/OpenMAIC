@@ -76,7 +76,8 @@ export type ChatNodeKind =
    * answered instead of offering buttons for a decision the user made an hour
    * ago.
    */
-  | 'question';
+  | 'question'
+  | 'compaction';
 
 /**
  * How loud a timeline marker is allowed to be. System notices are the chat's
@@ -197,6 +198,12 @@ export interface ChatNode {
    * see `answerOpenQuestions`.
    */
   questionAnswered?: boolean;
+  /** Compaction nodes only: token count before compaction. */
+  tokensBefore?: number;
+  /** Compaction nodes only: token count after compaction. */
+  tokensAfter?: number;
+  /** Compaction nodes only: the durable entry id from the compaction log. */
+  entryId?: string;
 }
 
 export interface PlannedPage {
@@ -384,6 +391,12 @@ export interface WorkbenchFold {
    * as a default target; the classroom pane remains independent UI state.
    */
   stageId: string | null;
+  /**
+   * Key of the in-flight compaction node, if one is streaming. Cleared by
+   * compaction_end and settled by fallback boundaries (message_start, session_end,
+   * a second compaction_start). Same pattern as thinkingKey.
+   */
+  compactionKey: string | null;
 }
 
 /**
@@ -556,6 +569,8 @@ export function createInitialSessionState(): WorkbenchSessionState {
     panelOpen: false,
     panelPinned: false,
     stageId: null,
+    // ── Compaction ─────────────────────────────────────────────────────
+    compactionKey: null,
   };
 }
 
@@ -701,7 +716,8 @@ function hasTurnParts(chat: ChatNode[]): boolean {
   for (let i = chat.length - 1; i >= 0; i -= 1) {
     const kind = chat[i]?.kind;
     if (kind === 'user' || kind === 'boundary') break;
-    if (kind === 'thinking' || kind === 'tool' || kind === 'assistant') return true;
+    if (kind === 'thinking' || kind === 'tool' || kind === 'assistant' || kind === 'compaction')
+      return true;
   }
   return false;
 }
@@ -753,6 +769,13 @@ function runningToolIndex(chat: ChatNode[]): number {
 function settleStreamingThinking(chat: ChatNode[], ts: number): ChatNode[] {
   return chat.map((n) =>
     n.kind === 'thinking' && n.streaming ? { ...n, streaming: false, endedAt: ts } : n,
+  );
+}
+
+/** Close any streaming compaction nodes — a boundary event ended the run. */
+function settleStreamingCompaction(chat: ChatNode[], ts: number): ChatNode[] {
+  return chat.map((n) =>
+    n.kind === 'compaction' && n.streaming ? { ...n, streaming: false, endedAt: ts } : n,
   );
 }
 
@@ -1221,6 +1244,8 @@ export function foldEvent(state: WorkbenchFold, event: WorkbenchEvent): Workbenc
       next.thinkingKey = null;
       next.assistantKey = null;
       next.chat = settleStreamingThinking(state.chat, event.ts);
+      next.chat = settleStreamingCompaction(next.chat, event.ts);
+      next.compactionKey = null;
       openWaiting(next, `${key}-w`, event.ts);
       break;
     }
@@ -1654,8 +1679,12 @@ export function foldEvent(state: WorkbenchFold, event: WorkbenchEvent): Workbenc
       next.generationOpen = false;
       next.thinkingKey = null;
       next.assistantKey = null;
-      const settled = settleStreamingThinking(next.chat, event.ts).map((n) =>
-        n.kind === 'assistant' && n.streaming ? { ...n, streaming: false } : n,
+      next.compactionKey = null;
+      const settled = settleStreamingCompaction(
+        settleStreamingThinking(next.chat, event.ts).map((n) =>
+          n.kind === 'assistant' && n.streaming ? { ...n, streaming: false } : n,
+        ),
+        event.ts,
       );
       if (status === 'failed') {
         // Three fields, not one sentence: what happened, what to do, and the
@@ -1731,6 +1760,109 @@ export function foldEvent(state: WorkbenchFold, event: WorkbenchEvent): Workbenc
       next.chat = settled;
       break;
     }
+    case 'compaction_start': {
+      // If a compaction is already streaming, settle it first (mirrors message_start).
+      if (next.compactionKey) {
+        next.chat = settleStreamingCompaction(next.chat, event.ts);
+        next.compactionKey = null;
+      }
+      // Convert an open waiting node, or create a new compaction node.
+      const tokensBefore = Number(data.tokensBefore ?? 0);
+      const compKey = `${key}-comp`;
+      if (next.waitingKey) {
+        const waitKey = next.waitingKey;
+        next.chat = next.chat.map((n) =>
+          n.key === waitKey
+            ? {
+                ...n,
+                kind: 'compaction' as const,
+                text: '',
+                streaming: true,
+                startedAt: n.startedAt ?? event.ts,
+                tokensBefore,
+              }
+            : n,
+        );
+        next.compactionKey = waitKey;
+        next.waitingKey = null;
+      } else {
+        next.chat = [
+          ...next.chat,
+          {
+            key: compKey,
+            kind: 'compaction',
+            text: '',
+            streaming: true,
+            startedAt: event.ts,
+            tokensBefore,
+          },
+        ];
+        next.compactionKey = compKey;
+      }
+      break;
+    }
+    case 'compaction_delta': {
+      const text = String(data.text ?? '');
+      if (next.compactionKey) {
+        // Overwrite text on the streaming compaction node.
+        next.chat = next.chat.map((n) => (n.key === next.compactionKey ? { ...n, text } : n));
+      } else {
+        // No compaction node exists (replay-first-frame path): create one.
+        const compKey = `${key}-comp`;
+        next.chat = [
+          ...next.chat,
+          {
+            key: compKey,
+            kind: 'compaction',
+            text,
+            streaming: true,
+            startedAt: event.ts,
+          },
+        ];
+        next.compactionKey = compKey;
+      }
+      break;
+    }
+    case 'compaction_end': {
+      const entryId = String(data.entryId ?? '');
+      const tokensBefore = Number(data.tokensBefore ?? 0);
+      const tokensAfter = Number(data.tokensAfter ?? 0);
+      const summary = String(data.summary ?? '');
+      if (next.compactionKey) {
+        next.chat = next.chat.map((n) =>
+          n.key === next.compactionKey
+            ? {
+                ...n,
+                text: summary,
+                streaming: false,
+                endedAt: event.ts,
+                tokensBefore,
+                tokensAfter,
+                entryId,
+              }
+            : n,
+        );
+      } else {
+        // No compaction node exists (replay with pruned deltas): create a settled one.
+        const compKey = `${key}-comp`;
+        next.chat = [
+          ...next.chat,
+          {
+            key: compKey,
+            kind: 'compaction',
+            text: summary,
+            streaming: false,
+            startedAt: event.ts,
+            endedAt: event.ts,
+            tokensBefore,
+            tokensAfter,
+            entryId,
+          },
+        ];
+      }
+      next.compactionKey = null;
+      break;
+    }
     default:
       break;
   }
@@ -1755,7 +1887,7 @@ export function foldEvents(state: WorkbenchFold, events: readonly WorkbenchEvent
   return events.reduce(foldEvent, state);
 }
 
-const REPLAY_STREAMING = new Set(['message_update', 'trace']);
+const REPLAY_STREAMING = new Set(['message_update', 'trace', 'compaction_delta']);
 
 /**
  * Drop token-by-token stream frames from a replay backlog — but keep the
@@ -1772,7 +1904,7 @@ export function compactReplayEvents(events: readonly WorkbenchEvent[]): Workbenc
   const flush = () => {
     if (run.length === 0) return;
     const type = run[0]?.type;
-    if (type === 'message_update') {
+    if (type === 'message_update' || type === 'compaction_delta') {
       const first = run[0];
       const last = run[run.length - 1];
       if (first) out.push(first);
@@ -1806,6 +1938,16 @@ export function appendCompactedReplayEvent(events: WorkbenchEvent[], event: Work
     // it; otherwise the run has one element so far, so the incoming frame
     // becomes the new `last` beside the preserved `first`.
     if (events[events.length - 2]?.type === 'message_update') {
+      events[events.length - 1] = event;
+    } else {
+      events.push(event);
+    }
+    return;
+  }
+  if (event.type === 'compaction_delta' && last?.type === 'compaction_delta') {
+    // Same first+last retention as message_update: the last frame carries the
+    // full accumulated text, and the first carries the stream start timestamp.
+    if (events[events.length - 2]?.type === 'compaction_delta') {
       events[events.length - 1] = event;
     } else {
       events.push(event);

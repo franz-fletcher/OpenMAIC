@@ -98,6 +98,11 @@
     "done": "已思考",
     "doneWithDuration": "已思考 {{duration}}"
   },
+  "compaction": {
+    "active": "正在壓縮上下文...",
+    "doneWithTokens": "已壓縮 {{before}} \u2192 {{after}}",
+    "done": "已壓縮"
+  },
   "system": {
     "technicalDetails": "技術詳情",
     "repeated": "相同提示連續出現 {{count}} 次",

@@ -77,4 +77,53 @@ describe('compactReplayEvents', () => {
     for (const frame of frames) appendCompactedReplayEvent(backlog, frame);
     expect(backlog.map((e) => e.id)).toEqual(compactReplayEvents(frames).map((e) => e.id));
   });
+
+  it('keeps the first and last compaction_delta in a streaming run', () => {
+    const compacted = compactReplayEvents([
+      ev(1, 'compaction_start', { tokensBefore: 50000, messagesBefore: 120 }),
+      ev(2, 'compaction_delta', { text: 'compacting...' }),
+      ev(3, 'compaction_delta', { text: 'compacting context...' }),
+      ev(4, 'compaction_delta', { text: 'compacting context done' }),
+      ev(5, 'compaction_end', {
+        entryId: 'e1',
+        tokensBefore: 50000,
+        tokensAfter: 12000,
+        summary: 'final',
+      }),
+    ]);
+    // start, first delta, last delta, end survive; middle delta is dropped
+    expect(compacted.map((e) => e.id)).toEqual([1, 2, 4, 5]);
+  });
+
+  it('keeps a single compaction_delta run of one as-is', () => {
+    const compacted = compactReplayEvents([
+      ev(1, 'compaction_start', { tokensBefore: 50000, messagesBefore: 120 }),
+      ev(2, 'compaction_delta', { text: 'only one' }),
+      ev(3, 'compaction_end', {
+        entryId: 'e1',
+        tokensBefore: 50000,
+        tokensAfter: 12000,
+        summary: 'done',
+      }),
+    ]);
+    expect(compacted.map((e) => e.id)).toEqual([1, 2, 3]);
+  });
+
+  it('incremental compaction of compaction_delta matches batch', () => {
+    const backlog: WorkbenchEvent[] = [];
+    const frames = [
+      ev(1, 'compaction_start', { tokensBefore: 50000, messagesBefore: 120 }),
+      ev(2, 'compaction_delta', { text: 'a' }),
+      ev(3, 'compaction_delta', { text: 'ab' }),
+      ev(4, 'compaction_delta', { text: 'abc' }),
+      ev(5, 'compaction_end', {
+        entryId: 'e1',
+        tokensBefore: 50000,
+        tokensAfter: 12000,
+        summary: 'abc',
+      }),
+    ];
+    for (const frame of frames) appendCompactedReplayEvent(backlog, frame);
+    expect(backlog.map((e) => e.id)).toEqual(compactReplayEvents(frames).map((e) => e.id));
+  });
 });

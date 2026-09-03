@@ -98,6 +98,11 @@
     "done": "Réflexion terminée",
     "doneWithDuration": "Réflexion pendant {{duration}}"
   },
+  "compaction": {
+    "active": "Compression du contexte...",
+    "doneWithTokens": "Compresse {{before}} \u2192 {{after}}",
+    "done": "Compresse"
+  },
   "system": {
     "technicalDetails": "Détails techniques",
     "repeated": "Même message {{count}} fois de suite",

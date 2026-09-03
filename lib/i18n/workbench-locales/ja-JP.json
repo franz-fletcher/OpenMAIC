@@ -98,6 +98,11 @@
     "done": "思考しました",
     "doneWithDuration": "{{duration}} 思考しました"
   },
+  "compaction": {
+    "active": "コンテキストを圧縮中...",
+    "doneWithTokens": "圧縮完了 {{before}} \u2192 {{after}}",
+    "done": "圧縮完了"
+  },
   "system": {
     "technicalDetails": "技術詳細",
     "repeated": "同じ通知が連続して {{count}} 回",

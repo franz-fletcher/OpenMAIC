@@ -98,6 +98,11 @@
     "done": "Pensou",
     "doneWithDuration": "Pensou por {{duration}}"
   },
+  "compaction": {
+    "active": "Comprimindo contexto...",
+    "doneWithTokens": "Comprimido {{before}} \u2192 {{after}}",
+    "done": "Comprimido"
+  },
   "system": {
     "technicalDetails": "Detalhes técnicos",
     "repeated": "O mesmo aviso apareceu {{count}} vezes seguidas",

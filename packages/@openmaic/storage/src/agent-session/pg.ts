@@ -911,6 +911,41 @@ export class PgAgentSessionStore
     return result.rows.length;
   }
 
+  async pruneCompactionDeltas(sessionId: string, compactionEndSeq: number): Promise<number> {
+    const result = await this.queryable.query<{ seq: number }>(
+      `WITH completed_compaction AS (
+         SELECT end.seq AS end_seq, boundary.seq AS start_seq
+         FROM ${this.table('events')} end
+         JOIN LATERAL (
+           SELECT e.seq, e.type
+           FROM ${this.table('events')} e
+           WHERE e.session_id = end.session_id AND e.seq < end.seq
+             AND e.type IN ('compaction_start', 'compaction_end')
+           ORDER BY e.seq DESC LIMIT 1
+         ) boundary ON boundary.type = 'compaction_start'
+         WHERE end.session_id = $1 AND end.seq = $2
+           AND end.type = 'compaction_end'
+       ), compaction_events AS (
+         SELECT e.seq, e.type
+         FROM ${this.table('events')} e
+         INNER JOIN completed_compaction cc
+           ON e.seq >= cc.start_seq AND e.seq <= cc.end_seq
+         WHERE e.session_id = $1
+       ), ranked AS (
+         SELECT seq, type, lag(type) OVER (ORDER BY seq) AS prev_type,
+                lead(type) OVER (ORDER BY seq) AS next_type
+         FROM compaction_events
+       )
+       DELETE FROM ${this.table('events')} e USING ranked r
+       WHERE e.session_id = $1 AND e.seq = r.seq AND e.seq < $2
+         AND r.type = 'compaction_delta'
+         AND r.prev_type = 'compaction_delta' AND r.next_type = 'compaction_delta'
+       RETURNING e.seq`,
+      [sessionId, compactionEndSeq],
+    );
+    return result.rows.length;
+  }
+
   async appendControlEvent(
     sessionId: string,
     event: Omit<NewAgentSessionEvent, 'attempt'>,

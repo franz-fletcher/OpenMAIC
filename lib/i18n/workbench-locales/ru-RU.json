@@ -98,6 +98,11 @@
     "done": "Подумал",
     "doneWithDuration": "Думал {{duration}}"
   },
+  "compaction": {
+    "active": "Сжатие контекста...",
+    "doneWithTokens": "Сжато {{before}} \u2192 {{after}}",
+    "done": "Сжато"
+  },
   "system": {
     "technicalDetails": "Технические детали",
     "repeated": "Одно и то же сообщение подряд {{count}} раз",
