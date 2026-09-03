@@ -4,12 +4,12 @@
   "spec": {
     "reference": "docs/specs/012-compaction-entry-id-space-fix.md",
     "title": "Batch 012 spec: compaction-entry-id-space-fix",
-    "hash": "5263e7cf7039195ae166b918e1be1301da468ce3bb60e2df7d93ae9451530992"
+    "hash": "b8be37478dda26697258c493ebaf048a707ca7a63f46eb2baec809882463b655"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "implementation",
+  "stage": "verification",
   "retry": {
     "count": 0,
     "max": 5,
@@ -486,7 +486,18 @@
       "slice": "S02",
       "hash": "e7964dfe33e27dacdb2c9aea4d79bc2356eeb379236da25da08ea1ee976ef202",
       "fileHash": "a0d611929a0a1bf49fcdf15e4c370da035ddbecd2fa20ca07cb9f1ec45ceadfa"
+    },
+    {
+      "seq": 28,
+      "id": "1138e3a5-426c-4fe3-af29-b99023699eab",
+      "at": "2026-09-03T13:27:11.076Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "26aa2358ae57b3894a736cf7c26e8ecc60b02bf4930c0650a150decdd0ea9db7",
+      "fileHash": "f963d1e553f8acf738d633f067f26243177958145b8657c99b9a472d40a6c9f5"
     }
   ],
-  "fileHash": "f963d1e553f8acf738d633f067f26243177958145b8657c99b9a472d40a6c9f5"
+  "fileHash": "d7bdaa2449220bec0b428f88243c9e0fa15793aa72c5aab3ac2e5dcbb067034a"
 }

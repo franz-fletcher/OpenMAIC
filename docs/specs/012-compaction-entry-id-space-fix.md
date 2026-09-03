@@ -1,6 +1,6 @@
 # Batch 012 spec: compaction-entry-id-space-fix
 
-Spec status: implementation
+Spec status: verification
 
 ## Problem Statement
 
