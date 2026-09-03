@@ -1,6 +1,6 @@
 # Meta-spec: rivr-stage-generation
 
-Spec status: draft
+Meta-spec status: research
 
 ## Purpose
 

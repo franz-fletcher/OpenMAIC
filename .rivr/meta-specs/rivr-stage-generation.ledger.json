@@ -1,0 +1,164 @@
+{
+  "schema_version": 2,
+  "$schema": "https://rivr.dev/schemas/ledger/v2",
+  "kind": "metaspec",
+  "spec": {
+    "reference": "docs/meta-specs/rivr-stage-generation.md",
+    "title": "Meta-spec: rivr-stage-generation",
+    "hash": "bc229ae50faf833fee5f1804244a3eed0e82fcbad44f8a8701a72deb7d9081d7"
+  },
+  "tracker": {
+    "mode": "none"
+  },
+  "stage": "research",
+  "retry": {
+    "count": 0,
+    "max": 5,
+    "consecutive_same_cause": 0,
+    "escalate_at": 3
+  },
+  "slices": [],
+  "adrs": [
+    {
+      "id": "adr-001",
+      "title": "# ADR-001: Progress-reset heartbeat over a flat budget raise",
+      "path": "docs/adrs/adr-001-heartbeat-over-flat-raise.md",
+      "hash": "dce9b1d0c1cc59d752eb130e3f5789ab970bfee834eaa5f73799fa6292a518f6"
+    },
+    {
+      "id": "adr-002",
+      "title": "# ADR-002: Phase progress on the durable trace channel",
+      "path": "docs/adrs/adr-002-trace-channel-reuse.md",
+      "hash": "dae4d3f232a0e4349644b75e0a67aacf63ba4f4015ee9628ad4520e3a6b7e8c5"
+    },
+    {
+      "id": "adr-003",
+      "title": "# ADR-003: Fresh session completion with the plan embedded",
+      "path": "docs/adrs/adr-003-fresh-session-completion.md",
+      "hash": "4a6c4b617c6b59cfd6583fe8da85f10225f7ab760da803325b37c7b22b0bb336"
+    },
+    {
+      "id": "adr-004",
+      "title": "# ADR-004: Compaction write side through appendCompaction and callLLM",
+      "path": "docs/adrs/adr-004-compaction-write-side-placement.md",
+      "hash": "b3e4a243114afb75a3548aea27b497ddde2e93bd7dd50d1c70a2e332ba314137"
+    },
+    {
+      "id": "adr-005",
+      "title": "# ADR-005: Tandem validation model for meta acceptance",
+      "path": "docs/adrs/adr-005-tandem-validation-model.md",
+      "hash": "81bcacddfb9a429591f7d65e6733a3b4218906bbdd9c1e80bbedbd209c1e866e"
+    },
+    {
+      "id": "adr-006",
+      "title": "# ADR-006: Compaction flag default OFF",
+      "path": "docs/adrs/adr-006-compaction-default-off.md",
+      "hash": "b64f6b67a7d091df441aa818e0ca7315cd42e9b9fa3a56af8e2b5cc119b8a24a"
+    }
+  ],
+  "child_ledgers": [
+    {
+      "batch": "008",
+      "ledger": ".rivr/specs/008-stage-generation-throughput.ledger.json",
+      "stage": "closed"
+    },
+    {
+      "batch": "009",
+      "ledger": ".rivr/specs/009-agent-context-compaction.ledger.json",
+      "stage": "closed"
+    }
+  ],
+  "audit": [
+    {
+      "seq": 1,
+      "id": "1502a83d-e2c6-464c-b652-fb9a6d426681",
+      "at": "2026-09-03T04:06:44.693Z",
+      "actor": "orchestrator",
+      "command": "metaspec_init",
+      "transition": "spec-approved:docs/meta-specs/rivr-stage-generation.md spec-hash:bc229ae50faf833fee5f1804244a3eed0e82fcbad44f8a8701a72deb7d9081d7",
+      "slice": null,
+      "hash": "2d8e1eaec38e9b5a47fd026429cc7cb663468b1c20b923436f9d0bb92fcda686"
+    },
+    {
+      "seq": 2,
+      "id": "a048caf3-5258-4890-9427-fb2c277b9c2d",
+      "at": "2026-09-03T04:06:44.694Z",
+      "actor": "orchestrator",
+      "command": "metaspec_child_link",
+      "transition": "child-link:008:.rivr/specs/008-stage-generation-throughput.ledger.json:closed",
+      "slice": null,
+      "hash": "9c93e93b9d410cc78611ffbcba99f00454235058dc7e392b57fb0fc2b75fff18"
+    },
+    {
+      "seq": 3,
+      "id": "746e80b9-0aa0-4b57-adf3-f762647768f0",
+      "at": "2026-09-03T04:06:44.694Z",
+      "actor": "orchestrator",
+      "command": "metaspec_child_link",
+      "transition": "child-link:009:.rivr/specs/009-agent-context-compaction.ledger.json:closed",
+      "slice": null,
+      "hash": "c824cbb811817a66996670ccd007e2ce1d2db753f0a89213dc2060614426d63a"
+    },
+    {
+      "seq": 4,
+      "id": "24d6ba23-4653-42fd-994a-cbf048bc46cc",
+      "at": "2026-09-03T04:06:44.694Z",
+      "actor": "orchestrator",
+      "command": "metaspec_adr_register",
+      "transition": "adr-register:adr-001:docs/adrs/adr-001-heartbeat-over-flat-raise.md:dce9b1d0c1cc59d752eb130e3f5789ab970bfee834eaa5f73799fa6292a518f6",
+      "slice": null,
+      "hash": "b09b7cd0f4b544888c87124a49681287e39ad5f09d15347f2ce7a6f2780883ac"
+    },
+    {
+      "seq": 5,
+      "id": "503ceb40-1807-4d08-9d11-7aa9a5f34865",
+      "at": "2026-09-03T04:06:44.694Z",
+      "actor": "orchestrator",
+      "command": "metaspec_adr_register",
+      "transition": "adr-register:adr-002:docs/adrs/adr-002-trace-channel-reuse.md:dae4d3f232a0e4349644b75e0a67aacf63ba4f4015ee9628ad4520e3a6b7e8c5",
+      "slice": null,
+      "hash": "1bba2163e1fc64237e37059d1bbaf7df7cd76c7220f505bc05dd8ae18f245bed"
+    },
+    {
+      "seq": 6,
+      "id": "b43b1a0c-2692-47fa-8dff-c0d58b37406c",
+      "at": "2026-09-03T04:06:44.694Z",
+      "actor": "orchestrator",
+      "command": "metaspec_adr_register",
+      "transition": "adr-register:adr-003:docs/adrs/adr-003-fresh-session-completion.md:4a6c4b617c6b59cfd6583fe8da85f10225f7ab760da803325b37c7b22b0bb336",
+      "slice": null,
+      "hash": "d446247e657dc6aaca2851fcea43e10195eae9653812f4def3806ded0763f8e9"
+    },
+    {
+      "seq": 7,
+      "id": "d7715582-7186-4c32-832e-e0e37ac67e88",
+      "at": "2026-09-03T04:06:44.694Z",
+      "actor": "orchestrator",
+      "command": "metaspec_adr_register",
+      "transition": "adr-register:adr-004:docs/adrs/adr-004-compaction-write-side-placement.md:b3e4a243114afb75a3548aea27b497ddde2e93bd7dd50d1c70a2e332ba314137",
+      "slice": null,
+      "hash": "2ddc2dd81936dd8aec93fe6edb5d6f9670802e5d5411401039332a159de36239"
+    },
+    {
+      "seq": 8,
+      "id": "7b5b30ea-2824-445c-b5de-a26b0f65c0ac",
+      "at": "2026-09-03T04:06:44.694Z",
+      "actor": "orchestrator",
+      "command": "metaspec_adr_register",
+      "transition": "adr-register:adr-005:docs/adrs/adr-005-tandem-validation-model.md:81bcacddfb9a429591f7d65e6733a3b4218906bbdd9c1e80bbedbd209c1e866e",
+      "slice": null,
+      "hash": "87a681975159c64009e466c02a567b2d1c87c0bca7cfcef720210e50f3e7029a"
+    },
+    {
+      "seq": 9,
+      "id": "190c8844-31a1-4bf7-aef7-477ebfb0c4d6",
+      "at": "2026-09-03T04:06:44.694Z",
+      "actor": "orchestrator",
+      "command": "metaspec_adr_register",
+      "transition": "adr-register:adr-006:docs/adrs/adr-006-compaction-default-off.md:b64f6b67a7d091df441aa818e0ca7315cd42e9b9fa3a56af8e2b5cc119b8a24a",
+      "slice": null,
+      "hash": "22cd0a97440600bb6fd126566c876151d31fcbdd5178240dc256fc44750a9b59"
+    }
+  ],
+  "fileHash": "d43cb3b6c9b8293c5b58eebdb87d16a4b41e1fd5097edae801a2ef1e89793eed"
+}
