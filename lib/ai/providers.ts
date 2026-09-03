@@ -32,7 +32,7 @@ import { createAnthropic } from '@ai-sdk/anthropic';
 import { createAmazonBedrock } from '@ai-sdk/amazon-bedrock';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { wrapLanguageModel, extractReasoningMiddleware } from 'ai';
-import { Agent as UndiciAgent } from 'undici';
+import type { Agent } from 'undici';
 import {
   createKimiReasoningPreservationMiddleware,
   restoreKimiReasoningInRequestBody,
@@ -1878,17 +1878,28 @@ function openAIStreamErrorStatus(error: Record<string, unknown>): number {
         : NaN;
   return Number.isInteger(status) && status >= 400 && status <= 599 ? status : 500;
 }
+let cachedNoTimeoutAgent: Promise<Agent> | null = null;
 /**
- * Undici agent with headersTimeout and bodyTimeout disabled. Long-running
- * LLM requests (scene generation, interactive widgets) can pause between
- * bytes for minutes. The default 300 s caps kill the fetch before the
- * tool-timeout heartbeat can act. This agent is shared across all LLM
- * fetch calls in this module.
+ * Lazily import undici and instantiate an agent with headersTimeout and
+ * bodyTimeout disabled. Long-running LLM requests (scene generation,
+ * interactive widgets) can pause between bytes for minutes. The default
+ * 300 s caps kill the fetch before the tool-timeout heartbeat can act.
+ * The import uses webpackIgnore so Turbopack does not bundle the Node
+ * module into the client graph.
  */
-const llmNoTimeoutAgent = new UndiciAgent({
-  headersTimeout: 0,
-  bodyTimeout: 0,
-});
+async function getLlmNoTimeoutAgent(): Promise<Agent> {
+  if (!cachedNoTimeoutAgent) {
+    cachedNoTimeoutAgent = import(/* webpackIgnore: true */ 'undici').then(
+      ({ Agent: UndiciAgent }) => {
+        return new UndiciAgent({
+          headersTimeout: 0,
+          bodyTimeout: 0,
+        });
+      },
+    );
+  }
+  return cachedNoTimeoutAgent;
+}
 
 async function fetchCustomOpenAIChat(
   input: RequestInfo | URL,
@@ -2151,7 +2162,8 @@ export function getModel(config: ModelConfig): ModelWithInfo {
           }
           // Inject the no-timeout dispatcher so long-running LLM requests
           // are not killed by undici's default 300 s headers/body timeout.
-          const fetchInit = init ? { ...init, dispatcher: llmNoTimeoutAgent } : init;
+          const dispatcher = await getLlmNoTimeoutAgent();
+          const fetchInit = init ? { ...init, dispatcher } : init;
           const response = useStreamingChatCompat
             ? await fetchCustomOpenAIChat(url, fetchInit)
             : await globalThis.fetch(url, fetchInit);
@@ -2271,7 +2283,8 @@ export function getModel(config: ModelConfig): ModelWithInfo {
             }
           }
 
-          const fetchInit = init ? { ...init, dispatcher: llmNoTimeoutAgent } : init;
+          const dispatcher = await getLlmNoTimeoutAgent();
+          const fetchInit = init ? { ...init, dispatcher } : init;
           return globalThis.fetch(url, fetchInit);
         }) as typeof globalThis.fetch;
       }

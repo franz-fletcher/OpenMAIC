@@ -1,0 +1,656 @@
+{
+  "schema_version": 2,
+  "$schema": "https://rivr.dev/schemas/ledger/v2",
+  "spec": {
+    "reference": "docs/specs/010-providers-client-graph-fix.md",
+    "title": "Batch 010 spec: providers-client-graph-fix",
+    "hash": "904b57d60481b835e732b95dfd8b7d9b2e6d7f7e8cb04cc57f6e1492a8521cb2"
+  },
+  "tracker": {
+    "mode": "none"
+  },
+  "stage": "closed",
+  "retry": {
+    "count": 0,
+    "max": 5,
+    "consecutive_same_cause": 0,
+    "escalate_at": 3
+  },
+  "slices": [
+    {
+      "id": "S01",
+      "title": "Lazy no-timeout agent and client-graph guard",
+      "intent": "Remove module-eval undici usage from providers.ts behind a memoized lazy getter and pin the client-graph invariant with a static guard test.",
+      "user_stories": [
+        2,
+        5
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/ai/providers.ts",
+          "symbols": [
+            {
+              "name": "getLlmNoTimeoutAgent",
+              "expectation": "Memoized async getter (): Promise<Agent>, webpackIgnore dynamic import of undici, headersTimeout 0 and bodyTimeout 0, awaited by both 008 fetch wrappers; no static undici import and no module-scope new Agent remain.",
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(): Promise<Agent>"
+              },
+              "postcondition_quality": "VERIFIED",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(): Promise<Agent>"
+              }
+            }
+          ]
+        }
+      ],
+      "riskTier": 3,
+      "uuid": "6842dd70-0792-4ee1-9bd0-55a3f9316728",
+      "impl": {
+        "status": "ready_for_verification",
+        "hash": "e974330772903951d0370ab6939231ff3c159c423127c6891e51da9a774056ac",
+        "actor": "implementer",
+        "at": "2026-09-03T06:40:10.930Z"
+      },
+      "verification": {
+        "status": "verified",
+        "hash": "e62bad5d982bfede9a4695447f3849bff1fdc8a9f54a34561fbfbec41af9003a",
+        "actor": "verifier",
+        "at": "2026-09-03T06:40:17.919Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G01",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/lint-providers-client-graph.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/lint-providers-client-graph.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 4\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m3 passed\u001b[39m\u001b[22m\u001b[90m (3)\u001b[39m\n\u001b[2m   Start at \u001b[22m 18:40:11\n\u001b[2m   Duration \u001b[22m 98ms\u001b[2m (transform 17ms, setup 16ms, import 9ms, tests 4ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G02",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/ai/llm-fetch-timeouts.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/ai/llm-fetch-timeouts.test.ts \u001b[2m(\u001b[22m\u001b[2m2 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 63\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m2 passed\u001b[39m\u001b[22m\u001b[90m (2)\u001b[39m\n\u001b[2m   Start at \u001b[22m 18:40:12\n\u001b[2m   Duration \u001b[22m 272ms\u001b[2m (transform 61ms, setup 11ms, import 134ms, tests 63ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G03",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        }
+      },
+      "expectation": "All existing assertions pass unchanged; the injected dispatcher still has a dispatch function.",
+      "gates": [
+        {
+          "id": "G01",
+          "check": "pnpm test tests/lint-providers-client-graph.test.ts",
+          "expect": "passed",
+          "evidence": "{\"id\":\"G01\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/lint-providers-client-graph.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/lint-providers-client-graph.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m3 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 4\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m3 passed\\u001b[39m\\u001b[22m\\u001b[90m (3)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 18:40:11\\n\\u001b[2m   Duration \\u001b[22m 98ms\\u001b[2m (transform 17ms, setup 16ms, import 9ms, tests 4ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "unit"
+        },
+        {
+          "id": "G02",
+          "check": "pnpm test tests/ai/llm-fetch-timeouts.test.ts",
+          "expect": "passed",
+          "evidence": "{\"id\":\"G02\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/ai/llm-fetch-timeouts.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/ai/llm-fetch-timeouts.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m2 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 63\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m2 passed\\u001b[39m\\u001b[22m\\u001b[90m (2)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 18:40:12\\n\\u001b[2m   Duration \\u001b[22m 272ms\\u001b[2m (transform 61ms, setup 11ms, import 134ms, tests 63ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "integration"
+        },
+        {
+          "id": "G03",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "evidence": "{\"id\":\"G03\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "smoke"
+        }
+      ]
+    },
+    {
+      "id": "S02",
+      "title": "Safari console-clean gate script",
+      "intent": "Encode the Safari MCP stdio console-clean check as a shell script so the runtime symptom is a ledger gate.",
+      "user_stories": [
+        1,
+        5
+      ],
+      "blocked_by": [
+        "S01"
+      ],
+      "targets": [
+        {
+          "path": "scripts/check-safari-console-clean.js",
+          "symbols": [
+            {
+              "name": "checkSafariConsoleClean",
+              "expectation": "Exported async (url) spawning safaridriver --mcp over stdio, create_tab to the target URL, browser_console_messages filtered for Cannot find module / node:net / undici, returns offending lines; CLI prints SAFARI_CONSOLE_CLEAN exit 0 on empty.",
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(url)"
+              },
+              "postcondition_quality": "VERIFIED",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(url)"
+              }
+            }
+          ]
+        }
+      ],
+      "riskTier": 1,
+      "uuid": "db52cf69-495c-40f3-ad53-2b3e0d902922",
+      "impl": {
+        "status": "ready_for_verification",
+        "hash": "2de5c068ee1829a4730c8ec77fa967d00d237e02e6a40da7fc1d9a8b124eaadd",
+        "actor": "implementer",
+        "at": "2026-09-03T06:40:10.972Z"
+      },
+      "verification": {
+        "status": "verified",
+        "hash": "c6594a886f60d4921a95f587d9c9bc880433278ba28a5f8660995ce0d03d53f8",
+        "actor": "verifier",
+        "at": "2026-09-03T06:42:52.458Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G01",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "SAFARI_CONSOLE_CLEAN\n(node:58462) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/scripts/check-safari-console-clean.js is not specified and it doesn't parse as CommonJS.\nReparsing as ES module because module syntax was detected. This incurs a performance overhead.\nTo eliminate this warning, add \"type\": \"module\" to /Users/franky/Projects/MyOpenMAIC/Source/openMAIC/package.json.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
+              "passed": true
+            }
+          ]
+        }
+      },
+      "gates": [
+        {
+          "id": "G01",
+          "check": "node scripts/check-safari-console-clean.js",
+          "expect": "SAFARI_CONSOLE_CLEAN",
+          "evidence": "{\"id\":\"G01\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"SAFARI_CONSOLE_CLEAN\\n(node:58462) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/scripts/check-safari-console-clean.js is not specified and it doesn't parse as CommonJS.\\nReparsing as ES module because module syntax was detected. This incurs a performance overhead.\\nTo eliminate this warning, add \\\"type\\\": \\\"module\\\" to /Users/franky/Projects/MyOpenMAIC/Source/openMAIC/package.json.\\n(Use `node --trace-warnings ...` to show where the warning was created)\\n\",\"passed\":true}",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC"
+        }
+      ],
+      "expectation": "Script drives Safari over a spawned safaridriver --mcp stdio session, opens the target URL, filters console errors for the module-resolution family, prints SAFARI_CONSOLE_CLEAN on clean, offending lines on failure, and always terminates its own spawned child."
+    }
+  ],
+  "audit": [
+    {
+      "seq": 1,
+      "id": "0b3aa890-0e83-49c9-aa60-7f477245920f",
+      "at": "2026-09-03T06:38:58.638Z",
+      "actor": "orchestrator",
+      "command": "init",
+      "transition": "spec-approved:docs/specs/010-providers-client-graph-fix.md spec-hash:111a8cc5283b390424bb635cce529bfaf497905d43fcc9e6ddacff5e1ad394ae",
+      "slice": null,
+      "hash": "2ee811f26a1d20998a74ce72e7825f71524c411c4fabfffb9afdc44670ccaac4"
+    },
+    {
+      "seq": 2,
+      "id": "03086b43-faa8-4ad5-894e-86e34c4d9fd8",
+      "at": "2026-09-03T06:38:58.687Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:add:S01",
+      "slice": "S01",
+      "hash": "410ac37ad3c1c86a6e617a77b1bc5bafcb761d3563db74a1921a5317cf84556b",
+      "fileHash": "be12932c408530696a018106b7b69b18d86d043e21b58932539fd6949ad9ae92"
+    },
+    {
+      "seq": 3,
+      "id": "75576ecc-b5bc-43ef-b565-4a53b8860828",
+      "at": "2026-09-03T06:38:58.739Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:add:S02",
+      "slice": "S02",
+      "hash": "1a152ee9cbd3238d0e4f70f196f4e74d6248ba074a8b99e5ae4173e3ccb71a25",
+      "fileHash": "6cf70f72e86ad06c5c3aad8de92592304f558e01541148b00dd03282399bea28"
+    },
+    {
+      "seq": 4,
+      "id": "7ee3ad07-40b6-4e95-8f5c-d1701c807868",
+      "at": "2026-09-03T06:38:58.786Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S01:target-add:lib/ai/providers.ts::getLlmNoTimeoutAgent",
+      "slice": "S01",
+      "hash": "a96f0cdbdd8f6872fbcf646efbb12c9fd1776b417ebe6bfa0836fba1a775b3a1",
+      "fileHash": "ccbe048e0cd801d9fadf3ee545d7e794c4dcdf654a9ee4c773dcdeaf936857c7"
+    },
+    {
+      "seq": 5,
+      "id": "ae13b790-6282-4f51-a3b8-5d8de5eded71",
+      "at": "2026-09-03T06:38:58.839Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S02:target-add:scripts/check-safari-console-clean.js::checkSafariConsoleClean",
+      "slice": "S02",
+      "hash": "c3a1481ab5d8802213a85e0ecdb407e4643dfd7f816e9952fb115d4f0523e8be",
+      "fileHash": "c0bb75c48a6cba2a2d32c5d0f63520a1f4536c7d1c2ab6e8e1d06357b5a5c303"
+    },
+    {
+      "seq": 6,
+      "id": "122cb5ce-0671-4263-b85d-01c495fbe9c9",
+      "at": "2026-09-03T06:39:17.284Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect-symbol:lib/ai/providers.ts::getLlmNoTimeoutAgent",
+      "slice": "S01",
+      "hash": "655645b80b7f61a175fbf97c33d1df21c04083f0eeeef1443e18af18101dad3a",
+      "expectationHash": "c58564aa0799a27387fd0dcdf95ecf06caa8331bd15505108baf869c59ab476b",
+      "fileHash": "66f5dbaa1510121166527e9e0e6033f2e9b79cd86f8d2117a14192ece667e92d"
+    },
+    {
+      "seq": 7,
+      "id": "f0189b59-7ceb-4818-8b55-2162a59bd092",
+      "at": "2026-09-03T06:39:17.325Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect",
+      "slice": "S01",
+      "hash": "12e831cae345c41b166aa776b7633b960319d79f7c4879fbbff3614bfc27814f",
+      "expectationHash": "f8876aaafc709b45bad6e712e1d63a4885b18263c41eb2893330910bf0a0cb93",
+      "fileHash": "6d0bc7939ca5d417b478c093f6a3607d7d3bbc08993fcdc66530984c497a87b8"
+    },
+    {
+      "seq": 8,
+      "id": "1409f086-f08c-48ab-98b6-3bc0aa29a190",
+      "at": "2026-09-03T06:39:17.371Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect",
+      "slice": "S01",
+      "hash": "0180f1dfcd5fc3ce56d19227a94d021d5554521ee7817bc3b411ced6e94713fe",
+      "expectationHash": "1a6aca48df452bdf1af21591f9d7466841dfe51d17e403ee34082d3ef0d64bb7",
+      "fileHash": "39e23595862ef6a715bd47e645b3d2a1e4311a00e04fd0e984c4dfc2ca66c366"
+    },
+    {
+      "seq": 9,
+      "id": "daf85555-027c-4b3b-b4f6-9c60f885acc2",
+      "at": "2026-09-03T06:39:17.421Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S02:expect-symbol:scripts/check-safari-console-clean.js::checkSafariConsoleClean",
+      "slice": "S02",
+      "hash": "39dc7b6ad6647d62cb74d82bf97c7c8feb42e74ceba7c53eea4c1603b4b377ac",
+      "expectationHash": "fb2b8f756ce29127537be2ebbbbeedc09162b219826bf23de43c719edd5adb14",
+      "fileHash": "15851270ab56f7e56bab4d55468cbb642ead88d591fe69ff90f9bc37486866cd"
+    },
+    {
+      "seq": 10,
+      "id": "361bde5d-9e2f-427d-ac21-d7387b3654cc",
+      "at": "2026-09-03T06:39:17.472Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S01:postcondition:lib/ai/providers.ts::getLlmNoTimeoutAgent",
+      "slice": "S01",
+      "hash": "ad4419472b5a3dfc3cbaf9ca2368fa2bdc5cdf5d01fefb6d58a0b48d064ec866",
+      "fileHash": "c017023326c97a113c489ee9c215a14de8028fa9cccdd980e542c5ab2adb394e"
+    },
+    {
+      "seq": 11,
+      "id": "f018d485-c3f2-4405-9f92-007794ba4923",
+      "at": "2026-09-03T06:39:17.518Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S02:postcondition:scripts/check-safari-console-clean.js::checkSafariConsoleClean",
+      "slice": "S02",
+      "hash": "addbc6faba3a4a2530fee25bb66c0c00256c17b2316d7d5a4cee649a55812a57",
+      "fileHash": "339cb511a68468ddf7cd94647474b64650859eb894a8aae9621ea9323279cf50"
+    },
+    {
+      "seq": 12,
+      "id": "2b61305c-e8ec-4d1e-acc1-a6b79ea94c51",
+      "at": "2026-09-03T06:39:17.596Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S01:capture",
+      "slice": "S01",
+      "hash": "d0435b2dd4f787e411943ccd292baabf025031ee459f6268de7c1e877852a2be",
+      "fileHash": "33fa0b0e7632255663aa5e15a9919628ddade7489884e922e0b839883e25881b"
+    },
+    {
+      "seq": 13,
+      "id": "33d9858b-f7de-49cc-8cd4-13505094d797",
+      "at": "2026-09-03T06:39:17.650Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S02:capture",
+      "slice": "S02",
+      "hash": "406c8a3f528c4bc72bc91f1cc3e05422223211151666c1652a5fa27c85822193",
+      "fileHash": "6c5958828161bc55e04c84c0191c12e59582518ed3730ddf5692b3090c64f9fd"
+    },
+    {
+      "seq": 14,
+      "id": "089ef57a-650e-44a7-9451-861827d9af61",
+      "at": "2026-09-03T06:39:17.705Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S01:gate-add:G01",
+      "slice": "S01",
+      "hash": "4e0731ee63cf7636e4f8d74d8edf7df0bee16ba5623dd2dde56c9410d2491257",
+      "fileHash": "ee70e8bf82959f23ec7b76c5ed75d69819f03a9d8dd51b74c7d1dc9316eee4dd"
+    },
+    {
+      "seq": 15,
+      "id": "3202ff3d-d069-4af6-bb91-2299d23a213c",
+      "at": "2026-09-03T06:39:17.750Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S01:gate-add:G02",
+      "slice": "S01",
+      "hash": "6858435351d387cf48e794514d1a10d7a4abc2a004e530d2d349af9921dc1d71",
+      "fileHash": "c3d931ff74d24c917a97dff1dcea092e258db75f6ec49cfd680cd22bf6f02296"
+    },
+    {
+      "seq": 16,
+      "id": "44b2d93c-7297-4c2d-ae77-1e6af33aaeb9",
+      "at": "2026-09-03T06:39:17.799Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S01:gate-add:G03",
+      "slice": "S01",
+      "hash": "e0e4269c382e14013670988301a9b2188db7e779bf6f273f0ffb474f15128572",
+      "fileHash": "af3086333fb817ddbae41735888961d4105e5179d28cbd77b247fe9618bdbf41"
+    },
+    {
+      "seq": 17,
+      "id": "8fd8e871-036f-4487-afbd-db6d1b8621d0",
+      "at": "2026-09-03T06:39:17.846Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S02:gate-add:G01",
+      "slice": "S02",
+      "hash": "7eaadc08e00e3c7ee583dad4d0db3975aca831ef6f3b20fd2d6a13a44048defd",
+      "fileHash": "78e91f65bb6522910ce4b8fd2d4a5f48b74eafbe7f545d9147b34718b958465f"
+    },
+    {
+      "seq": 18,
+      "id": "cc820a1b-5e69-4d25-8fb1-6f92c2079847",
+      "at": "2026-09-03T06:39:17.898Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "82b87fe3aa5f04f3e8bd4ee731e984ab1cb91b6c1d959b79b0643cf541c57e29",
+      "fileHash": "8b20d2fad1574f3a9c4403d2b4fcab87f6efec0ad6659609cf7f9d1a650d4ae8"
+    },
+    {
+      "seq": 19,
+      "id": "2761b699-64f0-48ff-abd2-0636c15e0c79",
+      "at": "2026-09-03T06:40:10.930Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S01:impl:pending->ready_for_verification",
+      "slice": "S01",
+      "hash": "6f59635add6ee6e525fa4625206e1211171f416cb570c9598684eacd117e0313",
+      "fileHash": "73b31b9400132a835d9d169867d2e55106532b1bed933ca6e3a9cc91b88bf019"
+    },
+    {
+      "seq": 20,
+      "id": "7a88b43e-fead-4e49-96c7-948031f069ad",
+      "at": "2026-09-03T06:40:10.972Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S02:impl:pending->ready_for_verification",
+      "slice": "S02",
+      "hash": "e659f1df6f4fef6f910ed478dd0f14f04a9951f8c3cdd1dbf8c2a9b064827c9a",
+      "fileHash": "a5c6af001d72b64625e8dda482f8d87207ca0288bbc6ac069a9d41139a7a6d40"
+    },
+    {
+      "seq": 21,
+      "id": "c0280b54-3a48-481e-bad9-3c969e8e01fd",
+      "at": "2026-09-03T06:40:11.017Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "b0683083e340bf3c9fda61ec64a2d766cacd6845e6a453406788ef9d485b0623",
+      "fileHash": "5e320b28ffc995bf1a25367b1e50b007835bbfaec049bcbb88031ace96dc408b"
+    },
+    {
+      "seq": 22,
+      "id": "0896287d-c7fd-43db-acd8-96d03e5d4634",
+      "at": "2026-09-03T06:40:17.919Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S01:verification:pending->verified",
+      "slice": "S01",
+      "hash": "d5e77dcfdb07618f2128ca6edddf29b7566e5450b0eb5861e1c572161261d7d2",
+      "oracle": "96141c1d705952c4f0c0a6de029678f06ae54fd5d63027325a2137fc00accdd0",
+      "evidence": "78cbcf64d3c80b6d5d174381b5d6cff5ab6b3ffd9b16fc490ef7bd7b7cb695aa",
+      "fileHash": "3e428cf7f2c5ed4a953e6e163758796712c5187ebe893bfaefd596d05262f20b"
+    },
+    {
+      "seq": 23,
+      "id": "69d102d5-6557-490f-8e01-24562476b42d",
+      "at": "2026-09-03T06:40:26.879Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S02:verification:pending->verified",
+      "slice": "S02",
+      "hash": "58f5cf4fa86352158c5227fe329a48121268ce004fc064dfb6e95b793fce32de",
+      "oracle": "603aac21fdb0c0a732247934ad00b85bb2f5ed3bcf439b9d885c78927657a935",
+      "evidence": "1f7832ee53dbb7e3e102cfada292c2991e875b219d71f9e714fdf035171bdbf7",
+      "fileHash": "8f0fc25c306aab9de3458afa9f3f97e1217e7e49a7be3b9941f6f46053cad056"
+    },
+    {
+      "seq": 24,
+      "id": "602e10a5-74d3-436f-8a86-56c4f7642460",
+      "at": "2026-09-03T06:41:10.931Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:verification->research_update",
+      "slice": null,
+      "hash": "49152a24f556efef5a6de3614ed3b11017a660bc198ca6f1f25bca588b2d3052",
+      "fileHash": "fb8e5930faf1ab4e23c2b2ad3cd768a99801f2714e10db15628a846f6af6a646"
+    },
+    {
+      "seq": 25,
+      "id": "19ba0e24-0ac7-460e-befb-84a88901282b",
+      "at": "2026-09-03T06:41:10.973Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:respecify:stage 4 research update: delivered evidence and deviations",
+      "slice": null,
+      "hash": "785996fbb7fafdcfe9c928293784b0f35c385dd55282f7ad74e9b8bc89862b08",
+      "fileHash": "eb825f883f7c58c63cba626129018251b4dda5d25ce54fc69fefbd319e2bac7b"
+    },
+    {
+      "seq": 26,
+      "id": "fa8c1e8b-8e2c-42ca-8a28-aeb85e13c8c4",
+      "at": "2026-09-03T06:41:11.021Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research_update->closed",
+      "slice": null,
+      "hash": "5ecd65b5a100138396a2516822d7aa37f7a637a96f5abad68db9730a982d8b79",
+      "fileHash": "d6cc49b5d8c0ca93e28a5e4675f341d06bd8429ae47e335a91e95b36fb19defb"
+    },
+    {
+      "seq": 27,
+      "id": "5a2f632e-45d2-41d8-a220-8651953d9d0b",
+      "at": "2026-09-03T06:41:21.820Z",
+      "actor": "orchestrator",
+      "command": "stage_reopen",
+      "transition": "reopen:add missing S02 slice-level expectation flagged by accept:reset=S02",
+      "slice": null,
+      "hash": "9b3bfc23fb3df30366ae7f15c2e2a9f24d1b94f3fa9d8fae7cfde51bffb1f958",
+      "fileHash": "6aeed2feca45a1dd8becaa1e5e98b0d45aeae5ff2778f6f1621701c56281dffa"
+    },
+    {
+      "seq": 28,
+      "id": "ac17ce5e-0947-4972-bf78-1e14a53f0b0e",
+      "at": "2026-09-03T06:41:21.906Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "2f02ef3f0a47cda23d563429d53ae574cb25eaaeb12ec6f47a2e1708f67ff426",
+      "fileHash": "bbe03f00f745c432c1d64fd747540495ad5482a1cba5991664d520e5b695eaac"
+    },
+    {
+      "seq": 29,
+      "id": "e2ad8230-3034-472b-b582-339f38d0a799",
+      "at": "2026-09-03T06:41:21.953Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "4d92ffc4a6dcd1e7ed3ac2901210426d67e47d0e5957fba1c627b0cfd1e32c1e",
+      "fileHash": "dd137ed9540a1db21b503f4721705acbb5d7ef279309c63d60ba52992b6a1b45"
+    },
+    {
+      "seq": 30,
+      "id": "c1fb2546-3b6a-4f09-98ec-5315ecc48b1f",
+      "at": "2026-09-03T06:41:46.075Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S02:verification:pending->verified",
+      "slice": "S02",
+      "hash": "b2199e8aab472d6ac405d8b711bc5582f3cb4b096f6b8f645e97514c2d52ae63",
+      "oracle": "fcccff36be159b4ae6eb88a98f0742794fb0db478b2bbb6c72c6a811ee0636e3",
+      "evidence": "7d687346bcda4c38b25c7fb2b0f0914586bd7ae5c40f750d259267446d00f7ce",
+      "fileHash": "1cd1f6b1e80ecb25b7b85a697e07ecc08d67f80a4e603412c1144decca8fc94e"
+    },
+    {
+      "seq": 31,
+      "id": "163ae6d3-6fc5-4556-adeb-3be98ca541e4",
+      "at": "2026-09-03T06:41:46.142Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:verification->research_update",
+      "slice": null,
+      "hash": "8854507e837c6a6d26a0850ceeaaf09cb8451a10241279b6b0d768209c688cc9",
+      "fileHash": "bf07a2a3aaa56b55a3767394b4f74ce2dd5f1bb3a913f2718c2f4f01e08f2480"
+    },
+    {
+      "seq": 32,
+      "id": "9b4f365b-3954-499a-b906-c5476fa6488a",
+      "at": "2026-09-03T06:41:46.188Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research_update->closed",
+      "slice": null,
+      "hash": "0e757a18ccccf59bc8dc9d1b5ba9fae1eee28c9dfd07dc6fcb596e0bcd73d699",
+      "fileHash": "ea124aff669e6bcad109367b87892368fedd6a89a7d6700222688398d4e73e18"
+    },
+    {
+      "seq": 33,
+      "id": "49f0040a-0dc0-446e-8bd5-a649ac6c91dd",
+      "at": "2026-09-03T06:42:29.362Z",
+      "actor": "orchestrator",
+      "command": "stage_reopen",
+      "transition": "reopen:add S02 slice-level expectation within the 300 char cap:reset=S02",
+      "slice": null,
+      "hash": "e6881e970c4d2b75a6a652aff2022c46ccd8a68a738b9049a5f8f24d73bd4e4b",
+      "fileHash": "68df5ca747d9b989867a07c7f14edaad5bbbd1efa7762a09cbf176aba15b5830"
+    },
+    {
+      "seq": 34,
+      "id": "ecca6fc1-9adc-4833-b3f4-190b4bea3a7c",
+      "at": "2026-09-03T06:42:29.404Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S02:expect",
+      "slice": "S02",
+      "hash": "f36050b68d75289681735e7ee2a359a9afa0f026c947276bd584c664de82d2ae",
+      "expectationHash": "712f8affbafbbffa5f974e933654080c817f661722913fd56650abb951ecfd5e",
+      "fileHash": "eedb9b25a3da254eaee8da52af615bda99cdde03666813c6f61d3dfc616a82dd"
+    },
+    {
+      "seq": 35,
+      "id": "6dfe4f66-f3d6-4ea1-bff2-69ee2c0ab409",
+      "at": "2026-09-03T06:42:29.450Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "3cc2203ab1c99405ce819f255524ce198b9599d5d82c1e928a5ca946a98841a8",
+      "fileHash": "b35555d326c08cedcbac0c0b9d5581502732595e83e45b9560d544daf44d1022"
+    },
+    {
+      "seq": 36,
+      "id": "0eabb511-3bed-4590-84f6-f481dc3935ec",
+      "at": "2026-09-03T06:42:29.499Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "b29011a60fee0ab21c78f8d50aa93d32c4743d4cf30e3ff2f799f12d2d282a57",
+      "fileHash": "cde29b9cb3c784310684296ea19ad0d1f2e360f96d40a410f0197f13244c9b35"
+    },
+    {
+      "seq": 37,
+      "id": "7a85f8a2-553a-4a19-8861-0d6fb83ea7a3",
+      "at": "2026-09-03T06:42:52.458Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S02:verification:pending->verified",
+      "slice": "S02",
+      "hash": "723b7c92207e009bfca84bc2db3454406170d4cf5b04322138515e34c4a94a75",
+      "oracle": "a29da33b3d15d9ed84e559156b8eb3b4805cf14f56b4131847c457f5c7de8f6d",
+      "evidence": "6093de9a83283cd634a2a1508b0df11dbbbec70fd8501c6be9d6b6acac3d7db8",
+      "fileHash": "787be6add4f056f44a7d1a92fbd3d57fc34ab9328614305f8900532aa5a59a2d"
+    },
+    {
+      "seq": 38,
+      "id": "1152b4cd-39ef-41c5-a3a0-e25550c57040",
+      "at": "2026-09-03T06:42:52.536Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:verification->research_update",
+      "slice": null,
+      "hash": "2d8d054b1c2485eaa653d4dac4cab4e6fb3940a9e36ad85e94b42590b1dc171b",
+      "fileHash": "49d3ad42e9fc0fddb276f0027613a657cf700c8ed9832297145b7f05a513b612"
+    },
+    {
+      "seq": 39,
+      "id": "1e6f6a27-08f3-43e0-a9cc-97ad5acc4d9f",
+      "at": "2026-09-03T06:42:52.582Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research_update->closed",
+      "slice": null,
+      "hash": "c237a62b7a3e4cd9c3e9769237ff4ab650ac012df46534b9f186fc4895e07e07",
+      "fileHash": "c4ea5696c7f524b10370a721f5e94962f8173cb43506f5efb182f4c2925dda09"
+    },
+    {
+      "seq": 40,
+      "id": "3b0fdc37-38e1-4ec0-a4b6-7b02fdc9baf6",
+      "at": "2026-09-03T06:42:52.633Z",
+      "actor": "verifier",
+      "command": "certify",
+      "transition": "certify:790140b1c2eab2c900cd10c2a091503b1b4f4d970d26e4dbcec6ccd095d43935",
+      "slice": null,
+      "hash": "97b5bd5bc9c1a018297b82933ea33ec222e428b359870682dda7db66f8ba0826",
+      "oracle": "790140b1c2eab2c900cd10c2a091503b1b4f4d970d26e4dbcec6ccd095d43935",
+      "fileHash": "9cf0e0a3b9e1e2eda55ca8115249ec20d17d98a943d24f2bb3484d347fdb0e08"
+    }
+  ],
+  "fileHash": "4e0426de99183ac78cafb176e394ca1a0fbf5e405470399f91f410624c6f1a1b"
+}
