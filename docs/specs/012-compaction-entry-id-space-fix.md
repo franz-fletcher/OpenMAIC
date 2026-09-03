@@ -1,6 +1,6 @@
 # Batch 012 spec: compaction-entry-id-space-fix
 
-Spec status: verification
+Spec status: closed
 
 ## Problem Statement
 
@@ -110,3 +110,16 @@ Gates (cwd: repo root).
 
 - Program acceptance after this batch: session `13dd023b` resumes, the card streams at the next model boundary, the tree validates on every subsequent resume, and the build reaches 50 pages for `check-stage-completion.js`.
 - Batch 011 certification and this batch's certification are both held until that live observation passes.
+
+## Research Update (Stage 4)
+
+Delivered evidence: implementation commit `ee83da24` (S01 resolver plus S02 script), JSDoc contract commit, and the checkJs type-clean commit. Verification round: both slices verified with fresh gates. Full suite at mark time: 7477 passed, 1 failed, 31 skipped. The single failure remains `runner-skills-registration`, proven pre-existing.
+
+Deviations and lessons, all resolved in favor of the verified truth:
+
+- Round 1 shipped the wrong pairing: the resolver received `messagesToSummarize[0]`, the first SUMMARIZED message, while the durable side supplied the first KEPT message. The comparison would have mismatched on every production compaction and disabled compaction fail-closed. The synthetic-resolver tests could not see it. Round 2 passes the mirror kept message, resolved from the branch by `preparation.value.firstKeptEntryId`, and pins kept-vs-kept agreement with two independent id counters in the safety suite.
+- The seam widened the recorded resolver type to `(mirrorFirstKeptEntryId: string, mirrorKeptMessage: AgentMessage) => Promise<string>`. The spec's one-argument sketch is superseded; the ledger postcondition for `CompactionRuntimeOptions` records the interface, not the member text.
+- `main` in the repair script keeps a captured signature of `(argv)` even with JSDoc `@param {string[]} argv` and `@returns {Promise<number>}`: the diff capture does not read JSDoc types from plain JS. The typed contract is documented in the file header. This is a record artifact, not a behavior deviation.
+- The repair script needed full JSDoc typing because root tsconfig checks JS files. Thirteen implicit-any errors surfaced only at the verification gate run, not during implementation, because the implementer's gate loop ran before the script entered the tsc graph. The gate list already caught it.
+
+Live repair pending: the orchestrator runs `scripts/repair-compaction-entry.js` in dry-run against session `13dd023b-322f-4631-8a7d-d46fc26011e2`, reviews the plan, applies it, and resumes the build. Certification of batches 011 and 012 is held until the live card renders and the tree validates on the next resume.

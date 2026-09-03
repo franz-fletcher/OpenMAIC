@@ -4,12 +4,12 @@
   "spec": {
     "reference": "docs/specs/012-compaction-entry-id-space-fix.md",
     "title": "Batch 012 spec: compaction-entry-id-space-fix",
-    "hash": "b8be37478dda26697258c493ebaf048a707ca7a63f46eb2baec809882463b655"
+    "hash": "c4e8cc4e8ac5572fd0562892329159fdb9d38e0b11e7752c96e97c576de0f386"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "verification",
+  "stage": "closed",
   "retry": {
     "count": 0,
     "max": 5,
@@ -90,8 +90,44 @@
         "at": "2026-09-03T13:15:36.188Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "verified",
+        "hash": "79c48b4c304d084570b086ae9f586540edc54d1a2bc26b095014bf31ce222928",
+        "actor": "verifier",
+        "at": "2026-09-03T13:47:50.117Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G01",
+              "shell": "/bin/sh",
+              "cwd": ".",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/compaction-runtime.test.ts \u001b[2m(\u001b[22m\u001b[2m16 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 131\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m16 passed\u001b[39m\u001b[22m\u001b[90m (16)\u001b[39m\n\u001b[2m   Start at \u001b[22m 01:47:44\n\u001b[2m   Duration \u001b[22m 346ms\u001b[2m (transform 43ms, setup 15ms, import 136ms, tests 131ms, environment 0ms)\u001b[22m\n\nWarning: A vi.mock(\"@/lib/ai/llm\") call in \"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC/tests/agent-runtime/compaction-runtime.test.ts\" is not at the top level of the module. Although it appears nested, it will be hoisted and executed before any tests run. Move it to the top level to reflect its actual execution order. This will become an error in a future version.\nSee: https://vitest.dev/guide/mocking/modules#how-it-works\nWarning: A vi.mock(\"@/lib/server/resolve-model\") call in \"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC/tests/agent-runtime/compaction-runtime.test.ts\" is not at the top level of the module. Although it appears nested, it will be hoisted and executed before any tests run. Move it to the top level to reflect its actual execution order. This will become an error in a future version.\nSee: https://vitest.dev/guide/mocking/modules#how-it-works\n",
+              "passed": true
+            },
+            {
+              "id": "G02",
+              "shell": "/bin/sh",
+              "cwd": ".",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/compaction-safety.test.ts \u001b[2m(\u001b[22m\u001b[2m9 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 28\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m9 passed\u001b[39m\u001b[22m\u001b[90m (9)\u001b[39m\n\u001b[2m   Start at \u001b[22m 01:47:45\n\u001b[2m   Duration \u001b[22m 500ms\u001b[2m (transform 239ms, setup 16ms, import 392ms, tests 28ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G03",
+              "shell": "/bin/sh",
+              "cwd": ".",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "Durable compaction rows carry an id from the durable space; mirror rows keep mirror ids; divergence and resolver failure write no row and record a failure.",
       "gates": [
@@ -99,7 +135,7 @@
           "id": "G01",
           "check": "npx vitest run tests/agent-runtime/compaction-runtime.test.ts",
           "expect": "passed",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G01\",\"shell\":\"/bin/sh\",\"cwd\":\".\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/agent-runtime/compaction-runtime.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m16 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 131\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m16 passed\\u001b[39m\\u001b[22m\\u001b[90m (16)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 01:47:44\\n\\u001b[2m   Duration \\u001b[22m 346ms\\u001b[2m (transform 43ms, setup 15ms, import 136ms, tests 131ms, environment 0ms)\\u001b[22m\\n\\nWarning: A vi.mock(\\\"@/lib/ai/llm\\\") call in \\\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC/tests/agent-runtime/compaction-runtime.test.ts\\\" is not at the top level of the module. Although it appears nested, it will be hoisted and executed before any tests run. Move it to the top level to reflect its actual execution order. This will become an error in a future version.\\nSee: https://vitest.dev/guide/mocking/modules#how-it-works\\nWarning: A vi.mock(\\\"@/lib/server/resolve-model\\\") call in \\\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC/tests/agent-runtime/compaction-runtime.test.ts\\\" is not at the top level of the module. Although it appears nested, it will be hoisted and executed before any tests run. Move it to the top level to reflect its actual execution order. This will become an error in a future version.\\nSee: https://vitest.dev/guide/mocking/modules#how-it-works\\n\",\"passed\":true}",
           "cwd": ".",
           "type": "unit"
         },
@@ -107,7 +143,7 @@
           "id": "G02",
           "check": "npx vitest run tests/agent-runtime/compaction-safety.test.ts",
           "expect": "passed",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G02\",\"shell\":\"/bin/sh\",\"cwd\":\".\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/agent-runtime/compaction-safety.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m9 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 28\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m9 passed\\u001b[39m\\u001b[22m\\u001b[90m (9)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 01:47:45\\n\\u001b[2m   Duration \\u001b[22m 500ms\\u001b[2m (transform 239ms, setup 16ms, import 392ms, tests 28ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}",
           "cwd": ".",
           "type": "integration"
         },
@@ -115,7 +151,7 @@
           "id": "G03",
           "check": "npx tsc --noEmit && echo TSC_OK",
           "expect": "TSC_OK",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G03\",\"shell\":\"/bin/sh\",\"cwd\":\".\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}",
           "cwd": ".",
           "type": "smoke"
         }
@@ -161,9 +197,9 @@
       },
       "verification": {
         "status": "verified",
-        "hash": "c8301b87ef2fd61ff142926785f0a6b0a06cc69836c4b0a20d3ecfa6987111b3",
+        "hash": "a9dc0f144a71b7295ad3ff5b1b4298d9e1f84afc5f6e115d824f3740c99147f8",
         "actor": "verifier",
-        "at": "2026-09-03T13:41:55.123Z",
+        "at": "2026-09-03T13:47:50.796Z",
         "evidence": {
           "gates": [
             {
@@ -173,7 +209,7 @@
               "exit": 0,
               "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
               "pathCount": 30,
-              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/scripts/repair-compaction-entry.test.ts \u001b[2m(\u001b[22m\u001b[2m5 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 106\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m5 passed\u001b[39m\u001b[22m\u001b[90m (5)\u001b[39m\n\u001b[2m   Start at \u001b[22m 01:41:54\n\u001b[2m   Duration \u001b[22m 202ms\u001b[2m (transform 27ms, setup 16ms, import 17ms, tests 106ms, environment 0ms)\u001b[22m\n\n",
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/scripts/repair-compaction-entry.test.ts \u001b[2m(\u001b[22m\u001b[2m5 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 99\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m5 passed\u001b[39m\u001b[22m\u001b[90m (5)\u001b[39m\n\u001b[2m   Start at \u001b[22m 01:47:50\n\u001b[2m   Duration \u001b[22m 194ms\u001b[2m (transform 22ms, setup 14ms, import 16ms, tests 99ms, environment 0ms)\u001b[22m\n\n",
               "passed": true
             },
             {
@@ -195,7 +231,7 @@
           "id": "G01",
           "check": "npx vitest run tests/scripts/repair-compaction-entry.test.ts",
           "expect": "passed",
-          "evidence": "{\"id\":\"G01\",\"shell\":\"/bin/sh\",\"cwd\":\".\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/scripts/repair-compaction-entry.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m5 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 106\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m5 passed\\u001b[39m\\u001b[22m\\u001b[90m (5)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 01:41:54\\n\\u001b[2m   Duration \\u001b[22m 202ms\\u001b[2m (transform 27ms, setup 16ms, import 17ms, tests 106ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}",
+          "evidence": "{\"id\":\"G01\",\"shell\":\"/bin/sh\",\"cwd\":\".\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/scripts/repair-compaction-entry.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m5 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 99\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m5 passed\\u001b[39m\\u001b[22m\\u001b[90m (5)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 01:47:50\\n\\u001b[2m   Duration \\u001b[22m 194ms\\u001b[2m (transform 22ms, setup 14ms, import 16ms, tests 99ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}",
           "cwd": ".",
           "type": "unit"
         },
@@ -536,7 +572,66 @@
       "oracle": "00e857cdd92f494595c610b39921cc7c6185ca556d9604a25358200acf393879",
       "evidence": "c32cae7cb8630644d73f7990d0d4fdcc435a7fd48667e31c1764f1a6d9f523a1",
       "fileHash": "d7bdaa2449220bec0b428f88243c9e0fa15793aa72c5aab3ac2e5dcbb067034a"
+    },
+    {
+      "seq": 30,
+      "id": "56fdab14-b6b9-4925-a53a-82ab0f1d6078",
+      "at": "2026-09-03T13:47:50.117Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S01:verification:pending->verified",
+      "slice": "S01",
+      "hash": "ea4a7c58271eccf4406cd7d3db8759742fc992bd18d04104f2f51bfdbc6d6194",
+      "oracle": "8bc64171d084082038f91bc133f03c03a2313ec4a9a8acaa3da0aae1f0302afc",
+      "evidence": "7fb1535c24dcbef71bd1936723aee1305ffd74658a094eda24e08a87d22c3d8c",
+      "fileHash": "67ec381242c6599b5c01eca0d5c8558aeb2a2082a0c83e8665b8b53057c527af"
+    },
+    {
+      "seq": 31,
+      "id": "0491b75e-e42d-49a1-8da3-ce81cf5dab93",
+      "at": "2026-09-03T13:47:50.796Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S02:verification:pending->verified",
+      "slice": "S02",
+      "hash": "14d23f62c897af1ce180eb47e458e99c06fe51ca8d4bdefca5a2068fa3827b7b",
+      "oracle": "34e4547e2c8d401e587bfe0192786a8f4136415a9374bcc2f71f017efe748fe1",
+      "evidence": "8772602fbac5b44b710e2aabedac7696903af427d8e8f26d64e34d0b624660df",
+      "fileHash": "484ba428b7a684e2642f6c646d74209393d9295bab7d1f10fe22af3c717049e9"
+    },
+    {
+      "seq": 32,
+      "id": "556accd6-434d-4c1e-8318-e8e3f3e36f86",
+      "at": "2026-09-03T13:49:04.837Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:verification->research_update",
+      "slice": null,
+      "hash": "6b3681081542b79ba94f7b48c182de2803d3577c56d2b175d8db78c17fe1ab7f",
+      "fileHash": "ced4786567715012a33b17f8a1faa99e3bbd332a9f6bca382fb62de95b372ed9"
+    },
+    {
+      "seq": 33,
+      "id": "94cd6f0b-4cb6-42bb-a6f1-c0f217556f0e",
+      "at": "2026-09-03T13:51:32.037Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:respecify:stage 4 research update: delivered evidence, pairing defect fixed in round 2, record artifacts documented",
+      "slice": null,
+      "hash": "40232fa8200dc9a7942d939ad581fc64b63479c93ee90583f745e494777662ba",
+      "fileHash": "e88d271c5946db042fdf082063f1e44f21bdfb85b05f327a7f41aa3a0f450167"
+    },
+    {
+      "seq": 34,
+      "id": "a562bcc0-91d6-4de9-9ddb-267959d01bed",
+      "at": "2026-09-03T13:51:32.154Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research_update->closed",
+      "slice": null,
+      "hash": "2fb4e9f1477277c3cdcd28eb35cd4f9f5020fd38f728b41c84da2a474ef2ebab",
+      "fileHash": "a8147e0d7f9b60816fbf336dfc6971af436b4bd697975417632835323edeeafc"
     }
   ],
-  "fileHash": "67ec381242c6599b5c01eca0d5c8558aeb2a2082a0c83e8665b8b53057c527af"
+  "fileHash": "5da5d85597c2bd079face296835a4a4073226b9b297adbc267baa7d4c0b5507e"
 }
