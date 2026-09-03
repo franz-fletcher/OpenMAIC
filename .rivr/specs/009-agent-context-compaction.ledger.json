@@ -1,0 +1,976 @@
+{
+  "schema_version": 2,
+  "$schema": "https://rivr.dev/schemas/ledger/v2",
+  "spec": {
+    "reference": "docs/specs/009-agent-context-compaction.md",
+    "title": "Batch 009 spec: agent-context-compaction",
+    "hash": "093a1c69684733b1c54b5a896060060c33335a66e50a01369470ff0fc5d5dbcb"
+  },
+  "tracker": {
+    "mode": "none"
+  },
+  "stage": "closed",
+  "retry": {
+    "count": 0,
+    "max": 5,
+    "consecutive_same_cause": 0,
+    "escalate_at": 3
+  },
+  "slices": [
+    {
+      "id": "S01",
+      "title": "Compaction trigger policy",
+      "intent": "New compaction.ts module resolves settings with floor policy from the parsed env flags and measures assembled driver context with the pi estimator, falling back to per-message estimates on zero or absent usage anchors. Disabled deployments see zero behavior change. User story 2.",
+      "user_stories": [
+        1
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/server/agent-runtime/compaction.ts",
+          "symbols": [
+            {
+              "name": "resolveCompactionSettings",
+              "kind": "function",
+              "expectation": "Resolves enabled, reserveTokens, keepRecentTokens with the floor policy; explicit overrides win.",
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(contextWindow: number, overrides?: Partial<CompactionSettings>): CompactionSettings"
+              },
+              "before": {
+                "exists": false
+              }
+            },
+            {
+              "name": "measureDriverContextTokens",
+              "kind": "function",
+              "expectation": "Returns the pi estimate on a nonzero usage anchor, else the per-message fallback sum.",
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(messages: AgentMessage[]): number"
+              },
+              "before": {
+                "exists": false
+              }
+            }
+          ]
+        }
+      ],
+      "riskTier": 3,
+      "uuid": "753a3924-2fdb-4749-aed9-06879326bda4",
+      "impl": {
+        "status": "ready_for_verification",
+        "hash": "60f29d7a507d936a6805c994d327b5fae5bab67f08955e7c78cfc829a0231b2c",
+        "actor": "implementer",
+        "at": "2026-09-03T02:46:34.940Z"
+      },
+      "verification": {
+        "status": "verified",
+        "hash": "f6bf432f4d1cf37d7c1511006506532f17bdbd3a62cf72834b2d5bf17715e910",
+        "actor": "verifier",
+        "at": "2026-09-03T03:51:30.027Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G01",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/compaction-trigger.test.ts \u001b[2m(\u001b[22m\u001b[2m16 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 3\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m16 passed\u001b[39m\u001b[22m\u001b[90m (16)\u001b[39m\n\u001b[2m   Start at \u001b[22m 15:51:23\n\u001b[2m   Duration \u001b[22m 184ms\u001b[2m (transform 22ms, setup 15ms, import 111ms, tests 3ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G02",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/runner-contract.test.ts \u001b[2m(\u001b[22m\u001b[2m2 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 1\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m2 passed\u001b[39m\u001b[22m\u001b[90m (2)\u001b[39m\n\u001b[2m   Start at \u001b[22m 15:51:24\n\u001b[2m   Duration \u001b[22m 1.02s\u001b[2m (transform 482ms, setup 13ms, import 949ms, tests 1ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G03",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/agent-driver-model.test.ts \u001b[2m(\u001b[22m\u001b[2m13 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 64\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m13 passed\u001b[39m\u001b[22m\u001b[90m (13)\u001b[39m\n\u001b[2m   Start at \u001b[22m 15:51:25\n\u001b[2m   Duration \u001b[22m 153ms\u001b[2m (transform 43ms, setup 14ms, import 19ms, tests 64ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G04",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        }
+      },
+      "expectation": "No overrides keeps the flag OFF and nothing triggers. Explicit values win over floors (reserve min 2048 or 20 percent of window, keep recent min 2048 or 25 percent, capped by pi defaults). The zero-usage tail shape counts every message. Below window minus reserve never triggers.",
+      "gates": [
+        {
+          "id": "G01",
+          "type": "unit",
+          "check": "npx vitest run tests/agent-runtime/compaction-trigger.test.ts",
+          "expect": "passed",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G01\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/agent-runtime/compaction-trigger.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m16 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 3\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m16 passed\\u001b[39m\\u001b[22m\\u001b[90m (16)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 15:51:23\\n\\u001b[2m   Duration \\u001b[22m 184ms\\u001b[2m (transform 22ms, setup 15ms, import 111ms, tests 3ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}"
+        },
+        {
+          "id": "G02",
+          "type": "unit",
+          "check": "npx vitest run tests/agent-runtime/runner-contract.test.ts",
+          "expect": "passed",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G02\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/agent-runtime/runner-contract.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m2 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 1\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m2 passed\\u001b[39m\\u001b[22m\\u001b[90m (2)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 15:51:24\\n\\u001b[2m   Duration \\u001b[22m 1.02s\\u001b[2m (transform 482ms, setup 13ms, import 949ms, tests 1ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}"
+        },
+        {
+          "id": "G03",
+          "type": "integration",
+          "check": "npx vitest run tests/agent-runtime/agent-driver-model.test.ts",
+          "expect": "passed",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G03\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/agent-runtime/agent-driver-model.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m13 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 64\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m13 passed\\u001b[39m\\u001b[22m\\u001b[90m (13)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 15:51:25\\n\\u001b[2m   Duration \\u001b[22m 153ms\\u001b[2m (transform 43ms, setup 14ms, import 19ms, tests 64ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}"
+        },
+        {
+          "id": "G04",
+          "type": "smoke",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G04\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}"
+        }
+      ]
+    },
+    {
+      "id": "S02",
+      "title": "Summarizer and entry writer contract",
+      "intent": "generateCompactionSummary calls callLLM with the new provider-neutral stage maic-agent-compaction (no fallback; missing route throws). LLM_STAGES gains the stage and the pinned list test is re-pinned in the same change. The written entry shape is what the shipped reader consumes. User story 3.",
+      "user_stories": [
+        1
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/server/agent-runtime/compaction.ts",
+          "symbols": [
+            {
+              "name": "generateCompactionSummary",
+              "kind": "function",
+              "expectation": "Calls callLLM at stage maic-agent-compaction via resolveModel with no fallback; never imports generateText or streamText.",
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(messages: AgentMessage[], focus: string, maxOutputTokens: number, signal?: AbortSignal): Promise<string>"
+              },
+              "before": {
+                "exists": false
+              }
+            }
+          ]
+        },
+        {
+          "path": "lib/server/model-routes.ts",
+          "symbols": [
+            {
+              "name": "LLM_STAGES",
+              "kind": "variable",
+              "expectation": "Includes maic-agent-compaction; pinned list test updated in the same change.",
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "before": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "INSPECTED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 3,
+      "uuid": "4ae89594-e433-497f-a62c-e08b07d8575c",
+      "impl": {
+        "status": "ready_for_verification",
+        "hash": "f34497ec135a29dfe6613eb9a1fb3f01219f329835598543651288ad893a7290",
+        "actor": "implementer",
+        "at": "2026-09-03T02:55:22.318Z"
+      },
+      "verification": {
+        "status": "verified",
+        "hash": "562e95484a7f61ee98293c4b04f1a75f06deee9e2521aa36ff0111382737d677",
+        "actor": "verifier",
+        "at": "2026-09-03T03:51:41.208Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G01",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/compaction-summary.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 94\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m3 passed\u001b[39m\u001b[22m\u001b[90m (3)\u001b[39m\n\u001b[2m   Start at \u001b[22m 15:51:36\n\u001b[2m   Duration \u001b[22m 173ms\u001b[2m (transform 22ms, setup 12ms, import 11ms, tests 94ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G02",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/server/model-routes.test.ts \u001b[2m(\u001b[22m\u001b[2m30 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 19\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m30 passed\u001b[39m\u001b[22m\u001b[90m (30)\u001b[39m\n\u001b[2m   Start at \u001b[22m 15:51:36\n\u001b[2m   Duration \u001b[22m 112ms\u001b[2m (transform 35ms, setup 13ms, import 24ms, tests 19ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G03",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/entry-tree-storage.test.ts \u001b[2m(\u001b[22m\u001b[2m7 tests\u001b[22m\u001b[2m | \u001b[22m\u001b[33m3 skipped\u001b[39m\u001b[2m)\u001b[22m\u001b[32m 6\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m4 passed\u001b[39m\u001b[22m\u001b[2m | \u001b[22m\u001b[33m3 skipped\u001b[39m\u001b[90m (7)\u001b[39m\n\u001b[2m   Start at \u001b[22m 15:51:37\n\u001b[2m   Duration \u001b[22m 400ms\u001b[2m (transform 200ms, setup 14ms, import 326ms, tests 6ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G04",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        }
+      },
+      "expectation": "A mocked callLLM returns the summary text to the caller. The stage appears once in LLM_STAGES with no vendor term. An appendCompaction-shaped entry passes loadSessionEntryHistory on reload. Neutrality debt table untouched; lint entry guard green.",
+      "gates": [
+        {
+          "id": "G01",
+          "type": "unit",
+          "check": "npx vitest run tests/agent-runtime/compaction-summary.test.ts",
+          "expect": "passed",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G01\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/agent-runtime/compaction-summary.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m3 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 94\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m3 passed\\u001b[39m\\u001b[22m\\u001b[90m (3)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 15:51:36\\n\\u001b[2m   Duration \\u001b[22m 173ms\\u001b[2m (transform 22ms, setup 12ms, import 11ms, tests 94ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}"
+        },
+        {
+          "id": "G02",
+          "type": "integration",
+          "check": "npx vitest run tests/server/model-routes.test.ts",
+          "expect": "passed",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G02\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/server/model-routes.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m30 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 19\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m30 passed\\u001b[39m\\u001b[22m\\u001b[90m (30)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 15:51:36\\n\\u001b[2m   Duration \\u001b[22m 112ms\\u001b[2m (transform 35ms, setup 13ms, import 24ms, tests 19ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}"
+        },
+        {
+          "id": "G03",
+          "type": "unit",
+          "check": "npx vitest run tests/agent-runtime/entry-tree-storage.test.ts",
+          "expect": "passed",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G03\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/agent-runtime/entry-tree-storage.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m7 tests\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[33m3 skipped\\u001b[39m\\u001b[2m)\\u001b[22m\\u001b[32m 6\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m4 passed\\u001b[39m\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[33m3 skipped\\u001b[39m\\u001b[90m (7)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 15:51:37\\n\\u001b[2m   Duration \\u001b[22m 400ms\\u001b[2m (transform 200ms, setup 14ms, import 326ms, tests 6ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}"
+        },
+        {
+          "id": "G04",
+          "type": "smoke",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G04\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}"
+        }
+      ]
+    },
+    {
+      "id": "S03",
+      "title": "transformContext wiring and read path",
+      "intent": "makeCompactionRuntime ports the director runtime shape: disabled returns a pass-through; enabled measures, triggers, cuts at keepRecentTokens, summarizes, appends through the injected durable sink, and returns the post-compaction view without mutating inputs. runSession wires it into buildAgent only when enabled, fenced through writeRequiredSessionEntry; disabled bytes unchanged. User stories 1 and 2.",
+      "user_stories": [
+        1
+      ],
+      "blocked_by": [
+        "S01",
+        "S02"
+      ],
+      "targets": [
+        {
+          "path": "lib/server/agent-runtime/compaction.ts",
+          "symbols": [
+            {
+              "name": "makeCompactionRuntime",
+              "kind": "function",
+              "expectation": "Returns { transformContext, getTrace, dispose }; pass-through when disabled; full pipeline with injected summarizer and append sink when enabled.",
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(opts: CompactionRuntimeOptions): CompactionRuntime"
+              },
+              "before": {
+                "exists": false
+              }
+            }
+          ]
+        },
+        {
+          "path": "lib/server/agent-runtime/runner.ts",
+          "symbols": [
+            {
+              "name": "runSession",
+              "kind": "function",
+              "expectation": "Signature unchanged; passes transformContext to buildAgent only when compaction is enabled and configured; durable append fenced through writeRequiredSessionEntry.",
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(ctx: RunContext, meta: ClaimedAgentSession): Promise<void>"
+              },
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(ctx: RunContext, meta: ClaimedAgentSession): Promise<void>"
+              },
+              "postcondition_quality": "INSPECTED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 3,
+      "uuid": "1d77706b-2921-4bf6-a459-eac0d700d163",
+      "impl": {
+        "status": "ready_for_verification",
+        "hash": "a73c426615ea716f5f08b5009b164910f14d50dd602114ce8a515fc3146417cf",
+        "actor": "implementer",
+        "at": "2026-09-03T03:30:15.194Z"
+      },
+      "verification": {
+        "status": "verified",
+        "hash": "f59c030c8d9c3efcabbaf8be8d82945e2b380ba217811fcbc7e387df1072d03f",
+        "actor": "verifier",
+        "at": "2026-09-03T03:51:52.411Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G01",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/compaction-runtime.test.ts \u001b[2m(\u001b[22m\u001b[2m8 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 16\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m8 passed\u001b[39m\u001b[22m\u001b[90m (8)\u001b[39m\n\u001b[2m   Start at \u001b[22m 15:51:48\n\u001b[2m   Duration \u001b[22m 195ms\u001b[2m (transform 29ms, setup 14ms, import 109ms, tests 16ms, environment 0ms)\u001b[22m\n\nWarning: A vi.mock(\"@/lib/ai/llm\") call in \"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC/tests/agent-runtime/compaction-runtime.test.ts\" is not at the top level of the module. Although it appears nested, it will be hoisted and executed before any tests run. Move it to the top level to reflect its actual execution order. This will become an error in a future version.\nSee: https://vitest.dev/guide/mocking/modules#how-it-works\nWarning: A vi.mock(\"@/lib/server/resolve-model\") call in \"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC/tests/agent-runtime/compaction-runtime.test.ts\" is not at the top level of the module. Although it appears nested, it will be hoisted and executed before any tests run. Move it to the top level to reflect its actual execution order. This will become an error in a future version.\nSee: https://vitest.dev/guide/mocking/modules#how-it-works\n",
+              "passed": true
+            },
+            {
+              "id": "G02",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/entry-tree-storage.test.ts \u001b[2m(\u001b[22m\u001b[2m7 tests\u001b[22m\u001b[2m | \u001b[22m\u001b[33m3 skipped\u001b[39m\u001b[2m)\u001b[22m\u001b[32m 5\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m4 passed\u001b[39m\u001b[22m\u001b[2m | \u001b[22m\u001b[33m3 skipped\u001b[39m\u001b[90m (7)\u001b[39m\n\u001b[2m   Start at \u001b[22m 15:51:48\n\u001b[2m   Duration \u001b[22m 381ms\u001b[2m (transform 180ms, setup 13ms, import 307ms, tests 5ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G03",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        }
+      },
+      "expectation": "Hermetic round trip: written entry reloads through loadSessionEntryHistory; context shrinks to summary plus kept tail; cursorMessages stays full. Driver sees the post-compaction view; cursors address raw entries. Disabled returns the identical array by reference and appends nothing.",
+      "gates": [
+        {
+          "id": "G01",
+          "type": "unit",
+          "check": "npx vitest run tests/agent-runtime/compaction-runtime.test.ts",
+          "expect": "passed",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G01\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/agent-runtime/compaction-runtime.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m8 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 16\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m8 passed\\u001b[39m\\u001b[22m\\u001b[90m (8)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 15:51:48\\n\\u001b[2m   Duration \\u001b[22m 195ms\\u001b[2m (transform 29ms, setup 14ms, import 109ms, tests 16ms, environment 0ms)\\u001b[22m\\n\\nWarning: A vi.mock(\\\"@/lib/ai/llm\\\") call in \\\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC/tests/agent-runtime/compaction-runtime.test.ts\\\" is not at the top level of the module. Although it appears nested, it will be hoisted and executed before any tests run. Move it to the top level to reflect its actual execution order. This will become an error in a future version.\\nSee: https://vitest.dev/guide/mocking/modules#how-it-works\\nWarning: A vi.mock(\\\"@/lib/server/resolve-model\\\") call in \\\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC/tests/agent-runtime/compaction-runtime.test.ts\\\" is not at the top level of the module. Although it appears nested, it will be hoisted and executed before any tests run. Move it to the top level to reflect its actual execution order. This will become an error in a future version.\\nSee: https://vitest.dev/guide/mocking/modules#how-it-works\\n\",\"passed\":true}"
+        },
+        {
+          "id": "G02",
+          "type": "integration",
+          "check": "npx vitest run tests/agent-runtime/entry-tree-storage.test.ts",
+          "expect": "passed",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G02\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/agent-runtime/entry-tree-storage.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m7 tests\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[33m3 skipped\\u001b[39m\\u001b[2m)\\u001b[22m\\u001b[32m 5\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m4 passed\\u001b[39m\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[33m3 skipped\\u001b[39m\\u001b[90m (7)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 15:51:48\\n\\u001b[2m   Duration \\u001b[22m 381ms\\u001b[2m (transform 180ms, setup 13ms, import 307ms, tests 5ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}"
+        },
+        {
+          "id": "G03",
+          "type": "smoke",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G03\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}"
+        }
+      ]
+    },
+    {
+      "id": "S04",
+      "title": "Compaction safety and observability",
+      "intent": "One durable trace line per compaction with before and after token counts and summary length. Failures record to getTrace().failures, return incoming messages unchanged, and append nothing. transformContext runs only at model boundaries, never mid tool call. Rejection paths of loadSessionEntryHistory stay byte identical. User stories 4 and 5.",
+      "user_stories": [
+        1
+      ],
+      "blocked_by": [
+        "S03"
+      ],
+      "targets": [
+        {
+          "path": "lib/server/agent-runtime/compaction.ts",
+          "symbols": [
+            {
+              "name": "makeCompactionRuntime",
+              "kind": "function",
+              "expectation": "Unchanged signature; adds failure recording, trace emission, and no-write-on-failure behavior.",
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(opts: CompactionRuntimeOptions): CompactionRuntime"
+              },
+              "before": {
+                "exists": false
+              }
+            }
+          ]
+        },
+        {
+          "path": "lib/server/agent-runtime/entry-tree-storage.ts",
+          "symbols": [
+            {
+              "name": "loadSessionEntryHistory",
+              "kind": "function",
+              "expectation": "Unchanged behavior; first compaction coverage lands in its test file; rejection shapes stay identical.",
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  session: Session,\n  options: { sessionId: string; hasPriorRun: boolean },\n): Promise<SessionEntryHistory>"
+              },
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  session: Session,\n  options: { sessionId: string; hasPriorRun: boolean },\n): Promise<SessionEntryHistory>"
+              },
+              "postcondition_quality": "INSPECTED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 4,
+      "uuid": "2467107c-3e3c-4913-be9d-5f7f0d08bb40",
+      "impl": {
+        "status": "ready_for_verification",
+        "hash": "e15b1ce227cbfa6b8fe19787f681d19b9f7b89c4330aa7a4310bd2b49cad32f1",
+        "actor": "implementer",
+        "at": "2026-09-03T03:46:31.187Z"
+      },
+      "verification": {
+        "status": "verified",
+        "hash": "ded515d687f515e431800f8df6e68569868bb07e924f6856db78c76e147d9292",
+        "actor": "verifier",
+        "at": "2026-09-03T03:52:07.329Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G01",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/compaction-safety.test.ts \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 15\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m6 passed\u001b[39m\u001b[22m\u001b[90m (6)\u001b[39m\n\u001b[2m   Start at \u001b[22m 15:52:00\n\u001b[2m   Duration \u001b[22m 392ms\u001b[2m (transform 180ms, setup 14ms, import 306ms, tests 15ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G02",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/compaction-safety.test.ts \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m | \u001b[22m\u001b[33m4 skipped\u001b[39m\u001b[2m)\u001b[22m\u001b[32m 7\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m2 passed\u001b[39m\u001b[22m\u001b[2m | \u001b[22m\u001b[33m4 skipped\u001b[39m\u001b[90m (6)\u001b[39m\n\u001b[2m   Start at \u001b[22m 15:52:01\n\u001b[2m   Duration \u001b[22m 381ms\u001b[2m (transform 174ms, setup 14ms, import 301ms, tests 7ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G03",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/lint-llm-entry-guard.test.ts \u001b[2m(\u001b[22m\u001b[2m32 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 1469\u001b[2mms\u001b[22m\u001b[39m\n     \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m blocks the named import in every guarded path (.ts) \u001b[33m 874\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m32 passed\u001b[39m\u001b[22m\u001b[90m (32)\u001b[39m\n\u001b[2m   Start at \u001b[22m 15:52:02\n\u001b[2m   Duration \u001b[22m 1.64s\u001b[2m (transform 16ms, setup 12ms, import 98ms, tests 1.47s, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G04",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        }
+      },
+      "expectation": "Summarizer failure returns original messages and no tree write. A valid entry survives reload with same summary and kept tail. The trace line carries entry id and counts. Existing rejection paths unchanged.",
+      "gates": [
+        {
+          "id": "G01",
+          "type": "integration",
+          "check": "npx vitest run tests/agent-runtime/compaction-safety.test.ts",
+          "expect": "passed",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G01\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/agent-runtime/compaction-safety.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m6 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 15\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m6 passed\\u001b[39m\\u001b[22m\\u001b[90m (6)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 15:52:00\\n\\u001b[2m   Duration \\u001b[22m 392ms\\u001b[2m (transform 180ms, setup 14ms, import 306ms, tests 15ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}"
+        },
+        {
+          "id": "G02",
+          "type": "adversarial",
+          "check": "npx vitest run tests/agent-runtime/compaction-safety.test.ts -t \"summarizer failure\"",
+          "expect": "passed",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G02\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/agent-runtime/compaction-safety.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m6 tests\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[33m4 skipped\\u001b[39m\\u001b[2m)\\u001b[22m\\u001b[32m 7\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m2 passed\\u001b[39m\\u001b[22m\\u001b[2m | \\u001b[22m\\u001b[33m4 skipped\\u001b[39m\\u001b[90m (6)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 15:52:01\\n\\u001b[2m   Duration \\u001b[22m 381ms\\u001b[2m (transform 174ms, setup 14ms, import 301ms, tests 7ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}"
+        },
+        {
+          "id": "G03",
+          "type": "integration",
+          "check": "npx vitest run tests/lint-llm-entry-guard.test.ts",
+          "expect": "passed",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G03\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/lint-llm-entry-guard.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m32 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[33m 1469\\u001b[2mms\\u001b[22m\\u001b[39m\\n     \\u001b[33m\\u001b[2m✓\\u001b[22m\\u001b[39m blocks the named import in every guarded path (.ts) \\u001b[33m 874\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m32 passed\\u001b[39m\\u001b[22m\\u001b[90m (32)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 15:52:02\\n\\u001b[2m   Duration \\u001b[22m 1.64s\\u001b[2m (transform 16ms, setup 12ms, import 98ms, tests 1.47s, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}"
+        },
+        {
+          "id": "G04",
+          "type": "smoke",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "{\"id\":\"G04\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}"
+        }
+      ]
+    }
+  ],
+  "audit": [
+    {
+      "seq": 1,
+      "id": "674f80bc-1086-46ee-9749-59a99e7a6320",
+      "at": "2026-09-03T02:39:09.958Z",
+      "actor": "orchestrator",
+      "command": "init",
+      "transition": "spec-approved:docs/specs/009-agent-context-compaction.md",
+      "slice": null,
+      "hash": "633f9bf9dab525d4f4570251272f09a140f218f8ccbab21aab34363eac440fc7"
+    },
+    {
+      "seq": 2,
+      "id": "159ebab0-e256-411f-ac3c-4d125bfe388d",
+      "at": "2026-09-03T02:39:09.959Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect",
+      "slice": "S01",
+      "hash": "3ee72b6eca7be72dd87d4a7201a371cd4d0892efa15cfacec4452a6b1f6a064d",
+      "expectationHash": "091892007a486a6063aead29518deefe697c83556633057fb9fab0747db9fa66"
+    },
+    {
+      "seq": 3,
+      "id": "fc44eb32-056f-44d9-a258-edff35a80821",
+      "at": "2026-09-03T02:39:09.959Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect-symbol:lib/server/agent-runtime/compaction.ts::resolveCompactionSettings",
+      "slice": "S01",
+      "hash": "8e4f9979828b3b4a3cb348bd2202dda5df14c5bcdf71051d2e2a13dcabfd1dcb",
+      "expectationHash": "fe5632873c021c976ae1fe3f16e4ad26ed6cb6308c079778b78577a1a11d3741"
+    },
+    {
+      "seq": 4,
+      "id": "47a39f6d-58de-4589-963c-4335dfaf4d57",
+      "at": "2026-09-03T02:39:09.959Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect-symbol:lib/server/agent-runtime/compaction.ts::measureDriverContextTokens",
+      "slice": "S01",
+      "hash": "e7814a8f0407ab5c19ceecd931c9db0472ebc183aef79897845ea90757394c94",
+      "expectationHash": "a99239b9405c8dab757ce712186a3016502e642413dc3a094a4f9bc7055c81c3"
+    },
+    {
+      "seq": 5,
+      "id": "18231182-260d-40cf-9cb4-bd9f3e860ce0",
+      "at": "2026-09-03T02:39:09.959Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S02:expect",
+      "slice": "S02",
+      "hash": "25aa1fba75d3b03cc404ba26785ca4fff3fb070fe888120093bbb1fb9959c048",
+      "expectationHash": "b5e6e0778d001eadd1f25c6777dbcbb6e0604892e044bb65b716ff8edcb42d4e"
+    },
+    {
+      "seq": 6,
+      "id": "1fd394e9-560a-464e-b589-528eb4b8561a",
+      "at": "2026-09-03T02:39:09.959Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S02:expect-symbol:lib/server/agent-runtime/compaction.ts::generateCompactionSummary",
+      "slice": "S02",
+      "hash": "93cc7d00aa916b1676d46e55da062aefc1287081c7dd5c1dd5e612594a7d9142",
+      "expectationHash": "2286054d8d54e78cee13899372982db12710eec81494426cf068fd02915ed2d5"
+    },
+    {
+      "seq": 7,
+      "id": "5d0a0ac9-8a45-4668-b7ae-70ba9288690b",
+      "at": "2026-09-03T02:39:09.959Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S02:expect-symbol:lib/server/model-routes.ts::LLM_STAGES",
+      "slice": "S02",
+      "hash": "16107529002a63a77f2a642a1467eff1f88f21b28867a5f9aa0e4b94f4b15023",
+      "expectationHash": "0968377ea54cc9612a613a84ec6fa8a64dad620cbd0084c09b98baf1ee4a9f33"
+    },
+    {
+      "seq": 8,
+      "id": "9bb09e4b-8a78-4b86-903c-4dd6d396c7fd",
+      "at": "2026-09-03T02:39:09.959Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S03:expect",
+      "slice": "S03",
+      "hash": "a4e6caf449b4108a6aff5169dae2df202801c00ce8b024e1ce858748b8870a44",
+      "expectationHash": "e8acd391991bb319b64896b02deb2724516206ff0d2a97bb4e82fbc6b2586b2f"
+    },
+    {
+      "seq": 9,
+      "id": "517f47e7-5eb0-4ca7-9fe0-e3ec9fd92607",
+      "at": "2026-09-03T02:39:09.959Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S03:expect-symbol:lib/server/agent-runtime/compaction.ts::makeCompactionRuntime",
+      "slice": "S03",
+      "hash": "afb86510cc070d22c5dabf843267335d7a2dc9bae7dcb608b047927b0db8b108",
+      "expectationHash": "3151bda01fdd5e5a22e4ca1a69db22fd99cbd7e8aceb891dbe9cec57fcdeb481"
+    },
+    {
+      "seq": 10,
+      "id": "c94faf3e-c97d-4a57-b989-e64cf2e6293d",
+      "at": "2026-09-03T02:39:09.959Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S03:expect-symbol:lib/server/agent-runtime/runner.ts::runSession",
+      "slice": "S03",
+      "hash": "1d4138e1a95a2c227196c31739f1976e5e9c4e2f4ec07a04f7f0323a2eae8d7f",
+      "expectationHash": "f664092e4eda335a73c6d3ccfdf948f1e4c875567b9438e1251ac719d741cb5d"
+    },
+    {
+      "seq": 11,
+      "id": "4ddff3d4-9a1f-49d4-b042-25bd97db9c28",
+      "at": "2026-09-03T02:39:09.959Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S04:expect",
+      "slice": "S04",
+      "hash": "5b431b869e00b9aa1c8172ffe1c5a2676dcaf8f87f259b6d7488b82d4c3335f6",
+      "expectationHash": "7612ee33e7d21c904bc3f5f213eb62a0a00e62e6799fd6071e698d1f64880d05"
+    },
+    {
+      "seq": 12,
+      "id": "dd11ff6c-52de-446e-9166-e26cd86e7245",
+      "at": "2026-09-03T02:39:09.959Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S04:expect-symbol:lib/server/agent-runtime/compaction.ts::makeCompactionRuntime",
+      "slice": "S04",
+      "hash": "c494f77b46d6bad084fa7ab93f246c7dcb80e312b73b4ad5acb73b953e550d24",
+      "expectationHash": "d5d5003e11fff8bfcc4e3d52dcf32a75b41d8f605ad95b4487a1795741ff204d"
+    },
+    {
+      "seq": 13,
+      "id": "9e6c9a2e-8b31-4a2a-b22b-f1255c5844d5",
+      "at": "2026-09-03T02:39:09.959Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S04:expect-symbol:lib/server/agent-runtime/entry-tree-storage.ts::loadSessionEntryHistory",
+      "slice": "S04",
+      "hash": "c1d1f726c3a7fed0b115b84bb172f53d1672d374304ff17035a5884c0959d266",
+      "expectationHash": "3aa69ab4e884eca89f1e07e3ca842dd3842898c2c63d545399f7c55e0c99a6b5"
+    },
+    {
+      "seq": 14,
+      "id": "7128cf44-133c-4e3b-aff0-2ec22b386afd",
+      "at": "2026-09-03T02:39:09.959Z",
+      "actor": "orchestrator",
+      "command": "init_batch",
+      "transition": "batch-init:S01,S02,S03,S04",
+      "slice": null,
+      "hash": "0f67a472179839a956a22be554b1118dc9daa3481a575242e4f97b9eefe6fad7"
+    },
+    {
+      "seq": 15,
+      "id": "c14a95b1-6d9c-4941-b23e-ae56125e005a",
+      "at": "2026-09-03T02:40:21.910Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S01:capture",
+      "slice": "S01",
+      "hash": "7184140b92ab2d7d3a639e103bc2e8426e8a1ae94049fba1642e9086f41a25f3",
+      "fileHash": "2b0511f8429339181e70d133b3a7693291136c18c1980aeae394797d90bf42b6"
+    },
+    {
+      "seq": 16,
+      "id": "87cd2b6d-287a-4df9-9f96-77651675e335",
+      "at": "2026-09-03T02:40:21.964Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S02:capture",
+      "slice": "S02",
+      "hash": "cebeceedd60d49272e20b958a3e7ea5a03969985a93e53b28bd9b687e40c420a",
+      "fileHash": "563e0db9bdb207b03fca53a802647097ad40a503ae193d20a0e0cc9afa130df1"
+    },
+    {
+      "seq": 17,
+      "id": "bd19b6c0-a168-4938-bfe4-dbc51fb0842a",
+      "at": "2026-09-03T02:40:22.041Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S03:capture",
+      "slice": "S03",
+      "hash": "bcd97f4c2283c7f7aba35c0ffc0ab2deefa9ce5d8a00da9f81526ef1e245927b",
+      "fileHash": "f4723ca8a57d4a9b571eb8f151194b87a0ce00412ed4f30e18eb6b93c196db64"
+    },
+    {
+      "seq": 18,
+      "id": "8e99b59e-13d3-47ee-9c0e-05ea4c7c0f42",
+      "at": "2026-09-03T02:40:22.092Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S04:capture",
+      "slice": "S04",
+      "hash": "1393a9ab3d03a0fa8b1a4630ae808476a30a3d2148e045140b731ef63bc4550d",
+      "fileHash": "9491eb5a891dfb8e79cd1f8dac7f12cfc952985ac45b9e2be4285bc496e524c1"
+    },
+    {
+      "seq": 19,
+      "id": "af386230-f83c-424d-98fd-d37937e3bbe9",
+      "at": "2026-09-03T02:40:44.495Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S02:postcondition:lib/server/model-routes.ts::LLM_STAGES",
+      "slice": "S02",
+      "hash": "e99e759df4734ee1b2e9f63ed201ef2b04cf8010a88a87ca0e9687853a08eda6",
+      "fileHash": "2602cf75d8337eb0c41ed98b75c24093391b16fdccfa830d19f1b3a73f2c9850"
+    },
+    {
+      "seq": 20,
+      "id": "2cd7c80b-76f7-4678-ac34-e324633faffe",
+      "at": "2026-09-03T02:40:44.544Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S03:postcondition:lib/server/agent-runtime/runner.ts::runSession",
+      "slice": "S03",
+      "hash": "bda8207f02171b10104560c9e31b8190da9acf997836a6dbf6a277efccd18c1b",
+      "fileHash": "f949be8446d277b6b72198f6e22d2684119ec305246c625cf450924fe23c13ee"
+    },
+    {
+      "seq": 21,
+      "id": "84ad8386-443c-4fb2-b89c-eab52579b4f8",
+      "at": "2026-09-03T02:40:44.591Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S04:postcondition:lib/server/agent-runtime/entry-tree-storage.ts::loadSessionEntryHistory",
+      "slice": "S04",
+      "hash": "ca9dddc11d6a7375dd937a95c42be5cb215a8d07ad49770c7c6abac4f4eb5886",
+      "fileHash": "9daa8caa0ddf95c45b35a7a523c4af938ae08fc07d8cf4c66ca767205496f8fb"
+    },
+    {
+      "seq": 22,
+      "id": "c9158025-06e8-49d9-a274-dff6de4ddd3c",
+      "at": "2026-09-03T02:41:40.798Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "2a1a9b455c1dcd956d95665d01e8adb6bc77a67a803c17cdc28ca10e55ffd98a",
+      "fileHash": "f46b40dc738d78467953e0686375ae512c9bbdcbb18f801150efdcc11bfbc7a1"
+    },
+    {
+      "seq": 23,
+      "id": "8fb41d9a-c5b3-4f44-8c68-286ff3e11955",
+      "at": "2026-09-03T02:46:34.940Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S01:impl:pending->ready_for_verification",
+      "slice": "S01",
+      "hash": "780d075e38da3aa8b4ece22f962a6e271dd3ea28254fab54e8dbadf78ab671b9",
+      "fileHash": "c0199b691cfab00c5600f9e479e81910ae13bad29b14f00ba55d76e72c8b9f65"
+    },
+    {
+      "seq": 24,
+      "id": "8272944d-a9e0-4780-b5cc-5690951f9805",
+      "at": "2026-09-03T02:55:22.319Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S02:impl:pending->ready_for_verification",
+      "slice": "S02",
+      "hash": "253f9db41a90a22f9e3ae254d9b29c58ff84300b2d90573a41b794f937199baa",
+      "fileHash": "f41fe33b4c026e96b24ae794df5ef6d5ed43c6e18eac4d99ceca50ae3e653d87"
+    },
+    {
+      "seq": 25,
+      "id": "d11a5a2f-fea7-4fa8-b309-347b4fbc3395",
+      "at": "2026-09-03T03:30:15.194Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S03:impl:pending->ready_for_verification",
+      "slice": "S03",
+      "hash": "e410d0a0c16f052a9335a5c302f4172b12a12a83811d973046bbfd2af7170ded",
+      "fileHash": "64338e467fd13505e43b2b44bc8eb98db4ade87b313750ba1f241351e45feb09"
+    },
+    {
+      "seq": 26,
+      "id": "63b4d07e-cb89-4253-89e1-d9791e197c47",
+      "at": "2026-09-03T03:46:31.187Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S04:impl:pending->ready_for_verification",
+      "slice": "S04",
+      "hash": "a2945ab175651b14602a6b53c5957a77d1cf418d2e3844fe9b64f4498eeb7024",
+      "fileHash": "b25fe6117360524c496407180272214b18cbe7451a640a0f0b789e02b7bf3c76"
+    },
+    {
+      "seq": 27,
+      "id": "c2801a59-1a10-4481-bcff-4a2a6eebfab3",
+      "at": "2026-09-03T03:47:45.716Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "db48462245f590226887472ea94a2d5efcc5aa8202eab4397ef4c2ec0967a8b4",
+      "fileHash": "99974231395e0f6ea85fdad08c85e68aa796f540160023a3257cf703d9448444"
+    },
+    {
+      "seq": 28,
+      "id": "0b634408-d50f-45de-a0a9-78a0c9cd82d9",
+      "at": "2026-09-03T03:51:30.027Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S01:verification:pending->verified",
+      "slice": "S01",
+      "hash": "bc12b0370c62ae8972c3fa3ff59c4411542770c9931195e9334dc4dddc1a0644",
+      "oracle": "01765ba96645b0e5df85ce8eea072fdf4e2f821498243164f2916ca902bafc49",
+      "evidence": "0b67210533861d33780b7c9aa457ef485cb6eac76e4f669650953118b13ff831",
+      "fileHash": "35c35352e9d2cb0b4578b17b80b6e90091a33e1e3a9d15d6804ffa79c47fc44e"
+    },
+    {
+      "seq": 29,
+      "id": "a317269f-82e5-4447-ba53-3f6edb8b219f",
+      "at": "2026-09-03T03:51:41.208Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S02:verification:pending->verified",
+      "slice": "S02",
+      "hash": "1c57de409d7b20424ec9390ecc72344e3849ffe9e7dbf5d50efeffff2c3acdc3",
+      "oracle": "042444a4d081637b702af33ffb490acb763755903fae0d0966bcbd05d6802ee9",
+      "evidence": "7f4f876359c9a7a9b79f241c77aa3ebeead5fd6a144a92732aeba025fc9d1365",
+      "fileHash": "fe282909b5a79bb2584060eaf3533dacdb2db39ddf322412f0a58db9a49986e6"
+    },
+    {
+      "seq": 30,
+      "id": "52d10881-876a-4811-a3e4-8988f6bfa374",
+      "at": "2026-09-03T03:51:52.411Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S03:verification:pending->verified",
+      "slice": "S03",
+      "hash": "7f1f1d38ffc4d5acad8fe68ce899614c80c02fa8602dc9f7255a00695160468d",
+      "oracle": "70ab059f03b12132c8a559d7d87aab30681f667be4272059a8f385453a70173d",
+      "evidence": "0e25d6f826d64788c96b2a415a510fbf7ca7b8157d8ebdf26550e356f709d678",
+      "fileHash": "52e30c7d0862de6804653144136f0b42ae87f262139d3bf4cb930384ba450c37"
+    },
+    {
+      "seq": 31,
+      "id": "dfe9941a-87cc-4bf7-9a05-05bac7b57311",
+      "at": "2026-09-03T03:52:07.329Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S04:verification:pending->verified",
+      "slice": "S04",
+      "hash": "aa2ecbaf614595f23c096417aecce69405893ac9b57c34e3a92be6ab361ee105",
+      "oracle": "bd504bea621d76067c7bfaf988dc2e4a2905c670113174f65aaeca4a9c8c9cbc",
+      "evidence": "84a0feffee0286552bce2217b28ca8711deba0f1bca9dffedd600f4b9cbe81b4",
+      "fileHash": "11accded91687873841ba53257536c3dbbd0cee0968bc1970dde5e58f84ca339"
+    },
+    {
+      "seq": 32,
+      "id": "ea7bcea7-9355-4811-bfd5-e55b9e0b5123",
+      "at": "2026-09-03T03:55:55.748Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:clarification:env-example wording landed as promised; decision text corrected to completed-change voice",
+      "slice": null,
+      "hash": "91924e8f3233874f81b5b59efe2b7fcb66782eea1e4648f36150fa32f5331062",
+      "fileHash": "c7b6e4c7b61365e9a4e1048d9a9d35258b5e0fe90344be624735bd09c9fb1332"
+    },
+    {
+      "seq": 33,
+      "id": "768c49a5-c1b5-4c72-88ec-3a59a35e64a5",
+      "at": "2026-09-03T03:55:55.791Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:verification->research_update",
+      "slice": null,
+      "hash": "7e16fac363eb8d10e8ad1285cf0b87ff1046d003e72e0056c9b5ac2093a47453",
+      "fileHash": "c63b80a0e1575023cfa3e406b17893b7003d43353ea0aac7d63eaa08788c4e9d"
+    },
+    {
+      "seq": 34,
+      "id": "73246867-bd9a-4abd-921e-473e8a2b3c97",
+      "at": "2026-09-03T04:02:14.483Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:respecify:stage 4 research update with delivered evidence, deviations, and round-1 verification record",
+      "slice": null,
+      "hash": "0b85c38f478a2785e7a551adabbb5ea09e8ab02f9089f624a21681baa0209fc2",
+      "fileHash": "c9e180794378e5f11e8f4248b575766bfd9c03e37094f042b1990cd885945b44"
+    },
+    {
+      "seq": 35,
+      "id": "69086c4b-85a8-4729-9573-272b6225b4ac",
+      "at": "2026-09-03T04:02:14.526Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research_update->closed",
+      "slice": null,
+      "hash": "b356e337a20cf33ef8ec55c6e39812d6d3c36f7503eead6a8c4895df21d54304",
+      "fileHash": "165fbe1849074457ed56771bd81de704668009bcd0aefbc7b233206ce2c5b225"
+    },
+    {
+      "seq": 36,
+      "id": "f0175447-388b-4360-98ea-8f9deb8e46c0",
+      "at": "2026-09-03T04:02:36.109Z",
+      "actor": "verifier",
+      "command": "certify",
+      "transition": "certify:273788756693879f2d207795397d66bffe9c67f1cc194f4e61c30f17c1b76b02",
+      "slice": null,
+      "hash": "07a6b93f6c843ec4280dd0aaf3bb12a2e9d70144aeab123cb601d620c2e61b75",
+      "oracle": "273788756693879f2d207795397d66bffe9c67f1cc194f4e61c30f17c1b76b02",
+      "fileHash": "9cb3f22e7cd30db1c4847c5b7dc211e9dba69bb53e454b3eb5fe119fba268964"
+    }
+  ],
+  "fileHash": "7a1b8be51bb1f586f8660f233d176281bb4632ea18cd84129332ecc47c6a61b3"
+}

@@ -1,6 +1,10 @@
 # Batch 009 spec: agent-context-compaction
 
-Spec status: implementation
+Spec status: closed
+
+## Outcome
+
+All four slices verified in round 1. S01, S02, S03, and S04 certified on the first attempt, with no rejections and no round-2 rework. Commit `65b4cd76` ships the full compaction write side: trigger policy, summarizer stage, transformContext wiring, and safety and observability. The ledger chain stood at 27 entries at verdict time and is valid at 33 entries at stage `research_update`, after the clarification amend at seq 32 and the stage advance at seq 33. Certification is pending ledger accept.
 
 ## Problem Statement
 
@@ -69,6 +73,16 @@ The flag stays default OFF. The tandem run in the meta spec flips it with enviro
 - Zero usage fallback guard: `providerEstimate.usageTokens <= 0` at `director-compaction.ts:91`.
 - Reference max input block: `307323`.
 
+**Delivered versus spec.**
+
+- `resolveCompactionSettings` ships at `compaction.ts:41-57`. The floor pair is byte-equivalent to the reference `director-compaction.ts:51-68`: reserve is at least 2048 or 20 percent of the window, keepRecent is at least 2048 or 25 percent, both capped by the pi defaults. The floor caps are the pi constants `reserveTokens: 16384` and `keepRecentTokens: 20000` (`pi-agent-core/dist/harness/compaction/compaction.js:57-61`). The one divergence is the enabled default. This runtime defaults to false at `compaction.ts:53`, where the reference uses the pi opt-in default of true. The comment at `compaction.ts:51-52` documents the inversion.
+- The zero-usage guard ships at `compaction.ts:69-79`. `measureDriverContextTokens` checks `lastUsageIndex !== null && usageTokens <= 0` at `compaction.ts:75` and sums the per-message estimator, byte-equivalent to the reference guard at `director-compaction.ts:91`.
+- The settings functions carry the `// prettier-ignore` marker at `compaction.ts:40` so the frozen signatures survive the Prettier 100-column wrap. The diff gate matched the captured signatures on the first round.
+
+**Round-1 evidence.**
+
+- 16 tests in `tests/agent-runtime/compaction-trigger.test.ts`, 2 in `tests/agent-runtime/runner-contract.test.ts`, and 13 in `tests/agent-runtime/agent-driver-model.test.ts`, plus the TSC smoke. All pass. Verified round 1.
+
 **Proposed gates (cwd: repo root for every gate).**
 
 - G01 (unit): `npx vitest run tests/agent-runtime/compaction-trigger.test.ts` expect `passed`.
@@ -108,6 +122,16 @@ The flag stays default OFF. The tandem run in the meta spec flips it with enviro
 - Canonical writer: `async appendCompaction(summary, firstKeptEntryId, tokensBefore, details, fromHook)` at `session.js:134`.
 - Stage list pin: `toEqual` at `tests/server/model-routes.test.ts:362`.
 - Entry key names: `firstKeptEntryId`, `summary`, `tokensBefore`.
+
+**Delivered versus spec.**
+
+- `generateCompactionSummary` ships at `compaction.ts:261-286`. It touches the LLM boundary only through dynamic import at `compaction.ts:262-263`, so the boundary loads only when a summary is actually generated. The function resolves the single stage `maic-agent-compaction` with no fallback at `compaction.ts:271` and passes the same stage to `callLLM` at `compaction.ts:281`. A missing route throws before any call, matching the driver doctrine. The function never imports `generateText` or `streamText`, and the lint entry guard gate stays green.
+- `LLM_STAGES` gains the stage once. The pinned registry test carries `'maic-agent-compaction'` at `tests/server/model-routes.test.ts:379`.
+- Neutrality is clean. No vendor term entered a neutral file, so the provider neutrality debt deltas are zero.
+
+**Round-1 evidence.**
+
+- 3 tests in `tests/agent-runtime/compaction-summary.test.ts`, 30 tests in `tests/server/model-routes.test.ts`, and 4 passed with 3 skipped in `tests/agent-runtime/entry-tree-storage.test.ts`, plus the TSC smoke. The 3 skips are pre-existing and outside batch scope. Verified round 1.
 
 **Proposed gates (cwd: repo root for every gate).**
 
@@ -154,6 +178,16 @@ The flag stays default OFF. The tandem run in the meta spec flips it with enviro
 - Delivery doctrine: `never from the compaction view` at `runner.ts:1696`.
 - Raw cursor: `cursorMessages: branch.flatMap(...)` at `entry-tree-storage.ts:119`.
 
+**Delivered versus spec.**
+
+- Enabled-only construction ships at `runner.ts:1273-1293`. The ternary at `runner.ts:1278` builds the runtime only when `config.compaction.enabled` is true. The lease fence wraps the durable append through `writeRequiredSessionEntry` with `markLeaseLost` at `runner.ts:1286-1292`, so a lost lease aborts exactly like a message write.
+- The conditional spread at `runner.ts:1519` keeps the disabled build byte identical. When the flag is off, `compactionRuntime` is undefined and the spread adds no `transformContext`.
+- No input mutation. The runtime returns the incoming array by reference on pass-through at `compaction.ts:187` and on failure at `compaction.ts:234`. The no-mutation property is pinned at `tests/agent-runtime/compaction-runtime.test.ts:186-200`.
+
+**Round-1 evidence.**
+
+- 8 tests in `tests/agent-runtime/compaction-runtime.test.ts` (with two non-blocking vi.mock hoisting warnings), 4 passed with 3 skipped in `tests/agent-runtime/entry-tree-storage.test.ts`, and the TSC smoke. Verified round 1.
+
 **Proposed gates (cwd: repo root for every gate).**
 
 - G01 (unit): `npx vitest run tests/agent-runtime/compaction-runtime.test.ts` expect `passed`.
@@ -194,6 +228,15 @@ The flag stays default OFF. The tandem run in the meta spec flips it with enviro
 - Replay rule: `deliberately drops raw call arguments and prose` at `create-skill.ts:58-59`.
 - Validation throw: `has a non-backward firstKeptEntryId` at `entry-tree-storage.ts:69`.
 
+**Delivered versus spec.**
+
+- One trace line per successful compaction ships at `compaction.ts:228-230`: `compaction <entryId> tokens <before>-><after> summary <length>`. The failure path records into the trace failures list and returns the original message array by reference at `compaction.ts:232-235`, so a summarizer failure appends nothing to the tree.
+- The reader is untouched. `loadSessionEntryHistory` keeps its signature and its rejection shapes. This batch adds coverage only.
+
+**Round-1 evidence.**
+
+- 6 tests in `tests/agent-runtime/compaction-safety.test.ts` (full run), the adversarial subset with the literal `summarizer failure` (2 passed, 4 skipped), and 32 tests in `tests/lint-llm-entry-guard.test.ts`, plus the TSC smoke. Verified round 1.
+
 **Proposed gates (cwd: repo root for every gate).**
 
 - G01 (integration): `npx vitest run tests/agent-runtime/compaction-safety.test.ts` expect `passed`.
@@ -209,9 +252,11 @@ The flag stays default OFF. The tandem run in the meta spec flips it with enviro
 - **The write goes through pi `Session.appendCompaction`.** It emits the shape the shipped reader consumes. The write is a critical entry write fenced through `writeRequiredSessionEntry`, so lease loss aborts the run exactly like a message append.
 - **`transformContext` is the wiring seam.** Pi invokes it before each LLM call, so the compaction judgment runs at a model boundary, never inside a tool call. The runner passes it only when `agentRuntimeConfig.compaction.enabled` is true. Disabled mode is a pass through and changes no existing behavior.
 - **The trigger token source is the entry tree usage blocks.** Assistant message blobs carry a `usage` block (137 of 141 in the reference session). The last block of a run can be all zero, so the measurement uses the trailing heuristic fallback from the reference runtime, never the last block alone.
-- **Default OFF, tandem flips it.** `OPENMAIC_AGENT_COMPACTION_ENABLED` stays default OFF. The `.env.example:401-403` wording changes in the same PR to describe live semantics while keeping the OFF default, per the repo rule for operator facing vars. The tandem run sets it true with orchestrator monitoring. The new env flags have no effect on existing tests because the parse defaults to false.
+- **Default OFF, tandem flips it.** `OPENMAIC_AGENT_COMPACTION_ENABLED` stays default OFF. The `.env.example:401-403` wording updated in the same change to describe live semantics while keeping the OFF default, per the repo rule for operator facing vars. The tandem run sets it true with orchestrator monitoring. The new env flags have no effect on existing tests because the parse defaults to false.
 - **Observability is the existing trace channel.** One `LIFECYCLE.trace` emit per compaction with before and after counts. The line is durable and replayable. No new event type and no i18n keys: the text is operator facing diagnostics.
 - **Repository constraints honored.** No `packages/@openmaic` changes. No provider vendor term enters a neutral file, so `tests/providers/provider-neutrality-guard.test.ts` debt counts stay untouched. Prettier 100 columns. No i18n keys.
+- **The frozen signatures carry `// prettier-ignore`.** The 008 round-1 lesson was applied preemptively. Prettier re-wraps TypeScript signatures past 100 columns, and the stored contract is the wrapped text. `resolveCompactionSettings`, `makeCompactionRuntime`, and `generateCompactionSummary` each carry the marker before a one-line signature (`compaction.ts:40, 135, 260`), so the frozen text survives formatting and the diff compares real code. The 8 symbol diffs matched on the first round because of it.
+- **The slice expectation cap was avoided by drafting under it.** Slice expectations have a 300-character cap. 008 hit the cap during staging and abandoned a staging worktree. 009 drafted each expectation under the cap on the first pass, so the ledger build landed without a cap error and without a workaround.
 
 ## Testing Decisions
 
@@ -220,6 +265,9 @@ The flag stays default OFF. The tandem run in the meta spec flips it with enviro
 - `tests/server/model-routes.test.ts:361-378` is re-pinned with the new stage.
 - Gate oracle doctrine: expect strings are literal substrings of stdout plus stderr. Silent success commands echo a literal marker: `npx tsc --noEmit && echo TSC_OK` expects `TSC_OK`. The adversarial gate names its test with the literal `summarizer failure`. Every gate pins the cwd to the repo root and is hermetic.
 - Zero paid gates. The summarizer tests mock `callLLM`. No gate touches the database.
+- **Allowed pre-existing failures.** `tests/agent-runtime/entry-tree-storage.test.ts` carries 3 pre-existing skipped tests in the S02 G03 and S03 G02 gates (7 total, 4 executed). The skips predate the batch, are outside its scope, and the gates pass on the executed subset. The vi.mock hoisting warnings in `tests/agent-runtime/compaction-runtime.test.ts` pass with warnings and will become an error in a future vitest version.
+- **Flag-on hermeticity spot check.** The enabled path runs with no environment. The runtime tests construct `makeCompactionRuntime` with settings on and mock `callLLM` and `resolve-model`, and the runtime in-memory session seam means no store is touched. Zero paid gates held.
+- **Soft finding on the trigger test.** `tests/agent-runtime/compaction-trigger.test.ts:138-162` re-implements the threshold formula inline (`settings.enabled && tokenCount > windowMinusReserve`) instead of calling `shouldCompact`. Documented, non-blocking. The real decision runs through `shouldCompact` at `compaction.ts:193`, and the trigger coverage lands via `tests/agent-runtime/compaction-runtime.test.ts:101-201`, which exercises the under-threshold and over-threshold paths through the runtime.
 
 ## Out of Scope
 
@@ -231,6 +279,7 @@ The flag stays default OFF. The tandem run in the meta spec flips it with enviro
 - Branch summaries and multi branch tree restructures. One linear compaction entry per judgment.
 - Schema migrations. The storage type carries the compaction entry already.
 - Any `packages/@openmaic` change and any i18n change.
+- **The out-of-scope claim that certification does not depend on the tandem run is met.** All gates are hermetic. Zero paid gates. No gate touches the database.
 
 ## Further Notes
 
@@ -239,3 +288,62 @@ The flag stays default OFF. The tandem run in the meta spec flips it with enviro
 - The reference session 96cdbbfa remains the evidence artifact for token shapes. Its last assistant usage block is all zero, which is the fallback case S01 pins.
 - Verifier note: all 009 gates are hermetic, so a hostile env run can execute them from a neutral cwd with absolute paths. The bun compiled rivr loads `.env.local` from its startup cwd, so gates that must stay clean run from a neutral cwd.
 - Soundness expectation: the soundness review at the human checkpoint dry runs every gate against the current CLI and dry runs the round trip against the shipped reader.
+- **Tandem start condition (meta-spec).** The tandem run flips compaction on in production with two steps: set `OPENMAIC_AGENT_COMPACTION_ENABLED=true` and add a `MODEL_ROUTES` entry for `maic-agent-compaction`. Then restart the server. The COMPLETION acceptance marker is unchanged.
+- **The `.env.example` promise is kept.** The compaction block at `.env.example` now describes live semantics while keeping the OFF default, per the repo rule for operator facing vars. The clarification amend at ledger seq 32 records the wording as landed. The spec decision voice was corrected to the completed-change voice in the same amend.
+
+## Deviations and Surprises
+
+- The `.env.example` promise was initially unmet. The reserved-and-inert wording was still in place after the implementation commit. The cleanup before close replaced it with live semantics, and the clarification amend at seq 32 records the correction.
+- `enabled` defaults false in `resolveCompactionSettings` (`compaction.ts:53`), where pi `DEFAULT_COMPACTION_SETTINGS.enabled` is true. The divergence is documented at `compaction.ts:51-52`. `makeCompactionRuntime` then applies `enabled ?? true` at `compaction.ts:139`, so the runner enabled-only construction at `runner.ts:1278` stays the single production gate.
+- `InMemorySessionRepo` is the hermetic session fake. The runtime builds a throwaway in-memory session per transform at `compaction.ts:144, 167`, and the tests drive the same seam. The durable write is only the injected `appendSink`. No real store is touched, which is what keeps the gates hermetic.
+- Vitest 4 warns when `vi.mock` is not at the module top level. `tests/agent-runtime/compaction-runtime.test.ts` logs the hoisting warning twice, and the mock still hoists correctly. The gates pass. A future vitest will turn the warning into an error.
+## Certification Report
+
+Certified: 2026-09-03T04:02:36.109Z
+Signature: 273788756693879f2d207795397d66bffe9c67f1cc194f4e61c30f17c1b76b02
+
+### Summary
+
+Slices: 4
+Symbols: 8
+Gates: 15
+
+### Implemented Symbols
+
+- **S01** (Compaction trigger policy):
+  - lib/server/agent-runtime/compaction.ts::resolveCompactionSettings
+  - lib/server/agent-runtime/compaction.ts::measureDriverContextTokens
+- **S02** (Summarizer and entry writer contract):
+  - lib/server/agent-runtime/compaction.ts::generateCompactionSummary
+  - lib/server/model-routes.ts::LLM_STAGES
+- **S03** (transformContext wiring and read path):
+  - lib/server/agent-runtime/compaction.ts::makeCompactionRuntime
+  - lib/server/agent-runtime/runner.ts::runSession
+- **S04** (Compaction safety and observability):
+  - lib/server/agent-runtime/compaction.ts::makeCompactionRuntime
+  - lib/server/agent-runtime/entry-tree-storage.ts::loadSessionEntryHistory
+
+### Gates Passed
+
+- **S01**:
+  - G01: {"id":"G01","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a","pathCount":30,"output":"\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/compaction-trigger.test.ts \u001b[2m(\u001b[22m\u001b[2m16 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 3\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m16 passed\u001b[39m\u001b[22m\u001b[90m (16)\u001b[39m\n\u001b[2m   Start at \u001b[22m 15:51:23\n\u001b[2m   Duration \u001b[22m 184ms\u001b[2m (transform 22ms, setup 15ms, import 111ms, tests 3ms, environment 0ms)\u001b[22m\n\n","passed":true}
+  - G02: {"id":"G02","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a","pathCount":30,"output":"\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/runner-contract.test.ts \u001b[2m(\u001b[22m\u001b[2m2 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 1\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m2 passed\u001b[39m\u001b[22m\u001b[90m (2)\u001b[39m\n\u001b[2m   Start at \u001b[22m 15:51:24\n\u001b[2m   Duration \u001b[22m 1.02s\u001b[2m (transform 482ms, setup 13ms, import 949ms, tests 1ms, environment 0ms)\u001b[22m\n\n","passed":true}
+  - G03: {"id":"G03","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a","pathCount":30,"output":"\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/agent-driver-model.test.ts \u001b[2m(\u001b[22m\u001b[2m13 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 64\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m13 passed\u001b[39m\u001b[22m\u001b[90m (13)\u001b[39m\n\u001b[2m   Start at \u001b[22m 15:51:25\n\u001b[2m   Duration \u001b[22m 153ms\u001b[2m (transform 43ms, setup 14ms, import 19ms, tests 64ms, environment 0ms)\u001b[22m\n\n","passed":true}
+  - G04: {"id":"G04","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a","pathCount":30,"output":"TSC_OK\n","passed":true}
+- **S02**:
+  - G01: {"id":"G01","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a","pathCount":30,"output":"\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/compaction-summary.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 94\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m3 passed\u001b[39m\u001b[22m\u001b[90m (3)\u001b[39m\n\u001b[2m   Start at \u001b[22m 15:51:36\n\u001b[2m   Duration \u001b[22m 173ms\u001b[2m (transform 22ms, setup 12ms, import 11ms, tests 94ms, environment 0ms)\u001b[22m\n\n","passed":true}
+  - G02: {"id":"G02","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a","pathCount":30,"output":"\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/server/model-routes.test.ts \u001b[2m(\u001b[22m\u001b[2m30 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 19\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m30 passed\u001b[39m\u001b[22m\u001b[90m (30)\u001b[39m\n\u001b[2m   Start at \u001b[22m 15:51:36\n\u001b[2m   Duration \u001b[22m 112ms\u001b[2m (transform 35ms, setup 13ms, import 24ms, tests 19ms, environment 0ms)\u001b[22m\n\n","passed":true}
+  - G03: {"id":"G03","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a","pathCount":30,"output":"\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/entry-tree-storage.test.ts \u001b[2m(\u001b[22m\u001b[2m7 tests\u001b[22m\u001b[2m | \u001b[22m\u001b[33m3 skipped\u001b[39m\u001b[2m)\u001b[22m\u001b[32m 6\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m4 passed\u001b[39m\u001b[22m\u001b[2m | \u001b[22m\u001b[33m3 skipped\u001b[39m\u001b[90m (7)\u001b[39m\n\u001b[2m   Start at \u001b[22m 15:51:37\n\u001b[2m   Duration \u001b[22m 400ms\u001b[2m (transform 200ms, setup 14ms, import 326ms, tests 6ms, environment 0ms)\u001b[22m\n\n","passed":true}
+  - G04: {"id":"G04","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a","pathCount":30,"output":"TSC_OK\n","passed":true}
+- **S03**:
+  - G01: {"id":"G01","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a","pathCount":30,"output":"\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/compaction-runtime.test.ts \u001b[2m(\u001b[22m\u001b[2m8 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 16\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m8 passed\u001b[39m\u001b[22m\u001b[90m (8)\u001b[39m\n\u001b[2m   Start at \u001b[22m 15:51:48\n\u001b[2m   Duration \u001b[22m 195ms\u001b[2m (transform 29ms, setup 14ms, import 109ms, tests 16ms, environment 0ms)\u001b[22m\n\nWarning: A vi.mock(\"@/lib/ai/llm\") call in \"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC/tests/agent-runtime/compaction-runtime.test.ts\" is not at the top level of the module. Although it appears nested, it will be hoisted and executed before any tests run. Move it to the top level to reflect its actual execution order. This will become an error in a future version.\nSee: https://vitest.dev/guide/mocking/modules#how-it-works\nWarning: A vi.mock(\"@/lib/server/resolve-model\") call in \"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC/tests/agent-runtime/compaction-runtime.test.ts\" is not at the top level of the module. Although it appears nested, it will be hoisted and executed before any tests run. Move it to the top level to reflect its actual execution order. This will become an error in a future version.\nSee: https://vitest.dev/guide/mocking/modules#how-it-works\n","passed":true}
+  - G02: {"id":"G02","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a","pathCount":30,"output":"\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/entry-tree-storage.test.ts \u001b[2m(\u001b[22m\u001b[2m7 tests\u001b[22m\u001b[2m | \u001b[22m\u001b[33m3 skipped\u001b[39m\u001b[2m)\u001b[22m\u001b[32m 5\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m4 passed\u001b[39m\u001b[22m\u001b[2m | \u001b[22m\u001b[33m3 skipped\u001b[39m\u001b[90m (7)\u001b[39m\n\u001b[2m   Start at \u001b[22m 15:51:48\n\u001b[2m   Duration \u001b[22m 381ms\u001b[2m (transform 180ms, setup 13ms, import 307ms, tests 5ms, environment 0ms)\u001b[22m\n\n","passed":true}
+  - G03: {"id":"G03","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a","pathCount":30,"output":"TSC_OK\n","passed":true}
+- **S04**:
+  - G01: {"id":"G01","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a","pathCount":30,"output":"\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/compaction-safety.test.ts \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 15\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m6 passed\u001b[39m\u001b[22m\u001b[90m (6)\u001b[39m\n\u001b[2m   Start at \u001b[22m 15:52:00\n\u001b[2m   Duration \u001b[22m 392ms\u001b[2m (transform 180ms, setup 14ms, import 306ms, tests 15ms, environment 0ms)\u001b[22m\n\n","passed":true}
+  - G02: {"id":"G02","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a","pathCount":30,"output":"\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/compaction-safety.test.ts \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m | \u001b[22m\u001b[33m4 skipped\u001b[39m\u001b[2m)\u001b[22m\u001b[32m 7\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m2 passed\u001b[39m\u001b[22m\u001b[2m | \u001b[22m\u001b[33m4 skipped\u001b[39m\u001b[90m (6)\u001b[39m\n\u001b[2m   Start at \u001b[22m 15:52:01\n\u001b[2m   Duration \u001b[22m 381ms\u001b[2m (transform 174ms, setup 14ms, import 301ms, tests 7ms, environment 0ms)\u001b[22m\n\n","passed":true}
+  - G03: {"id":"G03","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a","pathCount":30,"output":"\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/lint-llm-entry-guard.test.ts \u001b[2m(\u001b[22m\u001b[2m32 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 1469\u001b[2mms\u001b[22m\u001b[39m\n     \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m blocks the named import in every guarded path (.ts) \u001b[33m 874\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m32 passed\u001b[39m\u001b[22m\u001b[90m (32)\u001b[39m\n\u001b[2m   Start at \u001b[22m 15:52:02\n\u001b[2m   Duration \u001b[22m 1.64s\u001b[2m (transform 16ms, setup 12ms, import 98ms, tests 1.47s, environment 0ms)\u001b[22m\n\n","passed":true}
+  - G04: {"id":"G04","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a","pathCount":30,"output":"TSC_OK\n","passed":true}
+
+Certification hash: 273788756693879f2d207795397d66bffe9c67f1cc194f4e61c30f17c1b76b02
+Certified: 2026-09-03T04:02:36.109Z | Signature: 273788756693879f2d207795397d66bffe9c67f1cc194f4e61c30f17c1b76b02 | Certifier: verifier
