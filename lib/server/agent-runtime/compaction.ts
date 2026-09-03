@@ -139,6 +139,19 @@ export interface CompactionRuntimeOptions {
     firstKeptEntryId: string;
     tokensBefore: number;
   }) => Promise<void>;
+  /**
+   * Resolve the mirror firstKeptEntryId to the durable id space.
+   *
+   * When present the runtime calls this before appendSink with the mirror
+   * entry id and the mirror's cut message. The returned durable id flows
+   * into the appendSink payload only. The mirror row keeps the mirror id.
+   * A throw follows the existing fail-closed path: no sink, no end event,
+   * failure recorded, messages unchanged.
+   */
+  resolveFirstKeptEntryId?: (
+    mirrorFirstKeptEntryId: string,
+    mirrorKeptMessage: AgentMessage,
+  ) => Promise<string>;
   /** Emit one diagnostic trace line per successful compaction. */
   emitTrace?: (line: { message: string }) => void;
   /** Emit durable compaction card events for the workbench. */
@@ -219,28 +232,53 @@ export function makeCompactionRuntime(opts: CompactionRuntimeOptions): Compactio
         const preparation = prepareCompaction(branch, settings);
         if (!preparation.ok) throw preparation.error;
         if (!preparation.value) return beforeMessages;
-        // Emit start before the summarizer call
+        const prep = preparation.value;
         emitEvent?.({
           kind: 'start',
           tokensBefore,
           messagesBefore: beforeMessages.length,
         });
         const summary = await summarizer(
-          preparation.value.messagesToSummarize,
+          prep.messagesToSummarize,
           'Summarize the conversation history for context compaction.',
-          preparation.value.settings.reserveTokens,
+          prep.settings.reserveTokens,
           (text: string) => emitEvent?.({ kind: 'delta', text }),
           signal,
         );
         const entryId = await session.appendCompaction(
           summary,
-          preparation.value.firstKeptEntryId,
+          prep.firstKeptEntryId,
           tokensBefore,
         );
+        // When a resolver is provided, resolve the mirror firstKeptEntryId
+        // to the durable id space before the sink. The mirror row keeps the
+        // mirror id; only the durable appendSink payload receives the
+        // resolved id. The resolver runs inside the existing try so a throw
+        // follows the fail-closed path (no sink, no end event, failure
+        // recorded, messages unchanged).
+        let sinkFirstKeptEntryId = prep.firstKeptEntryId;
+        if (opts.resolveFirstKeptEntryId) {
+          const mirrorKeptEntry = branch.find(
+            (entry) => entry.id === prep.firstKeptEntryId,
+          );
+          if (
+            !mirrorKeptEntry ||
+            mirrorKeptEntry.type !== 'message' ||
+            !('message' in mirrorKeptEntry)
+          ) {
+            throw new Error(
+              'mirror kept entry is not a message entry; cannot resolve durable id',
+            );
+          }
+          sinkFirstKeptEntryId = await opts.resolveFirstKeptEntryId(
+            prep.firstKeptEntryId,
+            (mirrorKeptEntry as { message: AgentMessage }).message,
+          );
+        }
         await appendSink({
           type: 'compaction',
           summary,
-          firstKeptEntryId: preparation.value.firstKeptEntryId,
+          firstKeptEntryId: sinkFirstKeptEntryId,
           tokensBefore,
         });
         const afterContext = await session.buildContext();

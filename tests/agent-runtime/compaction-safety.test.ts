@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   makeCompactionRuntime,
   type CompactionRuntimeOptions,
+  type CompactionCardEvent,
 } from '@/lib/server/agent-runtime/compaction';
 import { loadSessionEntryHistory } from '@/lib/server/agent-runtime/entry-tree-storage';
 
@@ -210,6 +211,202 @@ describe('compaction safety', () => {
           hasPriorRun: true,
         }),
       ).rejects.toThrow(/non-backward firstKeptEntryId/);
+    });
+  });
+
+  // -----------------------------------------------------------------------
+  // Durable id resolution divergence guard (batch 012)
+  // -----------------------------------------------------------------------
+
+  describe('durable id resolution divergence guard', () => {
+    it('mirror and durable branches with same messages: resolver content comparison passes', async () => {
+      const { InMemorySessionRepo, prepareCompaction } =
+        await import('@earendil-works/pi-agent-core');
+
+      const repo = new InMemorySessionRepo();
+      const mirrorSession = await repo.create();
+      const durableSession = await repo.create();
+
+      // Both branches receive the same message sequence with independent
+      // id counters. The resolver's content comparison must pass on agreement.
+      for (let i = 0; i < 9; i += 1) {
+        const msg = fakeMessage(`shared-msg-${i}`);
+        await mirrorSession.appendMessage(msg);
+        await durableSession.appendMessage(msg);
+      }
+
+      const mirrorBranch = await mirrorSession.getBranch();
+      const durableBranch = await durableSession.getBranch();
+
+      const settings = {
+        enabled: true,
+        reserveTokens: 16_384,
+        keepRecentTokens: 16_384,
+      };
+
+      const mirrorPrep = prepareCompaction(mirrorBranch, settings);
+      expect(mirrorPrep.ok).toBe(true);
+      if (!mirrorPrep.ok || !mirrorPrep.value) return;
+
+      const durablePrep = prepareCompaction(durableBranch, settings);
+      expect(durablePrep.ok).toBe(true);
+      if (!durablePrep.ok || !durablePrep.value) return;
+
+      // Resolver: compare the mirror kept message with the durable kept
+      // message. On agreement return the durable firstKeptEntryId.
+      const mirrorKeptEntry = mirrorBranch.find((e) => e.id === mirrorPrep.value!.firstKeptEntryId);
+      expect(mirrorKeptEntry).toBeDefined();
+      expect(mirrorKeptEntry!.type).toBe('message');
+
+      const durableKeptEntry = durableBranch.find(
+        (e) => e.id === durablePrep.value!.firstKeptEntryId,
+      );
+      expect(durableKeptEntry).toBeDefined();
+      expect(durableKeptEntry!.type).toBe('message');
+
+      const mirrorKeptMsg = (mirrorKeptEntry as { message: AgentMessage }).message;
+      const durableKeptMsg = (durableKeptEntry as { message: AgentMessage }).message;
+
+      // Content comparison must pass: same message sequence, same content.
+      expect(JSON.stringify(mirrorKeptMsg)).toBe(JSON.stringify(durableKeptMsg));
+
+      // Simulate the resolver returning the durable id on agreement.
+      const resolverResult = durablePrep.value.firstKeptEntryId;
+      expect(typeof resolverResult).toBe('string');
+      expect(resolverResult.length).toBeGreaterThan(0);
+
+      // Append compaction with the resolved id and verify the tree is valid.
+      await durableSession.appendCompaction('resolved summary', resolverResult, 100_000);
+
+      const history = await loadSessionEntryHistory(durableSession, {
+        sessionId: 'test-agreement',
+        hasPriorRun: true,
+      });
+      expect(history.messages.length).toBeGreaterThan(0);
+      const firstMsg = history.messages[0]! as unknown as Record<string, unknown>;
+      expect(firstMsg.role).toBe('compactionSummary');
+    });
+
+    it('mirror and durable branches with different messages: resolver throws on divergence', async () => {
+      const { InMemorySessionRepo, prepareCompaction } =
+        await import('@earendil-works/pi-agent-core');
+
+      const repo = new InMemorySessionRepo();
+      const mirrorSession = await repo.create();
+      const durableSession = await repo.create();
+
+      // Mirror branch: standard 9-message sequence.
+      for (let i = 0; i < 9; i += 1) {
+        await mirrorSession.appendMessage(fakeMessage(`mirror-msg-${i}`));
+      }
+
+      // Durable branch: same count but different content (simulating
+      // divergence after a prior compaction or write failure).
+      for (let i = 0; i < 9; i += 1) {
+        await durableSession.appendMessage(fakeMessage(`durable-msg-${i}`));
+      }
+
+      const mirrorBranch = await mirrorSession.getBranch();
+      const durableBranch = await durableSession.getBranch();
+
+      const settings = {
+        enabled: true,
+        reserveTokens: 16_384,
+        keepRecentTokens: 16_384,
+      };
+
+      const mirrorPrep = prepareCompaction(mirrorBranch, settings);
+      expect(mirrorPrep.ok).toBe(true);
+      if (!mirrorPrep.ok || !mirrorPrep.value) return;
+
+      const durablePrep = prepareCompaction(durableBranch, settings);
+      expect(durablePrep.ok).toBe(true);
+      if (!durablePrep.ok || !durablePrep.value) return;
+
+      // Extract kept messages from both branches.
+      const mirrorKeptEntry = mirrorBranch.find((e) => e.id === mirrorPrep.value!.firstKeptEntryId);
+      const durableKeptEntry = durableBranch.find(
+        (e) => e.id === durablePrep.value!.firstKeptEntryId,
+      );
+      expect(mirrorKeptEntry).toBeDefined();
+      expect(durableKeptEntry).toBeDefined();
+
+      const mirrorKeptMsg = (mirrorKeptEntry as { message: AgentMessage }).message;
+      const durableKeptMsg = (durableKeptEntry as { message: AgentMessage }).message;
+
+      // Content comparison must FAIL: different message content.
+      expect(JSON.stringify(mirrorKeptMsg)).not.toBe(JSON.stringify(durableKeptMsg));
+
+      // The resolver must throw on divergence.
+      const resolver = vi.fn(async () => {
+        throw new Error('compaction kept-entry resolution diverged');
+      });
+
+      const summarizer = vi.fn(async () => 'summary after divergence');
+      const appendSink = vi.fn(async () => {});
+      const emitEvent = vi.fn();
+
+      const runtime = makeCompactionRuntime(
+        buildDefaults({
+          summarizer,
+          appendSink,
+          emitEvent,
+          resolveFirstKeptEntryId: resolver,
+        }),
+      );
+
+      const messages = messagesOverThreshold();
+      const result = await runtime.transformContext(messages);
+
+      expect(resolver).toHaveBeenCalledOnce();
+      expect(appendSink).not.toHaveBeenCalled();
+      expect(result).toBe(messages);
+
+      const trace = runtime.getTrace();
+      expect(trace.failures).toHaveLength(1);
+      expect(trace.failures[0]).toContain('diverged');
+
+      const endEvents = emitEvent.mock.calls
+        .map((c) => c[0] as CompactionCardEvent)
+        .filter((e) => e.kind === 'end');
+      expect(endEvents).toHaveLength(0);
+
+      runtime.dispose();
+    });
+
+    it('validator round-trip: after resolved sink append, loadSessionEntryHistory accepts the tree', async () => {
+      const { InMemorySessionRepo, prepareCompaction } =
+        await import('@earendil-works/pi-agent-core');
+
+      const repo = new InMemorySessionRepo();
+      const durableSession = await repo.create();
+
+      for (let i = 0; i < 9; i += 1) {
+        await durableSession.appendMessage(fakeMessage(`durable-msg-${i}`));
+      }
+
+      const durableBranch = await durableSession.getBranch();
+      const durablePrep = prepareCompaction(durableBranch, {
+        enabled: true,
+        reserveTokens: 16_384,
+        keepRecentTokens: 16_384,
+      });
+      expect(durablePrep.ok).toBe(true);
+      if (!durablePrep.ok || !durablePrep.value) return;
+
+      const durableFirstKeptId = durablePrep.value.firstKeptEntryId;
+      expect(typeof durableFirstKeptId).toBe('string');
+
+      await durableSession.appendCompaction('resolved summary', durableFirstKeptId, 100_000);
+
+      const history = await loadSessionEntryHistory(durableSession, {
+        sessionId: 'test-resolved',
+        hasPriorRun: true,
+      });
+
+      expect(history.messages.length).toBeGreaterThan(0);
+      const firstMsg = history.messages[0]! as unknown as Record<string, unknown>;
+      expect(firstMsg.role).toBe('compactionSummary');
     });
   });
 });

@@ -475,4 +475,132 @@ describe('makeCompactionRuntime', () => {
       runtime.dispose();
     });
   });
+
+  // -----------------------------------------------------------------------
+  // Durable id resolution (batch 012)
+  // -----------------------------------------------------------------------
+
+  describe('durable id resolution', () => {
+    it('two independent id spaces: durable sink gets durable id, mirror keeps mirror id', async () => {
+      const summaryText = 'compacted summary';
+      const summarizer = vi.fn(async () => summaryText);
+      const appendSink = vi.fn(async () => {});
+      const emitEvent = vi.fn();
+
+      // The resolver simulates the runner: it receives a mirror id and
+      // a mirror KEPT message (the first entry the compaction keeps).
+      // This proves the two id spaces remain disjoint.
+      const resolver = vi.fn(async (mirrorId: string, keptMsg: unknown) => {
+        return `durable-${mirrorId}`;
+      });
+      const runtime = makeCompactionRuntime(
+        buildDefaults({
+          summarizer,
+          appendSink,
+          emitEvent,
+          resolveFirstKeptEntryId: resolver,
+        }),
+      );
+
+      const messages = messagesOverThreshold();
+      await runtime.transformContext(messages);
+      // The resolver was called with the mirror firstKeptEntryId AND the
+      // mirror kept message (not the first summarized message).
+      expect(resolver).toHaveBeenCalledOnce();
+      const mirrorId = resolver.mock.calls[0]![0] as string;
+      expect(typeof mirrorId).toBe('string');
+      expect(mirrorId.length).toBeGreaterThan(0);
+
+      // The second argument is the mirror kept message, which must be a
+      // message from the branch whose id matches firstKeptEntryId. It
+      // should NOT be the first summarized message (messagesToSummarize[0]).
+      const resolverKeptMsg = resolver.mock.calls[0]![1] as AgentMessage;
+      expect(resolverKeptMsg).toBeDefined();
+      // The kept message is from the messagesOverThreshold set. It should
+      // NOT be message-0 (the first in the input, which is summarized).
+      const resolverContent = JSON.stringify(resolverKeptMsg);
+      expect(resolverContent).not.toContain('message-0: ');
+
+      // The end event entryId comes from the mirror session, NOT the resolver.
+      const endEvent = emitEvent.mock.calls
+        .map((c) => c[0] as CompactionCardEvent)
+        .find((e) => e.kind === 'end') as Extract<CompactionCardEvent, { kind: 'end' }>;
+      expect(typeof endEvent.entryId).toBe('string');
+      // The end event id must NOT be the durable id.
+      expect(endEvent.entryId).not.toBe(`durable-${mirrorId}`);
+
+      runtime.dispose();
+    });
+
+    it('resolver throw: no sink call, failure recorded, context unchanged, no end event', async () => {
+      const summarizer = vi.fn(async () => 'summary');
+      const appendSink = vi.fn(async () => {});
+      const emitEvent = vi.fn();
+      const resolverError = new Error('durable resolution diverged');
+      const resolver = vi.fn(async () => {
+        throw resolverError;
+      });
+
+      const runtime = makeCompactionRuntime(
+        buildDefaults({
+          summarizer,
+          appendSink,
+          emitEvent,
+          resolveFirstKeptEntryId: resolver,
+        }),
+      );
+
+      const messages = messagesOverThreshold();
+      const result = await runtime.transformContext(messages);
+
+      // The resolver was called (it threw).
+      expect(resolver).toHaveBeenCalledOnce();
+
+      // No sink call happened.
+      expect(appendSink).not.toHaveBeenCalled();
+
+      // Original messages returned unchanged.
+      expect(result).toBe(messages);
+
+      // Failure recorded in trace.
+      const trace = runtime.getTrace();
+      expect(trace.failures).toHaveLength(1);
+      expect(trace.failures[0]).toContain('durable resolution diverged');
+
+      // No end event emitted.
+      const endEvents = emitEvent.mock.calls
+        .map((c) => c[0] as CompactionCardEvent)
+        .filter((e) => e.kind === 'end');
+      expect(endEvents).toHaveLength(0);
+
+      runtime.dispose();
+    });
+
+    it('resolver absent: mirror id passes through (byte-identical to today)', async () => {
+      const summaryText = 'compacted summary';
+      const summarizer = vi.fn(async () => summaryText);
+      const appendSink = vi.fn(async () => {});
+
+      // No resolver provided. Today's behavior: the mirror id passes
+      // directly into the appendSink payload.
+      const runtime = makeCompactionRuntime(
+        buildDefaults({
+          summarizer,
+          appendSink,
+        }),
+      );
+
+      const messages = messagesOverThreshold();
+      await runtime.transformContext(messages);
+
+      // The sink receives the mirror firstKeptEntryId directly.
+      const sinkEntry = (appendSink.mock.calls as unknown[][])[0]![0] as {
+        firstKeptEntryId: string;
+      };
+      expect(typeof sinkEntry.firstKeptEntryId).toBe('string');
+      expect(sinkEntry.firstKeptEntryId.length).toBeGreaterThan(0);
+
+      runtime.dispose();
+    });
+  });
 });

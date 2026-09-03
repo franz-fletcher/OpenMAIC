@@ -6,7 +6,12 @@
  * recovery. A client connection is never part of the execution lifetime.
  */
 import { randomUUID } from 'node:crypto';
-import { Session, type AgentEvent, type AgentMessage } from '@earendil-works/pi-agent-core';
+import {
+  Session,
+  prepareCompaction,
+  type AgentEvent,
+  type AgentMessage,
+} from '@earendil-works/pi-agent-core';
 import {
   AgentSessionLeaseLostError,
   type AgentSessionClaimReason,
@@ -25,7 +30,7 @@ import type { Scene, SlideContent } from '@/lib/types/stage';
 
 import { resolveAgentDriverModel } from './agent-driver-model';
 import { buildAskUserTool } from './ask-user';
-import { makeCompactionRuntime } from './compaction';
+import { makeCompactionRuntime, resolveCompactionSettings } from './compaction';
 import { agentRuntimeConfig as config } from './config';
 import { traceMessageForUpdate } from './tool-progress';
 import { buildCreateSkillTool } from './create-skill';
@@ -1302,6 +1307,36 @@ export async function runSession(ctx: RunContext, meta: ClaimedAgentSession): Pr
                 entry.tokensBefore,
               );
             }, markLeaseLost),
+          resolveFirstKeptEntryId: async (mirrorFirstKeptEntryId, mirrorKeptMessage) => {
+            // Resolve the durable branch firstKeptEntryId by running
+            // prepareCompaction against the durable entry tree with the
+            // same settings the runtime uses. Content comparison guards
+            // against mirror-durable divergence after a prior compaction.
+            const durableBranch = await entrySession!.getBranch();
+            const resolvedSettings = resolveCompactionSettings(driver.piModel.contextWindow, {
+              reserveTokens: config.compaction.reserveTokens,
+              keepRecentTokens: config.compaction.keepRecentTokens,
+            });
+            const durablePrep = prepareCompaction(durableBranch, resolvedSettings);
+            if (!durablePrep.ok) throw durablePrep.error;
+            if (!durablePrep.value) {
+              throw new Error('compaction kept-entry resolution: durable prep returned no value');
+            }
+            const durableFirstKeptId = durablePrep.value.firstKeptEntryId;
+            // Content comparison: find the durable entry that the durable
+            // preparation keeps and compare its message with the mirror cut.
+            const durableKeptEntry = durableBranch.find((e) => e.id === durableFirstKeptId);
+            if (
+              !durableKeptEntry ||
+              durableKeptEntry.type !== 'message' ||
+              !('message' in durableKeptEntry) ||
+              JSON.stringify((durableKeptEntry as { message: AgentMessage }).message) !==
+                JSON.stringify(mirrorKeptMessage)
+            ) {
+              throw new Error('compaction kept-entry resolution diverged');
+            }
+            return durableFirstKeptId;
+          },
           emitTrace: (line) => emit(LIFECYCLE.trace, line),
           emitEvent: (event) => {
             switch (event.kind) {

@@ -1,0 +1,492 @@
+{
+  "schema_version": 2,
+  "$schema": "https://rivr.dev/schemas/ledger/v2",
+  "spec": {
+    "reference": "docs/specs/012-compaction-entry-id-space-fix.md",
+    "title": "Batch 012 spec: compaction-entry-id-space-fix",
+    "hash": "5263e7cf7039195ae166b918e1be1301da468ce3bb60e2df7d93ae9451530992"
+  },
+  "tracker": {
+    "mode": "none"
+  },
+  "stage": "implementation",
+  "retry": {
+    "count": 0,
+    "max": 5,
+    "consecutive_same_cause": 0,
+    "escalate_at": 3
+  },
+  "slices": [
+    {
+      "id": "S01",
+      "title": "Durable id resolution in the append sink",
+      "intent": "Optional resolveFirstKeptEntryId hook re-resolves the kept id against the durable branch via prepareCompaction; only the sink payload receives it; content-comparison guard fails closed on mirror-durable divergence.",
+      "user_stories": [
+        2,
+        3
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/server/agent-runtime/runner.ts",
+          "symbols": [
+            {
+              "name": "runSession",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(ctx: RunContext, meta: ClaimedAgentSession): Promise<void>"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(ctx: RunContext, meta: ClaimedAgentSession): Promise<void>"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Supplies the resolver: durable branch, prepareCompaction with runtime settings, content comparison against the mirror cut, throw on mismatch."
+            }
+          ]
+        },
+        {
+          "path": "lib/server/agent-runtime/compaction.ts",
+          "symbols": [
+            {
+              "name": "makeCompactionRuntime",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(opts: CompactionRuntimeOptions): CompactionRuntime"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(opts: CompactionRuntimeOptions): CompactionRuntime"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Calls resolver before appendSink; sink receives resolved durable id; mirror append keeps mirror id; failure path writes nothing."
+            },
+            {
+              "name": "CompactionRuntimeOptions",
+              "before": {
+                "exists": true,
+                "kind": "interface"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "interface"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Gains optional resolveFirstKeptEntryId: (mirrorFirstKeptEntryId: string) => Promise<string>."
+            }
+          ]
+        }
+      ],
+      "riskTier": 3,
+      "uuid": "c19af94a-f3a0-424e-a1d4-84cac7456643",
+      "impl": {
+        "status": "ready_for_verification",
+        "hash": "af6e47c806b0ca43db2172f7b7284a7382db88c8e49b9a58e1cb4fce7f67014e",
+        "actor": "implementer",
+        "at": "2026-09-03T13:15:36.188Z"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "Durable compaction rows carry an id from the durable space; mirror rows keep mirror ids; divergence and resolver failure write no row and record a failure.",
+      "gates": [
+        {
+          "id": "G01",
+          "check": "npx vitest run tests/agent-runtime/compaction-runtime.test.ts",
+          "expect": "passed",
+          "evidence": "pending",
+          "cwd": ".",
+          "type": "unit"
+        },
+        {
+          "id": "G02",
+          "check": "npx vitest run tests/agent-runtime/compaction-safety.test.ts",
+          "expect": "passed",
+          "evidence": "pending",
+          "cwd": ".",
+          "type": "integration"
+        },
+        {
+          "id": "G03",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "evidence": "pending",
+          "cwd": ".",
+          "type": "smoke"
+        }
+      ]
+    },
+    {
+      "id": "S02",
+      "title": "Repair runbook and re-entry proof",
+      "intent": "scripts/repair-compaction-entry.js recomputes the durable kept id for phantom compaction rows; dry-run default; --apply only on terminal sessions; env-only DATABASE_URL with REPAIR_UNAVAILABLE guard.",
+      "user_stories": [
+        1
+      ],
+      "blocked_by": [
+        "S01"
+      ],
+      "targets": [
+        {
+          "path": "scripts/repair-compaction-entry.js",
+          "symbols": [
+            {
+              "name": "main",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(argv: string[]): Promise<number>"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Parses --session and --apply; env-only DATABASE_URL; prints REPAIR_UNAVAILABLE exit 2 without it; dry-run prints planned UPDATE; apply rewrites firstKeptEntryId only on phantom rows of terminal sessions."
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "b5b34ff7-7304-4ac3-87fe-e5c619bdb1fa",
+      "impl": {
+        "status": "ready_for_verification",
+        "hash": "2943a304c6081fc90795e93677bf6bf22058016f712335749351809a0a58a1ba",
+        "actor": "implementer",
+        "at": "2026-09-03T13:26:16.718Z"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "Repair script recomputes phantom kept ids with prepareCompaction, prints dry-run plans, applies only with --apply, and guards missing DATABASE_URL with REPAIR_UNAVAILABLE exit 2.",
+      "gates": [
+        {
+          "id": "G01",
+          "check": "npx vitest run tests/scripts/repair-compaction-entry.test.ts",
+          "expect": "passed",
+          "evidence": "pending",
+          "cwd": ".",
+          "type": "unit"
+        },
+        {
+          "id": "G02",
+          "check": "env -u DATABASE_URL node scripts/repair-compaction-entry.js",
+          "expect": "REPAIR_UNAVAILABLE",
+          "evidence": "pending",
+          "cwd": ".",
+          "type": "smoke"
+        }
+      ]
+    }
+  ],
+  "audit": [
+    {
+      "seq": 1,
+      "id": "8ba0a744-c190-4b96-904d-9fb9c2e3191b",
+      "at": "2026-09-03T12:07:50.845Z",
+      "actor": "orchestrator",
+      "command": "init",
+      "transition": "spec-approved:docs/specs/012-compaction-entry-id-space-fix.md spec-hash:a696aa52ccdd7ad0c8da6e0986928e8d964d44c2ba2a159cc50cc3dc3d652a68",
+      "slice": null,
+      "hash": "f37298de461ac10af3f23668703be23609c7994acf544d9c1436051b2ab12f3c"
+    },
+    {
+      "seq": 2,
+      "id": "458bc637-db67-48de-a13d-ef486e5a9271",
+      "at": "2026-09-03T12:07:50.910Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:add:S01",
+      "slice": "S01",
+      "hash": "dec11e444a32b5a88f0517d51b926c5bf782a044a4b983dfd229c8b17e0fc7c1",
+      "fileHash": "3c6781ec5eeb85646a622a672d33da326098e635fb94b08ff5e6f000d719cb7a"
+    },
+    {
+      "seq": 3,
+      "id": "9086dfff-b7d3-4cab-9861-93bd9ed1318d",
+      "at": "2026-09-03T12:07:50.972Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:add:S02",
+      "slice": "S02",
+      "hash": "f264a78d56167cd733fc300b8b18be284049086d9f71dbbd4276be7c934d42a1",
+      "fileHash": "cdbf0c6bf3f4e712f6e7c3005aaa418dbc4e5866fcc8a1c37916b3c62509c028"
+    },
+    {
+      "seq": 4,
+      "id": "ad5dbbc1-ec60-412a-b783-46a4fb867a2c",
+      "at": "2026-09-03T12:07:51.031Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S01:target-add:lib/server/agent-runtime/runner.ts::runSession",
+      "slice": "S01",
+      "hash": "26e790d78cb793581be9a9193cd7860d3d8fcfb2eef9e467f0c60f8617cb7a6f",
+      "fileHash": "3004755882a05d2d114487e4e4f58da4ba865ada630d6f5a71474427e22cc55b"
+    },
+    {
+      "seq": 5,
+      "id": "557f0568-a6a8-465a-a985-6355998bc6a4",
+      "at": "2026-09-03T12:07:51.089Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S01:target-add:lib/server/agent-runtime/compaction.ts::makeCompactionRuntime",
+      "slice": "S01",
+      "hash": "451aa0b54377a3dff37f4c09db4d7b8c0dd64725f511aecaba6c39f9513cee44",
+      "fileHash": "8023491ef0b3682785c0768a174fae8cf62cb8bbbf97ba6ce93e27ba8b93fa93"
+    },
+    {
+      "seq": 6,
+      "id": "bceeced6-dab5-46e6-ab7e-fc96c5032b0e",
+      "at": "2026-09-03T12:07:51.144Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S01:target-add:lib/server/agent-runtime/compaction.ts::CompactionRuntimeOptions",
+      "slice": "S01",
+      "hash": "dd69823005c27568274d0d19356c3659b6a83e8b905fe13bef39cd7bf3d9a6bb",
+      "fileHash": "e1efa7538226ecf89d34d2b3688df1e2b52d172a7ac014cb14a1a2e02010dfe6"
+    },
+    {
+      "seq": 7,
+      "id": "5ac191b6-2730-49f3-8fac-18f9bd34f47f",
+      "at": "2026-09-03T12:07:51.242Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S01:capture",
+      "slice": "S01",
+      "hash": "8b38cf0e0f4775604721c9fc2ce23b669846b3fa7a6c21517e84698cd3ec2c75",
+      "fileHash": "8cffdb2f86193bf14bdbe9df288282302bb9a1df2dbb7aca912b465fa1927a13"
+    },
+    {
+      "seq": 8,
+      "id": "224efb39-a437-4de7-aff6-358d1dd0a1ac",
+      "at": "2026-09-03T12:07:51.296Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect",
+      "slice": "S01",
+      "hash": "79477819c5ad1b3f6c83bd5bc9811dfc59a1b70132ef7bf9d72b0daf370d7b9d",
+      "expectationHash": "32e0a6110cf0ef16f9a499663032d908b0700617563b1339752c44d45b23be16",
+      "fileHash": "2b08af181f07dfcbab6766d362d71728d060f459c24559625963034c17e737f4"
+    },
+    {
+      "seq": 9,
+      "id": "a91dd6dd-a70f-494b-874b-cf8380ed174a",
+      "at": "2026-09-03T12:07:51.351Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S02:expect",
+      "slice": "S02",
+      "hash": "6536b5058fd60ce407ca137e6978d62d674839429230218cf2ad3a69bdfcd7de",
+      "expectationHash": "3c55f2211b959a9d30e38a2a3b6cc213552b7b75b11eb2dee909e14543d73b18",
+      "fileHash": "8c4721d0c0a2d258812f7ea4395d722da6493d0cbd43d195e71a9f1cef706a9e"
+    },
+    {
+      "seq": 10,
+      "id": "79f7022a-f5f6-4729-b284-17eb975696d0",
+      "at": "2026-09-03T12:07:51.401Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S01:postcondition:lib/server/agent-runtime/runner.ts::runSession",
+      "slice": "S01",
+      "hash": "27454cfcd37f2426c33fb80510f90edc13e7e9cff3dffb8cb63ff04532a22273",
+      "fileHash": "dfc3b2d3c5afc39e2d5ce342cb8f397af87897866e820061c85e5db2f6509ad1"
+    },
+    {
+      "seq": 11,
+      "id": "1004b495-ff7c-4846-b727-008c2f86218b",
+      "at": "2026-09-03T12:07:51.457Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S01:postcondition:lib/server/agent-runtime/compaction.ts::makeCompactionRuntime",
+      "slice": "S01",
+      "hash": "8db63064c2fe6614daaf47ca2e2ef9ff1820290507c36e6ed6413b95bcf7a331",
+      "fileHash": "8f799485ebc5158f4be933792055f13dc77dbd904cb5dbbd547566b8140ca2e8"
+    },
+    {
+      "seq": 12,
+      "id": "43eaa6a2-668b-40ca-b7be-b13dbe3d629c",
+      "at": "2026-09-03T12:07:51.510Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S01:postcondition:lib/server/agent-runtime/compaction.ts::CompactionRuntimeOptions",
+      "slice": "S01",
+      "hash": "d3379c27748859cb6cb1bdae4358056d5d14f9424648c556e5e5a313c28c7d77",
+      "fileHash": "c3d9015b9e3a6297fb3842aa5938a9dcccd520d297ef8909ff51a5d87bd5a2e0"
+    },
+    {
+      "seq": 13,
+      "id": "483ba1dc-67e0-4409-b02a-542da959abeb",
+      "at": "2026-09-03T12:07:51.574Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect-symbol:lib/server/agent-runtime/runner.ts::runSession",
+      "slice": "S01",
+      "hash": "5e50026710c76df99f2121ad9d05404a025a18d9f5f2fedd704153e7e23e4b23",
+      "expectationHash": "e227483bc4e29d2a43b4205b3b7284b9748a9ba99e558e7f55c99675ea5fbcf2",
+      "fileHash": "98d9316c26d487d7d49136f86bfac79af02611a682d20e1c531aa17aa5de0e7d"
+    },
+    {
+      "seq": 14,
+      "id": "8163f5b0-a3a7-476b-bd48-aad3cd852f7d",
+      "at": "2026-09-03T12:07:51.630Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect-symbol:lib/server/agent-runtime/compaction.ts::makeCompactionRuntime",
+      "slice": "S01",
+      "hash": "b840575a89b25698ecc03f77656ead398d488e9aa7cbbfa899b3532d3dd895c3",
+      "expectationHash": "5d03f9701aa1250e25af7c5025dd8ed10908d07e1d368eddc68ce864f1c9bd8c",
+      "fileHash": "e138bf10ebce706e82669a3be4cc6022417af25101cb411e33560f47da42cf0f"
+    },
+    {
+      "seq": 15,
+      "id": "7c0cf328-ba14-4ace-bb8c-fbdb4956d88a",
+      "at": "2026-09-03T12:07:51.689Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect-symbol:lib/server/agent-runtime/compaction.ts::CompactionRuntimeOptions",
+      "slice": "S01",
+      "hash": "68e327143649cf632827decaee7f34420907e319cd066c7973ebf1787ba8ca78",
+      "expectationHash": "4125d9154b51deeba3af08e4a77309cf6739b04e7d81c44293b5f701657f0afa",
+      "fileHash": "73262390fb708a4351efae637e4a458929cf51982604a21b9d812d8f19b6ca62"
+    },
+    {
+      "seq": 16,
+      "id": "692246af-00f6-4968-ad69-f0aefe186f00",
+      "at": "2026-09-03T12:07:51.742Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S01:gate-add:G01",
+      "slice": "S01",
+      "hash": "424d6df2a836f96813617520c580a155fae18f9a735dbe0267b497c159ad4bfc",
+      "fileHash": "12f1946fdac4ccdc0e1870e2211970295825df7a18c7001f5ee56e64d812f60e"
+    },
+    {
+      "seq": 17,
+      "id": "bc3f622f-ecdd-4602-a461-69643c26d995",
+      "at": "2026-09-03T12:07:51.793Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S01:gate-add:G02",
+      "slice": "S01",
+      "hash": "81b0470235bb3b5f3859eec143e62e771fe1959bbf97392a7842ddae09e7ba4d",
+      "fileHash": "bb712f052bafe88a3225b5f4c6497a4e4a7cd7b26cc9b583cfa6b52345e40a6f"
+    },
+    {
+      "seq": 18,
+      "id": "9edbb2b0-0230-4229-baa0-f36383265dfb",
+      "at": "2026-09-03T12:07:51.846Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S01:gate-add:G03",
+      "slice": "S01",
+      "hash": "fe7776b1aa6de62f796b7c987e23d30bbb91a1041a537e2fb52c1a2f6c036390",
+      "fileHash": "9193b751afee7353b6a1167bf80330ee7575d28f6ed332ba3c8e3066c39e7014"
+    },
+    {
+      "seq": 19,
+      "id": "c69681a9-e17d-4345-9d7d-47f3a500cc6f",
+      "at": "2026-09-03T12:07:51.906Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S02:gate-add:G01",
+      "slice": "S02",
+      "hash": "c595855213567fc98c19b1ea4b89beef4f85fa20e744953864cdfa0fffac0bcf",
+      "fileHash": "670fabef9774dda58b5b70f5561a78dfc40ca1592e1bde41db9e3cc77a717b98"
+    },
+    {
+      "seq": 20,
+      "id": "c449d68a-8189-4c1f-9827-2f37215c6c09",
+      "at": "2026-09-03T12:07:51.965Z",
+      "actor": "orchestrator",
+      "command": "gate_add",
+      "transition": "slice:S02:gate-add:G02",
+      "slice": "S02",
+      "hash": "fdb5be61589c55f0c7cc958cb4db7f3dc6e56d1b35cf207e081728cea23bc16b",
+      "fileHash": "1e84664733ba431cd1ce192837715e80a2f62feac5e4e590ad9766619427a919"
+    },
+    {
+      "seq": 21,
+      "id": "638be03d-2ab1-4d7c-95a0-33a5916b9e62",
+      "at": "2026-09-03T12:08:24.348Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S02:target-add:scripts/repair-compaction-entry.js::main",
+      "slice": "S02",
+      "hash": "61a7b1d93295c3a97fe692c63cbbb3561b0e110d07cf297bc525f357d1701166",
+      "fileHash": "8ba1c9e769ba3d689a3d0b758018aedc46f12432964ea6d61789fb0abdb7d09e"
+    },
+    {
+      "seq": 22,
+      "id": "8186875c-da74-4e68-b7aa-a9f3840df485",
+      "at": "2026-09-03T12:08:24.402Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S02:capture",
+      "slice": "S02",
+      "hash": "f60ea72bb896a4073a0bd0daddd0a5def9f87a9a245390a43479cf48bf9cef50",
+      "fileHash": "1d9f0253002050324b3ba4d871c44eec0bd01e7d15d5cad978908f53012715ab"
+    },
+    {
+      "seq": 23,
+      "id": "20a739e2-b765-4b68-9bc3-898396d14499",
+      "at": "2026-09-03T12:08:24.452Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S02:postcondition:scripts/repair-compaction-entry.js::main",
+      "slice": "S02",
+      "hash": "5128ded2ac5c42929cda129248222363ff4b05252ba047d76e08dff2f62df745",
+      "fileHash": "325e6d504e35ac974ee9afe1feb730185f2a91c65bef4b1d640489e193ba517a"
+    },
+    {
+      "seq": 24,
+      "id": "1f350537-db9d-4ab0-8897-504798881f87",
+      "at": "2026-09-03T12:08:24.502Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S02:expect-symbol:scripts/repair-compaction-entry.js::main",
+      "slice": "S02",
+      "hash": "95828fa41c221c4d25c492d65b3bf15beeff6928748d027d6cf4a5b4918a05b9",
+      "expectationHash": "e682416fa82e0e0d4745f96e8783d15e650cd99a3e5a69922178b3b9b735f109",
+      "fileHash": "dd2cd9d4e3a4e5cd31830c6beb14092da699b095f20cc2d8a00e62831bf35e0c"
+    },
+    {
+      "seq": 25,
+      "id": "0b95a92b-960e-41d7-b425-a41c461fdfc8",
+      "at": "2026-09-03T12:08:24.546Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "96e65cb09a926d513386f4d0cfcec5e3f856012a4a368ad9f2118c6a6c9307cd",
+      "fileHash": "aaa1aa558ebaeaba6019543e9829f8ff769b98c485b3c70b2968240cb4bb66ae"
+    },
+    {
+      "seq": 26,
+      "id": "1f0c4e75-8157-4992-97fc-fe56a3f49de6",
+      "at": "2026-09-03T13:15:36.188Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S01:impl:pending->ready_for_verification",
+      "slice": "S01",
+      "hash": "3e4e7f2cd1d272c7ea180f6097496d9e2948bd9fb8162550858986e7c80ed397",
+      "fileHash": "4c747bd927e7032df67b5090d978eab0703674ac3c34c4e66259a4fd6f0780c0"
+    },
+    {
+      "seq": 27,
+      "id": "4cabbf7f-bedc-4dc3-bfef-d1c50e5c79e0",
+      "at": "2026-09-03T13:26:16.718Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S02:impl:pending->ready_for_verification",
+      "slice": "S02",
+      "hash": "e7964dfe33e27dacdb2c9aea4d79bc2356eeb379236da25da08ea1ee976ef202",
+      "fileHash": "a0d611929a0a1bf49fcdf15e4c370da035ddbecd2fa20ca07cb9f1ec45ceadfa"
+    }
+  ],
+  "fileHash": "f963d1e553f8acf738d633f067f26243177958145b8657c99b9a472d40a6c9f5"
+}
