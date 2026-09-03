@@ -160,8 +160,34 @@
         "at": "2026-09-03T13:26:16.718Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "verified",
+        "hash": "c8301b87ef2fd61ff142926785f0a6b0a06cc69836c4b0a20d3ecfa6987111b3",
+        "actor": "verifier",
+        "at": "2026-09-03T13:41:55.123Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "G01",
+              "shell": "/bin/sh",
+              "cwd": ".",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/scripts/repair-compaction-entry.test.ts \u001b[2m(\u001b[22m\u001b[2m5 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 106\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m5 passed\u001b[39m\u001b[22m\u001b[90m (5)\u001b[39m\n\u001b[2m   Start at \u001b[22m 01:41:54\n\u001b[2m   Duration \u001b[22m 202ms\u001b[2m (transform 27ms, setup 16ms, import 17ms, tests 106ms, environment 0ms)\u001b[22m\n\n",
+              "passed": true
+            },
+            {
+              "id": "G02",
+              "shell": "/bin/sh",
+              "cwd": ".",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "REPAIR_UNAVAILABLE\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "Repair script recomputes phantom kept ids with prepareCompaction, prints dry-run plans, applies only with --apply, and guards missing DATABASE_URL with REPAIR_UNAVAILABLE exit 2.",
       "gates": [
@@ -169,7 +195,7 @@
           "id": "G01",
           "check": "npx vitest run tests/scripts/repair-compaction-entry.test.ts",
           "expect": "passed",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G01\",\"shell\":\"/bin/sh\",\"cwd\":\".\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/scripts/repair-compaction-entry.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m5 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 106\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m5 passed\\u001b[39m\\u001b[22m\\u001b[90m (5)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 01:41:54\\n\\u001b[2m   Duration \\u001b[22m 202ms\\u001b[2m (transform 27ms, setup 16ms, import 17ms, tests 106ms, environment 0ms)\\u001b[22m\\n\\n\",\"passed\":true}",
           "cwd": ".",
           "type": "unit"
         },
@@ -177,7 +203,7 @@
           "id": "G02",
           "check": "env -u DATABASE_URL node scripts/repair-compaction-entry.js",
           "expect": "REPAIR_UNAVAILABLE",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"G02\",\"shell\":\"/bin/sh\",\"cwd\":\".\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"REPAIR_UNAVAILABLE\\n\",\"passed\":true}",
           "cwd": ".",
           "type": "smoke"
         }
@@ -497,7 +523,20 @@
       "slice": null,
       "hash": "26aa2358ae57b3894a736cf7c26e8ecc60b02bf4930c0650a150decdd0ea9db7",
       "fileHash": "f963d1e553f8acf738d633f067f26243177958145b8657c99b9a472d40a6c9f5"
+    },
+    {
+      "seq": 29,
+      "id": "b53d10ae-fbe5-4cd8-a7ae-1f1bb9266a50",
+      "at": "2026-09-03T13:41:55.123Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S02:verification:pending->verified",
+      "slice": "S02",
+      "hash": "c9fdf6ff2417103f0337ef7bbe5179e0d16bfe6d165c2934f0bf5d089c0b03a2",
+      "oracle": "00e857cdd92f494595c610b39921cc7c6185ca556d9604a25358200acf393879",
+      "evidence": "c32cae7cb8630644d73f7990d0d4fdcc435a7fd48667e31c1764f1a6d9f523a1",
+      "fileHash": "d7bdaa2449220bec0b428f88243c9e0fa15793aa72c5aab3ac2e5dcbb067034a"
     }
   ],
-  "fileHash": "d7bdaa2449220bec0b428f88243c9e0fa15793aa72c5aab3ac2e5dcbb067034a"
+  "fileHash": "67ec381242c6599b5c01eca0d5c8558aeb2a2082a0c83e8665b8b53057c527af"
 }

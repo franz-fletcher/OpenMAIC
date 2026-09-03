@@ -19,6 +19,35 @@
  */
 
 // ---------------------------------------------------------------------------
+// Type definitions
+// ---------------------------------------------------------------------------
+
+/**
+ * A single row from the agent_session_entries table, with data merged in.
+ * @typedef {Object} EntryRow
+ * @property {string} id - The entry_id column value.
+ * @property {string|null} parentId - The parent_id column value.
+ * @property {string} type - Entry type (e.g. 'message', 'compaction').
+ */
+
+/**
+ * A repair plan for a single phantom compaction row.
+ * @typedef {Object} RepairPlan
+ * @property {string} entryId - The compaction entry's id.
+ * @property {string} oldId - The phantom firstKeptEntryId.
+ * @property {string} newId - The recomputed firstKeptEntryId.
+ * @property {string} sql - The UPDATE statement to fix the row.
+ */
+
+/**
+ * Compaction settings derived from context window size.
+ * @typedef {Object} CompactionSettings
+ * @property {boolean} enabled - Whether compaction is enabled.
+ * @property {number} reserveTokens - Token reserve for compaction.
+ * @property {number} keepRecentTokens - Tokens to keep from the recent prefix.
+ */
+
+// ---------------------------------------------------------------------------
 // Settings floor (inlined from lib/server/agent-runtime/compaction.ts
 // resolveCompactionSettings to avoid a TS import from plain Node).
 // Source of truth: resolveCompactionSettings in compaction.ts.
@@ -29,6 +58,12 @@ const DEFAULT_COMPACTION_SETTINGS = {
   keepRecentTokens: 32000,
 };
 
+/**
+ * Derive compaction settings from the context window size.
+ *
+ * @param {number} contextWindow - The model's context window size in tokens.
+ * @returns {CompactionSettings}
+ */
 function resolveCompactionSettings(contextWindow) {
   const reserveTokens = Math.min(
     DEFAULT_COMPACTION_SETTINGS.reserveTokens,
@@ -49,13 +84,23 @@ function resolveCompactionSettings(contextWindow) {
 // pi-agent-core dynamic import (ESM-only package, cached after first call)
 // ---------------------------------------------------------------------------
 
+/**
+ * @type {{ prepareCompaction: (prefix: Array<Record<string, unknown>>, settings: CompactionSettings) => { ok: boolean, value?: { firstKeptEntryId: string } } } | null}
+ */
 let _piModule = null;
 
+/**
+ * Load the pi-agent-core module, caching the result after the first call.
+ *
+ * @returns {Promise<{ prepareCompaction: (prefix: Array<Record<string, unknown>>, settings: CompactionSettings) => { ok: boolean, value?: { firstKeptEntryId: string } } }>}
+ */
 async function loadPi() {
   if (!_piModule) {
-    _piModule = await import('@earendil-works/pi-agent-core');
+    _piModule = /** @type {*} */ (await import('@earendil-works/pi-agent-core'));
   }
-  return _piModule;
+  return /** @type {{ prepareCompaction: (prefix: Array<Record<string, unknown>>, settings: CompactionSettings) => { ok: boolean, value?: { firstKeptEntryId: string } } }} */ (
+    _piModule
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -72,24 +117,25 @@ async function loadPi() {
  * @param {Array<Record<string, unknown>>} branch - Durable branch entries
  *   ordered by seq. Each entry has at least { id, type } and compaction
  *   entries also have { firstKeptEntryId }.
- * @param {{ enabled: boolean, reserveTokens: number, keepRecentTokens: number }} settings
- * @returns {Promise<Array<{ entryId: string, oldId: string, newId: string, sql: string }>>}
+ * @param {CompactionSettings} settings
+ * @returns {Promise<Array<RepairPlan>>}
  */
 async function planRepairs(branch, settings) {
   const pi = await loadPi();
+  /** @type {Array<RepairPlan>} */
   const plans = [];
   const seenIds = new Set();
 
   for (const entry of branch) {
     if (entry.type !== 'compaction') {
-      seenIds.add(entry.id);
+      seenIds.add(/** @type {string} */ (entry.id));
       continue;
     }
 
-    const firstKept = entry.firstKeptEntryId;
+    const firstKept = /** @type {string} */ (entry.firstKeptEntryId);
     if (firstKept && !seenIds.has(firstKept)) {
       // Phantom detected. Recompute from the branch prefix before this row.
-      const prefix = branch.filter((e) => seenIds.has(e.id));
+      const prefix = branch.filter((e) => seenIds.has(/** @type {string} */ (e.id)));
       const prep = pi.prepareCompaction(prefix, settings);
       let newId = firstKept;
       if (prep.ok && prep.value) {
@@ -99,13 +145,18 @@ async function planRepairs(branch, settings) {
         `UPDATE agent_session_entries` +
         ` SET data = jsonb_set(data, '{firstKeptEntryId}', to_jsonb('${newId}'::text))` +
         ` WHERE session_id = $1 AND entry_id = '${entry.id}';`;
-      plans.push({ entryId: entry.id, oldId: firstKept, newId, sql });
+      plans.push({
+        entryId: /** @type {string} */ (entry.id),
+        oldId: firstKept,
+        newId,
+        sql,
+      });
     }
 
     // Compaction entries are themselves part of the branch for subsequent
     // lookups. Add after processing so the row does not satisfy its own
     // firstKeptEntryId check.
-    seenIds.add(entry.id);
+    seenIds.add(/** @type {string} */ (entry.id));
   }
 
   return plans;
@@ -115,6 +166,12 @@ async function planRepairs(branch, settings) {
 // CLI argument parsing
 // ---------------------------------------------------------------------------
 
+/**
+ * Parse CLI arguments into a structured options object.
+ *
+ * @param {string[]} argv - The process.argv array.
+ * @returns {{ sessionId: string|null, apply: boolean, databaseUrl: string|null, contextWindow: number }}
+ */
 function parseArgs(argv) {
   let sessionId = null;
   let apply = false;
@@ -143,6 +200,13 @@ function parseArgs(argv) {
 // Database helpers (pg CJS require, matching check-stage-completion.js)
 // ---------------------------------------------------------------------------
 
+/**
+ * Load all entries for a session, ordered by seq.
+ *
+ * @param {{ query: (sql: string, params?: unknown[]) => Promise<{ rows: Array<{ entry_id: string, parent_id: string|null, type: string, data: Record<string, unknown> }> }> }} client - A pg client.
+ * @param {string} sessionId - The session id to load entries for.
+ * @returns {Promise<Array<EntryRow & Record<string, unknown>>>}
+ */
 async function loadEntries(client, sessionId) {
   const result = await client.query(
     `SELECT entry_id, parent_id, type, data` +
@@ -158,12 +222,27 @@ async function loadEntries(client, sessionId) {
   }));
 }
 
+/**
+ * Check whether a session has a terminal status.
+ *
+ * @param {{ query: (sql: string, params?: unknown[]) => Promise<{ rows: Array<{ status: string }> }> }} client - A pg client.
+ * @param {string} sessionId - The session id to check.
+ * @returns {Promise<boolean>}
+ */
 async function checkTerminalStatus(client, sessionId) {
   const result = await client.query(`SELECT status FROM agent_sessions WHERE id = $1`, [sessionId]);
   if (result.rows.length === 0) return false;
   return ['succeeded', 'failed', 'cancelled'].includes(result.rows[0].status);
 }
 
+/**
+ * Execute a list of repair plans inside a single transaction.
+ *
+ * @param {{ query: (sql: string, params?: unknown[]) => Promise<unknown> }} client - A pg client.
+ * @param {string} sessionId - The session id to substitute for $1 in each plan's SQL.
+ * @param {Array<RepairPlan>} plans - The repair plans to execute.
+ * @returns {Promise<void>}
+ */
 async function applyPlans(client, sessionId, plans) {
   await client.query('BEGIN');
   try {
