@@ -38,6 +38,7 @@ import { type ReactNode, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useI18n } from '@/lib/hooks/use-i18n';
 import { useBrand, useIsDesktop } from '@/lib/brand/brand-context';
+import { useSiteBranding } from '@/lib/hooks/use-site-branding';
 import { arrivedByProSwap } from '@/lib/workbench/pro-swap';
 import { cn } from '@/lib/utils/cn';
 import { ProBadge } from '@/components/workbench/ProBadge';
@@ -64,6 +65,7 @@ export function WorkspaceHome({
   const { t } = useI18n();
   const brand = useBrand();
   const isDesktop = useIsDesktop();
+  const { showLogo } = useSiteBranding();
 
   // Someone who arrived through the Pro swap has just watched the surfaces
   // crossfade around a fixed lockup and the composer turn over into this face;
@@ -82,7 +84,7 @@ export function WorkspaceHome({
           plain button, not a second ProBadge: two elements answering to
           `pro-mode-exit` would be one testid too many. */}
       <div className="flex h-12 shrink-0 items-center justify-between px-4 md:hidden">
-        <img src={brand.logoSrc} alt={brand.productName} className="h-5 w-auto" />
+        {showLogo && <img src={brand.logoSrc} alt={brand.productName} className="h-5 w-auto" />}
         <button
           type="button"
           data-testid="pro-workspace-exit-compact"
@@ -124,26 +126,31 @@ export function WorkspaceHome({
               data-testid="pro-workspace-hero-lockup"
               data-pro-morph="lockup"
             >
-              {isDesktop && !brand.logoHasWordmark ? (
-                // A brand whose mark carries no wordmark gets the product name
-                // beside it, exactly as the classic hero does.
-                <div className="flex items-center gap-3">
-                  <img src={brand.markSrc} alt={brand.productName} className="size-11 md:size-14" />
-                  <span
-                    className="text-xl font-semibold tracking-tight md:text-2xl"
-                    style={{ color: brand.themeColor }}
-                  >
-                    {brand.productName}
-                  </span>
-                </div>
-              ) : (
-                <img
-                  src={brand.logoSrc}
-                  alt={brand.productName}
-                  data-testid="pro-workspace-hero-logo"
-                  className="ws-hero-logo"
-                />
-              )}
+              {showLogo &&
+                (isDesktop && !brand.logoHasWordmark ? (
+                  // A brand whose mark carries no wordmark gets the product name
+                  // beside it, exactly as the classic hero does.
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={brand.markSrc}
+                      alt={brand.productName}
+                      className="size-11 md:size-14"
+                    />
+                    <span
+                      className="text-xl font-semibold tracking-tight md:text-2xl"
+                      style={{ color: brand.themeColor }}
+                    >
+                      {brand.productName}
+                    </span>
+                  </div>
+                ) : (
+                  <img
+                    src={brand.logoSrc}
+                    alt={brand.productName}
+                    data-testid="pro-workspace-hero-logo"
+                    className="ws-hero-logo"
+                  />
+                ))}
               {/* At the wordmark's cap height, where a trademark mark goes —
                   offset from the image TOP, not centred on it, and scaled with
                   the 46/56px lockup rather than the classic page's 48/64px. */}

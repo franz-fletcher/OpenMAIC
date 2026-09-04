@@ -11,6 +11,7 @@
   },
   "home": {
     "slogan": "Generatives Lernen im interaktiven Lernraum mit mehreren KI-Agenten",
+    "headline": "Verwandeln Sie jedes Material in einen lebendigen Kursraum",
     "greetingWithName": "Hallo, {{name}}"
   },
   "toolbar": {

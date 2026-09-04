@@ -11,6 +11,7 @@
   },
   "home": {
     "slogan": "Generative Learning in Multi-Agent Interactive Classroom",
+    "headline": "把任何材料变成生动的课堂",
     "greetingWithName": "嗨，{{name}}"
   },
   "toolbar": {

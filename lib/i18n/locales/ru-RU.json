@@ -11,6 +11,7 @@
   },
   "home": {
     "slogan": "Generative Learning in Multi-Agent Interactive Classroom",
+    "headline": "Превратите любой материал в живой класс",
     "greetingWithName": "Привет, {{name}}"
   },
   "toolbar": {

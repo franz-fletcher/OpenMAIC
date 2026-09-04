@@ -4,134 +4,19 @@
   "spec": {
     "reference": "docs/specs/014-branding-header.md",
     "title": "Batch 014 spec: branding-header",
-    "hash": "d99adbd223ac8fcb0c14f1824857560470b40a1e5c52a3ba401b65ff20b1f7b1"
+    "hash": "fe5aa5900f5c12533b5e538e00bef3936412c495909d7a9f1746192639bcaa4b"
   },
   "tracker": {
     "mode": "none"
   },
   "stage": "implementation",
   "retry": {
-    "count": 0,
+    "count": 1,
     "max": 5,
     "consecutive_same_cause": 0,
     "escalate_at": 3
   },
   "slices": [
-    {
-      "id": "S1",
-      "title": "Branding config and public surface",
-      "intent": "The server loader at lib/config/site-branding.ts (env plus optional server-branding.yml), the public route app/api/site-branding/route.ts (GET, no PII, no auth), and the client hook lib/hooks/use-site-branding.ts with defaults that hold until the route answers.",
-      "user_stories": [
-        1,
-        2
-      ],
-      "blocked_by": [],
-      "targets": [
-        {
-          "path": "lib/config/site-branding.ts",
-          "symbols": [
-            {
-              "name": "SITE_BRANDING_DEFAULTS",
-              "before": {
-                "exists": false
-              },
-              "postcondition": {
-                "exists": true,
-                "kind": "variable"
-              },
-              "postcondition_quality": "VERIFIED",
-              "expectation": "The fallbacks when env and yaml say nothing. Shape: { name: 'OpenMAIC', tagline: '', showLogo: true, showHeadline: true }."
-            },
-            {
-              "name": "loadSiteBranding",
-              "before": {
-                "exists": false
-              },
-              "postcondition": {
-                "exists": true,
-                "kind": "function",
-                "signature": "(): SiteBranding"
-              },
-              "postcondition_quality": "VERIFIED",
-              "expectation": "Merges defaults, yaml, then env. Env wins. SHOW_LOGO and SHOW_HEADLINE parse with readBoolean semantics."
-            }
-          ]
-        },
-        {
-          "path": "app/api/site-branding/route.ts",
-          "symbols": [
-            {
-              "name": "GET",
-              "before": {
-                "exists": false
-              },
-              "postcondition": {
-                "exists": true,
-                "kind": "function",
-                "signature": "(): Promise<Response>"
-              },
-              "postcondition_quality": "VERIFIED",
-              "expectation": "Returns { name, tagline, showLogo, showHeadline } publicly, no PII, no auth, Node runtime."
-            }
-          ]
-        },
-        {
-          "path": "lib/hooks/use-site-branding.ts",
-          "symbols": [
-            {
-              "name": "useSiteBranding",
-              "before": {
-                "exists": false
-              },
-              "postcondition": {
-                "exists": true,
-                "kind": "function",
-                "signature": "(): SiteBrandingState"
-              },
-              "postcondition_quality": "VERIFIED",
-              "expectation": "Returns defaults first, then the fetched values."
-            }
-          ]
-        }
-      ],
-      "riskTier": 2,
-      "uuid": "ff91930d-4ac7-4a9a-bace-228c76acde3c",
-      "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
-      },
-      "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
-      },
-      "expectation": "An operator changes the site identity through env or yaml and the route serves the result; the route returns no PII and requires no session; the hook renders defaults before the fetch resolves and keeps defaults on any failure.",
-      "gates": [
-        {
-          "id": "g1",
-          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/branding/site-branding.test.ts && echo BRAND_CFG_OK",
-          "expect": "BRAND_CFG_OK",
-          "evidence": "pending",
-          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "type": "unit"
-        },
-        {
-          "id": "g2",
-          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/branding/site-branding-route.test.ts && echo BRAND_RT_OK",
-          "expect": "BRAND_RT_OK",
-          "evidence": "pending",
-          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "type": "smoke"
-        },
-        {
-          "id": "g3",
-          "check": "grep -q \"SHOW_HEADLINE\" .env.example && grep -q \"SITE_NAME\" .env.example && echo BRAND_ENV_OK",
-          "expect": "BRAND_ENV_OK",
-          "evidence": "pending",
-          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "type": "smoke"
-        }
-      ]
-    },
     {
       "id": "S2",
       "title": "Header chrome",
@@ -256,8 +141,10 @@
       "riskTier": 3,
       "uuid": "fdf2549e-24b0-4c59-85ee-bbe4671cda8b",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "d5126ce4509ff4091afca211779a2f407c339f35feef09809a6c9e21c19975a1",
+        "actor": "implementer",
+        "at": "2026-09-04T03:29:49.913Z"
       },
       "verification": {
         "status": "pending",
@@ -293,6 +180,161 @@
           "id": "g4",
           "check": "pnpm check:i18n-keys && echo I18N_OK",
           "expect": "I18N_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "smoke"
+        }
+      ]
+    },
+    {
+      "id": "S1",
+      "title": "Branding config and public surface",
+      "intent": "The client-safe branding module, the server-only loader, the public route, and the client hook with safe defaults.",
+      "user_stories": [
+        1,
+        2
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/config/site-branding.ts",
+          "symbols": [
+            {
+              "name": "SiteBranding",
+              "before": {
+                "exists": true,
+                "kind": "interface"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "interface"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "The client-safe model carried by both modules. Shape: { name: string, tagline: string, showLogo: boolean, showHeadline: boolean }."
+            },
+            {
+              "name": "SITE_BRANDING_DEFAULTS",
+              "before": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "The fallbacks when env and yaml say nothing, kept in the client-safe module. Shape: { name: 'OpenMAIC', tagline: '', showLogo: true, showHeadline: true }."
+            },
+            {
+              "name": "readBoolean",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(envValue: string | undefined): boolean"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(envValue: string | undefined): boolean"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Truthy is 'true' or '1'. Client-safe, no node imports."
+            }
+          ]
+        },
+        {
+          "path": "lib/config/site-branding.server.ts",
+          "symbols": [
+            {
+              "name": "loadSiteBranding",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(): SiteBranding"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(): SiteBranding"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Server-only: defaults, then server-branding.yml through the module-private loadYamlFile helper, then env. Env wins. SHOW_LOGO and SHOW_HEADLINE parse with readBoolean. Imports node:fs, node:path, and js-yaml."
+            }
+          ]
+        },
+        {
+          "path": "app/api/site-branding/route.ts",
+          "symbols": [
+            {
+              "name": "GET",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "()"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(): Promise<Response>"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Imports the server module, returns { name, tagline, showLogo, showHeadline } publicly, no PII, no auth, Node runtime."
+            }
+          ]
+        },
+        {
+          "path": "lib/hooks/use-site-branding.ts",
+          "symbols": [
+            {
+              "name": "useSiteBranding",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(): SiteBrandingState"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(): SiteBrandingState"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Returns defaults first, then the fetched values. Imports the client-safe module only."
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "a45a5c3c-60d9-432b-8bb1-fba085d4d8d6",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "An operator changes the site identity through env or yaml and the route serves the result. The route returns no PII and requires no session. The hook renders defaults first and keeps them on any failure. The server-only loader lives in lib/config/site-branding.server.ts.",
+      "gates": [
+        {
+          "id": "g1",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/branding/site-branding.test.ts && echo BRAND_CFG_OK",
+          "expect": "BRAND_CFG_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "unit"
+        },
+        {
+          "id": "g2",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/branding/site-branding-route.test.ts && echo BRAND_RT_OK",
+          "expect": "BRAND_RT_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "smoke"
+        },
+        {
+          "id": "g3",
+          "check": "grep -q \"SHOW_HEADLINE\" .env.example && grep -q \"SITE_NAME\" .env.example && echo BRAND_ENV_OK",
+          "expect": "BRAND_ENV_OK",
           "evidence": "pending",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
           "type": "smoke"
@@ -792,7 +834,344 @@
       "slice": null,
       "hash": "06ba5ca9abba2e1e61781d81241b085ba1a3057be425eeb30a587b63ab120f1b",
       "fileHash": "b4da3630bed6952930d4bf790870e1fe6b1624706d36f9fabff53210d0b9e768"
+    },
+    {
+      "seq": 45,
+      "id": "da0a912a-b5ba-43fb-afac-0876ec8ee626",
+      "at": "2026-09-04T03:20:58.570Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S1:impl:pending->ready_for_verification",
+      "slice": "S1",
+      "hash": "ba6838aa89ba76758b8ba2d268a1b813801004bdf90f537498b4dbf4efaa20a0",
+      "fileHash": "984c4e2a5f15ff9bb5ed12c80346d131c5cfbe1c84c4cb9a339f2ac415f46b31"
+    },
+    {
+      "seq": 46,
+      "id": "b08d1619-b27b-4cd6-af53-35549b066d1e",
+      "at": "2026-09-04T03:29:49.913Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S2:impl:pending->ready_for_verification",
+      "slice": "S2",
+      "hash": "823b66219e7ccbe8335eef83c92d79027d6475bf0012e9086af1571e0b26299a",
+      "fileHash": "3e431a86debc45a3718179428c2764b40aca0bc55721786d45a9151c5b74c26a"
+    },
+    {
+      "seq": 47,
+      "id": "95a74701-572d-4a4a-84a2-a2f32caf1e48",
+      "at": "2026-09-04T04:22:11.321Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:correction:Client/server split retargets loadSiteBranding; S1 slice rebuilt from the corrected spec tables",
+      "slice": null,
+      "hash": "e5ea1f1389e2d9779370edfa7eec2150766d3e5fc1afc351507d047d100cc592",
+      "fileHash": "363d68753b5ae0dcbe866b2ab0e3b16702bc7b0a7ec3070ded4df0299908bdbb"
+    },
+    {
+      "seq": 48,
+      "id": "87d092dc-32fe-4da3-bcb7-3cf269d731b9",
+      "at": "2026-09-04T04:22:47.410Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:remove",
+      "slice": "S1",
+      "hash": "30a271aefef72bb29cf00f780334c38c51a5e42042f71890f8b3591dcd2bee55",
+      "fileHash": "b093c2db1014bff57ff9d2ca93f0eba05cd72fdbe7a93927e4a21b09823413f3"
+    },
+    {
+      "seq": 49,
+      "id": "bed1a318-e101-4be3-8648-2b14e9087db4",
+      "at": "2026-09-04T04:22:47.457Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:add:S1",
+      "slice": "S1",
+      "hash": "1ec89b1b24bf3f22e68f082c56a4af5062a988172a8c88b3834926c7e1113e63",
+      "fileHash": "03a2d1aef67b600892f3b1574a6fb7529ff56563d95e6fca9d0c3a8e46a600ea"
+    },
+    {
+      "seq": 50,
+      "id": "dd4cbe01-b2fe-4232-a258-26316064c5fd",
+      "at": "2026-09-04T04:22:47.505Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect",
+      "slice": "S1",
+      "hash": "aba33334537a5c867375c256f39f594e91ff9f5cbcd293c250cf6434c8933957",
+      "expectationHash": "253fea98b2baef7c051f3e24e5fc625032691a6c96c87af59af594f7ed0f40f0",
+      "fileHash": "de17def24cf6ac9d53dc6694b54add22287877986c471d150bc34aaa2fed7109"
+    },
+    {
+      "seq": 51,
+      "id": "d187b36c-b0ec-44d6-b554-b99c380fffde",
+      "at": "2026-09-04T04:22:47.547Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S1:target-add:lib/config/site-branding.ts::SiteBranding",
+      "slice": "S1",
+      "hash": "6da5a846f396d86b623b8f24297eb95e9a8403a3939cfa5b6eb231067feba3aa",
+      "fileHash": "30ddd06dad7743e54e7371244a385fb87e0342f8a5402b435378a5cc1a3f1d7c"
+    },
+    {
+      "seq": 52,
+      "id": "fc8045a0-44f2-42c2-a11a-eda558701e86",
+      "at": "2026-09-04T04:22:47.584Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S1:target-add:lib/config/site-branding.ts::SITE_BRANDING_DEFAULTS",
+      "slice": "S1",
+      "hash": "51c71c724879701aa627d100f360b4ad33282b7c36f2912989d461ce68ebc212",
+      "fileHash": "4ef4c23fd629a5df24d6d42e359570a125d5fb73c2f964aa200c300097bf6703"
+    },
+    {
+      "seq": 53,
+      "id": "a7ad4a41-cc36-4ca9-b8af-87dffa40b80b",
+      "at": "2026-09-04T04:22:47.620Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S1:target-add:lib/config/site-branding.ts::readBoolean",
+      "slice": "S1",
+      "hash": "86e263f921e58c2db9babcce4afc8546aa651277d92b9fbc0a675afcefec19a8",
+      "fileHash": "b01562a2b77babd09e242777dfc5f27b28acd72c0ddfe1b5c7f3a1648f01fe89"
+    },
+    {
+      "seq": 54,
+      "id": "9b2b8688-f330-4382-830b-c72e58926426",
+      "at": "2026-09-04T04:22:47.657Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S1:target-add:lib/config/site-branding.server.ts::loadSiteBranding",
+      "slice": "S1",
+      "hash": "ef658b67b9ab6b10f6fdd120bd951d36a0735ee8533fe90d50e6bcccc63d4517",
+      "fileHash": "a0852fef32df9af4fd3a5e3e75ab72988175ea9b3e27def2fdd523dfdf4aedb3"
+    },
+    {
+      "seq": 55,
+      "id": "ab11303f-0663-46c8-ab22-8c80ed01fc7a",
+      "at": "2026-09-04T04:22:47.696Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S1:target-add:app/api/site-branding/route.ts::GET",
+      "slice": "S1",
+      "hash": "f1b61d86f715a8d3bbe5502ae5fbe16f44544dacc47c7d081a0b45751bdb91d9",
+      "fileHash": "aa54873587294a46d30dc69e35287b751cd688c3fecfb6b2b30d06113978d08d"
+    },
+    {
+      "seq": 56,
+      "id": "97594160-bf86-4f19-b73c-d652db8951f9",
+      "at": "2026-09-04T04:22:47.731Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S1:target-add:lib/hooks/use-site-branding.ts::useSiteBranding",
+      "slice": "S1",
+      "hash": "f169aa629e084f5ec04c9f61ebb1010e68d8b708ccdc978bd5d7309aa31b9450",
+      "fileHash": "35cd6140f638473384c03bf590bdd61bca971e1dc723e2b60882c21825b4db5b"
+    },
+    {
+      "seq": 57,
+      "id": "8e691d21-36aa-4b25-a82c-dd16f873331e",
+      "at": "2026-09-04T04:23:05.891Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S1:capture",
+      "slice": "S1",
+      "hash": "1286f18e2ccfb2945fb4ce02a874d982240ae69a7b84a15344f11c58d04bceb3",
+      "fileHash": "5d350ef3ce70fb1a3d798acca18a087ca8ce0f5bb5c8d20f9b764e0f2b880773"
+    },
+    {
+      "seq": 58,
+      "id": "282b7bf3-6687-40e4-86f9-0cf52bd578df",
+      "at": "2026-09-04T04:23:05.938Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/config/site-branding.ts::SiteBranding",
+      "slice": "S1",
+      "hash": "9d2c319679198eca39038acadded079dc9ee1319a289252c68f3702bd1f6e66c",
+      "fileHash": "2207e0f84398efaa3818074534f617a2a7db3193a7eb60eb0f5ca872e686b358"
+    },
+    {
+      "seq": 59,
+      "id": "05219a4d-f2ae-4e37-9a0f-0c84265ae98a",
+      "at": "2026-09-04T04:23:05.984Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/config/site-branding.ts::SITE_BRANDING_DEFAULTS",
+      "slice": "S1",
+      "hash": "8ea169eb8eb8ae9f7eee7e8edcd33ebd48fc2f35a713c1b4212fe0052129350d",
+      "fileHash": "cebaa447de033b4ea831f15e448a17c3ee4c9f97119d70fa50ff4ebcd83890d3"
+    },
+    {
+      "seq": 60,
+      "id": "482405df-9872-4a72-8fd3-b1017bb7ada6",
+      "at": "2026-09-04T04:23:06.020Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/config/site-branding.ts::readBoolean",
+      "slice": "S1",
+      "hash": "022748b3dca931bdb53a41ed36dc1c772a7b45c725b514cded28d6b4f30e98cf",
+      "fileHash": "497729801e8957d7a39634fc0f1181201499237f61762c071ff8da06efa821a9"
+    },
+    {
+      "seq": 61,
+      "id": "b76789b2-ad52-4bb1-91d6-bd7238e7b0d4",
+      "at": "2026-09-04T04:23:06.063Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/config/site-branding.server.ts::loadSiteBranding",
+      "slice": "S1",
+      "hash": "78facf8a5ae3ad563f95720f1735d4db4c27afdf7ed03a698e98f837e4dbc327",
+      "fileHash": "361b0c8dbfbb75d77f8e4cc41a141fc7176f8ab28931d5323dcda251ecd4e115"
+    },
+    {
+      "seq": 62,
+      "id": "a592782f-2af0-4dc1-b111-7488c8324a84",
+      "at": "2026-09-04T04:23:06.099Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:app/api/site-branding/route.ts::GET",
+      "slice": "S1",
+      "hash": "d8baef76add906cc87d8e24bec751f638a4e1839d415e623e4ad110c12c2a8b6",
+      "fileHash": "48b4e2f86d25aabddf0c737ae69d5fffefe6850a016ba945c67c99ca82d01509"
+    },
+    {
+      "seq": 63,
+      "id": "9a35533e-5965-430b-8a86-13ec54e66fcb",
+      "at": "2026-09-04T04:23:06.134Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/hooks/use-site-branding.ts::useSiteBranding",
+      "slice": "S1",
+      "hash": "fd892962e28851297f1f081f321fdce2fc02711931218a71cd4b09ce186c6e8a",
+      "fileHash": "647ab9f7cbdf4662eecf5337c40a0ab75f1124eea70825b1576d741144cb88e8"
+    },
+    {
+      "seq": 64,
+      "id": "80615630-ad6e-4cd8-a598-f7fe86cc6ed9",
+      "at": "2026-09-04T04:25:25.672Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/config/site-branding.ts::SiteBranding",
+      "slice": "S1",
+      "hash": "1647580ffeaeacc84aff16f55a2e2db21d958af56b4a05d4342dba0ae5641e4c",
+      "fileHash": "dc52b48b4098f06e72fa7f3eb5df48eb5c11690515f7fffbf12a7492f5f8f078"
+    },
+    {
+      "seq": 65,
+      "id": "0eb70032-fde9-42eb-8ddc-70c25428ee38",
+      "at": "2026-09-04T04:25:46.084Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/config/site-branding.ts::SiteBranding",
+      "slice": "S1",
+      "hash": "91b343404cbafd3a1d5c49549f58ffe9e7c18d9190235d289279bb6c7674abff",
+      "expectationHash": "ddf78cb4d6f47533af5343fdb6e3570d08738781fa4d6175b69c89d7b8d0923d",
+      "fileHash": "8cd566247281682ea6fbee6910908bd7eb00f296a98ae6ff655eec129c0a0476"
+    },
+    {
+      "seq": 66,
+      "id": "67e72b88-dd77-488e-97ac-2c174b29fa64",
+      "at": "2026-09-04T04:25:46.133Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/config/site-branding.ts::SITE_BRANDING_DEFAULTS",
+      "slice": "S1",
+      "hash": "dc158b48b937eaaa8a2e706fbc5facd34735e8f9c699d5401d2f9352954f852b",
+      "expectationHash": "39f0c7e96defe4621a621899d96824159b2c5b14a8104be1d3940c34a78eefb1",
+      "fileHash": "b3af265ae2c9cb94431cf6acb7cc3502fc6e00398815730fe8bfac51aad3532c"
+    },
+    {
+      "seq": 67,
+      "id": "e9b00d4f-0b42-409f-b7f0-7842bf27b3da",
+      "at": "2026-09-04T04:25:46.175Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/config/site-branding.ts::readBoolean",
+      "slice": "S1",
+      "hash": "7997fc5636c4ca994b5abaf36238fc696c5d23783b7e0b5b29979d281ed1fd26",
+      "expectationHash": "378874189ef4c6fbf0579f938d4a75505a50ed1085a959df6a5f0f38a2bc4838",
+      "fileHash": "7e2d8d78d9c79b84834d64a9a007c457c0fd4f69dd810ba5b65d076a1a700a77"
+    },
+    {
+      "seq": 68,
+      "id": "c617c2a3-a6c1-4b66-85bc-7a7bfd535f4d",
+      "at": "2026-09-04T04:25:46.212Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/config/site-branding.server.ts::loadSiteBranding",
+      "slice": "S1",
+      "hash": "c118f0169e951198982f18eb86fc5ad93b170ce6722ee74bd76bd42c7d13a381",
+      "expectationHash": "f45f02d21cd6fac90a42263116a72a69eb54e60c755a38cb74ea3c75d3066746",
+      "fileHash": "38dd2137e93d959a5e5e22ac392c9e9789131e11034c3a64b2ab2f677b4e575f"
+    },
+    {
+      "seq": 69,
+      "id": "0ac893db-e79b-4b2b-98e8-d45dda4b749b",
+      "at": "2026-09-04T04:25:46.251Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:app/api/site-branding/route.ts::GET",
+      "slice": "S1",
+      "hash": "d7d39a0df46746f08ec26321f11607b6374427a6682a8a447dd0fd24640964fe",
+      "expectationHash": "4457184a6ebf3a5cf6fccfa7eaab1646544f1841149b8c6ccd42e4278770c235",
+      "fileHash": "4b5fc4e21ceabae0e6ee49bc5d6b42f6238780db993e23fad0382095ff3108c6"
+    },
+    {
+      "seq": 70,
+      "id": "e65b18da-5664-4dd8-8950-6de25d8cbbde",
+      "at": "2026-09-04T04:25:46.290Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/hooks/use-site-branding.ts::useSiteBranding",
+      "slice": "S1",
+      "hash": "3f46375670cd2be31eb0e8714093cd2ffb01bcf05db3ce7d21225af9e6fcc84b",
+      "expectationHash": "3c0a4a60c707f3b4dc407680ee8f0a811f125507705ad5e272f7062f301776ab",
+      "fileHash": "8906e41b1f41a26e7abdd88ae438ee23e2eef1f01099ca5d867de5568b00ae33"
+    },
+    {
+      "seq": 71,
+      "id": "54a793bd-e612-469a-a6a8-d316e453f70a",
+      "at": "2026-09-04T04:26:00.833Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S1:gate-add:g1",
+      "slice": "S1",
+      "hash": "38756af00758788a90fecba3b2adbaa2a451117fb0d585af321eebbfb726227b",
+      "fileHash": "b717314626d8d233a56f5ba2796185e0804f320a9c826f7156316ed90cac3e53"
+    },
+    {
+      "seq": 72,
+      "id": "20b42721-bd45-482d-8caa-1b51a88c3a73",
+      "at": "2026-09-04T04:26:00.874Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S1:gate-add:g2",
+      "slice": "S1",
+      "hash": "662038e41c4ca32db69c70aa615aa64e0e7944c14175983220552b590376b196",
+      "fileHash": "261519b645806e1524801b5bb8fea9798aba0b627ce3a8356d9383a59c38d8dd"
+    },
+    {
+      "seq": 73,
+      "id": "3c78da27-57cb-4d53-8489-4f1e7112be21",
+      "at": "2026-09-04T04:26:00.913Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S1:gate-add:g3",
+      "slice": "S1",
+      "hash": "d825e866581d21e572c6712478641936b0a885a38cfb18aff56bce5aa8a34ac3",
+      "fileHash": "6d559bac7a754660be7d48797e2dd8fad7167383d30c4bcc78a56ecf1297bcc0"
+    },
+    {
+      "seq": 74,
+      "id": "ef89de62-e497-4e80-a2f4-401bc0bb8e2c",
+      "at": "2026-09-04T04:26:10.218Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "b1401f825aad4f5f2f381ed5ffe422adff23531771d44aa4a4b56961beeb3849",
+      "fileHash": "22d967e400738e8acca7490a32b92672ff7e64c342925db2576e00cb2cb747e9"
     }
   ],
-  "fileHash": "984c4e2a5f15ff9bb5ed12c80346d131c5cfbe1c84c4cb9a339f2ac415f46b31"
+  "fileHash": "791ab27dc29b266baea2d7fdd971f7140c8600c561b4c0cec7adee6f11617e91"
 }

@@ -11,6 +11,7 @@
   },
   "home": {
     "slogan": "Aprendizaje generativo en un aula interactiva multiagente",
+    "headline": "Convierte cualquier material en un aula viva",
     "greetingWithName": "Hola, {{name}}"
   },
   "toolbar": {

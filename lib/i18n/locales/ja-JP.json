@@ -11,6 +11,7 @@
   },
   "home": {
     "slogan": "マルチエージェント対話型教室で生成的に学ぶ",
+    "headline": "どんな教材も、活きた教室に",
     "greetingWithName": "こんにちは、{{name}}さん"
   },
   "toolbar": {

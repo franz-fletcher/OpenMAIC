@@ -10,7 +10,8 @@
     "close": "Fermer"
   },
   "home": {
-    "slogan": "L’apprentissage génératif en classe interactive multi-agents",
+    "slogan": "L'apprentissage génératif en classe interactive multi-agents",
+    "headline": "Transformez n'importe quel matériel en une classe vivante",
     "greetingWithName": "Bonjour, {{name}}"
   },
   "toolbar": {

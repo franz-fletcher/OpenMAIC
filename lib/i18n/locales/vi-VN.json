@@ -11,6 +11,7 @@
   },
   "home": {
     "slogan": "Học tập sinh tạo trong lớp học tương tác đa tác nhân",
+    "headline": "Biến bất kỳ tài liệu nào thành lớp học sống động",
     "greetingWithName": "Chào {{name}}"
   },
   "toolbar": {

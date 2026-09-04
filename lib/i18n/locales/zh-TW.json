@@ -11,6 +11,7 @@
   },
   "home": {
     "slogan": "多智能體互動課室中的生成式學習",
+    "headline": "把任何材料變成生動的課堂",
     "greetingWithName": "嗨，{{name}}"
   },
   "toolbar": {

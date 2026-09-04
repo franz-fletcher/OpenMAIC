@@ -7,6 +7,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useBrand, useIsDesktop } from '@/lib/brand/brand-context';
+import { useSiteBranding } from '@/lib/hooks/use-site-branding';
 import { useStageStore } from '@/lib/store';
 import { useSettingsStore } from '@/lib/store/settings';
 import { useI18n } from '@/lib/hooks/use-i18n';
@@ -53,6 +54,7 @@ export function SlideNavRail() {
   const router = useRouter();
   const brand = useBrand();
   const isDesktop = useIsDesktop();
+  const { showLogo } = useSiteBranding();
   const inWorkbenchPanel = useInWorkbenchPanel();
   const scenes = useStageStore.use.scenes();
   const currentSceneId = useStageStore.use.currentSceneId();
@@ -408,7 +410,9 @@ export function SlideNavRail() {
             >
               {/* Desktop client: the Electron title bar already shows the brand icon + name, so the edit rail doesn't repeat it;
                   returning home is handled by the edit bar's CommandBar back arrow. */}
-              <img src={brand.logoSrc} alt={brand.productName} className="h-6 w-auto" />
+              {showLogo && (
+                <img src={brand.logoSrc} alt={brand.productName} className="h-6 w-auto" />
+              )}
             </button>
           )}
         </div>

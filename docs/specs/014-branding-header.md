@@ -89,10 +89,12 @@ Ledger bindings:
 
 | file::symbol | kind | after-signature or shape | behavior |
 | --- | --- | --- | --- |
-| `lib/config/site-branding.ts::SITE_BRANDING_DEFAULTS` | constant | shape `{ name: 'OpenMAIC', tagline: '', showLogo: true, showHeadline: true }` | the fallbacks when env and yaml say nothing |
-| `lib/config/site-branding.ts::loadSiteBranding` | function | `(): SiteBranding` | merges defaults, yaml, then env. Env wins. `SHOW_LOGO` and `SHOW_HEADLINE` parse with `readBoolean` semantics |
-| `app/api/site-branding/route.ts::GET` | function | `(): Promise<Response>` | returns `{ name, tagline, showLogo, showHeadline }` publicly, no PII, no auth, Node runtime |
-| `lib/hooks/use-site-branding.ts::useSiteBranding` | function | `(): SiteBrandingState` | returns defaults first, then the fetched values |
+| `lib/config/site-branding.ts::SiteBranding` | type | shape `{ name: string, tagline: string, showLogo: boolean, showHeadline: boolean }` | the client-safe model carried by both modules |
+| `lib/config/site-branding.ts::SITE_BRANDING_DEFAULTS` | constant | shape `{ name: 'OpenMAIC', tagline: '', showLogo: true, showHeadline: true }` | the fallbacks when env and yaml say nothing, kept in the client-safe module |
+| `lib/config/site-branding.ts::readBoolean` | function | `(envValue: string | undefined): boolean` | truthy is `'true'` or `'1'`. Client-safe, no node imports |
+| `lib/config/site-branding.server.ts::loadSiteBranding` | function | `(): SiteBranding` | server-only: defaults, then `server-branding.yml` through the module-private `loadYamlFile` helper, then env. Env wins. `SHOW_LOGO` and `SHOW_HEADLINE` parse with `readBoolean`. Imports `node:fs`, `node:path`, and `js-yaml` |
+| `app/api/site-branding/route.ts::GET` | function | `(): Promise<Response>` | imports the server module, returns `{ name, tagline, showLogo, showHeadline }` publicly, no PII, no auth, Node runtime |
+| `lib/hooks/use-site-branding.ts::useSiteBranding` | function | `(): SiteBrandingState` | returns defaults first, then the fetched values. Imports the client-safe module only |
 
 Before-state capture notes: `lib/config/site-branding.ts` does not exist. No
 `SITE_NAME`, `SITE_TAGLINE`, `SHOW_LOGO`, or `SHOW_HEADLINE` entry exists in
@@ -107,7 +109,9 @@ Postcondition: an operator changes the site identity through env or yaml and
 the route serves the result. The route returns no PII and requires no
 session. The hook renders defaults before the fetch resolves. On any non-2xx
 response or fetch error, `useSiteBranding` keeps the defaults and does not
-throw. `SHOW_LOGO` and `SHOW_HEADLINE` default to shown.
+throw. `SHOW_LOGO` and `SHOW_HEADLINE` default to shown. The server-only
+loader lives in `lib/config/site-branding.server.ts`. The client-safe surface
+stays in `lib/config/site-branding.ts`. The route imports the server module.
 
 Gates:
 
@@ -175,6 +179,16 @@ markup.
   the provider-config doctrine (`lib/server/provider-config.ts:208` and the
   module cache at `:354`). Batch E later adds the admin settings modal
   override on the same defaults-then-database spine.
+- The client and server split. `loadSiteBranding` and its `loadYamlFile`
+  helper live in `lib/config/site-branding.server.ts`, which imports
+  `node:fs`, `node:path`, and `js-yaml`. `lib/config/site-branding.ts` keeps
+  only the client-safe surface: the `SiteBranding` type,
+  `SITE_BRANDING_DEFAULTS`, and `readBoolean`. The route imports the server
+  module. Turbopack client bundling cannot carry `node:fs`, and the hook's
+  import graph must stay pure.
+- The import-graph guard. A static regression test,
+  `tests/branding/client-import-graph.test.ts`, walks the hook import graph
+  and asserts no `node:` imports. It is a gate-bound deliverable.
 - `SHOW_LOGO` and `SHOW_HEADLINE` parse with `readBoolean` semantics from
   `lib/config/feature-flags.ts:10-12`: truthy is `'true'` or `'1'`. Both
   default to shown.
@@ -243,6 +257,9 @@ markup.
 - Non-capturable deliverables bind through gates only, per the batch A
   substitution rule. `.env.example` entries are gate-bound, never symbol
   targets.
+- The import-graph guard test `tests/branding/client-import-graph.test.ts` is
+  a gate-bound deliverable. It walks the hook import graph and asserts no
+  server-only imports.
 - Plan-time state: the `tests/branding/*` suites do not exist yet and fail
   with no marker until they do. The presence gate fails until `SITE_NAME`
   and `SHOW_HEADLINE` land in `.env.example`. These are the documented
@@ -273,3 +290,14 @@ markup.
 - Commit convention for this batch: `feat(branding): ...`.
 - Every new operator-facing env var is documented in `.env.example` in the
   same change (S1).
+
+## Amendment 2026-09-04 (client/server split)
+
+`loadSiteBranding` and its `loadYamlFile` helper moved into
+`lib/config/site-branding.server.ts`, and the client module keeps only the
+`SiteBranding` type, `SITE_BRANDING_DEFAULTS`, and `readBoolean`. Turbopack
+cannot bundle `node:fs` into the client, so the hook import graph must stay
+pure, and `tests/branding/client-import-graph.test.ts` guards that. The
+change is runtime-proven in the working tree: the home page returns 200, the
+route serves the JSON `{ name, tagline, showLogo, showHeadline }`, and Safari
+shows a console-clean session. The gate command text is unchanged.
