@@ -4,17 +4,18 @@
   "spec": {
     "reference": "docs/specs/014-branding-header.md",
     "title": "Batch 014 spec: branding-header",
-    "hash": "fe5aa5900f5c12533b5e538e00bef3936412c495909d7a9f1746192639bcaa4b"
+    "hash": "84e7110ad548041f11a58fcf4f44c56392d738970e88d5c9ee291dc4db31a576"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "implementation",
+  "stage": "research_update",
   "retry": {
-    "count": 1,
+    "count": 3,
     "max": 5,
-    "consecutive_same_cause": 0,
-    "escalate_at": 3
+    "consecutive_same_cause": 1,
+    "escalate_at": 3,
+    "last_cause": "postcondition-signature-mismatch"
   },
   "slices": [
     {
@@ -38,7 +39,8 @@
               },
               "postcondition": {
                 "exists": true,
-                "kind": "function"
+                "kind": "function",
+                "signature": "({ onSettingsOpen, accountSlot }: HeaderCapsuleProps)"
               },
               "postcondition_quality": "VERIFIED",
               "expectation": "Renders language, theme, Pro toggle, account slot, gear in that exact order. The account slot renders null through a prop in G. Gear, theme, and language behaviors stay unchanged in function. Pro toggle is the workbench entry affordance, same intent as the hero ProBadge routing, ungated in G."
@@ -58,7 +60,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(): JSX.Element"
+                "signature": "()"
               },
               "postcondition_quality": "VERIFIED",
               "expectation": "Modified: top-left name and tagline from useSiteBranding. Right side renders HeaderCapsule with an empty account slot. Hero logo and tagline removed. GreetingBar no longer rendered. The hero renders the home.headline i18n key gated by showHeadline, with 12-locale parity."
@@ -73,7 +75,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(): JSX.Element"
+                "signature": "()"
               },
               "postcondition_quality": "VERIFIED",
               "expectation": "Modified: retired from the home hero, no render site remains."
@@ -92,7 +94,8 @@
               },
               "postcondition": {
                 "exists": true,
-                "kind": "function"
+                "kind": "function",
+                "signature": "({\n  composerReset,\n  discoveryContent,\n  courseOptions,\n  onOpenSession,\n  onExitPro,\n}: {\n  readonly composerReset: number;\n  readonly discoveryContent: ReactNode;\n  /**\n   * What the composer's `@` picker may name. The shell already has this list\n   * (the rail renders it), so it is handed down rather than fetched again here.\n   */\n  readonly courseOptions: readonly CourseMentionSource[];\n  readonly onOpenSession: (sessionId: string) => void;\n  readonly onExitPro: () => void;\n})"
               },
               "postcondition_quality": "VERIFIED",
               "expectation": "Modified: hero logo honors showLogo."
@@ -111,7 +114,8 @@
               },
               "postcondition": {
                 "exists": true,
-                "kind": "function"
+                "kind": "function",
+                "signature": "()"
               },
               "postcondition_quality": "VERIFIED",
               "expectation": "Modified: rail logo honors showLogo."
@@ -130,7 +134,8 @@
               },
               "postcondition": {
                 "exists": true,
-                "kind": "function"
+                "kind": "function",
+                "signature": "({\n  courses,\n  sessions,\n  sessionState,\n  onReloadSessions,\n  activeCourseId,\n  activeSessionId,\n  collapsed,\n  onToggleCollapsed,\n  onOpenCourse,\n  onOpenSession,\n  onNewSession,\n  onGoHome,\n  onExitPro,\n  onSessionDeleted,\n  onRenameSession,\n  onDeleteCourse,\n  resizeHandle,\n}: {\n  readonly courses: Discovery;\n  readonly sessions: readonly ProHomeSessionItem[];\n  readonly sessionState: HomeDiscoveryState;\n  readonly onReloadSessions: () => void;\n  readonly activeCourseId: string | null;\n  readonly activeSessionId: string | null;\n  readonly collapsed: boolean;\n  readonly onToggleCollapsed: () => void;\n  readonly onOpenCourse: (id: string) => void;\n  readonly onOpenSession: (id: string) => void;\n  /**\n   * A new conversation in the middle column. Both entries below (the compose row\n   * and its collapsed `+`) call this ONE handler, and it deliberately does not\n   * touch the classroom pane — see `startNewConversation` in the shell.\n   */\n  readonly onNewSession: () => void;\n  /** Back to the bare `/workspace` — the logo, and the shell's own handler. */\n  readonly onGoHome: () => void;\n  readonly onExitPro: () => void;\n  /** The shell drops the deleted chat's pane and URL param, once the server\n   *  confirmed the delete. Rows are already gone optimistically down here. */\n  readonly onSessionDeleted: (sessionId: string) => void;\n  /**\n   * Name a chat. The shell owns the write (one writer for this row and the\n   * pane header both) and answers with a readable message when it is refused.\n   */\n  readonly onRenameSession: (sessionId: string, title: string) => Promise<string | null>;\n  /** The shell deletes the course AND closes its classroom tab on success. */\n  readonly onDeleteCourse: (courseId: string) => Promise<void> | void;\n  /** The width drag, owned by the shell (it writes the CSS variable on the root). */\n  readonly resizeHandle: ReactNode;\n})"
               },
               "postcondition_quality": "VERIFIED",
               "expectation": "Modified: rail logo honors showLogo."
@@ -142,13 +147,62 @@
       "uuid": "fdf2549e-24b0-4c59-85ee-bbe4671cda8b",
       "impl": {
         "status": "ready_for_verification",
-        "hash": "d5126ce4509ff4091afca211779a2f407c339f35feef09809a6c9e21c19975a1",
+        "hash": "47f76735548d459db1e8be74cbcd74eb2da4c6267119f06e22e0829a3f0c360b",
         "actor": "implementer",
-        "at": "2026-09-04T03:29:49.913Z"
+        "at": "2026-09-04T05:18:38.845Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "verified",
+        "hash": "a5401270ba74fcff5339b0f4de83b2b3823df837e3f7a25e604556b3ecd57986",
+        "actor": "verifier",
+        "at": "2026-09-04T05:20:42.948Z",
+        "deficiencies": [
+          "diff S2 0/6: app/page.tsx::HomePage and app/page.tsx::GreetingBar pin (): JSX.Element but capture () (declarations carry no return annotation). components/header-capsule.tsx::HeaderCapsule, components/workbench/workspace/WorkspaceHome.tsx::WorkspaceHome, components/edit/SlideNavRail/SlideNavRail.tsx::SlideNavRail, components/workbench/workspace/WorkspaceRail.tsx::WorkspaceRail are exists-only rows with no after-signature, yet each captured symbol carries a non-empty signature, so the literal matcher flags every one. Retarget those postconditions to outline truth like the S1 SiteBranding row, or add the missing return annotations."
+        ],
+        "evidence": {
+          "gates": [
+            {
+              "id": "g1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/branding/header-capsule.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/branding/header-capsule.test.ts \u001b[2m(\u001b[22m\u001b[2m2 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 7\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m2 passed\u001b[39m\u001b[22m\u001b[90m (2)\u001b[39m\n\u001b[2m   Start at \u001b[22m 17:20:41\n\u001b[2m   Duration \u001b[22m 174ms\u001b[2m (transform 37ms, setup 14ms, import 86ms, tests 7ms, environment 0ms)\u001b[22m\n\nBRAND_HDR_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/providers/provider-neutrality-guard.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/providers/provider-neutrality-guard.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 37\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m3 passed\u001b[39m\u001b[22m\u001b[90m (3)\u001b[39m\n\u001b[2m   Start at \u001b[22m 17:20:42\n\u001b[2m   Duration \u001b[22m 387ms\u001b[2m (transform 88ms, setup 15ms, import 273ms, tests 37ms, environment 0ms)\u001b[22m\n\nNEUTRAL_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g4",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> node scripts/check-i18n-keys.mjs\n\ni18n key alignment check passed (12 locale files, source: en-US.json).\nI18N_OK\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "The home capsule renders exactly language, theme, Pro toggle, account slot, gear; the top-left shows the configured name and tagline; the hero shows no logo and no tagline and the greeting is retired; every product logo render site hides when showLogo is false.",
       "gates": [
@@ -156,33 +210,134 @@
           "id": "g1",
           "check": "npx tsc --noEmit && echo TSC_OK",
           "expect": "TSC_OK",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "type": "smoke"
+          "type": "smoke",
+          "captures": [
+            {
+              "captureId": "0a681dd4-606b-4000-a09b-18ed6d50f853",
+              "ts": "2026-09-04T04:56:35.460Z",
+              "actor": "verifier",
+              "stage": "verification",
+              "headSha": "e11a69e7725a0333b2592721d17ae8fd8bc14f9f",
+              "round": 0,
+              "oracleSignature": "8d51cf6df031f8a8513598c3cc230a828d9c8f359ec2570f4299e9a655616de5",
+              "evidence": {
+                "id": "g1",
+                "shell": "/bin/sh",
+                "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+                "exit": 0,
+                "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+                "pathCount": 30,
+                "output": "TSC_OK\n",
+                "passed": true
+              },
+              "consumed": false
+            }
+          ]
         },
         {
           "id": "g2",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/branding/header-capsule.test.ts && echo BRAND_HDR_OK",
           "expect": "BRAND_HDR_OK",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"g2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/branding/header-capsule.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/branding/header-capsule.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m2 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 7\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m2 passed\\u001b[39m\\u001b[22m\\u001b[90m (2)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 17:20:41\\n\\u001b[2m   Duration \\u001b[22m 174ms\\u001b[2m (transform 37ms, setup 14ms, import 86ms, tests 7ms, environment 0ms)\\u001b[22m\\n\\nBRAND_HDR_OK\\n\",\"passed\":true}",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "type": "integration"
+          "type": "integration",
+          "captures": [
+            {
+              "captureId": "f0e15093-76a9-477a-b4ed-3205deef2fb3",
+              "ts": "2026-09-04T04:56:44.176Z",
+              "actor": "verifier",
+              "stage": "verification",
+              "headSha": "e11a69e7725a0333b2592721d17ae8fd8bc14f9f",
+              "round": 0,
+              "oracleSignature": "8d51cf6df031f8a8513598c3cc230a828d9c8f359ec2570f4299e9a655616de5",
+              "evidence": {
+                "id": "g2",
+                "shell": "/bin/sh",
+                "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+                "exit": 0,
+                "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+                "pathCount": 30,
+                "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/branding/header-capsule.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/branding/header-capsule.test.ts \u001b[2m(\u001b[22m\u001b[2m2 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 6\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m2 passed\u001b[39m\u001b[22m\u001b[90m (2)\u001b[39m\n\u001b[2m   Start at \u001b[22m 16:56:43\n\u001b[2m   Duration \u001b[22m 180ms\u001b[2m (transform 40ms, setup 15ms, import 89ms, tests 6ms, environment 0ms)\u001b[22m\n\nBRAND_HDR_OK\n",
+                "passed": true
+              },
+              "consumed": false
+            }
+          ]
         },
         {
           "id": "g3",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/providers/provider-neutrality-guard.test.ts && echo NEUTRAL_OK",
           "expect": "NEUTRAL_OK",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"g3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/providers/provider-neutrality-guard.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/providers/provider-neutrality-guard.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m3 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 37\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m3 passed\\u001b[39m\\u001b[22m\\u001b[90m (3)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 17:20:42\\n\\u001b[2m   Duration \\u001b[22m 387ms\\u001b[2m (transform 88ms, setup 15ms, import 273ms, tests 37ms, environment 0ms)\\u001b[22m\\n\\nNEUTRAL_OK\\n\",\"passed\":true}",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "type": "smoke"
+          "type": "smoke",
+          "captures": [
+            {
+              "captureId": "f84a5aa6-9c7d-4ec1-8189-c804a224dd41",
+              "ts": "2026-09-04T04:56:50.661Z",
+              "actor": "verifier",
+              "stage": "verification",
+              "headSha": "e11a69e7725a0333b2592721d17ae8fd8bc14f9f",
+              "round": 0,
+              "oracleSignature": "8d51cf6df031f8a8513598c3cc230a828d9c8f359ec2570f4299e9a655616de5",
+              "evidence": {
+                "id": "g3",
+                "shell": "/bin/sh",
+                "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+                "exit": 0,
+                "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+                "pathCount": 30,
+                "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/providers/provider-neutrality-guard.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/providers/provider-neutrality-guard.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 41\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m3 passed\u001b[39m\u001b[22m\u001b[90m (3)\u001b[39m\n\u001b[2m   Start at \u001b[22m 16:56:50\n\u001b[2m   Duration \u001b[22m 397ms\u001b[2m (transform 91ms, setup 15ms, import 277ms, tests 41ms, environment 0ms)\u001b[22m\n\nNEUTRAL_OK\n",
+                "passed": true
+              },
+              "consumed": false
+            }
+          ]
         },
         {
           "id": "g4",
           "check": "pnpm check:i18n-keys && echo I18N_OK",
           "expect": "I18N_OK",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"g4\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> node scripts/check-i18n-keys.mjs\\n\\ni18n key alignment check passed (12 locale files, source: en-US.json).\\nI18N_OK\\n\",\"passed\":true}",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "type": "smoke"
+          "type": "smoke",
+          "captures": [
+            {
+              "captureId": "837a7d3f-9fc2-45d5-a6f9-de71edf965f8",
+              "ts": "2026-09-04T04:56:55.414Z",
+              "actor": "verifier",
+              "stage": "verification",
+              "headSha": "e11a69e7725a0333b2592721d17ae8fd8bc14f9f",
+              "round": 0,
+              "oracleSignature": "8d51cf6df031f8a8513598c3cc230a828d9c8f359ec2570f4299e9a655616de5",
+              "evidence": {
+                "id": "g4",
+                "shell": "/bin/sh",
+                "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+                "exit": 0,
+                "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+                "pathCount": 30,
+                "output": "\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> node scripts/check-i18n-keys.mjs\n\ni18n key alignment check passed (12 locale files, source: en-US.json).\nI18N_OK\n",
+                "passed": true
+              },
+              "consumed": false
+            }
+          ]
+        }
+      ],
+      "findings": [
+        {
+          "id": 1,
+          "correlation": "eb269fd200b019e840ad94bd2cb4e1cfa3124a498d23ab966f094de3b73d2597",
+          "at": "2026-09-04T05:03:43.777Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "diff S2 0/6: app/page.tsx::HomePage and app/page.tsx::GreetingBar pin (): JSX.Element but capture () (declarations carry no return annotation). components/header-capsule.tsx::HeaderCapsule, components/workbench/workspace/WorkspaceHome.tsx::WorkspaceHome, components/edit/SlideNavRail/SlideNavRail.tsx::SlideNavRail, components/workbench/workspace/WorkspaceRail.tsx::WorkspaceRail are exists-only rows with no after-signature, yet each captured symbol carries a non-empty signature, so the literal matcher flags every one. Retarget those postconditions to outline truth like the S1 SiteBranding row, or add the missing return annotations.",
+          "evidence": "postcondition-outline-drift"
         }
       ]
     },
@@ -278,7 +433,7 @@
                 "signature": "(): Promise<Response>"
               },
               "postcondition_quality": "VERIFIED",
-              "expectation": "Imports the server module, returns { name, tagline, showLogo, showHeadline } publicly, no PII, no auth, Node runtime."
+              "expectation": "Imports the server module, returns { name, tagline, showLogo, showHeadline } publicly, no PII, no auth, Node runtime. The outline reports () and the implementer adds the : Promise<Response> annotation."
             }
           ]
         },
@@ -306,12 +461,53 @@
       "riskTier": 2,
       "uuid": "a45a5c3c-60d9-432b-8bb1-fba085d4d8d6",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "760034bb7ec99573fb0090d3482437c799332a9ba21e6ed24823431a7097dcbb",
+        "actor": "implementer",
+        "at": "2026-09-04T05:18:38.599Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "verified",
+        "hash": "6ad4dcd0158251117842ce5e8990484c1a3629390f7927769f8fec0114106177",
+        "actor": "verifier",
+        "at": "2026-09-04T05:20:28.137Z",
+        "deficiencies": [
+          "diff S1 5/6: app/api/site-branding/route.ts::GET after-signature pins (): Promise<Response> but the fresh capture is (); the GET declaration has no explicit : Promise<Response> return annotation. The other five rows match, including the SiteBranding interface retarget."
+        ],
+        "evidence": {
+          "gates": [
+            {
+              "id": "g1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/branding/site-branding.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/branding/site-branding.test.ts \u001b[2m(\u001b[22m\u001b[2m13 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 4\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m13 passed\u001b[39m\u001b[22m\u001b[90m (13)\u001b[39m\n\u001b[2m   Start at \u001b[22m 17:20:27\n\u001b[2m   Duration \u001b[22m 102ms\u001b[2m (transform 20ms, setup 14ms, import 17ms, tests 4ms, environment 0ms)\u001b[22m\n\nBRAND_CFG_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/branding/site-branding-route.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/branding/site-branding-route.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 4\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m3 passed\u001b[39m\u001b[22m\u001b[90m (3)\u001b[39m\n\u001b[2m   Start at \u001b[22m 17:20:27\n\u001b[2m   Duration \u001b[22m 120ms\u001b[2m (transform 19ms, setup 14ms, import 38ms, tests 4ms, environment 0ms)\u001b[22m\n\nBRAND_RT_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "BRAND_ENV_OK\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "An operator changes the site identity through env or yaml and the route serves the result. The route returns no PII and requires no session. The hook renders defaults first and keeps them on any failure. The server-only loader lives in lib/config/site-branding.server.ts.",
       "gates": [
@@ -319,25 +515,104 @@
           "id": "g1",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/branding/site-branding.test.ts && echo BRAND_CFG_OK",
           "expect": "BRAND_CFG_OK",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/branding/site-branding.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/branding/site-branding.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m13 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 4\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m13 passed\\u001b[39m\\u001b[22m\\u001b[90m (13)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 17:20:27\\n\\u001b[2m   Duration \\u001b[22m 102ms\\u001b[2m (transform 20ms, setup 14ms, import 17ms, tests 4ms, environment 0ms)\\u001b[22m\\n\\nBRAND_CFG_OK\\n\",\"passed\":true}",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "type": "unit"
+          "type": "unit",
+          "captures": [
+            {
+              "captureId": "c0de4561-b332-4cd1-8be5-d3f9598cbf2f",
+              "ts": "2026-09-04T04:55:35.378Z",
+              "actor": "verifier",
+              "stage": "verification",
+              "headSha": "e11a69e7725a0333b2592721d17ae8fd8bc14f9f",
+              "round": 0,
+              "oracleSignature": "c4f5131b5521f98b3541713865bf39e1a5e544e546e8fb9e7ee77f755c4473a6",
+              "evidence": {
+                "id": "g1",
+                "shell": "/bin/sh",
+                "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+                "exit": 0,
+                "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+                "pathCount": 30,
+                "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/branding/site-branding.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/branding/site-branding.test.ts \u001b[2m(\u001b[22m\u001b[2m13 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 3\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m13 passed\u001b[39m\u001b[22m\u001b[90m (13)\u001b[39m\n\u001b[2m   Start at \u001b[22m 16:55:35\n\u001b[2m   Duration \u001b[22m 115ms\u001b[2m (transform 24ms, setup 17ms, import 18ms, tests 3ms, environment 0ms)\u001b[22m\n\nBRAND_CFG_OK\n",
+                "passed": true
+              },
+              "consumed": false
+            }
+          ]
         },
         {
           "id": "g2",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/branding/site-branding-route.test.ts && echo BRAND_RT_OK",
           "expect": "BRAND_RT_OK",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"g2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/branding/site-branding-route.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/branding/site-branding-route.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m3 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 4\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m3 passed\\u001b[39m\\u001b[22m\\u001b[90m (3)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 17:20:27\\n\\u001b[2m   Duration \\u001b[22m 120ms\\u001b[2m (transform 19ms, setup 14ms, import 38ms, tests 4ms, environment 0ms)\\u001b[22m\\n\\nBRAND_RT_OK\\n\",\"passed\":true}",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "type": "smoke"
+          "type": "smoke",
+          "captures": [
+            {
+              "captureId": "02add573-6297-40d4-bbe8-173fc0451b74",
+              "ts": "2026-09-04T04:55:40.662Z",
+              "actor": "verifier",
+              "stage": "verification",
+              "headSha": "e11a69e7725a0333b2592721d17ae8fd8bc14f9f",
+              "round": 0,
+              "oracleSignature": "c4f5131b5521f98b3541713865bf39e1a5e544e546e8fb9e7ee77f755c4473a6",
+              "evidence": {
+                "id": "g2",
+                "shell": "/bin/sh",
+                "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+                "exit": 0,
+                "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+                "pathCount": 30,
+                "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/branding/site-branding-route.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/branding/site-branding-route.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 4\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m3 passed\u001b[39m\u001b[22m\u001b[90m (3)\u001b[39m\n\u001b[2m   Start at \u001b[22m 16:55:40\n\u001b[2m   Duration \u001b[22m 133ms\u001b[2m (transform 22ms, setup 16ms, import 47ms, tests 4ms, environment 0ms)\u001b[22m\n\nBRAND_RT_OK\n",
+                "passed": true
+              },
+              "consumed": false
+            }
+          ]
         },
         {
           "id": "g3",
           "check": "grep -q \"SHOW_HEADLINE\" .env.example && grep -q \"SITE_NAME\" .env.example && echo BRAND_ENV_OK",
           "expect": "BRAND_ENV_OK",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"g3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"BRAND_ENV_OK\\n\",\"passed\":true}",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "type": "smoke"
+          "type": "smoke",
+          "captures": [
+            {
+              "captureId": "d9828957-0170-41f9-a835-c0311aa76c8c",
+              "ts": "2026-09-04T04:55:47.011Z",
+              "actor": "verifier",
+              "stage": "verification",
+              "headSha": "e11a69e7725a0333b2592721d17ae8fd8bc14f9f",
+              "round": 0,
+              "oracleSignature": "c4f5131b5521f98b3541713865bf39e1a5e544e546e8fb9e7ee77f755c4473a6",
+              "evidence": {
+                "id": "g3",
+                "shell": "/bin/sh",
+                "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+                "exit": 0,
+                "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+                "pathCount": 30,
+                "output": "BRAND_ENV_OK\n",
+                "passed": true
+              },
+              "consumed": false
+            }
+          ]
+        }
+      ],
+      "findings": [
+        {
+          "id": 1,
+          "correlation": "ca182cecd210a6254f154d94141c213c94ac7f5ff5f038be14c735a8ba808769",
+          "at": "2026-09-04T05:03:43.777Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "diff S1 5/6: app/api/site-branding/route.ts::GET after-signature pins (): Promise<Response> but the fresh capture is (); the GET declaration has no explicit : Promise<Response> return annotation. The other five rows match, including the SiteBranding interface retarget.",
+          "evidence": "postcondition-signature-mismatch"
         }
       ]
     }
@@ -1171,7 +1446,301 @@
       "slice": null,
       "hash": "b1401f825aad4f5f2f381ed5ffe422adff23531771d44aa4a4b56961beeb3849",
       "fileHash": "22d967e400738e8acca7490a32b92672ff7e64c342925db2576e00cb2cb747e9"
+    },
+    {
+      "seq": 75,
+      "id": "a772c7ae-16d0-4a08-a470-aac16d8a44c4",
+      "at": "2026-09-04T04:41:27.271Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S1:impl:pending->ready_for_verification",
+      "slice": "S1",
+      "hash": "a811710ff904b2ff833ee179175b9499d8f31511a41f2240bc3887275e09c00b",
+      "fileHash": "791ab27dc29b266baea2d7fdd971f7140c8600c561b4c0cec7adee6f11617e91"
+    },
+    {
+      "seq": 76,
+      "id": "34a67094-d4f4-48cb-8318-8c670afe2fdf",
+      "at": "2026-09-04T04:41:27.318Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "860afc4930626dd6375f81140aa305ba8b378f6ae0818b85ddd2a3b38162f894",
+      "fileHash": "85b1674d271694be777cd2ed21ec87318baf7414c14afe8891f63b206e31683a"
+    },
+    {
+      "seq": 77,
+      "id": "846905c3-7d03-4a85-9704-7d73ed97345c",
+      "at": "2026-09-04T04:55:35.378Z",
+      "actor": "verifier",
+      "command": "gate_run",
+      "transition": "slice:S1:gate-run:g1:c0de4561-b332-4cd1-8be5-d3f9598cbf2f",
+      "slice": "S1",
+      "hash": "5bf6f2b231a2ff8600ab5313a8d3f55372b77dcf784e1e1594a05518825b33da",
+      "oracle": "c4f5131b5521f98b3541713865bf39e1a5e544e546e8fb9e7ee77f755c4473a6",
+      "evidence": "2bcc01e1a474b484faf6153dd157f5c75f345a3cdee8e9dfc57b6af312cc1b03",
+      "fileHash": "b46d9daab72a376e66bf1efc1db122043fd92bfd77097981a3eb32801c24ff4b"
+    },
+    {
+      "seq": 78,
+      "id": "8e5b9bf3-1722-4694-8358-7dff8bfb0ca0",
+      "at": "2026-09-04T04:55:40.662Z",
+      "actor": "verifier",
+      "command": "gate_run",
+      "transition": "slice:S1:gate-run:g2:02add573-6297-40d4-bbe8-173fc0451b74",
+      "slice": "S1",
+      "hash": "d9759e79007f05d738c2a8912bbfd1cdd781d39d2403e7725537ee0ac1d9a9f7",
+      "oracle": "c4f5131b5521f98b3541713865bf39e1a5e544e546e8fb9e7ee77f755c4473a6",
+      "evidence": "8606ce0895238a82f78aec7ea575c5c06a15a43aee0b8d86f84098bf1b0a2caf",
+      "fileHash": "55b435c486a85f3105d7f52b8f7562c1339d901cdad27bd7d99367afee8d5de1"
+    },
+    {
+      "seq": 79,
+      "id": "5a529c6a-36b5-4454-a964-d657b51ee926",
+      "at": "2026-09-04T04:55:47.011Z",
+      "actor": "verifier",
+      "command": "gate_run",
+      "transition": "slice:S1:gate-run:g3:d9828957-0170-41f9-a835-c0311aa76c8c",
+      "slice": "S1",
+      "hash": "ff1d0ec6e1d3d6f174e64fb98d5ecb8cb3f2c0a7fa4a38ca56caed78a263442c",
+      "oracle": "c4f5131b5521f98b3541713865bf39e1a5e544e546e8fb9e7ee77f755c4473a6",
+      "evidence": "2b8adf67216732a54974e31fd3f2245cffe04454cc79fabef273786e327ef5b1",
+      "fileHash": "054bc2d873eb45903a89a51e8a116bbe9156fe7d9b7c1abae7e286e780a2e5d1"
+    },
+    {
+      "seq": 80,
+      "id": "fd084c8d-d5e7-4b8c-ac8c-2e19691f1fab",
+      "at": "2026-09-04T04:56:35.460Z",
+      "actor": "verifier",
+      "command": "gate_run",
+      "transition": "slice:S2:gate-run:g1:0a681dd4-606b-4000-a09b-18ed6d50f853",
+      "slice": "S2",
+      "hash": "ee5e8fd01ba250f32e851dfa1705db58b052fcd901d0d4861b6560ba84017df9",
+      "oracle": "8d51cf6df031f8a8513598c3cc230a828d9c8f359ec2570f4299e9a655616de5",
+      "evidence": "7f8dc7165da904bc81857897d095a67471cc730d1c3cf2e5de23ceb60bedbdab",
+      "fileHash": "48f7c57ce6496b101d144ee8ab9c50828098cb6df9cce8ecbba33fca8d87a385"
+    },
+    {
+      "seq": 81,
+      "id": "11420a57-a372-4a36-b85e-d427840650ec",
+      "at": "2026-09-04T04:56:44.176Z",
+      "actor": "verifier",
+      "command": "gate_run",
+      "transition": "slice:S2:gate-run:g2:f0e15093-76a9-477a-b4ed-3205deef2fb3",
+      "slice": "S2",
+      "hash": "63eab89fb69edbf58c2b53644629b3086dde962d32df16fe88736c4891c323f1",
+      "oracle": "8d51cf6df031f8a8513598c3cc230a828d9c8f359ec2570f4299e9a655616de5",
+      "evidence": "92e008ac2b2b7721f22b79aa8e79c4f7bcc4e7621e680bc53b2d7f1f36909254",
+      "fileHash": "eba95a9ce269a2a11961ba8948d652e17130815d94a1239d4ec63361a42db6c9"
+    },
+    {
+      "seq": 82,
+      "id": "e93a45fa-44dd-4750-b882-b3706ae9e450",
+      "at": "2026-09-04T04:56:50.661Z",
+      "actor": "verifier",
+      "command": "gate_run",
+      "transition": "slice:S2:gate-run:g3:f84a5aa6-9c7d-4ec1-8189-c804a224dd41",
+      "slice": "S2",
+      "hash": "d3a6e56bbcbe717b100a3809b4cafed4e65973287e0daa8d92b38a0e89135634",
+      "oracle": "8d51cf6df031f8a8513598c3cc230a828d9c8f359ec2570f4299e9a655616de5",
+      "evidence": "53616881beeabbd5b041f1ff9e01c1c8e0f49d8e2b4db5dd4fbf469cce67e996",
+      "fileHash": "638a03251112256906e6404c06c3f37e8cb0a37e7dd9dc8d8d63a32530511e6a"
+    },
+    {
+      "seq": 83,
+      "id": "aa9bfe0b-2207-41d4-89a0-2ecda927c0c7",
+      "at": "2026-09-04T04:56:55.414Z",
+      "actor": "verifier",
+      "command": "gate_run",
+      "transition": "slice:S2:gate-run:g4:837a7d3f-9fc2-45d5-a6f9-de71edf965f8",
+      "slice": "S2",
+      "hash": "28b4786ce6ce657995984edd6e482157aa5b6fa3c7dfc48285e1c0799f3f82d0",
+      "oracle": "8d51cf6df031f8a8513598c3cc230a828d9c8f359ec2570f4299e9a655616de5",
+      "evidence": "6dab28c04a7e7969faeb00c67c8e24dac686ada5ecab32fb147368ad46b7ca9a",
+      "fileHash": "710f130a4b80284658910f882d69ec3e62379acc3a301f95aa044e8f588b82f6"
+    },
+    {
+      "seq": 84,
+      "id": "927963f5-d940-452a-b40a-174228b95d4b",
+      "at": "2026-09-04T05:03:43.777Z",
+      "actor": "verifier",
+      "command": "slice_reject_batch",
+      "transition": "reject-batch:S1,S2",
+      "slice": null,
+      "hash": "51c9aa96ba1e16d34eaf0ec72ff7254c745bbed5cd14d95b2350ca446644d149",
+      "fileHash": "67165ae4509c35d9ffbc28d47085742ecf4601720825e766af2b0cd2506c3725"
+    },
+    {
+      "seq": 85,
+      "id": "7e298fda-27c2-4caa-af74-bb0e1851eeb1",
+      "at": "2026-09-04T05:10:09.898Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:correction:Round-1 verification: binding signatures re-pinned to outline truth; GET annotation mandated",
+      "slice": null,
+      "hash": "1f70b5be990aba69f67d1efaff8e62aeb565981422b19e6351fb1e30d27680e7",
+      "fileHash": "6cc9d9a59d2789e08bb8ecd73baaf301d3f4c7d640e084e28daa3bd199444c09"
+    },
+    {
+      "seq": 86,
+      "id": "c951be4a-488b-494f-b53c-5d66cd76f1fa",
+      "at": "2026-09-04T05:14:47.039Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:components/workbench/workspace/WorkspaceHome.tsx::WorkspaceHome",
+      "slice": "S2",
+      "hash": "4d0a72de4a70984340e2064ae1631436a84509681f02c2e1bf2ef73fc1eaef12",
+      "fileHash": "afa795d6df369ea850c64707af393705cfd285ec43fc4c3671fb756273bf1c2e"
+    },
+    {
+      "seq": 87,
+      "id": "4083257e-5bd9-4bba-91ff-2c7e55331843",
+      "at": "2026-09-04T05:14:47.087Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:components/workbench/workspace/WorkspaceRail.tsx::WorkspaceRail",
+      "slice": "S2",
+      "hash": "035f3c7ace299f23c28d24741a76d648f335c679663ff36afdcd63c743f553b4",
+      "fileHash": "0bc212d99b4bb002417248e97d8ce97fa41ec856525892e5259fd6920b7d44a2"
+    },
+    {
+      "seq": 88,
+      "id": "a8ac343f-fa37-417f-9b37-a8dee1571242",
+      "at": "2026-09-04T05:15:00.711Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:components/header-capsule.tsx::HeaderCapsule",
+      "slice": "S2",
+      "hash": "998bd66eb5e8d1b9fe198b00af8702df8e348d83d139dee34d6021d19e476268",
+      "fileHash": "003d3c2a70004b5ba856bc3a285407e123eabcf45dd40d87056fff58a86640c7"
+    },
+    {
+      "seq": 89,
+      "id": "821cd575-54ac-4706-bb65-7903bda90850",
+      "at": "2026-09-04T05:15:00.768Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/page.tsx::HomePage",
+      "slice": "S2",
+      "hash": "7026dd5d5458db18d18694297ca1f242a37ff23e3d1191fd259f6a272682ac1f",
+      "fileHash": "7ab47e35a7df9d1d1f43bd8e5f92d1479571110c38d87256b5b8e1f3b80c6ec5"
+    },
+    {
+      "seq": 90,
+      "id": "6f37200f-7b4b-4f5f-9a81-d6a58c226b65",
+      "at": "2026-09-04T05:15:00.825Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/page.tsx::GreetingBar",
+      "slice": "S2",
+      "hash": "b9532fc8782bfb607f9bfabdb07c34fb659fe7d50078f8d7502214d967f1586c",
+      "fileHash": "c338b9069ea473864ce956e6f5c95b5b670f3178d65c8ea4049747d6bd431bbc"
+    },
+    {
+      "seq": 91,
+      "id": "df4c2078-8267-4539-be8f-1b2d478c8937",
+      "at": "2026-09-04T05:15:00.886Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:components/edit/SlideNavRail/SlideNavRail.tsx::SlideNavRail",
+      "slice": "S2",
+      "hash": "7d385799dc2a30ab20b696eb43674a525ac9954110995fd82e8c68362ec4d0fa",
+      "fileHash": "afad51e791a72f2bc662865c5cb183c224554a8b23f730f3d7e69d29e5eba11a"
+    },
+    {
+      "seq": 92,
+      "id": "3c5bbde8-e15a-4eb0-95eb-5c7023216df0",
+      "at": "2026-09-04T05:15:00.960Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:app/api/site-branding/route.ts::GET",
+      "slice": "S1",
+      "hash": "cbcfaf1fc77b43dcda0de81a2927ba7f00fe405946274bac911c14fcc5ad9385",
+      "expectationHash": "b0136bab142bcbea6d7ad829e5f9e2a453dc251a886fb11a5180c00bcc86587f",
+      "fileHash": "2a086492a27088cb94bd0e8b8cab04eb456707a24faed5a901e2ed3203592fdc"
+    },
+    {
+      "seq": 93,
+      "id": "34faede0-6629-4ee8-825b-f14d7f81a662",
+      "at": "2026-09-04T05:15:22.633Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "44da59b5571125e08d7d44a06519296af77186bf7769958ddcb281587ea5ce14",
+      "fileHash": "dfd3a50d59a082b7ed0a3912cb3a074e77842fb35c50a96026d7db5a280e6648"
+    },
+    {
+      "seq": 94,
+      "id": "7ce28504-fa8f-4e56-a272-23386db22128",
+      "at": "2026-09-04T05:18:38.599Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S1:impl:pending->ready_for_verification",
+      "slice": "S1",
+      "hash": "4d5e7604b3c4362a8774700c21ea26b5907f24baf7111066794890049a561ac9",
+      "fileHash": "041cafda79f690cb2677418fea32b1cf3f46b7f8108f84783f983c61e81c9802"
+    },
+    {
+      "seq": 95,
+      "id": "fc5f5edc-e01d-4b8a-b565-707bf111bd59",
+      "at": "2026-09-04T05:18:38.845Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S2:impl:pending->ready_for_verification",
+      "slice": "S2",
+      "hash": "f1f0f63b5e910c03398479dce66706fda02cb08e018bd858a22fbdf1a8b08627",
+      "fileHash": "1f943b09e07d31509e9bec44ca4635fb032dcc6a7d21564f9fc489dce5580e68"
+    },
+    {
+      "seq": 96,
+      "id": "b0760a6c-181b-4c36-b68e-897877debb70",
+      "at": "2026-09-04T05:19:29.364Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "576fd8756671225232df80c8618d9b432f3382924a2c6d55a95a683cf61bae1b",
+      "fileHash": "49790ba6c1ff883c2265a6f2a2d0234c10a4aa4a9c4476450ea909e48d2a508e"
+    },
+    {
+      "seq": 97,
+      "id": "d0618f1f-3a11-4699-8862-85e3a28c0a54",
+      "at": "2026-09-04T05:20:28.137Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S1:verification:pending->verified",
+      "slice": "S1",
+      "hash": "6f8aac6d021d20a02fa3547bccc7e44447d87895f830fd0199be4f4137e84096",
+      "oracle": "4cf6e7741341cf6dc821ac9563d61e005ffce72c006628fea9d78607c8fc8fce",
+      "evidence": "7dcb30c41a644636d8dbce7651813d024d26fd8c7e07bd557f516ece9ecaecf5",
+      "fileHash": "efd528043dca03fa428eade666f193e8f4adf260cbb12f8d649774a1d71e8434"
+    },
+    {
+      "seq": 98,
+      "id": "e68aefd7-e098-4acf-b6cb-96928f3b4663",
+      "at": "2026-09-04T05:20:42.948Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S2:verification:pending->verified",
+      "slice": "S2",
+      "hash": "781368472e765bdbe0df4de8d0141af6bd47921e162d31bcb20fa8102884c2e6",
+      "oracle": "6ed6fa76189eaea433c5bfe200aa899e09f6a42da3816269399436bd94d9b9dc",
+      "evidence": "2423aafbf388b48dd8d5c2c55101124e0ef865eb00836c827565ae723e75e09c",
+      "fileHash": "c7fe2d803866708e9566d905ac02e6ef2e0ec915342d931edeb73d34ec644452"
+    },
+    {
+      "seq": 99,
+      "id": "fc4296bb-cef7-4509-b352-e5b30478d67a",
+      "at": "2026-09-04T05:22:24.243Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:verification->research_update",
+      "slice": null,
+      "hash": "aa44b444b0a8d52d755f8e0a81f5a02056b1bcc3051ec65b3a66c68727a867bd",
+      "fileHash": "bbcf3dea1fee82d7f26b3e6e752c98c2441ddc0fc26a7a107635da10218fff4f"
     }
   ],
-  "fileHash": "791ab27dc29b266baea2d7fdd971f7140c8600c561b4c0cec7adee6f11617e91"
+  "fileHash": "590576130a3f34b09ebc4e0f1b47d957b32708d65d7b28e8516021cb63f79168"
 }

@@ -7,7 +7,7 @@ export const runtime = 'nodejs';
  * Public endpoint that returns the resolved site branding configuration.
  * No PII. No auth required. The ACCESS_CODE middleware curtain still applies.
  */
-export async function GET() {
+export async function GET(): Promise<Response> {
   const branding = loadSiteBranding();
   return NextResponse.json({
     name: branding.name,

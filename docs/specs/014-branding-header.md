@@ -1,6 +1,6 @@
 # Batch 014 spec: branding-header
 
-Spec status: implementation
+Spec status: research_update
 
 ## Problem Statement
 
@@ -93,7 +93,7 @@ Ledger bindings:
 | `lib/config/site-branding.ts::SITE_BRANDING_DEFAULTS` | constant | shape `{ name: 'OpenMAIC', tagline: '', showLogo: true, showHeadline: true }` | the fallbacks when env and yaml say nothing, kept in the client-safe module |
 | `lib/config/site-branding.ts::readBoolean` | function | `(envValue: string | undefined): boolean` | truthy is `'true'` or `'1'`. Client-safe, no node imports |
 | `lib/config/site-branding.server.ts::loadSiteBranding` | function | `(): SiteBranding` | server-only: defaults, then `server-branding.yml` through the module-private `loadYamlFile` helper, then env. Env wins. `SHOW_LOGO` and `SHOW_HEADLINE` parse with `readBoolean`. Imports `node:fs`, `node:path`, and `js-yaml` |
-| `app/api/site-branding/route.ts::GET` | function | `(): Promise<Response>` | imports the server module, returns `{ name, tagline, showLogo, showHeadline }` publicly, no PII, no auth, Node runtime |
+| `app/api/site-branding/route.ts::GET` | function | `(): Promise<Response>` | imports the server module, returns `{ name, tagline, showLogo, showHeadline }` publicly, no PII, no auth, Node runtime. The outline reports `()` and the implementer adds the `: Promise<Response>` annotation |
 | `lib/hooks/use-site-branding.ts::useSiteBranding` | function | `(): SiteBrandingState` | returns defaults first, then the fetched values. Imports the client-safe module only |
 
 Before-state capture notes: `lib/config/site-branding.ts` does not exist. No
@@ -134,12 +134,96 @@ Ledger bindings:
 
 | file::symbol | kind | after-signature or shape | behavior |
 | --- | --- | --- | --- |
-| `components/header-capsule.tsx::HeaderCapsule` | component | exists | renders language, theme, Pro toggle, account slot, gear in that exact order. The account slot renders null through a prop in G. The gear, theme, and language behaviors stay unchanged in function. The Pro toggle acts as the workbench entry affordance, the same intent as today's hero ProBadge routing. Its visibility stays ungated in G |
-| `app/page.tsx::HomePage` | function | `(): JSX.Element` | modified: top-left name and tagline from `useSiteBranding`. Right side renders `HeaderCapsule` with an empty account slot. Hero logo and tagline removed. `GreetingBar` no longer rendered. The hero renders the `home.headline` i18n key gated by `showHeadline`, with 12-locale parity |
-| `app/page.tsx::GreetingBar` | function | `(): JSX.Element` | modified: retired from the home hero, no render site remains |
-| `components/workbench/workspace/WorkspaceHome.tsx::WorkspaceHome` | component | exists | modified: hero logo honors `showLogo` |
-| `components/edit/SlideNavRail/SlideNavRail.tsx::SlideNavRail` | component | exists | modified: rail logo honors `showLogo` |
-| `components/workbench/workspace/WorkspaceRail.tsx::WorkspaceRail` | component | exists | modified: rail logo honors `showLogo` |
+| `components/header-capsule.tsx::HeaderCapsule` | component | `({ onSettingsOpen, accountSlot }: HeaderCapsuleProps)` | renders language, theme, Pro toggle, account slot, gear in that exact order. The account slot renders null through a prop in G. The gear, theme, and language behaviors stay unchanged in function. The Pro toggle acts as the workbench entry affordance, the same intent as today's hero ProBadge routing. Its visibility stays ungated in G |
+| `app/page.tsx::HomePage` | function | `()` | modified: top-left name and tagline from `useSiteBranding`. Right side renders `HeaderCapsule` with an empty account slot. Hero logo and tagline removed. `GreetingBar` no longer rendered. The hero renders the `home.headline` i18n key gated by `showHeadline`, with 12-locale parity |
+| `app/page.tsx::GreetingBar` | function | `()` | modified: retired from the home hero, no render site remains |
+| `components/edit/SlideNavRail/SlideNavRail.tsx::SlideNavRail` | component | `()` | modified: rail logo honors `showLogo` |
+
+The two workspace rows carry multi-line signatures the outline reports verbatim. Their exact parameter text pins them:
+
+- `components/workbench/workspace/WorkspaceHome.tsx::WorkspaceHome` (kind
+  component, after-signature):
+
+  ```
+  ({
+    composerReset,
+    discoveryContent,
+    courseOptions,
+    onOpenSession,
+    onExitPro,
+  }: {
+    readonly composerReset: number;
+    readonly discoveryContent: ReactNode;
+    /**
+     * What the composer's `@` picker may name. The shell already has this list
+     * (the rail renders it), so it is handed down rather than fetched again here.
+     */
+    readonly courseOptions: readonly CourseMentionSource[];
+    readonly onOpenSession: (sessionId: string) => void;
+    readonly onExitPro: () => void;
+  })
+  ```
+
+  Behavior: modified: hero logo honors `showLogo`.
+
+- `components/workbench/workspace/WorkspaceRail.tsx::WorkspaceRail` (kind
+  component, after-signature):
+
+  ```
+  ({
+    courses,
+    sessions,
+    sessionState,
+    onReloadSessions,
+    activeCourseId,
+    activeSessionId,
+    collapsed,
+    onToggleCollapsed,
+    onOpenCourse,
+    onOpenSession,
+    onNewSession,
+    onGoHome,
+    onExitPro,
+    onSessionDeleted,
+    onRenameSession,
+    onDeleteCourse,
+    resizeHandle,
+  }: {
+    readonly courses: Discovery;
+    readonly sessions: readonly ProHomeSessionItem[];
+    readonly sessionState: HomeDiscoveryState;
+    readonly onReloadSessions: () => void;
+    readonly activeCourseId: string | null;
+    readonly activeSessionId: string | null;
+    readonly collapsed: boolean;
+    readonly onToggleCollapsed: () => void;
+    readonly onOpenCourse: (id: string) => void;
+    readonly onOpenSession: (id: string) => void;
+    /**
+     * A new conversation in the middle column. Both entries below (the compose row
+     * and its collapsed `+`) call this ONE handler, and it deliberately does not
+     * touch the classroom pane — see `startNewConversation` in the shell.
+     */
+    readonly onNewSession: () => void;
+    /** Back to the bare `/workspace` — the logo, and the shell's own handler. */
+    readonly onGoHome: () => void;
+    readonly onExitPro: () => void;
+    /** The shell drops the deleted chat's pane and URL param, once the server
+     *  confirmed the delete. Rows are already gone optimistically down here. */
+    readonly onSessionDeleted: (sessionId: string) => void;
+    /**
+     * Name a chat. The shell owns the write (one writer for this row and the
+     * pane header both) and answers with a readable message when it is refused.
+     */
+    readonly onRenameSession: (sessionId: string, title: string) => Promise<string | null>;
+    /** The shell deletes the course AND closes its classroom tab on success. */
+    readonly onDeleteCourse: (courseId: string) => Promise<void> | void;
+    /** The width drag, owned by the shell (it writes the CSS variable on the root). */
+    readonly resizeHandle: ReactNode;
+  })
+  ```
+
+  Behavior: modified: rail logo honors `showLogo`.
 
 Before-state capture notes: the capsule pieces are inline in `HomePage`
 (language at `app/page.tsx:729`, theme at `:733-777`). The hero logo renders
@@ -301,3 +385,5 @@ pure, and `tests/branding/client-import-graph.test.ts` guards that. The
 change is runtime-proven in the working tree: the home page returns 200, the
 route serves the JSON `{ name, tagline, showLogo, showHeadline }`, and Safari
 shows a console-clean session. The gate command text is unchanged.
+Round-1 verification pinned the six signature strings to outline truth, and
+the GET route gained its `: Promise<Response>` annotation.
