@@ -142,6 +142,7 @@ Ledger bindings:
 | file::symbol | kind | after-signature or shape (planned) | behavior |
 | --- | --- | --- | --- |
 | `lib/auth/permissions-server.ts::requirePermission` | function | `(headers: Headers, permission: Permission): Promise<Session>` | returns the session or throws the typed 403 refusal with shape `{ message, code }` |
+| `lib/auth/index.ts::requirePermission` | function | exists | modified: re-exports the guard through the public surface |
 | `app/api/quiz-grade/route.ts::POST` | function | `(req: NextRequest): Promise<Response>` | modified: adopts the guard as the single batch B route, preserving the existing `callLLM` flow |
 
 Before-state capture notes: `app/api/quiz-grade/route.ts` has no auth gate
@@ -158,9 +159,10 @@ Gates:
 - integration: `unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/permissions/quiz-grade-gate.test.ts && echo QUIZ_GATE_OK` expects `QUIZ_GATE_OK`
 - smoke: `npx tsc --noEmit && echo TSC_OK` expects `TSC_OK`
 
-Risk tier: 3. The integration gate drives the real route with `callLLM`
-mocked, asserting the 403 shape, the allow path, and that the LLM call is
-guarded.
+Risk tier: 3. The integration gate drives the real route with `@/lib/ai/llm`
+and `@/lib/server/resolve-model` both mocked, asserting the 403 shape, the
+allow path, and that the LLM call is guarded. The 403 path needs neither
+mock.
 
 ### S4 Client surface and account zone consumption
 
@@ -185,7 +187,9 @@ hook and no `permission-gate` component exist.
 Postcondition: the more specific route wins over the catch-all. Anonymous
 clients receive an empty permission list. The hook never imports a server
 module. The account zone hides Settings without `settings.manage` and shows
-an Admin entry only with `users.manage`.
+an Admin entry only with `users.manage`. The `auth.common.soon` badge stays
+for users without `settings.manage`, while holders navigate to the normal
+settings modal with no soon badge until batch E replaces the destination.
 
 Gates:
 
@@ -305,5 +309,9 @@ for the hook, exactly as the batch G and batch A lessons require.
 - The visual-preview checkpoint runs before implementation. The account zone
   delta mockup renders in localhost and is approved in Safari first.
 - Commit convention for this batch: `feat(auth): ...`.
+- Batch 013 is closed, so a one-word correction is recorded here instead.
+  013's roles-table prose says only "a system flag". The implemented column
+  is `"isSystem"` (`lib/auth/schema.ts:74`), read as `is_system` by
+  `lib/auth/roles.ts:112`.
 - No new operator-facing env vars ship in batch B, so `.env.example` is
   unchanged.
