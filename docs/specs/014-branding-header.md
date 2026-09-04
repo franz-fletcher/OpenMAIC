@@ -1,6 +1,6 @@
 # Batch 014 spec: branding-header
 
-Spec status: draft
+Spec status: implementation
 
 ## Problem Statement
 

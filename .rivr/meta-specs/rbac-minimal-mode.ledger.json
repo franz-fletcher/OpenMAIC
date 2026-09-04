@@ -5,7 +5,7 @@
   "spec": {
     "reference": "docs/meta-specs/rbac-minimal-mode.md",
     "title": "Meta-spec: rbac-minimal-mode",
-    "hash": "720c58300fe01b2078f21e6816366e3dc999ab6ea0d2bf5d4673e13572a3c3a8"
+    "hash": "cd65ff7518110ea7eb7d34c0db59e2bfd20c99e459d19bb8c59f5d8e3a720948"
   },
   "tracker": {
     "mode": "none"
@@ -23,6 +23,11 @@
     {
       "batch": "013-rbac-auth-foundation",
       "ledger": ".rivr/specs/013-rbac-auth-foundation.ledger.json",
+      "stage": "implementation"
+    },
+    {
+      "batch": "014-branding-header",
+      "ledger": ".rivr/specs/014-branding-header.ledger.json",
       "stage": "implementation"
     }
   ],
@@ -80,7 +85,51 @@
       "slice": null,
       "hash": "e0f50ddbab1b76f36f36a01638d39b2ab45c980cfc483fb58cf0d4392ae9f24b",
       "fileHash": "2395f2951ae94823f78616f0ce7dd2a2182a334b1552c7a7f793e0c37718c023"
+    },
+    {
+      "seq": 6,
+      "id": "cde5c960-e916-415b-baee-9344a829d9f2",
+      "at": "2026-09-04T03:11:34.993Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:clarification:Register child batch ledger 014-branding-header into the meta-ledger.",
+      "slice": null,
+      "hash": "d2031fad6f245ef1f74e75113d110463f40c07f888dceb1dab476f42778a809a",
+      "fileHash": "6d5dfffc6d555efd95cb8cca415075db65f5afc060910c0c549b1546f17e604b"
+    },
+    {
+      "seq": 7,
+      "id": "c2a04da6-7242-4340-b391-6daa728fb0e7",
+      "at": "2026-09-04T03:11:34.994Z",
+      "actor": "orchestrator",
+      "command": "metaspec_child_link",
+      "transition": "child-link:014-branding-header:.rivr/specs/014-branding-header.ledger.json:research",
+      "slice": null,
+      "hash": "38584bb8ce13aa6e45a1939d3a69aeb40ab4b6baeb15aeba2a17e787f863ab9c",
+      "fileHash": "6d5dfffc6d555efd95cb8cca415075db65f5afc060910c0c549b1546f17e604b"
+    },
+    {
+      "seq": 8,
+      "id": "33c04a45-d88a-475f-bae1-c939d4197635",
+      "at": "2026-09-04T03:11:42.838Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:clarification:Refresh recorded child stage after batch 014 advanced to implementation.",
+      "slice": null,
+      "hash": "6995d2aa49cab80bcf393decfc04afa3468ed2ffaf1c20f2587bafba20431a52",
+      "fileHash": "455d2922b820c7b2249f40596d936bb200ba46f261f21c77b6a5a770099987b9"
+    },
+    {
+      "seq": 9,
+      "id": "ac1185cc-93fd-44ad-9067-5a60a2799eea",
+      "at": "2026-09-04T03:11:42.839Z",
+      "actor": "orchestrator",
+      "command": "metaspec_child_link",
+      "transition": "child-link:014-branding-header:.rivr/specs/014-branding-header.ledger.json:implementation",
+      "slice": null,
+      "hash": "a24af1945da27bb9fdcdee304f86ab5de8141945bd7c7cb937050ace17c8c04e",
+      "fileHash": "455d2922b820c7b2249f40596d936bb200ba46f261f21c77b6a5a770099987b9"
     }
   ],
-  "fileHash": "6d5dfffc6d555efd95cb8cca415075db65f5afc060910c0c549b1546f17e604b"
+  "fileHash": "872030b6e3181c1e4e2e080ee5d2af02fbc76e3f20bfaaeeaebc0d41468b39bf"
 }

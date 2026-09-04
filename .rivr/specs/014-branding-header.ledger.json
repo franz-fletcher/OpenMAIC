@@ -1,0 +1,798 @@
+{
+  "schema_version": 2,
+  "$schema": "https://rivr.dev/schemas/ledger/v2",
+  "spec": {
+    "reference": "docs/specs/014-branding-header.md",
+    "title": "Batch 014 spec: branding-header",
+    "hash": "d99adbd223ac8fcb0c14f1824857560470b40a1e5c52a3ba401b65ff20b1f7b1"
+  },
+  "tracker": {
+    "mode": "none"
+  },
+  "stage": "implementation",
+  "retry": {
+    "count": 0,
+    "max": 5,
+    "consecutive_same_cause": 0,
+    "escalate_at": 3
+  },
+  "slices": [
+    {
+      "id": "S1",
+      "title": "Branding config and public surface",
+      "intent": "The server loader at lib/config/site-branding.ts (env plus optional server-branding.yml), the public route app/api/site-branding/route.ts (GET, no PII, no auth), and the client hook lib/hooks/use-site-branding.ts with defaults that hold until the route answers.",
+      "user_stories": [
+        1,
+        2
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/config/site-branding.ts",
+          "symbols": [
+            {
+              "name": "SITE_BRANDING_DEFAULTS",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "The fallbacks when env and yaml say nothing. Shape: { name: 'OpenMAIC', tagline: '', showLogo: true, showHeadline: true }."
+            },
+            {
+              "name": "loadSiteBranding",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(): SiteBranding"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Merges defaults, yaml, then env. Env wins. SHOW_LOGO and SHOW_HEADLINE parse with readBoolean semantics."
+            }
+          ]
+        },
+        {
+          "path": "app/api/site-branding/route.ts",
+          "symbols": [
+            {
+              "name": "GET",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(): Promise<Response>"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Returns { name, tagline, showLogo, showHeadline } publicly, no PII, no auth, Node runtime."
+            }
+          ]
+        },
+        {
+          "path": "lib/hooks/use-site-branding.ts",
+          "symbols": [
+            {
+              "name": "useSiteBranding",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(): SiteBrandingState"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Returns defaults first, then the fetched values."
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "ff91930d-4ac7-4a9a-bace-228c76acde3c",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "An operator changes the site identity through env or yaml and the route serves the result; the route returns no PII and requires no session; the hook renders defaults before the fetch resolves and keeps defaults on any failure.",
+      "gates": [
+        {
+          "id": "g1",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/branding/site-branding.test.ts && echo BRAND_CFG_OK",
+          "expect": "BRAND_CFG_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "unit"
+        },
+        {
+          "id": "g2",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/branding/site-branding-route.test.ts && echo BRAND_RT_OK",
+          "expect": "BRAND_RT_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "smoke"
+        },
+        {
+          "id": "g3",
+          "check": "grep -q \"SHOW_HEADLINE\" .env.example && grep -q \"SITE_NAME\" .env.example && echo BRAND_ENV_OK",
+          "expect": "BRAND_ENV_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "smoke"
+        }
+      ]
+    },
+    {
+      "id": "S2",
+      "title": "Header chrome",
+      "intent": "The standardized capsule component, the home header rebuild, the hero cleanup, and the site-wide logo toggle application.",
+      "user_stories": [
+        2,
+        3,
+        4
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "components/header-capsule.tsx",
+          "symbols": [
+            {
+              "name": "HeaderCapsule",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Renders language, theme, Pro toggle, account slot, gear in that exact order. The account slot renders null through a prop in G. Gear, theme, and language behaviors stay unchanged in function. Pro toggle is the workbench entry affordance, same intent as the hero ProBadge routing, ungated in G."
+            }
+          ]
+        },
+        {
+          "path": "app/page.tsx",
+          "symbols": [
+            {
+              "name": "HomePage",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "()"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(): JSX.Element"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Modified: top-left name and tagline from useSiteBranding. Right side renders HeaderCapsule with an empty account slot. Hero logo and tagline removed. GreetingBar no longer rendered. The hero renders the home.headline i18n key gated by showHeadline, with 12-locale parity."
+            },
+            {
+              "name": "GreetingBar",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "()"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(): JSX.Element"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Modified: retired from the home hero, no render site remains."
+            }
+          ]
+        },
+        {
+          "path": "components/workbench/workspace/WorkspaceHome.tsx",
+          "symbols": [
+            {
+              "name": "WorkspaceHome",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "({\n  composerReset,\n  discoveryContent,\n  courseOptions,\n  onOpenSession,\n  onExitPro,\n}: {\n  readonly composerReset: number;\n  readonly discoveryContent: ReactNode;\n  /**\n   * What the composer's `@` picker may name. The shell already has this list\n   * (the rail renders it), so it is handed down rather than fetched again here.\n   */\n  readonly courseOptions: readonly CourseMentionSource[];\n  readonly onOpenSession: (sessionId: string) => void;\n  readonly onExitPro: () => void;\n})"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Modified: hero logo honors showLogo."
+            }
+          ]
+        },
+        {
+          "path": "components/edit/SlideNavRail/SlideNavRail.tsx",
+          "symbols": [
+            {
+              "name": "SlideNavRail",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "()"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Modified: rail logo honors showLogo."
+            }
+          ]
+        },
+        {
+          "path": "components/workbench/workspace/WorkspaceRail.tsx",
+          "symbols": [
+            {
+              "name": "WorkspaceRail",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "({\n  courses,\n  sessions,\n  sessionState,\n  onReloadSessions,\n  activeCourseId,\n  activeSessionId,\n  collapsed,\n  onToggleCollapsed,\n  onOpenCourse,\n  onOpenSession,\n  onNewSession,\n  onGoHome,\n  onExitPro,\n  onSessionDeleted,\n  onRenameSession,\n  onDeleteCourse,\n  resizeHandle,\n}: {\n  readonly courses: Discovery;\n  readonly sessions: readonly ProHomeSessionItem[];\n  readonly sessionState: HomeDiscoveryState;\n  readonly onReloadSessions: () => void;\n  readonly activeCourseId: string | null;\n  readonly activeSessionId: string | null;\n  readonly collapsed: boolean;\n  readonly onToggleCollapsed: () => void;\n  readonly onOpenCourse: (id: string) => void;\n  readonly onOpenSession: (id: string) => void;\n  /**\n   * A new conversation in the middle column. Both entries below (the compose row\n   * and its collapsed `+`) call this ONE handler, and it deliberately does not\n   * touch the classroom pane — see `startNewConversation` in the shell.\n   */\n  readonly onNewSession: () => void;\n  /** Back to the bare `/workspace` — the logo, and the shell's own handler. */\n  readonly onGoHome: () => void;\n  readonly onExitPro: () => void;\n  /** The shell drops the deleted chat's pane and URL param, once the server\n   *  confirmed the delete. Rows are already gone optimistically down here. */\n  readonly onSessionDeleted: (sessionId: string) => void;\n  /**\n   * Name a chat. The shell owns the write (one writer for this row and the\n   * pane header both) and answers with a readable message when it is refused.\n   */\n  readonly onRenameSession: (sessionId: string, title: string) => Promise<string | null>;\n  /** The shell deletes the course AND closes its classroom tab on success. */\n  readonly onDeleteCourse: (courseId: string) => Promise<void> | void;\n  /** The width drag, owned by the shell (it writes the CSS variable on the root). */\n  readonly resizeHandle: ReactNode;\n})"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Modified: rail logo honors showLogo."
+            }
+          ]
+        }
+      ],
+      "riskTier": 3,
+      "uuid": "fdf2549e-24b0-4c59-85ee-bbe4671cda8b",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "The home capsule renders exactly language, theme, Pro toggle, account slot, gear; the top-left shows the configured name and tagline; the hero shows no logo and no tagline and the greeting is retired; every product logo render site hides when showLogo is false.",
+      "gates": [
+        {
+          "id": "g1",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "smoke"
+        },
+        {
+          "id": "g2",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/branding/header-capsule.test.ts && echo BRAND_HDR_OK",
+          "expect": "BRAND_HDR_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "integration"
+        },
+        {
+          "id": "g3",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/providers/provider-neutrality-guard.test.ts && echo NEUTRAL_OK",
+          "expect": "NEUTRAL_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "smoke"
+        },
+        {
+          "id": "g4",
+          "check": "pnpm check:i18n-keys && echo I18N_OK",
+          "expect": "I18N_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "smoke"
+        }
+      ]
+    }
+  ],
+  "audit": [
+    {
+      "seq": 1,
+      "id": "46608cf1-9f0d-4df9-9747-5ef03cbe8c64",
+      "at": "2026-09-04T03:10:05.743Z",
+      "actor": "orchestrator",
+      "command": "init",
+      "transition": "spec-approved:docs/specs/014-branding-header.md",
+      "slice": null,
+      "hash": "097f1ea4d8339f581541b478ddc146d0880b3df589e533bb2fbae8b8d1eb820d"
+    },
+    {
+      "seq": 2,
+      "id": "a61a2e1b-707d-486b-a865-60b5ef50fa0e",
+      "at": "2026-09-04T03:10:05.743Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect",
+      "slice": "S1",
+      "hash": "e73bf6234b4d8909c72f7f54dd3dddf48bdbdf2ea2cfb651066495a3e301419f",
+      "expectationHash": "7ce0691105178662c4bae40f6b57c96c3bbc89c02a0e2023df2573b7a0398f55"
+    },
+    {
+      "seq": 3,
+      "id": "b6940c4e-f111-41f6-a666-5210080db79f",
+      "at": "2026-09-04T03:10:05.744Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect",
+      "slice": "S2",
+      "hash": "8884535aa1e85031db1fc789e336fcd77535feb1df42c80d733be9c77a1915ff",
+      "expectationHash": "c4841c2d4a9df9c5f1ff826a135afaa8fcdf0e4b77eb6d015075162187951dd4"
+    },
+    {
+      "seq": 4,
+      "id": "445c3909-0062-4843-a77f-c848f22f2b3e",
+      "at": "2026-09-04T03:10:05.744Z",
+      "actor": "orchestrator",
+      "command": "init_batch",
+      "transition": "batch-init:S1,S2",
+      "slice": null,
+      "hash": "2035cb352e68a5623fa509784b2a8e30a7d37eff3b74e1adc88e9a605de020a7"
+    },
+    {
+      "seq": 5,
+      "id": "a5a82a79-82fb-41b9-91e8-17c1bd5de6b8",
+      "at": "2026-09-04T03:10:19.221Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S1:target-add:lib/config/site-branding.ts::SITE_BRANDING_DEFAULTS",
+      "slice": "S1",
+      "hash": "80475e7cb60fcb0b6796a6ad04b883d818fe5f31cc500e21d7956f2b9a063f57",
+      "fileHash": "4bfc99c7a92833c56fc4b8efe0d2f2aecd38272d6c9b7f44e2d8c137d66a2172"
+    },
+    {
+      "seq": 6,
+      "id": "8952902b-bf68-4370-a74f-927b2f08390c",
+      "at": "2026-09-04T03:10:19.269Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S1:target-add:lib/config/site-branding.ts::loadSiteBranding",
+      "slice": "S1",
+      "hash": "7f3b3aa23e98513e7b8821ec2ea35720a7acca2bbe7bfd21d35f6347b9a947e6",
+      "fileHash": "efe72179948a38a14b158b9d1c4fa41ae12dd09de13cc2a12b47fe26175c2240"
+    },
+    {
+      "seq": 7,
+      "id": "f4d08f4f-f9e4-460d-814c-e91be9cba8d7",
+      "at": "2026-09-04T03:10:19.317Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S1:target-add:app/api/site-branding/route.ts::GET",
+      "slice": "S1",
+      "hash": "1f9630f03cb743c3122e39bbf8ee4e9968d7d120a46f893a11b7dc0da175366e",
+      "fileHash": "d04ae5c67d1c534b5b0575e1c5bdd4b11dfd4f37f0db65b09f497daa6cc4cd4c"
+    },
+    {
+      "seq": 8,
+      "id": "a3067b8d-694a-4e17-a2dd-ab55191694aa",
+      "at": "2026-09-04T03:10:19.359Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S1:target-add:lib/hooks/use-site-branding.ts::useSiteBranding",
+      "slice": "S1",
+      "hash": "3a0535b940bee2856653d89670e6e64b51f1a7e6e29eba04715854fd7593ed49",
+      "fileHash": "acd5b2ba79d363c06b2bde50f5b9badb51b27bb8049c9a16b88fc2002c64b2c8"
+    },
+    {
+      "seq": 9,
+      "id": "0574c73d-71d0-427c-92e6-2b35ecb105fd",
+      "at": "2026-09-04T03:10:19.398Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S1:capture",
+      "slice": "S1",
+      "hash": "5efba4dc22e0c69acf42761a71730ee8237ba1ef9f2deb33d4b3acbd9cfe48ee",
+      "fileHash": "1b65ea57571e1e7ae02bd2f04ed9df365709fb0aa2013dbafc6b0e474bf0b028"
+    },
+    {
+      "seq": 10,
+      "id": "7c3a3826-1d35-4727-b75b-1adc549c1e6c",
+      "at": "2026-09-04T03:10:19.434Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/config/site-branding.ts::SITE_BRANDING_DEFAULTS",
+      "slice": "S1",
+      "hash": "453d4152993c9a7f6758346a222d62382c159dc8f2038fabc782eab1a79831f5",
+      "fileHash": "ccf164839cdb3b68b6e3fdde76fee1a778ad94c9f1d8df812581878c91db3961"
+    },
+    {
+      "seq": 11,
+      "id": "24a87dda-856b-4e7d-993e-e304c2b5653e",
+      "at": "2026-09-04T03:10:19.471Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/config/site-branding.ts::loadSiteBranding",
+      "slice": "S1",
+      "hash": "e478a36fa9939b557f6dbe13bb57c8fe593e9508e882f88d8dcdac431a2b5e7b",
+      "fileHash": "c3e479ab859116f81ec287a782cdbbdee72373077eef548f7c59355a51bbe143"
+    },
+    {
+      "seq": 12,
+      "id": "77eb7e1f-2955-4662-af84-98145a4318b3",
+      "at": "2026-09-04T03:10:19.509Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:app/api/site-branding/route.ts::GET",
+      "slice": "S1",
+      "hash": "c1edae77c4c4128be336e94cca17a8d154306fdd856b4d744b3e918108d1ccc4",
+      "fileHash": "eb2ff27252f71cec69e34c94b1608c765e263e1d3831b7abcc10252bd04604af"
+    },
+    {
+      "seq": 13,
+      "id": "6f6ea0e3-f795-43c1-afc7-1f2985d86f1a",
+      "at": "2026-09-04T03:10:19.546Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/hooks/use-site-branding.ts::useSiteBranding",
+      "slice": "S1",
+      "hash": "586939379e0f58c759acf0c17699624ffc87b7713a2b8c2254864979371944d8",
+      "fileHash": "14c88ebe203d41c26823293c1c6ea014b2e54a294c7dc8acbe6e51d5cc51b4d1"
+    },
+    {
+      "seq": 14,
+      "id": "8607f06c-49b7-4c2c-b6e5-011939367488",
+      "at": "2026-09-04T03:10:31.549Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:target-add:components/header-capsule.tsx::HeaderCapsule",
+      "slice": "S2",
+      "hash": "d4c4e00dc633dbea30bfd2f7190892eee16222f6a5b69cabe308827715feafcb",
+      "fileHash": "d983810b5e3b727fee7f557db74c340b06024ed56dc561afb2e91f2f5d6bdcde"
+    },
+    {
+      "seq": 15,
+      "id": "0b3e6a61-248c-49d2-b99c-3593742281e6",
+      "at": "2026-09-04T03:10:31.598Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:target-add:app/page.tsx::HomePage",
+      "slice": "S2",
+      "hash": "263429d3ab4c7861c4878a5d4098706a9930df8116dbc71ea7c387c155ecc52d",
+      "fileHash": "bd49cc204f0a0a0d0acc8f615125e480f1e80ccdc4e6d53d6764ae42b0e51778"
+    },
+    {
+      "seq": 16,
+      "id": "3f833d45-0a4b-4722-94a5-5a9f7a4f6fa0",
+      "at": "2026-09-04T03:10:31.649Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:target-add:app/page.tsx::GreetingBar",
+      "slice": "S2",
+      "hash": "6967d18ec643cd29fd2555ebc98c3ac2ac4caea8d69bc0a4630720dfa3e4efd8",
+      "fileHash": "732a0a38a3ba786deb2cadea6a4c75304d5fa30209d5933edb618d1e9fbed316"
+    },
+    {
+      "seq": 17,
+      "id": "133a30d0-ad3a-4ca2-a1e9-68ac406db8e1",
+      "at": "2026-09-04T03:10:31.692Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:target-add:components/workbench/workspace/WorkspaceHome.tsx::WorkspaceHome",
+      "slice": "S2",
+      "hash": "ff30f8e7a7c3152d32a2fab27361c7f1ae562fefe7f4c455ed0b26b1549cd0ec",
+      "fileHash": "cbbeed34a29c7cb0347d39dc19628dc0cefe2238074d1032aaf032726ef6f5dd"
+    },
+    {
+      "seq": 18,
+      "id": "d00d8a92-980a-47db-aefb-90a80ad50d22",
+      "at": "2026-09-04T03:10:31.735Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:target-add:components/edit/SlideNavRail/SlideNavRail.tsx::SlideNavRail",
+      "slice": "S2",
+      "hash": "1c5642583b412bde092da9a8fc5c982c1850909077fb4e606a893595c98e8001",
+      "fileHash": "76985e6a254dd19feef0cc8f279f47e590759a21052e9dcd6ab66f53224e9c9b"
+    },
+    {
+      "seq": 19,
+      "id": "a471e7d7-2758-464f-a3fc-b52244bb6eaf",
+      "at": "2026-09-04T03:10:31.774Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:target-add:components/workbench/workspace/WorkspaceRail.tsx::WorkspaceRail",
+      "slice": "S2",
+      "hash": "c105be9e2c1c63202867a8e6a2dc99f0b1ee78ec1c4ec7b6132485af459479f1",
+      "fileHash": "fb0cb640b408560e6c99cb703a876935d4625ba9be37bed35682d64bb943110f"
+    },
+    {
+      "seq": 20,
+      "id": "bb414e19-75d7-458b-8fb3-2522ecacd0d4",
+      "at": "2026-09-04T03:10:31.842Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S2:capture",
+      "slice": "S2",
+      "hash": "7820605af47b24e8f68b498fb7a4bdfc47f033472c0a1a65a79518c76cbf72bb",
+      "fileHash": "5c81b0e37aca13aab4f4966b51e35e8abcb90e5fe50a256574e4daef94eb15be"
+    },
+    {
+      "seq": 21,
+      "id": "5a5cb669-2cd1-4c79-8747-624656663b15",
+      "at": "2026-09-04T03:10:31.883Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:components/header-capsule.tsx::HeaderCapsule",
+      "slice": "S2",
+      "hash": "f3599ceb26080d1b69bb6722ec92962ef87269c9317ec99e3a91aa175f42ccf8",
+      "fileHash": "2c83e7dc99c6f3a098de8d8299eef3de809835cddb8f9f4e43964e1a3b19282e"
+    },
+    {
+      "seq": 22,
+      "id": "1659d71e-b294-4cec-ba64-e10523f83188",
+      "at": "2026-09-04T03:10:31.922Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/page.tsx::HomePage",
+      "slice": "S2",
+      "hash": "565409e4373097e1b42da9b9bf4252d6a048feffb356bcd115f2fb0b6c725fc1",
+      "fileHash": "d01280c6b47a082a445edf55b3db528d3eb1a5a4946e57181fd5233abf7a6295"
+    },
+    {
+      "seq": 23,
+      "id": "21975527-08ab-4555-9d28-73357b08beda",
+      "at": "2026-09-04T03:10:31.964Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/page.tsx::GreetingBar",
+      "slice": "S2",
+      "hash": "acbfe41ea924c623b00a85bffd972c9ab981ce066342b40d04eb00284128e514",
+      "fileHash": "63bb9244bcb7dfddd13835694765be22d2cda0771165d1e8f8d5d77abd2c0553"
+    },
+    {
+      "seq": 24,
+      "id": "304e9b75-1c51-41a9-b11f-e9c0749f8912",
+      "at": "2026-09-04T03:10:32.003Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:components/workbench/workspace/WorkspaceHome.tsx::WorkspaceHome",
+      "slice": "S2",
+      "hash": "c1afd9aad0249333f07e81a8d207cf33f3216285e10c60707d8a785c51a145be",
+      "fileHash": "742ae9ca8e20c09476815db3b814f2ebbd0fbd942a22d697d93f00005eac24f8"
+    },
+    {
+      "seq": 25,
+      "id": "4a787a24-f299-4ae8-9936-fd3bc7e02ff0",
+      "at": "2026-09-04T03:10:32.047Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:components/edit/SlideNavRail/SlideNavRail.tsx::SlideNavRail",
+      "slice": "S2",
+      "hash": "022adf6e247419596942bda3f1cd8416570989646f8787b0077028c4967b659e",
+      "fileHash": "05c4eaab0ff461f90e178f6204558be645aa2759ae7ed72d3c1ec8a89426bd80"
+    },
+    {
+      "seq": 26,
+      "id": "37222b05-4f2f-4f57-a8a3-5ab337ae44c2",
+      "at": "2026-09-04T03:10:32.085Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:components/workbench/workspace/WorkspaceRail.tsx::WorkspaceRail",
+      "slice": "S2",
+      "hash": "c8d0f542bca632bbc8b2c9a3d8aa9cd1f04a6fef5e59683e06301b760a5d1edf",
+      "fileHash": "bab8b1f47aced9b603fa03baf9ae0b0e067f760ed3063936994a6b6ad29861df"
+    },
+    {
+      "seq": 27,
+      "id": "0056fc01-f8d3-4152-99c1-aa36a87dbc8c",
+      "at": "2026-09-04T03:10:51.378Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/config/site-branding.ts::SITE_BRANDING_DEFAULTS",
+      "slice": "S1",
+      "hash": "82da52c77008a9fd19ea65ba5ab4c1a19ba39af53b51409649156cb7e7db6878",
+      "expectationHash": "cad11e467214ca8bb9620e6b235fdd6f4e1525523e366650a4059ca877160415",
+      "fileHash": "5bf2ad14214d209d2016d86e71b08bc9cfccb894081dc90e78c02f3570059936"
+    },
+    {
+      "seq": 28,
+      "id": "dcf27ce3-83e8-4542-b8cc-55002c0f685f",
+      "at": "2026-09-04T03:10:51.434Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/config/site-branding.ts::loadSiteBranding",
+      "slice": "S1",
+      "hash": "64218fef362698475733c59ba5ea72abc299b0057b98d64dd4bbe3c9430fd279",
+      "expectationHash": "f9dd8e7a04179d231673590caade782bcda27d9fdb4bd66e01426abf8c76a996",
+      "fileHash": "5e9cc731ca9b1e7ee8c628eabac170c68b46781acd90c6a55799ed24600089c7"
+    },
+    {
+      "seq": 29,
+      "id": "90ec2306-a4e8-4899-b816-cd6308097139",
+      "at": "2026-09-04T03:10:51.487Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:app/api/site-branding/route.ts::GET",
+      "slice": "S1",
+      "hash": "c96bc6d5d301c855cba012bd7d7215f43dd8e3c221e3e5014371e1890a531da1",
+      "expectationHash": "b9df70890d0d8ee4a128176ff01dd7d6d84d5815963d98c948cbb9d366215ac6",
+      "fileHash": "35709e5f1c57b431440192c06ad169361c950910fea555f2c8ecec0882482f23"
+    },
+    {
+      "seq": 30,
+      "id": "c32401f0-8b55-460e-a850-bd04c6d7e33e",
+      "at": "2026-09-04T03:10:51.529Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/hooks/use-site-branding.ts::useSiteBranding",
+      "slice": "S1",
+      "hash": "72d23379f57441759d6e8485fd43b51ed465ea4ddce52215ee5e432ac200bcc0",
+      "expectationHash": "b2ce39727947952e49a7f2080823722bb7b5b757d4e59a3578fdcdfcee85e353",
+      "fileHash": "b36b668eb6b39aff31b42e5638953570b93f4ce1c5e848b047f40b2a37990eed"
+    },
+    {
+      "seq": 31,
+      "id": "5bf0f950-aed4-40d7-9f3f-370214c1b359",
+      "at": "2026-09-04T03:10:51.611Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/page.tsx::HomePage",
+      "slice": "S2",
+      "hash": "237e2a5a31785c15dddb9df2f8e4d28bc0b84a75a2001f5fa1fd59dbd6bda346",
+      "expectationHash": "ea2190354f6474c245583192db9d822593bf1559f2367c28aea23a1f28d93a60",
+      "fileHash": "35fcfd24874ea861f9ba97056d29c4a31becc80dcc3daa49e794d6b86e6ca20a"
+    },
+    {
+      "seq": 32,
+      "id": "66348ec9-5899-4257-aea8-b315791353f9",
+      "at": "2026-09-04T03:10:51.650Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/page.tsx::GreetingBar",
+      "slice": "S2",
+      "hash": "d791dd3ec24bf7534a6249a6a8a37218aa416b0fe115881fd6f49d9c2ff5bba5",
+      "expectationHash": "d65d6535431b319a2bd4a579b908bb973be22cef44999c5bf76e8f2f5e0dc949",
+      "fileHash": "7e07e9fcb1b89ef097691db19b8cf4d817d68933496fc3fad13244a0bdf37534"
+    },
+    {
+      "seq": 33,
+      "id": "6d1f3e78-ccbf-4335-8dc7-7b0935d2fb01",
+      "at": "2026-09-04T03:10:51.691Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:components/workbench/workspace/WorkspaceHome.tsx::WorkspaceHome",
+      "slice": "S2",
+      "hash": "4bc8669e047f7cdc80236c003679c0674c80fe3b18a2ff208da9a2925e8b434b",
+      "expectationHash": "3ad886a613a3862c581fd15454de3664d6bff65c7acbc3e38e0ede7fea606ece",
+      "fileHash": "a41b6efe68a7f570e2766a464e5c5f5a1aaa33cbed0f72108548a7c0ab530247"
+    },
+    {
+      "seq": 34,
+      "id": "1bc153d8-775c-4e4a-8ec8-8bb9e079a72a",
+      "at": "2026-09-04T03:10:51.732Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:components/edit/SlideNavRail/SlideNavRail.tsx::SlideNavRail",
+      "slice": "S2",
+      "hash": "949e499fda1731da05b376a46246368867b81f4e81d5ca1a8fde3ab412511def",
+      "expectationHash": "cec81d2d975c98fbffe2e90712e2465c4f8bc3653b8e9fb97f1fa768bce789e4",
+      "fileHash": "33dfb4171150840c94c30f97a8d64adf7b125910f71f4c848cdd8d57b740d3c5"
+    },
+    {
+      "seq": 35,
+      "id": "c7bf7c4f-1665-4875-84c6-9a6cea6f0625",
+      "at": "2026-09-04T03:10:51.769Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:components/workbench/workspace/WorkspaceRail.tsx::WorkspaceRail",
+      "slice": "S2",
+      "hash": "f50c1cd2f3dbbb3a024821deabce692a957981a49fcc40146dfd75054d891801",
+      "expectationHash": "cec81d2d975c98fbffe2e90712e2465c4f8bc3653b8e9fb97f1fa768bce789e4",
+      "fileHash": "6595c63b399293f331447d2baa3c8bf4df48e1d81e1e97fb151ded52c2ff1ec7"
+    },
+    {
+      "seq": 36,
+      "id": "e4e78778-b1b1-44e6-8f66-08b8fde2f368",
+      "at": "2026-09-04T03:11:09.768Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:components/header-capsule.tsx::HeaderCapsule",
+      "slice": "S2",
+      "hash": "f9d52e27bc08ff0c7a74e29dc2b01586c867002ed96882d89bd97d64c0864c97",
+      "expectationHash": "0205cb9d7e0c8bc8cecc81e30962e05e34a375e424b3641af0313699be2bdd3c",
+      "fileHash": "cf1220e01468fb227060952bade2c2a013ad3264cae7b45f2648be8587495e7f"
+    },
+    {
+      "seq": 37,
+      "id": "86c14255-64d6-4960-8613-e031311105aa",
+      "at": "2026-09-04T03:11:23.332Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S1:gate-add:g1",
+      "slice": "S1",
+      "hash": "b93cd8f60cb0394f7960470438518e077b5cdefcb0a3d113856b215ee9140fdf",
+      "fileHash": "8dbe01bf9ae63ad57ccd4ee01a99534a7f57d6f88b9499a5be929914f1defd41"
+    },
+    {
+      "seq": 38,
+      "id": "9fd1d662-3162-46f2-b870-3764c6c96aad",
+      "at": "2026-09-04T03:11:23.385Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S1:gate-add:g2",
+      "slice": "S1",
+      "hash": "e8fd46179d6b640cc17b04c637b4564dec3664b0ffcb792bca8af6b1e464bae4",
+      "fileHash": "323c806b919a927e2b0fc2ceef209ad99b0ec06dc4311a27fdc241db6e8b27ad"
+    },
+    {
+      "seq": 39,
+      "id": "64324d4c-425a-42f0-a3d7-7a4da9af4bc2",
+      "at": "2026-09-04T03:11:23.439Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S1:gate-add:g3",
+      "slice": "S1",
+      "hash": "73ea650d61db3916a8f2db834b7080b0db3a10366171801fa1d190f855567e88",
+      "fileHash": "c8cf4e3719df3b1f68ae65635ac74c014fc5ab212506fb8de61f926f02289820"
+    },
+    {
+      "seq": 40,
+      "id": "aae33edb-5bd3-4bb9-a176-d88f00e7ec43",
+      "at": "2026-09-04T03:11:23.483Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S2:gate-add:g1",
+      "slice": "S2",
+      "hash": "d14aaaf494e55bf681232635e88ba1db6c9d4f5892e1a409b437b3543699cdcb",
+      "fileHash": "66857cd87a4f0244aaf425e616af0397772e41d60facdd79b20b53446075d729"
+    },
+    {
+      "seq": 41,
+      "id": "f42c2b0b-ebf3-4b7b-8086-39e301c0dd9c",
+      "at": "2026-09-04T03:11:23.526Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S2:gate-add:g2",
+      "slice": "S2",
+      "hash": "98e7527781b0efc160359fa26b5d8ac0891bfe6a46724d5e8e7b339466aff0eb",
+      "fileHash": "7c10a0b476b51d0772edda691e2e061645e796c9de7ea0fec952a627836ca271"
+    },
+    {
+      "seq": 42,
+      "id": "ab5b2d97-9efa-4d67-80da-d8127ea88dac",
+      "at": "2026-09-04T03:11:23.566Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S2:gate-add:g3",
+      "slice": "S2",
+      "hash": "daf6c6b8243c063c9ac508ceb1697397e9e8bfc350c8c11554ed79a40c39f51b",
+      "fileHash": "638a5f999036137e9511a94a7eee7b104b656c3db564d77be325cde7cec19066"
+    },
+    {
+      "seq": 43,
+      "id": "b34e61c0-9016-4d29-8e40-20f009e0cda9",
+      "at": "2026-09-04T03:11:23.606Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S2:gate-add:g4",
+      "slice": "S2",
+      "hash": "59f5b91f727a9c895e4b0adf116a123ca1e02c2a1662dbfd05811fafce2939fe",
+      "fileHash": "97f87d03dd650f4edc12038e088d61cd857facb6f3df395d766a483770026875"
+    },
+    {
+      "seq": 44,
+      "id": "c381e83e-dc54-4415-9051-bdc0fba2f94b",
+      "at": "2026-09-04T03:11:35.039Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "06ba5ca9abba2e1e61781d81241b085ba1a3057be425eeb30a587b63ab120f1b",
+      "fileHash": "b4da3630bed6952930d4bf790870e1fe6b1624706d36f9fabff53210d0b9e768"
+    }
+  ],
+  "fileHash": "984c4e2a5f15ff9bb5ed12c80346d131c5cfbe1c84c4cb9a339f2ac415f46b31"
+}
