@@ -36,6 +36,7 @@ import type { NextRequest } from 'next/server';
 
 import { HOST_AGENT_LIFECYCLE as LIFECYCLE } from '@/lib/agent-runtime/lifecycle';
 import { isAgentRuntimeConfigured } from '@/lib/config/feature-flags';
+import { getSession } from '@/lib/auth';
 import { subscribeAgentEventWakeup } from '@/lib/server/agent-runtime/event-notify-bus';
 import { resolveRequestOwnerId } from '@/lib/server/agent-runtime/owner';
 import { getAgentSessionStore } from '@/lib/server/agent-runtime/store';
@@ -64,17 +65,16 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     return new Response('Not found', { status: 404 });
   }
   const { id } = await params;
+  // Resolve the owner identity. If a valid session exists, use the
+  // authenticated user id. Otherwise fall back to the anonymous cookie.
   const responseHeaders = new Headers();
-  // The identity cookie is minted for the requester regardless of the target
-  // session, and the owner is resolved before the session lookup: a request
-  // for a missing session and one for a session owned by someone else return
-  // byte-identical 404s (same status, body, and cookie headers), so the
-  // response cannot be used to probe whether a session UUID exists. This
-  // slice resolves only the anonymous cookie identity; a future auth
-  // integration must thread `authenticatedOwnerId` through here, or sessions
-  // created under authenticated identities would be unreachable by their own
-  // owner.
-  const ownerId = resolveRequestOwnerId(req, responseHeaders);
+  let ownerId: string;
+  try {
+    const session = await getSession(req.headers);
+    ownerId = session ? `user:${session.userId}` : resolveRequestOwnerId(req, responseHeaders);
+  } catch {
+    ownerId = resolveRequestOwnerId(req, responseHeaders);
+  }
   const store = await getAgentSessionStore();
   const meta = await store.getSession(id);
   if (!meta) {

@@ -290,9 +290,31 @@ Ledger bindings:
 
 | file::symbol | kind | after-signature or shape | behavior |
 | --- | --- | --- | --- |
-| `lib/auth/mailer.ts::createMailer` | function | `(env: MailerEnv): Mailer` | selects the transport by `MAIL_TRANSPORT`: smtp, resend, or console fallback |
-| `lib/auth/mailer.ts::sendVerificationLink` | function | `(to: string, url: string): Promise<void>` | sends the verification link through the selected transport |
 | `lib/auth/server.ts::createAuthServer` | function | `(options: AuthServerOptions): AuthServer` | modified: the verification callback calls the mailer |
+
+The `createMailer` signature is multi-line in source and stores verbatim, so
+its binding uses the code-block pattern:
+
+- `lib/auth/mailer.ts::createMailer` (kind function, after-signature):
+
+  ```
+  (
+    env: MailerEnv,
+    deps: {
+      createTransport?: typeof createTransport;
+      Resend?: new (apiKey: string) => { emails: { send: (opts: unknown) => Promise<unknown> } };
+    } = {},
+  ): Mailer
+  ```
+
+  Behavior: selects the transport by `MAIL_TRANSPORT`: smtp, resend, or
+  console fallback. The `deps` parameter injects transport dependencies for
+  tests and defaults to an empty object.
+
+- `lib/auth/mailer.ts::sendVerificationLink` (kind function, after-signature
+  `(mailer: Mailer, to: string, url: string): Promise<void>`): sends the
+  verification link through the given mailer instance. The mailer parameter
+  is explicit dependency injection.
 
 Deliverables (gate-bound, not symbol-bound): the `.env.example` entries for
 `MAIL_TRANSPORT`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`,
@@ -496,3 +518,5 @@ with the env shape, without sending.
 ## Amendment 2026-09-04 (guest default role)
 
 The design-pass review caught that this spec did not state the default signup role. The approved decision record Q3 (`docs/research/rbac-minimal-mode-decision-round-1.md`) assigns `guest` at verified signup. This amendment records the explicit statement in the Role seed decision, user story 7, and the two clause refinements on S01 `createAuthServer` and S02 `seedRoleGrants`. The gate inventory is unchanged. The ledger binds this text via a `correction` amend and then re-syncs expectations.
+Round-1 pre-verification pinned the mailer rows to DI truth, and the mailer
+keeps runtime behavior unchanged.

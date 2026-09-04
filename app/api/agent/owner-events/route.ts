@@ -11,6 +11,7 @@ import type { PersistedOwnerSessionEvent } from '@openmaic/storage';
 import type { NextRequest } from 'next/server';
 
 import { isAgentRuntimeConfigured } from '@/lib/config/feature-flags';
+import { getSession } from '@/lib/auth';
 import { subscribeAgentEventWakeup } from '@/lib/server/agent-runtime/event-notify-bus';
 import { resolveRequestOwnerId } from '@/lib/server/agent-runtime/owner';
 import { getAgentSessionStore } from '@/lib/server/agent-runtime/store';
@@ -39,14 +40,16 @@ function parseLastEventId(value: string | null): bigint {
 export async function GET(req: NextRequest) {
   if (!isAgentRuntimeConfigured()) return new Response('Not found', { status: 404 });
 
-  // Identity belongs to the request, not the URL. EventSource reconnects to
-  // this same stable path with the anonymous cookie minted on first attach.
-  // This slice resolves only the anonymous cookie identity; a future auth
-  // integration must thread `authenticatedOwnerId` through here, or sessions
-  // created under authenticated identities would be unreachable by their own
-  // owner.
+  // Resolve the owner identity. If a valid session exists, use the
+  // authenticated user id. Otherwise fall back to the anonymous cookie.
   const responseHeaders = new Headers();
-  const ownerId = resolveRequestOwnerId(req, responseHeaders);
+  let ownerId: string;
+  try {
+    const session = await getSession(req.headers);
+    ownerId = session ? `user:${session.userId}` : resolveRequestOwnerId(req, responseHeaders);
+  } catch {
+    ownerId = resolveRequestOwnerId(req, responseHeaders);
+  }
   const store = await getAgentSessionStore();
 
   const url = new URL(req.url);

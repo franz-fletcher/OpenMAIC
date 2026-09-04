@@ -1518,7 +1518,6 @@
     "glmVoiceLuodo": "Voz Luodo",
     "qwenTpVoiceLonganlingxin": "Longanlingxin",
     "qwenTpVoiceLonganlufeng": "Longanlufeng",
-
     "qwenVoiceCherry": "Solar, calorosa e natural",
     "qwenVoiceSerena": "Gentil e suave",
     "qwenVoiceEthan": "Enérgica e vibrante",
@@ -2035,6 +2034,98 @@
       },
       "error": {
         "materialExtraction": null
+      }
+    }
+  },
+  "auth": {
+    "nav": {
+      "signIn": "Sign in",
+      "createAccount": "Create account"
+    },
+    "account": {
+      "menu": "Account menu",
+      "title": "Account",
+      "settings": "Settings",
+      "admin": "Admin",
+      "signOut": "Sign out"
+    },
+    "common": {
+      "soon": "Soon",
+      "soonTooltip": "Arrives in a later release"
+    },
+    "roles": {
+      "guest": "Guest",
+      "learner": "Learner",
+      "creator": "Creator",
+      "admin": "Admin"
+    },
+    "signup": {
+      "title": "Create your account",
+      "subtitle": "Join OpenMAIC to save classrooms, keep your course library, and pick up where you left off.",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm password",
+      "passwordHint": "At least 8 characters, with letters and numbers.",
+      "submit": "Create account",
+      "haveAccount": "Already have an account?",
+      "signInLink": "Sign in",
+      "validation": {
+        "weakPassword": "Password is too weak.",
+        "checkCharCount": "8+ characters",
+        "checkMix": "Letters and numbers",
+        "checkNotEmail": "Different from your email",
+        "passwordMismatch": "Passwords do not match.",
+        "emailInvalid": "Enter a valid email address."
+      },
+      "errors": {
+        "emailExists": "An account with this email already exists.",
+        "signInInstead": "Sign in instead"
+      },
+      "pending": {
+        "title": "Check your email",
+        "body": "We sent a verification link to {email}.",
+        "openMail": "Open email app",
+        "resend": "Resend verification email",
+        "spamHint": "Check your spam folder.",
+        "restart": "Start over with a different email"
+      }
+    },
+    "signin": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to access your classrooms.",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign in",
+      "forgot": "Forgot password?",
+      "forgotSoon": "Soon",
+      "forgotTooltip": "Password reset ships in a later release",
+      "forgotNote": "Password reset is planned for a later release.",
+      "errors": {
+        "invalidCredentials": "Incorrect email or password.",
+        "invalidCredentialsDetail": "Check both fields and try again.",
+        "passwordIncorrect": "The password you entered is incorrect."
+      },
+      "unverified": {
+        "title": "Verify your email to sign in.",
+        "body": "We sent a verification link to {email}.",
+        "resend": "Resend verification email"
+      },
+      "success": "Signed in.",
+      "redirecting": "Redirecting to your home"
+    },
+    "verify": {
+      "success": {
+        "title": "Email verified",
+        "body": "Your email is verified.",
+        "continue": "Go to my home",
+        "claimNote": "Your anonymous classroom library was carried over."
+      },
+      "failure": {
+        "title": "Link invalid or expired",
+        "body": "This verification link has expired.",
+        "email": "Email",
+        "submit": "Send new link",
+        "loginResend": "resend from the sign-in page"
       }
     }
   }

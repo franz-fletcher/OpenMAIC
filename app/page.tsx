@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { useI18n } from '@/lib/hooks/use-i18n';
 import { HeaderCapsule } from '@/components/header-capsule';
+import { AccountZone } from '@/components/account-zone';
 import { useSiteBranding } from '@/lib/hooks/use-site-branding';
 import { createLogger } from '@/lib/logger';
 import { Button } from '@/components/ui/button';
@@ -713,7 +714,7 @@ function HomePage() {
         )}
       </div>
       {/* ═══ Top-right capsule ═══ */}
-      <HeaderCapsule onSettingsOpen={() => setSettingsOpen(true)} />
+      <HeaderCapsule onSettingsOpen={() => setSettingsOpen(true)} accountSlot={<AccountZone />} />
       <SettingsDialog
         open={settingsOpen}
         onOpenChange={(open) => {
