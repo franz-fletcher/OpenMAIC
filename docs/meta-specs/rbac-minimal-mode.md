@@ -49,7 +49,7 @@ tree on 2026-09-04.
 Operators cannot seed users before going live, courses stay bound to cookies
 that evaporate between browsers, there is no email delivery, and every
 AI-spend route is open to anyone holding the access code. This program fixes
-that with a six-batch RBAC and minimal-mode build.
+that with a seven-batch RBAC and minimal-mode build.
 
 ## Solution
 
@@ -69,7 +69,7 @@ curtain.
 
 ## Architecture Record
 
-Target state after all six batches, anchored to current code where the seams
+Target state after all seven batches, anchored to current code where the seams
 already exist.
 
 ### Identity and owner ids
@@ -163,7 +163,7 @@ round-2 deltas.
 | Q6 | Anonymous to authenticated migration | Auto-claim all `anon:`-owned rows on first verified login, and thread `authenticatedOwnerId` through the three documented call sites. A test proves agent sessions and courses follow the user. |
 | Q7 | Publish audience model | Replace the boolean `is_public` with `status` (draft, published) plus `audience` (everyone, guest, learner) on `stage_meta`, via `ADD COLUMN IF NOT EXISTS`. The creator picks the audience at publish time. Drafts stay owner-visible only. Per-user draft share lists are deferred. The read gate returns 404 for unpublished and wrong-audience courses. Existing `is_public=true` rows migrate to published and everyone. |
 | Q8 | Custom roles and permission granularity | A fixed permission catalog defined in code: `course.create`, `course.publish`, `classroom.chat`, `quiz.grade`, `settings.manage`, `users.manage`, `roles.manage`. Admins toggle catalog checkboxes per role and cannot invent new permission strings. Assignments live in the database, seeded from env and yaml, overridable in the UI. One `can(user, permission)` helper serves route guards and UI hiding alike. |
-| Q9 | Program decomposition | Six child batches, each with its own spec, ledger, approval, and cycle, in the order A through F as tabled above. Round-2 delta: batches A and B join C through F in requiring a Safari localhost visual-preview checkpoint before code lands. |
+| Q9 | Program decomposition | Six child batches, each with its own spec, ledger, approval, and cycle, in the order A through F as tabled above. Round-2 delta: batches A and B join C through F in requiring a Safari localhost visual-preview checkpoint before code lands. Amended by the round-3 register: seven batches with G first. |
 | Q10 | Email delivery | nodemailer over SMTP, credentials from env. When SMTP is unconfigured, verification and invite links log to the server console instead of sending. |
 | Q11 | Table placement | Auth tables, `invites`, `role_permissions`, and `quota_daily` live app-side under `lib/auth/` with the lazy `ensureSchema` pattern on the existing `pg.Pool`. They do not go into the publishable `@openmaic/storage` package. This avoids a version bump, the byte-pinned schema contract churn, and the package-independence lint rules. |
 | Q12 | Role rank model | Audiences store an integer ROLE RANK, never a role name. Roles carry a stable rank. Seeded ranks: anonymous 0, guest 1, learner 2, creator 3, admin 4. Custom roles get an admin-chosen rank. Rank edits re-resolve visibility live. Built-in roles are undeletable. Custom role deletion requires reassigning its users first. |
@@ -184,6 +184,10 @@ both candidates for it. Neither exists before batch C.
 | R3-Q3 | Branding config | The header top-left shows a configurable site name and tagline. Sources: env (`SITE_NAME`, `SITE_TAGLINE`), yaml, then the admin settings modal in batch E. The doctrine stays defaults then database. All OpenMAIC logos honor a visibility toggle (`SHOW_LOGO`) from env and yaml. |
 | R3-Q4 | Capsule order | The top-right capsule order is language, theme, Pro toggle, account zone, settings gear. G ships the capsule with an empty account slot. |
 | R3-Q5 | Minimal-mode layout rule | For anonymous, guest, and learner, the composer and generation-toolbar container is hidden and the library expands into a multi-column grid. The behavior ships in batch C. The branding and header work defines the layout, and G's approved mockups preview it. |
+| R3-Q6 | Pro toggle semantics | The home capsule Pro toggle is a workbench entry affordance, the same intent as today's hero ProBadge routing to the Pro workbench. It is not the stage edit-mode switch. Visibility is creator and admin only, enforced in batch C. G preserves today's ungated visibility. |
+| R3-Q7 | Hero headline | Batch G owns `home.headline` with the copy "Turn any material into a living classroom" and 12-locale parity at implementation. `SHOW_HEADLINE` (readBoolean, env + `server-branding.yml`, batch E admin override) toggles the hero headline visibility. |
+| R3-Q8 | Config badge | The "env · yaml" config badge from the approved mockup is mockup-only. It does not ship in user UI. |
+| R3-Q9 | Footer credit | The footer credit "OpenMAIC Open Source Project" stays static. `SHOW_LOGO` does not touch it. |
 
 Program structure change: batch G certifies before batch A. The V2 capsule
 chrome must exist before the account zone lands

@@ -12,7 +12,7 @@ language at `:729`, theme at `:733-777`. From the operator view the
 consequences are concrete.
 
 - The product name and tagline cannot be changed without editing code. The
-  brand constant is static (`lib/brand/brand-config.ts:29-38`,
+  brand constant is static (`lib/brand/brand-config.ts:27-34`,
   `DEFAULT_BRAND.productName` is `'OpenMAIC'`).
 - The product logo cannot be hidden. Every logo render site draws
   `brand.logoSrc` unconditionally: the home hero (`app/page.tsx:836`), the
@@ -89,14 +89,15 @@ Ledger bindings:
 
 | file::symbol | kind | after-signature or shape | behavior |
 | --- | --- | --- | --- |
-| `lib/config/site-branding.ts::SITE_BRANDING_DEFAULTS` | constant | shape `{ name: 'OpenMAIC', tagline: '', showLogo: true }` | the fallbacks when env and yaml say nothing |
-| `lib/config/site-branding.ts::loadSiteBranding` | function | `(): SiteBranding` | merges defaults, yaml, then env. Env wins. `SHOW_LOGO` parses with `readBoolean` semantics |
-| `app/api/site-branding/route.ts::GET` | function | `(): Promise<Response>` | returns `{ name, tagline, showLogo }` publicly, no PII, no auth, Node runtime |
+| `lib/config/site-branding.ts::SITE_BRANDING_DEFAULTS` | constant | shape `{ name: 'OpenMAIC', tagline: '', showLogo: true, showHeadline: true }` | the fallbacks when env and yaml say nothing |
+| `lib/config/site-branding.ts::loadSiteBranding` | function | `(): SiteBranding` | merges defaults, yaml, then env. Env wins. `SHOW_LOGO` and `SHOW_HEADLINE` parse with `readBoolean` semantics |
+| `app/api/site-branding/route.ts::GET` | function | `(): Promise<Response>` | returns `{ name, tagline, showLogo, showHeadline }` publicly, no PII, no auth, Node runtime |
 | `lib/hooks/use-site-branding.ts::useSiteBranding` | function | `(): SiteBrandingState` | returns defaults first, then the fetched values |
 
 Before-state capture notes: `lib/config/site-branding.ts` does not exist. No
-`SITE_NAME`, `SITE_TAGLINE`, or `SHOW_LOGO` entry exists in `.env.example`.
-The brand is the static `DEFAULT_BRAND` (`lib/brand/brand-config.ts:29-38`).
+`SITE_NAME`, `SITE_TAGLINE`, `SHOW_LOGO`, or `SHOW_HEADLINE` entry exists in
+`.env.example`.
+The brand is the static `DEFAULT_BRAND` (`lib/brand/brand-config.ts:27-34`).
 The js-yaml loader to model is `loadYamlFile`
 (`lib/server/provider-config.ts:208`), and the boolean precedent is
 `readBoolean` (`lib/config/feature-flags.ts:10-12`, truthy is `'true'` or
@@ -104,14 +105,15 @@ The js-yaml loader to model is `loadYamlFile`
 
 Postcondition: an operator changes the site identity through env or yaml and
 the route serves the result. The route returns no PII and requires no
-session. The hook renders defaults before the fetch resolves. `SHOW_LOGO`
-defaults to shown.
+session. The hook renders defaults before the fetch resolves. On any non-2xx
+response or fetch error, `useSiteBranding` keeps the defaults and does not
+throw. `SHOW_LOGO` and `SHOW_HEADLINE` default to shown.
 
 Gates:
 
 - unit: `unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/branding/site-branding.test.ts && echo BRAND_CFG_OK` expects `BRAND_CFG_OK`
 - smoke: `unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/branding/site-branding-route.test.ts && echo BRAND_RT_OK` expects `BRAND_RT_OK`
-- smoke: `grep -q "SITE_NAME" .env.example && echo BRAND_ENV_OK` expects `BRAND_ENV_OK`
+- smoke: `grep -q "SHOW_HEADLINE" .env.example && grep -q "SITE_NAME" .env.example && echo BRAND_ENV_OK` expects `BRAND_ENV_OK`
 
 Risk tier: 2.
 
@@ -121,25 +123,26 @@ Delivers: the standardized capsule component, the home header rebuild, the
 hero cleanup, and the site-wide logo toggle application.
 
 Deliverables (gate-bound, not symbol-bound): the `.env.example` entries for
-`SITE_NAME`, `SITE_TAGLINE`, `SHOW_LOGO`. The BRAND_ENV_OK gate binds them.
+`SITE_NAME`, `SITE_TAGLINE`, `SHOW_LOGO`, `SHOW_HEADLINE`. The BRAND_ENV_OK
+gate binds them.
 
 Ledger bindings:
 
 | file::symbol | kind | after-signature or shape | behavior |
 | --- | --- | --- | --- |
-| `components/header-capsule.tsx::HeaderCapsule` | component | exists | renders language, theme, Pro toggle, account slot, gear in that exact order. The account slot renders null through a prop in G. The gear, theme, and language behaviors stay unchanged in function |
-| `app/page.tsx::HomePage` | function | `(): JSX.Element` | modified: top-left name and tagline from `useSiteBranding`. Right side renders `HeaderCapsule` with an empty account slot. Hero logo and tagline removed. `GreetingBar` no longer rendered |
+| `components/header-capsule.tsx::HeaderCapsule` | component | exists | renders language, theme, Pro toggle, account slot, gear in that exact order. The account slot renders null through a prop in G. The gear, theme, and language behaviors stay unchanged in function. The Pro toggle acts as the workbench entry affordance, the same intent as today's hero ProBadge routing. Its visibility stays ungated in G |
+| `app/page.tsx::HomePage` | function | `(): JSX.Element` | modified: top-left name and tagline from `useSiteBranding`. Right side renders `HeaderCapsule` with an empty account slot. Hero logo and tagline removed. `GreetingBar` no longer rendered. The hero renders the `home.headline` i18n key gated by `showHeadline`, with 12-locale parity |
 | `app/page.tsx::GreetingBar` | function | `(): JSX.Element` | modified: retired from the home hero, no render site remains |
-| `components/workbench/workspace/WorkspaceHome.tsx` | component | exists | modified: hero logo honors `showLogo` |
-| `components/edit/SlideNavRail/SlideNavRail.tsx` | component | exists | modified: rail logo honors `showLogo` |
-| `components/workbench/workspace/WorkspaceRail.tsx` | component | exists | modified: rail logo honors `showLogo` |
+| `components/workbench/workspace/WorkspaceHome.tsx::WorkspaceHome` | component | exists | modified: hero logo honors `showLogo` |
+| `components/edit/SlideNavRail/SlideNavRail.tsx::SlideNavRail` | component | exists | modified: rail logo honors `showLogo` |
+| `components/workbench/workspace/WorkspaceRail.tsx::WorkspaceRail` | component | exists | modified: rail logo honors `showLogo` |
 
 Before-state capture notes: the capsule pieces are inline in `HomePage`
 (language at `app/page.tsx:729`, theme at `:733-777`). The hero logo renders
 at `app/page.tsx:836`. `GreetingBar` renders at `:881` and is defined at
 `:1362`. The home footer carries only a text credit
 (`app/page.tsx:1347-1350`), no logo image, so it is unaffected by
-`SHOW_LOGO`. Logo sites today: `WorkspaceHome.tsx:141-144`,
+`SHOW_LOGO`. The credit stays static in G. Logo sites today: `WorkspaceHome.tsx:141-144`,
 `SlideNavRail.tsx:411`, `WorkspaceRail.tsx:849`. No `header-capsule`
 component exists. The component test precedent is
 `tests/ui/interactive-mode-button.test.ts:1-18`
@@ -147,9 +150,13 @@ component exists. The component test precedent is
 
 Postcondition: the home capsule renders exactly language, theme, Pro toggle,
 account slot, gear. The top-left shows the configured name and tagline. The
-hero shows no logo, no tagline, and no greeting. Every product logo render
-site hides when `showLogo` is false. The gear, theme, and language controls
-behave exactly as before within the new capsule.
+hero shows no logo and no tagline, and the greeting is retired. The hero
+shows the `home.headline` copy when `showHeadline` is true. Every product
+logo render site hides when `showLogo` is false. The footer credit stays
+static. The config badge from the approved mockup is mockup-only and does not
+ship in user UI. The gear, theme, and language controls behave exactly as
+before within the new capsule. The Pro toggle remains the workbench entry
+affordance, ungated in G, and batch C restricts it to creator and admin.
 
 Gates:
 
@@ -168,31 +175,46 @@ markup.
   the provider-config doctrine (`lib/server/provider-config.ts:208` and the
   module cache at `:354`). Batch E later adds the admin settings modal
   override on the same defaults-then-database spine.
-- `SHOW_LOGO` parses with `readBoolean` semantics from
-  `lib/config/feature-flags.ts:10-12`: truthy is `'true'` or `'1'`. Default
-  is shown.
-- The public route returns only `{ name, tagline, showLogo }`. It contains
-  no PII and requires no session. Its Node runtime reads the config file with
-  the same fs and js-yaml path the provider loader uses
+- `SHOW_LOGO` and `SHOW_HEADLINE` parse with `readBoolean` semantics from
+  `lib/config/feature-flags.ts:10-12`: truthy is `'true'` or `'1'`. Both
+  default to shown.
+- The public route returns only `{ name, tagline, showLogo, showHeadline }`.
+  It contains no PII and requires no session. Its Node runtime reads the
+  config file with the same fs and js-yaml path the provider loader uses
   (`lib/server/provider-config.ts:208-220`). The `ACCESS_CODE` network
   curtain still applies to it at the middleware, per Q14. The route is not
   added to the middleware whitelist.
 - Defaults: name falls back to `'OpenMAIC'`, matching
-  `DEFAULT_BRAND.productName` (`lib/brand/brand-config.ts:29-31`). Tagline
-  falls back to empty. Logo falls back to shown.
+  `DEFAULT_BRAND.productName` (`lib/brand/brand-config.ts:28`). Tagline
+  falls back to empty. Logo falls back to shown. Headline visibility falls
+  back to shown.
 - The capsule order is contractual: language, theme, Pro toggle, account
   slot, gear. G ships `HeaderCapsule` with the account slot as a prop that
   renders null. Batch A fills the slot with the account menu without
   re-chroming the header.
 - The existing gear, theme, and language behaviors stay byte-for-byte in
   function inside the new capsule. The move is structural, not behavioral.
+- The Pro toggle. It is a workbench entry affordance, the same intent as
+  today's hero ProBadge routing to the Pro workbench, not the stage edit-mode
+  switch. Its visibility stays ungated in G. Batch C restricts it to creator
+  and admin.
+- The hero headline. Batch G owns `home.headline` with the copy "Turn any
+  material into a living classroom" and 12-locale parity at implementation.
+  `SHOW_HEADLINE` toggles its visibility with `readBoolean` semantics, from
+  env and `server-branding.yml`, with the batch E admin override like the
+  other branding keys.
+- The config badge. The "env · yaml" badge from the approved mockup is
+  mockup-only. It does not ship in user UI.
+- The footer credit. "OpenMAIC Open Source Project" stays static in G.
+  `SHOW_LOGO` does not touch it.
 - i18n: the brand strings are operator config, not locale keys. A locale
   key would pin a translation the operator cannot control. The route returns
   the operator strings as data. Surrounding UI copy stays on i18n keys, and
   `check:i18n-keys` keeps enforcing parity.
 - Env vars, all documented in `.env.example` in this change: `SITE_NAME`,
-  `SITE_TAGLINE`, `SHOW_LOGO`. No name contains the substrings "token" or
-  "plan", so the provider-neutrality guard stays green.
+  `SITE_TAGLINE`, `SHOW_LOGO`, `SHOW_HEADLINE`. No name contains the
+  substrings "token" or "plan", so the provider-neutrality guard stays
+  green.
 - No database schema, no migration, no publishable package changes. G is
   chrome and config only.
 
@@ -209,6 +231,8 @@ markup.
   `tests/config/feature-flags.test.ts:21-38`.
 - The component test uses `renderToStaticMarkup` plus `createElement`, the
   established precedent at `tests/ui/interactive-mode-button.test.ts:1-18`.
+  The header-capsule suite asserts the `home.headline` copy renders from the
+  key and honors `showHeadline`.
 - The route test calls the GET handler directly with the loader mocked,
   following the stage-meta route test style
   (`tests/agent-runtime/stage-meta-routes.test.ts:1-33`).
@@ -221,8 +245,8 @@ markup.
   targets.
 - Plan-time state: the `tests/branding/*` suites do not exist yet and fail
   with no marker until they do. The presence gate fails until `SITE_NAME`
-  lands in `.env.example`. These are the documented deliverable-dependent
-  failures.
+  and `SHOW_HEADLINE` land in `.env.example`. These are the documented
+  deliverable-dependent failures.
 
 ## Out of Scope
 

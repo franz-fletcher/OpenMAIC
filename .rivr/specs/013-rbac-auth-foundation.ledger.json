@@ -4,14 +4,14 @@
   "spec": {
     "reference": "docs/specs/013-rbac-auth-foundation.md",
     "title": "Batch 013 spec: rbac-auth-foundation",
-    "hash": "97c8dc8d14203699af3e461595b4d23e777f7b2f1c0943376335431844159758"
+    "hash": "0262fe59aba2407e98107f71138f62f841f8144a9402188c9ff224922c13f396"
   },
   "tracker": {
     "mode": "none"
   },
   "stage": "implementation",
   "retry": {
-    "count": 1,
+    "count": 2,
     "max": 5,
     "consecutive_same_cause": 0,
     "escalate_at": 3
@@ -359,7 +359,7 @@
                 "kind": "function"
               },
               "postcondition_quality": "VERIFIED",
-              "expectation": "Modified: renders the account menu with signed-in state and sign out."
+              "expectation": "Renders the header with the account zone filling the batch G capsule account slot; signed-in state shows identity, role badge, and sign out."
             }
           ]
         },
@@ -1987,7 +1987,41 @@
       "slice": null,
       "hash": "395f14065e6133c9728d44d27839538ec839c31b67d386437adb0198e79aaa4b",
       "fileHash": "74d23e8831e5a97669c4bea3f8e662cb55262230f2dd18796f056949506f9ac1"
+    },
+    {
+      "seq": 115,
+      "id": "82329e4b-b657-4fac-9296-b4018416d652",
+      "at": "2026-09-04T02:55:22.828Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:correction:S03 account-zone clause routes into batch G capsule slot; guest-default assertion placement pinned in Testing Decisions (round-3/4 approvals)",
+      "slice": null,
+      "hash": "d1ca5448c02f8bdf58ef86816ede77f2c3e7287b98235e78035f89cd2783603a",
+      "fileHash": "547345df43372225462eac77ee3221bb1a5f3b28e5f8a30b0f09700dffbd30ca"
+    },
+    {
+      "seq": 116,
+      "id": "1bba5a79-da15-4e43-b4cb-507ce72fcecc",
+      "at": "2026-09-04T02:55:22.874Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S03:expect-symbol:components/header.tsx::Header",
+      "slice": "S03",
+      "hash": "1ad83a95bd9a8e5caf50bf17aa17eedb4e0414bc2c387db6236b1709f6b86be6",
+      "expectationHash": "5de228423d6132c2f5cf7a57162f19a523f36a7526c2e24e390031a23dfa15e4",
+      "fileHash": "02999bed9fad9d193d2c7eab05d8860f66f3bf3c60f758c9bf4cfcb58ebd42b7"
+    },
+    {
+      "seq": 117,
+      "id": "f4e98fa1-0702-4b9e-96a3-34592fb9f493",
+      "at": "2026-09-04T02:55:22.923Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "1ca85a946832ca492cb21cbd1f6871488682a4e4c7a06c87836dd12e6637738b",
+      "fileHash": "3b90aebd9be332e41ae82f66a2b5120a1b50c096eef0adcf880189cd0d5ea93d"
     }
   ],
-  "fileHash": "547345df43372225462eac77ee3221bb1a5f3b28e5f8a30b0f09700dffbd30ca"
+  "fileHash": "04ffea8ac22e3ab3834661c4f186e398b627c2aa23d6512392fa8dec611ac953"
 }

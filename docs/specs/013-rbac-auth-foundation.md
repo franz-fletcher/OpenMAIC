@@ -430,6 +430,8 @@ with the env shape, without sending.
 - The claim-migration test proves that anonymous courses and agent sessions
   follow the user across the sign-in (Q6), using the exact column list in
   S04.
+- The guest-default assertion lives inside the `role-seed.test.ts` and
+  `session-roundtrip.test.ts` suites, and no gate command text changes.
 - Non-capturable deliverables bind through gates only. The rivr capture
   symbol router supports only `.rs`, `.md`, `.markdown`, `.txt`, `.text`,
   `.ts`, `.tsx`, `.js`, `.jsx`. `package.json`, `.env.example`, and locale

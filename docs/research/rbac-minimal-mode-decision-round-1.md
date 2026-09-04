@@ -226,3 +226,20 @@ The user annotated the live home page. These decisions are binding:
 Program structure change: branding and header chrome become child batch G
 (spec `014-branding-header`), implemented BEFORE batch A, so the V2 capsule
 chrome exists when the account zone lands. Batch A S03 rides on it.
+
+## Round 4 (2026-09-04, decision answers D1-D4)
+
+- D1 approved: home capsule Pro toggle = workbench entry, not the stage edit
+  switch. Target visibility is creator and admin, enforced in batch C. Batch G
+  ships today's ungated behavior and records the C intent.
+- D2 approved: batch G owns `home.headline` with copy "Turn any material into
+  a living classroom", 12-locale parity. Added: `SHOW_HEADLINE` boolean config
+  (env + server-branding.yml + batch E admin override) toggles headline
+  visibility. Branding config set: SITE_NAME, SITE_TAGLINE, SHOW_LOGO,
+  SHOW_HEADLINE.
+- D3 approved: the "env · yaml" config badge is mockup-only. It never ships in
+  user UI.
+- D4 approved: the footer credit stays static. SHOW_LOGO does not touch it.
+- Soundness fixes C1-C5 applied in the same pass (hook failure defaults, real
+  symbol bindings for the three rail/home rows, stale batch counts, guest
+  assertion placement).
