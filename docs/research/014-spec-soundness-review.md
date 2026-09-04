@@ -221,6 +221,102 @@ signup resolves to guest.
   binding tables and converted to gate-bound deliverables (`013:181-183`,
   `013:297-300`).
 
+## Second pass (2026-09-04, after the author's fixes + round-4 decisions D1-D4)
+
+Re-reviewed the current file text of `docs/specs/014-branding-header.md`, the
+013 delta, and the meta-spec R3 register; re-dry-ran the changed gate and two
+vitest gates; re-verified the C2 symbol bindings against the actual exports.
+Only this file was modified.
+
+### Per-finding status
+
+- **B1 (Pro toggle semantics) — CLOSED.** 014:197-200: "It is a workbench
+  entry affordance, the same intent as today's hero ProBadge routing to the
+  Pro workbench, not the stage edit-mode switch. Its visibility stays ungated
+  in G. Batch C restricts it to creator and admin." Mirrored in the S2
+  binding (014:133) and postcondition (014:158-159). D1 requirement met:
+  G ships ungated, C gates to creator/admin.
+- **B2 (home.headline + SHOW_HEADLINE) — CLOSED.** D2 is placed everywhere
+  required: defaults shape adds `showHeadline: true` (014:92); the loader
+  parses `SHOW_HEADLINE` with `readBoolean` semantics (014:93); the route
+  shape returns `showHeadline` (014:94); before-state and deliverables
+  mention `SHOW_HEADLINE` (014:98, 126); the env vars list includes it
+  (014:214-215); BRAND_ENV_OK now greps both `SHOW_HEADLINE` and `SITE_NAME`
+  (014:116); the HomePage binding row states "The hero renders the
+  `home.headline` i18n key gated by `showHeadline`, with 12-locale parity"
+  (014:134); Implementation Decisions own the key with the approved copy and
+  parity (014:201-205); the postcondition states the hero shows it when
+  `showHeadline` is true (014:153-154).
+- **B3 (config badge) — CLOSED.** 014:156-157: "The config badge from the
+  approved mockup is mockup-only and does not ship in user UI." Repeated at
+  014:206-207. D3 honored.
+- **C1 (hook failure under ACCESS_CODE) — CLOSED.** 014:108-110: "On any
+  non-2xx response or fetch error, `useSiteBranding` keeps the defaults and
+  does not throw." The ACCESS_CODE-locked deployment now degrades to
+  defaults by contract, completing the decision that the route is not
+  whitelisted.
+- **C2 (symbol bindings) — CLOSED.** 014:136-138 now read
+  `WorkspaceHome.tsx::WorkspaceHome`, `SlideNavRail.tsx::SlideNavRail`,
+  `WorkspaceRail.tsx::WorkspaceRail`; verified against the real exports
+  (`WorkspaceHome` at `WorkspaceHome.tsx:47`, `SlideNavRail` at
+  `SlideNavRail.tsx:51`, `WorkspaceRail` at `WorkspaceRail.tsx:182`).
+- **C3 (footer) — CLOSED.** 014:145 "The credit stays static in G", 014:155,
+  and 014:208 "'OpenMAIC Open Source Project' stays static in G. `SHOW_LOGO`
+  does not touch it." D4 honored.
+- **C4 (meta-spec stale six-batch) — CLOSED.** The meta-spec now reads
+  "seven-batch RBAC" (`meta-spec:52`), "Target state after all seven
+  batches" (`meta-spec:72`), and the Q9 register row carries the amendment
+  "Seven batches with G first" (`meta-spec:166`). R3-Q6..Q9 rows are present
+  and match D1-D4 verbatim (`meta-spec:187-190`).
+- **C5 (013 guest-default unpinned) — CLOSED.** 013:433-434 (Testing
+  Decisions): "The guest-default assertion lives inside the
+  `role-seed.test.ts` and `session-roundtrip.test.ts` suites, and no gate
+  command text changes." This is the declared Testing-Decisions sentence;
+  it pins the doctrine to suites that already exist as gates, added as
+  assertions, with no gate text drift.
+
+### Observed-but-consistent drift (accept)
+
+- 013 adds user story 7 (013:70-71): "As a new visitor, I want to create an
+  account and land as a verified guest, so that I know what my account can do
+  before I am elevated." This is beyond the declared delta (the
+  Testing-Decisions sentence and the S03 clause), and the 013 delta brief
+  said "only" those two lines changed. The story is consistent with the
+  guest-default doctrine already accepted in C5 and changes no gate or
+  binding. Accept it; no action required.
+
+### Gate and tier re-verification
+
+| Gate | Result | Marker |
+| --- | --- | --- |
+| S1-G3 changed BRAND_ENV_OK (`grep SHOW_HEADLINE && grep SITE_NAME && echo BRAND_ENV_OK`) | exit 1 | none; plan-time (both vars absent from `.env.example`), documented at 014:246-249 |
+| S1-G1 vitest (`tests/branding/site-branding.test.ts`) | exit 1 | none; plan-time, documented |
+| S2-G2 integration vitest (`tests/branding/header-capsule.test.ts`) | exit 1 | none; plan-time, documented |
+
+ENV_CLEAR prefix re-compared byte-for-byte against the 013 canonical list:
+**identical**. Tier compliance unchanged from file text: S1 = 3 gates
+(tier 2, min 2), S2 = 4 gates (tier 3, min 3) with the `integration:` tag on
+BRAND_HDR_OK. All 19 gates of 013 re-verified byte-identical in this pass
+(S01 4, S02 3, S03 4, S04 5, S05 3; the gate lists at 013:121-124, 156-161,
+199-202, 260-264, 315-317 match the 013 second-pass record exactly, including
+marks and the PG_CONTRACT_URL wrap).
+
+### Program structure
+
+Dependency order is consistent across all three files: meta-spec batch table
+(A depends on G, `meta-spec:136`; G depends on none, `:142`), per-batch
+dependency table (`:261-267`), and strict sequence "G, then A, then B, then C
+through F in order" (`:269`); 013's S03 clause and postcondition reference
+G's V2 capsule (013:178, 192-193); 014 user story 4 and Further Notes
+reference A filling the slot. No circular dependency. R3-Q6..Q9 rows present
+and complete.
+
+### Second-pass verdict
+
+**Approve.** All three blockers and all five concerns are closed in file
+text. The one observed extra (013 user story 7) is consistent and gated
+text-neutral; accept it. No NOT-closed items.
+
 ## Could not verify
 
 - Behavior of the not-yet-written `tests/branding/*` suites and the not-yet
