@@ -4,12 +4,12 @@
   "spec": {
     "reference": "docs/specs/013-rbac-auth-foundation.md",
     "title": "Batch 013 spec: rbac-auth-foundation",
-    "hash": "bb5b373610e21dcc3ea57d3ae0529698e72cbc15738767c5c6d1000653ca32dd"
+    "hash": "47b44b33073b58821871ec8fb87e48c12c81561b2e9c42e959fa9556546d5859"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "research",
+  "stage": "verification",
   "retry": {
     "count": 5,
     "max": 5,
@@ -121,10 +121,10 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(connectionString: string, poolFactory?: PersistencePoolFactory): Promise<ServerPersistenceProvider>"
+                "signature": "(\n  connectionString: string,\n  poolFactory: PersistencePoolFactory,\n): Promise<ServerPersistenceProvider>"
               },
               "postcondition_quality": "VERIFIED",
-              "expectation": "Modified: composes ensureAuthSchema into the lazy chain beside the five existing ensures."
+              "expectation": "Modified: composes ensureAuthSchema into the lazy chain beside the five existing ensures. The poolFactory parameter is required, not optional."
             }
           ]
         }
@@ -132,8 +132,10 @@
       "riskTier": 3,
       "uuid": "989ebcf7-8583-43e1-9290-7379739dee87",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "f9522c93b1f1139f5a7e21ee904d5bdbb6de4a94f3630e949e541df50c443169",
+        "actor": "implementer",
+        "at": "2026-09-04T15:22:12.650Z"
       },
       "verification": {
         "status": "rejected",
@@ -313,7 +315,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(queryable: Queryable, grants: RoleGrantSeed[]): Promise<number>"
+                "signature": "(\n  queryable: Queryable,\n  grants: RoleGrantSeed[],\n): Promise<number>"
               },
               "postcondition_quality": "VERIFIED",
               "expectation": "Seeds grants idempotently, non-destructive, overriding the guest default for emails with a configured role, returns applied count."
@@ -355,8 +357,10 @@
       "riskTier": 2,
       "uuid": "26109576-ffe8-4183-b584-961fcf8aa00b",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "86fd255533862d13108ef4b69db976f7533595863637898b6047813d8464033e",
+        "actor": "implementer",
+        "at": "2026-09-04T15:22:12.714Z"
       },
       "verification": {
         "status": "rejected",
@@ -494,7 +498,8 @@
               },
               "postcondition": {
                 "exists": true,
-                "kind": "function"
+                "kind": "function",
+                "signature": "()"
               },
               "postcondition_quality": "VERIFIED",
               "expectation": "Renders the signup form."
@@ -511,7 +516,8 @@
               },
               "postcondition": {
                 "exists": true,
-                "kind": "function"
+                "kind": "function",
+                "signature": "()"
               },
               "postcondition_quality": "VERIFIED",
               "expectation": "Renders the login form."
@@ -528,7 +534,8 @@
               },
               "postcondition": {
                 "exists": true,
-                "kind": "function"
+                "kind": "function",
+                "signature": "()"
               },
               "postcondition_quality": "VERIFIED",
               "expectation": "Renders the verification status and resend action."
@@ -547,10 +554,11 @@
               },
               "postcondition": {
                 "exists": true,
-                "kind": "function"
+                "kind": "function",
+                "signature": "({\n  currentSceneTitle,\n  mode,\n  proModeActive,\n  canEdit,\n  onToggleEditMode,\n  backControl,\n  hideBackControl,\n  hideGlobalControls,\n  hideCourseActions,\n}: HeaderProps)"
               },
               "postcondition_quality": "VERIFIED",
-              "expectation": "Renders the header with the account zone filling the batch G capsule account slot; signed-in state shows identity, role badge, and sign out."
+              "expectation": "Modified: renders the account menu with signed-in state and sign out, filling the batch G capsule account slot."
             }
           ]
         },
@@ -576,8 +584,10 @@
       "riskTier": 3,
       "uuid": "ecf70787-6bb1-4021-a650-0675ad2570ca",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "330330b27666a6f3d3b549986094c0d6a093f2ddeb46be0ab549191f4afde35c",
+        "actor": "implementer",
+        "at": "2026-09-04T15:22:12.825Z"
       },
       "verification": {
         "status": "rejected",
@@ -765,7 +775,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(req: Pick<Request, 'headers'>, responseHeaders: Headers, authenticatedOwnerId?: string): string"
+                "signature": "(\n  req: Pick<Request, 'headers'>,\n  responseHeaders: Headers,\n  authenticatedOwnerId?: string,\n): string"
               },
               "postcondition_quality": "VERIFIED",
               "expectation": "Modified: the accepted authenticatedOwnerId parameter becomes actually threaded by callers."
@@ -785,7 +795,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(req: Pick<Request, 'headers'>, handler: OwnerHandler): Promise<Response>"
+                "signature": "(\n  req: Pick<Request, 'headers'>,\n  handler: OwnerHandler,\n): Promise<Response>"
               },
               "postcondition_quality": "VERIFIED",
               "expectation": "Modified: resolves user:<id> when a session is present, else the anon identity."
@@ -805,7 +815,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(req: NextRequest): Promise<Response>"
+                "signature": "(req: NextRequest)"
               },
               "postcondition_quality": "VERIFIED",
               "expectation": "Modified: resolves the authenticated owner when signed in."
@@ -825,7 +835,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(req: NextRequest, ctx: { params: Promise<{ id: string }> }): Promise<Response>"
+                "signature": "(req: NextRequest, { params }: { params: Promise<{ id: string }> })"
               },
               "postcondition_quality": "VERIFIED",
               "expectation": "Modified: resolves the authenticated owner when signed in."
@@ -845,7 +855,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(req: NextRequest, ctx: { params: Promise<{ id: string }> }): Promise<Response>"
+                "signature": "(req: NextRequest, { params }: Params)"
               },
               "postcondition_quality": "VERIFIED",
               "expectation": "Modified: resolves the authenticated owner when signed in."
@@ -856,8 +866,10 @@
       "riskTier": 4,
       "uuid": "899c3dc8-7d00-42e0-98be-aece4207643e",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "822a82270ed9085e3eee5f572e8ed729f51364efc6cea7417a99d45540b7a339",
+        "actor": "implementer",
+        "at": "2026-09-04T15:22:12.964Z"
       },
       "verification": {
         "status": "rejected",
@@ -3000,7 +3012,218 @@
       "slice": null,
       "hash": "cc704705ccaa2164ccf43f0fdb2b44875830aa63f6db218499965c96f9b51798",
       "fileHash": "c35cf5309563e8eca2a6322404106034546174c0310513335d085dac367c7226"
+    },
+    {
+      "seq": 153,
+      "id": "f9cedcb6-918a-4c92-95f1-1ff72b67a827",
+      "at": "2026-09-04T15:17:13.759Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S01:postcondition:lib/persistence/server-provider.ts::createServerPersistenceProvider",
+      "slice": "S01",
+      "hash": "a5e1b2df83ace4cdccee73743d54c67d543413666b679bedaeb6b8cfcf9f976c",
+      "fileHash": "67b345e36f446ecea75bed31b059727477d292de8f9ba2a14e9832a026610277"
+    },
+    {
+      "seq": 154,
+      "id": "2dff2f46-ea4a-481f-b54b-52877907539a",
+      "at": "2026-09-04T15:17:13.800Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S02:postcondition:lib/auth/roles.ts::seedRoleGrants",
+      "slice": "S02",
+      "hash": "f0fdc305cace69f0894fa3eb029db5069c134cfd39b02f785afba61ebb8a898e",
+      "fileHash": "8322cd7f78cf4c0dae2299ab01fe5e0dc1097059cc53415dbc15f263a5df51ed"
+    },
+    {
+      "seq": 155,
+      "id": "a588c2cf-9e63-4269-a4ea-fcc20248a669",
+      "at": "2026-09-04T15:17:13.837Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S03:postcondition:app/signup/page.tsx::Page",
+      "slice": "S03",
+      "hash": "9d80c0a212e641a986e514ae1cd2dc519e2024a1672bf3cda4e78da46fcd8bf1",
+      "fileHash": "16f09a9e3a61fb56151dd285b5a2f88150805c82bcbd4374bf3cc5eaaf0ee17a"
+    },
+    {
+      "seq": 156,
+      "id": "f99396f7-348d-4923-a103-3d057a728cab",
+      "at": "2026-09-04T15:17:13.872Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S03:postcondition:app/login/page.tsx::Page",
+      "slice": "S03",
+      "hash": "1707091e1bbb17cfdc6100d7d6fd81bbcb6e589ecb2e4bf1b74960e4d849f978",
+      "fileHash": "ab1234b52650f6fe007770726b6e1f903b3f7e2a1079c5efa14fdb0daa5800ff"
+    },
+    {
+      "seq": 157,
+      "id": "5cc97f57-b069-4ae1-8e46-b2091434a8c0",
+      "at": "2026-09-04T15:17:13.910Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S03:postcondition:app/verify/page.tsx::Page",
+      "slice": "S03",
+      "hash": "d23e51d652acceb937ca51fa913553b851f3026920b6d98e52df0aa619837b06",
+      "fileHash": "f3849b58603ba7a36a08d5ad214e9595247177149b1a6afc8742f139b80fe7be"
+    },
+    {
+      "seq": 158,
+      "id": "57432902-e884-48d5-9c7b-eaa07e42ad0a",
+      "at": "2026-09-04T15:17:13.946Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S03:postcondition:components/header.tsx::Header",
+      "slice": "S03",
+      "hash": "cd99991e9c62b6fb5bff9ceabcd39f604eb947e1e82248868e27438f6874750a",
+      "fileHash": "dcd235741d3ae438013f571bbd867a4f61c4b51bfb5582429c81910ecf157824"
+    },
+    {
+      "seq": 159,
+      "id": "9091c96c-0219-47c6-8c50-f548d1634d8b",
+      "at": "2026-09-04T15:17:13.986Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S04:postcondition:lib/server/agent-runtime/owner.ts::resolveRequestOwnerId",
+      "slice": "S04",
+      "hash": "890eb2e6330fd8bfb52f85b75344789aec41b2679cb441486fffddcb1b58c55f",
+      "fileHash": "1b0fda70ae2cb26b765bc392468d4c5954b5502756ff59b14c202fcf5ec9f16e"
+    },
+    {
+      "seq": 160,
+      "id": "7f1fc50e-e608-44c5-a18d-53654a314934",
+      "at": "2026-09-04T15:17:14.021Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S04:postcondition:lib/server/agent-runtime/with-owner.ts::withRequestOwnerId",
+      "slice": "S04",
+      "hash": "aeae4f9dc18f75a49e502b31c06e668ac685c1d0f70e7f5dfad588b3ef6cc78e",
+      "fileHash": "cc6010f900c0306067a880a6a1fe4bf9f8bd31803549dd1f675e6443b7229101"
+    },
+    {
+      "seq": 161,
+      "id": "47ef0b6f-906f-48e7-8072-f3fbb80cc2fd",
+      "at": "2026-09-04T15:17:14.058Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S04:postcondition:app/api/agent/owner-events/route.ts::GET",
+      "slice": "S04",
+      "hash": "95c0989e4a8455e2f84bf18bbb4e2b2d64881ca0e163f3f14325f7c3d75ea428",
+      "fileHash": "d1ca5974d511c9d68e80bd209da965413fadf7726dfb2d6fa8f0fd8de996da3d"
+    },
+    {
+      "seq": 162,
+      "id": "e338ca14-bb0e-4066-9b7d-99b3bb4dd7ed",
+      "at": "2026-09-04T15:17:14.095Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S04:postcondition:app/api/agent/sessions/[id]/events/route.ts::GET",
+      "slice": "S04",
+      "hash": "1e39ac93c97065d0e0a9596055ac2c525c410e426e80d0b37f191a72883f9a20",
+      "fileHash": "c99939f354ab6b67c501105b0988238aab93dba2f7444c1d66ab46dce1652983"
+    },
+    {
+      "seq": 163,
+      "id": "c9ab871d-cf5e-4c18-9f10-630078dae846",
+      "at": "2026-09-04T15:17:14.129Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S04:postcondition:app/api/stages/[id]/freshness/route.ts::GET",
+      "slice": "S04",
+      "hash": "805627f1695d07bd36a3b7a373e1088c3964b924ebd5763cd06e0e9fb0cdf1f2",
+      "fileHash": "334cf7a583408857efbf3f3cc99d9bf878d5334f9259110f71f8c8163f5db69a"
+    },
+    {
+      "seq": 164,
+      "id": "69e01b6e-9fdd-4e39-a85f-da866af0cdd3",
+      "at": "2026-09-04T15:17:14.167Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect-symbol:lib/persistence/server-provider.ts::createServerPersistenceProvider",
+      "slice": "S01",
+      "hash": "cbc673bc896465442563b91eeffd1c08b9eddcb8cb7b776b853cf4ddd18dde43",
+      "expectationHash": "a9dc3499fa585f1cf8ed58f39c31ea26c4ca52114648c5abc87c177f6195d507",
+      "fileHash": "2b0274b07c0475304a13aa49ca88c1794932d4347cf4e4d212a3f201f98e77ec"
+    },
+    {
+      "seq": 165,
+      "id": "a5846bfb-a261-4247-afb9-c14988d6f734",
+      "at": "2026-09-04T15:17:14.204Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S03:expect-symbol:components/header.tsx::Header",
+      "slice": "S03",
+      "hash": "18ece64b82a45eedda10ccfd8b12d2471b54ced95b42751c5144aa0d81ef3a09",
+      "expectationHash": "4544b9d98084cee2a3647893ae161f65f610bb8fd677242ef61829eebe3b38fe",
+      "fileHash": "c7623e3dd06d9399ffd9b1e3999f51f3f7375f56c42f670a4398c3e98e795cbb"
+    },
+    {
+      "seq": 166,
+      "id": "88ecf466-1f8b-4d48-b36c-1393f930a440",
+      "at": "2026-09-04T15:19:58.640Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "a3e33d90de93185c5a72fe8ad832c0ac33f0b937eee8b8bd25c46ec73a6798cd",
+      "fileHash": "576f7de6601d547df1a22248891e326b0b246a2f31bc201cfead776e90d406c0"
+    },
+    {
+      "seq": 167,
+      "id": "0287a94e-8c00-42e7-9240-8df243a29f9b",
+      "at": "2026-09-04T15:22:12.650Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S01:impl:pending->ready_for_verification",
+      "slice": "S01",
+      "hash": "a2c0c6f315decd8d5c8bf9ad4d22a94d63604f513f1062adbf3c85eb1f474820",
+      "fileHash": "ab51208cbccbc01b49ae784facc79a4173d39c21d67dda6ddf46bb5bb1de2e4b"
+    },
+    {
+      "seq": 168,
+      "id": "478890dd-5fb2-4d38-975a-652b1f78bb32",
+      "at": "2026-09-04T15:22:12.714Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S02:impl:pending->ready_for_verification",
+      "slice": "S02",
+      "hash": "020f22cc560069e62f6816c75c172b027fa94918d7f9feeec55e5aba7d311192",
+      "fileHash": "31575485eb78d1cb954af2e4932f4f5e1933c4ab420317c026d15e2acc00cc93"
+    },
+    {
+      "seq": 169,
+      "id": "b3bb31e7-c242-4911-9eb6-64bbbdb4e976",
+      "at": "2026-09-04T15:22:12.825Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S03:impl:pending->ready_for_verification",
+      "slice": "S03",
+      "hash": "ced9f556be72d608214d22d8e3d34dc1ccda4548e29e0c2e7bb2d3bc90adc50d",
+      "fileHash": "e30723e89704f74bf3446cef5d168f8599812b98d7bd9c3b43874b26b4a7b138"
+    },
+    {
+      "seq": 170,
+      "id": "0c8ec714-ed1d-4adc-96db-160198ce1dc6",
+      "at": "2026-09-04T15:22:12.964Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S04:impl:pending->ready_for_verification",
+      "slice": "S04",
+      "hash": "f242072b97abf30293a7c87b3d57d7a17f4441007ac359869699a86b9dcdff6f",
+      "fileHash": "528c0ace518b4c71afe2ea49a987a32ac33dd5554e654c63e2104a4bfeca7cfd"
+    },
+    {
+      "seq": 171,
+      "id": "c5ecfba4-3caa-4631-bcaa-e5efe18db95e",
+      "at": "2026-09-04T15:22:45.567Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "1f4b64a06c000e0b62e46f25c75aa7a43388722bec6f0eb34373dadd72a43e15",
+      "fileHash": "164f755e6922c17cb9a9fdbe5c4964fc30cad05da3704b44bd2511f97ff68576"
     }
   ],
-  "fileHash": "67b345e36f446ecea75bed31b059727477d292de8f9ba2a14e9832a026610277"
+  "fileHash": "a60ec72ad8e40188397cf73b4f54afe5b4e7616ca267df647da3dd2f01126950"
 }
