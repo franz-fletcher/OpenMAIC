@@ -1,0 +1,86 @@
+{
+  "schema_version": 2,
+  "$schema": "https://rivr.dev/schemas/ledger/v2",
+  "kind": "metaspec",
+  "spec": {
+    "reference": "docs/meta-specs/rbac-minimal-mode.md",
+    "title": "Meta-spec: rbac-minimal-mode",
+    "hash": "720c58300fe01b2078f21e6816366e3dc999ab6ea0d2bf5d4673e13572a3c3a8"
+  },
+  "tracker": {
+    "mode": "none"
+  },
+  "stage": "research",
+  "retry": {
+    "count": 0,
+    "max": 5,
+    "consecutive_same_cause": 0,
+    "escalate_at": 3
+  },
+  "slices": [],
+  "adrs": [],
+  "child_ledgers": [
+    {
+      "batch": "013-rbac-auth-foundation",
+      "ledger": ".rivr/specs/013-rbac-auth-foundation.ledger.json",
+      "stage": "implementation"
+    }
+  ],
+  "audit": [
+    {
+      "seq": 1,
+      "id": "6e5925f9-0d2a-47cb-86c1-812cec48b3b8",
+      "at": "2026-09-04T01:22:16.951Z",
+      "actor": "researcher",
+      "command": "metaspec_init",
+      "transition": "spec-approved:docs/meta-specs/rbac-minimal-mode.md spec-hash:720c58300fe01b2078f21e6816366e3dc999ab6ea0d2bf5d4673e13572a3c3a8",
+      "slice": null,
+      "hash": "4a4b9619ea30efe32c2673da2df12949c5a3e3c71bedfeb4e498eb2f5c052ef0"
+    },
+    {
+      "seq": 2,
+      "id": "364f3856-b632-49fb-a0cc-4637b6aaad6d",
+      "at": "2026-09-04T01:25:34.792Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:clarification:Register child batch ledger 013-rbac-auth-foundation into the meta-ledger.",
+      "slice": null,
+      "hash": "5ab21a77100202b943b903d8b231015093f0fcb4ac2374a6a39e51435acb6c6f",
+      "fileHash": "21240d90ea4ee167f7ddac644635bc5c85b3706a09d51804cd62ca607b2ea082"
+    },
+    {
+      "seq": 3,
+      "id": "2fc112b4-4327-434f-ae96-f28ae376f73c",
+      "at": "2026-09-04T01:25:34.793Z",
+      "actor": "orchestrator",
+      "command": "metaspec_child_link",
+      "transition": "child-link:013-rbac-auth-foundation:.rivr/specs/013-rbac-auth-foundation.ledger.json:research",
+      "slice": null,
+      "hash": "05968a427e35ec80811e0e7839a0ec13a627c3445c446dd91c894b8d86a2f118",
+      "fileHash": "21240d90ea4ee167f7ddac644635bc5c85b3706a09d51804cd62ca607b2ea082"
+    },
+    {
+      "seq": 4,
+      "id": "9ec9bc8b-a7b2-4556-9990-305fe3a05a17",
+      "at": "2026-09-04T01:26:04.605Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:clarification:Refresh recorded child stage after batch advanced to implementation.",
+      "slice": null,
+      "hash": "ba02973a7c1a30e49ad4c4d1dd46a01e630b92f70304540846946d26b32867c3",
+      "fileHash": "2395f2951ae94823f78616f0ce7dd2a2182a334b1552c7a7f793e0c37718c023"
+    },
+    {
+      "seq": 5,
+      "id": "95acf7e8-f2cb-4911-bfd3-ff7f69fce5aa",
+      "at": "2026-09-04T01:26:04.609Z",
+      "actor": "orchestrator",
+      "command": "metaspec_child_link",
+      "transition": "child-link:013-rbac-auth-foundation:.rivr/specs/013-rbac-auth-foundation.ledger.json:implementation",
+      "slice": null,
+      "hash": "e0f50ddbab1b76f36f36a01638d39b2ab45c980cfc483fb58cf0d4392ae9f24b",
+      "fileHash": "2395f2951ae94823f78616f0ce7dd2a2182a334b1552c7a7f793e0c37718c023"
+    }
+  ],
+  "fileHash": "6d5dfffc6d555efd95cb8cca415075db65f5afc060910c0c549b1546f17e604b"
+}

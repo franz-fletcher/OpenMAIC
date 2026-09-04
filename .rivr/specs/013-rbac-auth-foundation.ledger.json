@@ -1,0 +1,1924 @@
+{
+  "schema_version": 2,
+  "$schema": "https://rivr.dev/schemas/ledger/v2",
+  "spec": {
+    "reference": "docs/specs/013-rbac-auth-foundation.md",
+    "title": "Batch 013 spec: rbac-auth-foundation",
+    "hash": "0955f47f27eed3a64557951a138c6bfc2e646d587b07f3fcc4224a905858ec79"
+  },
+  "tracker": {
+    "mode": "none"
+  },
+  "stage": "implementation",
+  "retry": {
+    "count": 0,
+    "max": 5,
+    "consecutive_same_cause": 0,
+    "escalate_at": 3
+  },
+  "slices": [
+    {
+      "id": "S01",
+      "title": "Auth bootstrap and session surface",
+      "intent": "The pinned better-auth dependency, the server factory with email and password plus mandatory verification, a thin database adapter over the existing pool, the auth schema in the lazy ensure chain, and the lib/auth public surface (getSession, requireSession, listRoles).",
+      "user_stories": [
+        1,
+        2
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/auth/schema.ts",
+          "symbols": [
+            {
+              "name": "ensureAuthSchema",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable): Promise<void>"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Creates the six tables idempotently: user, session, account, verification (better-auth canonical shapes), roles, user_roles."
+            }
+          ]
+        },
+        {
+          "path": "lib/auth/server.ts",
+          "symbols": [
+            {
+              "name": "createAuthServer",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(options: AuthServerOptions): AuthServer"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Returns the wrapped better-auth server with email and password, mandatory verification, and the verification callback wired."
+            }
+          ]
+        },
+        {
+          "path": "lib/auth/index.ts",
+          "symbols": [
+            {
+              "name": "getSession",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(headers: Headers): Promise<Session | null>"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Returns the session for valid cookies, null otherwise."
+            },
+            {
+              "name": "requireSession",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(headers: Headers): Promise<Session>"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Returns the session or a 401-style refusal."
+            },
+            {
+              "name": "listRoles",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable): Promise<Role[]>"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Returns all roles with ranks."
+            }
+          ]
+        },
+        {
+          "path": "lib/persistence/server-provider.ts",
+          "symbols": [
+            {
+              "name": "createServerPersistenceProvider",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  connectionString: string,\n  poolFactory: PersistencePoolFactory,\n): Promise<ServerPersistenceProvider>"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(connectionString: string, poolFactory?: PersistencePoolFactory): Promise<ServerPersistenceProvider>"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Modified: composes ensureAuthSchema into the lazy chain beside the five existing ensures."
+            }
+          ]
+        }
+      ],
+      "riskTier": 3,
+      "uuid": "989ebcf7-8583-43e1-9290-7379739dee87",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "After provider bootstrap the six auth tables exist; a valid session cookie resolves a session; a missing session makes requireSession refuse; lib/auth is the only module that imports better-auth; the better-auth dependency is pinned in package.json.",
+      "gates": [
+        {
+          "id": "g1",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "smoke"
+        },
+        {
+          "id": "g2",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/auth/auth-core.test.ts && echo AUTH_CORE_OK",
+          "expect": "AUTH_CORE_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "unit"
+        },
+        {
+          "id": "g3",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/auth/session-roundtrip.test.ts && echo SESSION_RT_OK",
+          "expect": "SESSION_RT_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "integration"
+        },
+        {
+          "id": "g4",
+          "check": "node -e \"const p=require('./package.json'); if(!p.dependencies?.['better-auth']) process.exit(1)\" && echo PKG_OK",
+          "expect": "PKG_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "smoke"
+        }
+      ]
+    },
+    {
+      "id": "S02",
+      "title": "Role model, rank integers, env and yaml seeds",
+      "intent": "The roles and user_roles tables, the ROLE_RANKS constants with anonymous 0 virtual and guest 1, learner 2, creator 3, admin 4 seeded as system rows, the ADMIN_EMAILS env seed, the server-roles.yml loader, and idempotent non-destructive reseeding where the database is truth.",
+      "user_stories": [
+        5
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/auth/roles.ts",
+          "symbols": [
+            {
+              "name": "ROLE_RANKS",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "The stable rank constants, anonymous virtual. Shape: { ANONYMOUS: 0, GUEST: 1, LEARNER: 2, CREATOR: 3, ADMIN: 4 }."
+            },
+            {
+              "name": "seedRoleGrants",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable, grants: RoleGrantSeed[]): Promise<number>"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Seeds grants idempotently, non-destructive, returns applied count."
+            },
+            {
+              "name": "listRoles",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable): Promise<Role[]>"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Returns all roles with ranks."
+            }
+          ]
+        },
+        {
+          "path": "lib/auth/roles-config.ts",
+          "symbols": [
+            {
+              "name": "loadRoleDefaults",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(): RoleDefaults"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Merges the ADMIN_EMAILS env and server-roles.yml default filename into defaults."
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "26109576-ffe8-4183-b584-961fcf8aa00b",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "After bootstrap, four system role rows exist with ranks 1 through 4; every email in ADMIN_EMAILS or server-roles.yml has exactly one grant; running the seed a second time changes no rows; anonymous rank 0 is a module constant with no row; ADMIN_EMAILS is documented in .env.example.",
+      "gates": [
+        {
+          "id": "g1",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/auth/role-seed.test.ts && echo ROLE_SEED_OK",
+          "expect": "ROLE_SEED_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "unit"
+        },
+        {
+          "id": "g2",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/providers/provider-neutrality-guard.test.ts && echo NEUTRAL_OK",
+          "expect": "NEUTRAL_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "smoke"
+        },
+        {
+          "id": "g3",
+          "check": "grep -q \"ADMIN_EMAILS\" .env.example && echo SEED_ENV_OK",
+          "expect": "SEED_ENV_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "smoke"
+        }
+      ]
+    },
+    {
+      "id": "S03",
+      "title": "Signup, login, verification pages and the header account menu",
+      "intent": "Signup, login, and verify pages; email and password signup with mandatory verification; sign in, sign out, verification resend; the header account menu; and the auth.* i18n namespace in all 12 locale files.",
+      "user_stories": [
+        2,
+        4
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "app/signup/page.tsx",
+          "symbols": [
+            {
+              "name": "Page",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Renders the signup form."
+            }
+          ]
+        },
+        {
+          "path": "app/login/page.tsx",
+          "symbols": [
+            {
+              "name": "Page",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Renders the login form."
+            }
+          ]
+        },
+        {
+          "path": "app/verify/page.tsx",
+          "symbols": [
+            {
+              "name": "Page",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Renders the verification status and resend action."
+            }
+          ]
+        },
+        {
+          "path": "components/header.tsx",
+          "symbols": [
+            {
+              "name": "Header",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "({\n  currentSceneTitle,\n  mode,\n  proModeActive,\n  canEdit,\n  onToggleEditMode,\n  backControl,\n  hideBackControl,\n  hideGlobalControls,\n  hideCourseActions,\n}: HeaderProps)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Modified: renders the account menu with signed-in state and sign out."
+            }
+          ]
+        },
+        {
+          "path": "lib/auth/client.ts",
+          "symbols": [
+            {
+              "name": "createAuthClient",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(opts: AuthClientOptions): AuthClient"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Returns the wrapped client for signup, sign in, sign out, resend."
+            }
+          ]
+        }
+      ],
+      "riskTier": 3,
+      "uuid": "ecf70787-6bb1-4021-a650-0675ad2570ca",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "A visitor can sign up, receive a verification link, verify the address, and sign in; the header shows an account menu with signed-in state and a sign out action; every visible string resolves through an auth.* key; locale parity holds.",
+      "gates": [
+        {
+          "id": "g1",
+          "check": "pnpm check:i18n-keys && echo I18N_OK",
+          "expect": "I18N_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "smoke"
+        },
+        {
+          "id": "g2",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/auth/session-routes.test.ts && echo SESSION_ROUTES_OK",
+          "expect": "SESSION_ROUTES_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "integration"
+        },
+        {
+          "id": "g3",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "smoke"
+        },
+        {
+          "id": "g4",
+          "check": "node -e \"const l=require('./lib/i18n/locales/en-US.json'); if(!l.auth) process.exit(1)\" && echo I18N_NS_OK",
+          "expect": "I18N_NS_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "smoke"
+        }
+      ]
+    },
+    {
+      "id": "S04",
+      "title": "Anonymous owner claim migration",
+      "intent": "The authenticated owner id scheme user:<auth-user-id>, the one-time claim of anon: owned rows on first verified sign-in, and the authenticatedOwnerId thread through the wrapper and the three direct call sites.",
+      "user_stories": [
+        3
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/auth/claim.ts",
+          "symbols": [
+            {
+              "name": "claimAnonOwnership",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(anonId: string, userId: string): Promise<number>"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Rewrites the claim owner columns (stage_meta, document_stages, document_folders, agent_sessions, agent_owner_session_events, agent_owner_session_event_counters, agent_user_skill, owner_material) from anon:<id> to user:<id>; returns the row count."
+            }
+          ]
+        },
+        {
+          "path": "lib/server/agent-runtime/owner.ts",
+          "symbols": [
+            {
+              "name": "resolveRequestOwnerId",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  req: Pick<Request, 'headers'>,\n  responseHeaders: Headers,\n  authenticatedOwnerId?: string,\n): string"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: Pick<Request, 'headers'>, responseHeaders: Headers, authenticatedOwnerId?: string): string"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Modified: the accepted authenticatedOwnerId parameter becomes actually threaded by callers."
+            }
+          ]
+        },
+        {
+          "path": "lib/server/agent-runtime/with-owner.ts",
+          "symbols": [
+            {
+              "name": "withRequestOwnerId",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  req: Pick<Request, 'headers'>,\n  handler: (ownerId: string, responseHeaders: Headers) => Promise<Response>,\n): Promise<Response>"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: Pick<Request, 'headers'>, handler: OwnerHandler): Promise<Response>"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Modified: resolves user:<id> when a session is present, else the anon identity."
+            }
+          ]
+        },
+        {
+          "path": "app/api/agent/owner-events/route.ts",
+          "symbols": [
+            {
+              "name": "GET",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<Response>"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Modified: resolves the authenticated owner when signed in."
+            }
+          ]
+        },
+        {
+          "path": "app/api/agent/sessions/[id]/events/route.ts",
+          "symbols": [
+            {
+              "name": "GET",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest, { params }: { params: Promise<{ id: string }> })"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest, ctx: { params: Promise<{ id: string }> }): Promise<Response>"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Modified: resolves the authenticated owner when signed in."
+            }
+          ]
+        },
+        {
+          "path": "app/api/stages/[id]/freshness/route.ts",
+          "symbols": [
+            {
+              "name": "GET",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest, { params }: Params)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest, ctx: { params: Promise<{ id: string }> }): Promise<Response>"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Modified: resolves the authenticated owner when signed in."
+            }
+          ]
+        }
+      ],
+      "riskTier": 4,
+      "uuid": "899c3dc8-7d00-42e0-98be-aece4207643e",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "After the first verified sign-in on a device, every owner column that held that device anon:<uuid> is now user:<id>; a re-run of the claim changes nothing; a sign-in on a different device claims nothing.",
+      "gates": [
+        {
+          "id": "g1",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/auth/claim-migration.test.ts && echo CLAIM_OK",
+          "expect": "CLAIM_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "unit"
+        },
+        {
+          "id": "g2",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/auth/claim-scheme.test.ts && echo CLAIM_SCHEME_OK",
+          "expect": "CLAIM_SCHEME_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "unit"
+        },
+        {
+          "id": "g3",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/auth/owner-threading.test.ts && echo THREADING_OK",
+          "expect": "THREADING_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "unit"
+        },
+        {
+          "id": "g4",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/auth/claim.pg.test.ts && echo CLAIM_PG_OK",
+          "expect": "CLAIM_PG_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "integration"
+        },
+        {
+          "id": "g5",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/auth/claim-adversarial.test.ts && echo CLAIM_ADV_OK",
+          "expect": "CLAIM_ADV_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "adversarial"
+        }
+      ]
+    },
+    {
+      "id": "S05",
+      "title": "Mailer transport and verified email delivery with console fallback",
+      "intent": "The mailer transport interface at lib/auth/mailer.ts, the smtp transport via nodemailer, the resend transport via the Resend SDK, the console-link fallback for unconfigured mail, the verification callback on signup, verification resend, and the .env.example entries.",
+      "user_stories": [
+        6
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/auth/mailer.ts",
+          "symbols": [
+            {
+              "name": "createMailer",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(env: MailerEnv): Mailer"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Selects the transport by MAIL_TRANSPORT: smtp, resend, or console fallback."
+            },
+            {
+              "name": "sendVerificationLink",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(to: string, url: string): Promise<void>"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Sends the verification link through the selected transport."
+            }
+          ]
+        },
+        {
+          "path": "lib/auth/server.ts",
+          "symbols": [
+            {
+              "name": "createAuthServer",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(options: AuthServerOptions): AuthServer"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Modified: the verification callback calls the mailer."
+            }
+          ]
+        }
+      ],
+      "riskTier": 3,
+      "uuid": "b77405d3-9405-4216-a5bb-728628b6a7ca",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "With MAIL_TRANSPORT unset, the mailer logs a verification link to the server console; a fresh signup triggers the verification callback; opening the link verifies the address; MAIL_TRANSPORT=smtp selects nodemailer and =resend selects the Resend SDK; the interface is invite-agnostic.",
+      "gates": [
+        {
+          "id": "g3",
+          "check": "grep -q \"MAIL_TRANSPORT\" .env.example && echo ENV_DOC_OK",
+          "expect": "ENV_DOC_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "smoke"
+        },
+        {
+          "id": "g1",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MAIL_TRANSPORT AUTH_SECRET RESEND_API_KEY SMTP_HOST SMTP_PORT SMTP_USER SMTP_PASS MAIL_FROM; pnpm test tests/auth/mailer.test.ts && echo MAILER_OK",
+          "expect": "MAILER_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "integration"
+        },
+        {
+          "id": "g2",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MAIL_TRANSPORT AUTH_SECRET RESEND_API_KEY SMTP_HOST SMTP_PORT SMTP_USER SMTP_PASS MAIL_FROM; pnpm test tests/auth/mailer-transports.test.ts && echo TRANSPORTS_OK",
+          "expect": "TRANSPORTS_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "unit"
+        }
+      ]
+    }
+  ],
+  "audit": [
+    {
+      "seq": 1,
+      "id": "ef58e8d5-bc11-4b7b-ad6e-5485225a6045",
+      "at": "2026-09-04T01:22:38.306Z",
+      "actor": "orchestrator",
+      "command": "init",
+      "transition": "spec-approved:docs/specs/013-rbac-auth-foundation.md",
+      "slice": null,
+      "hash": "8652cabbe9bb7e75323f4da0940dc3af136b3bb3609bf586a28c08953451e9c9"
+    },
+    {
+      "seq": 2,
+      "id": "7a4cf37c-f96a-4ca4-a054-fceb56d1326d",
+      "at": "2026-09-04T01:22:38.307Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect",
+      "slice": "S01",
+      "hash": "aa0452720bcc304b4ed5e004b3b639a20c746a0df43823d5f6528c38733b0314",
+      "expectationHash": "6aa1c193f9e7021f9e285579840d1f81a9073edcd63c8a9501df9bbe42c512f0"
+    },
+    {
+      "seq": 3,
+      "id": "74c37120-4c9e-42e1-809f-62a6c2b457b0",
+      "at": "2026-09-04T01:22:38.307Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S02:expect",
+      "slice": "S02",
+      "hash": "03be5bd268ecd03b04e70039694433002a53cf1fc6a737c7e34246456ddfb0a8",
+      "expectationHash": "6657b5c1f8598611a537a32fe2ffa49e1fc1203772ef2878ca43167516f6195e"
+    },
+    {
+      "seq": 4,
+      "id": "361c6247-5ac8-4346-b5bd-1d663f6bedaa",
+      "at": "2026-09-04T01:22:38.307Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S03:expect",
+      "slice": "S03",
+      "hash": "541e53c36452e6311d263a5a494ee497573bd62110edeaf34d0eadd1979e52b9",
+      "expectationHash": "f1794dc28fe5246590d665edb3cdd92625b6f61e6bb1538bfffea563964c02d1"
+    },
+    {
+      "seq": 5,
+      "id": "0364200f-5740-4d7f-9380-eff0c7e24624",
+      "at": "2026-09-04T01:22:38.307Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S04:expect",
+      "slice": "S04",
+      "hash": "c665d490b257d58aa4f4787fd3034c92fb9e4aaa73a577e7a47c576984ecd485",
+      "expectationHash": "fbb6d696023a65096d0fd805fe7b588ce895417d0298afaf20c6050f06feb66b"
+    },
+    {
+      "seq": 6,
+      "id": "56d94c27-a259-40b2-acfc-13c06ca11d57",
+      "at": "2026-09-04T01:22:38.307Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S05:expect",
+      "slice": "S05",
+      "hash": "638f8c02fdbb886b1aa3e1d06eb4735bd7be49c72cbfb7a51a46a7607558ed76",
+      "expectationHash": "372ffa0a9f4c0c132dd27d147adc0cd5ce7e8caafcd870f460af60f9e9522672"
+    },
+    {
+      "seq": 7,
+      "id": "1ac53018-5cf6-4fac-9512-ca9dd926cdf9",
+      "at": "2026-09-04T01:22:38.307Z",
+      "actor": "orchestrator",
+      "command": "init_batch",
+      "transition": "batch-init:S01,S02,S03,S04,S05",
+      "slice": null,
+      "hash": "6e07d94738d08c0ea96fabb954e64b7cfd527934b871d94ed6ac1216db655a12"
+    },
+    {
+      "seq": 8,
+      "id": "a6e8cac3-fedc-4d1a-b01c-ad3e7e8fcb40",
+      "at": "2026-09-04T01:22:53.582Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S01:target-add:lib/auth/schema.ts::ensureAuthSchema",
+      "slice": "S01",
+      "hash": "08c580b9eadb58a9713ff10121fede0e487ccccd768227585180485581e09e2f",
+      "fileHash": "1f503963cc8d9f45c692137e2597e8f9422c6f9dffad518f5c7d980551f6d727"
+    },
+    {
+      "seq": 9,
+      "id": "c8dd3d65-ed5f-4c27-b81a-3668de6084b9",
+      "at": "2026-09-04T01:22:53.640Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S01:target-add:lib/auth/server.ts::createAuthServer",
+      "slice": "S01",
+      "hash": "06f7727a1c3d07a493af9b9dae8e790703d155567541c7ff007c120c684ee938",
+      "fileHash": "a0b65dcab82fed0ec6ecec0bd411b59f8d2fe436dddbd4ba6368451723b2a0d9"
+    },
+    {
+      "seq": 10,
+      "id": "3f5252fa-9057-4000-b445-1c3239b61f5f",
+      "at": "2026-09-04T01:22:53.697Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S01:target-add:lib/auth/index.ts::getSession",
+      "slice": "S01",
+      "hash": "35993deeea2f4d7ac047e947cbcd8ef85021d29cf3db4e111a5a5a46049d5557",
+      "fileHash": "3109b0a7b630d93a04e94f3f9b55eeb8cbb61a55570374aee34c7679c77f91c6"
+    },
+    {
+      "seq": 11,
+      "id": "29fb844c-993b-46f2-aa4b-8cef88ef1d74",
+      "at": "2026-09-04T01:22:53.747Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S01:target-add:lib/auth/index.ts::requireSession",
+      "slice": "S01",
+      "hash": "a3bc8bc0cad757fefe75d31ad73ab085b6a90ca57942e56ef70dbc1428a8d5a9",
+      "fileHash": "2a30948486427390678067c4c2a697210d78d131f74381aac1f0ac6c1c31a3d3"
+    },
+    {
+      "seq": 12,
+      "id": "0bfb29d3-0aea-48fa-8d59-071f809bff93",
+      "at": "2026-09-04T01:22:53.809Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S01:target-add:lib/auth/index.ts::listRoles",
+      "slice": "S01",
+      "hash": "c488c865685be23109210798ffa4eaef9501e0e1fe4e1b2ddb9944f65d6d0e52",
+      "fileHash": "4e119e0b1de5d405151bc37962c4fecc63dc0dbbbce1329bbddb4fb658b53804"
+    },
+    {
+      "seq": 13,
+      "id": "2fcb5769-6755-458b-b30b-f015495207ab",
+      "at": "2026-09-04T01:22:53.888Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S01:target-add:lib/persistence/server-provider.ts::createServerPersistenceProvider",
+      "slice": "S01",
+      "hash": "eb9cc82d5a1607a01e67ca43bd446522c813043252d4930a65b3da71b7e19891",
+      "fileHash": "98faed38a216d1b684b0b2131cfef653520f1cd64c5de03d6b78ae9d727ee908"
+    },
+    {
+      "seq": 14,
+      "id": "8662fa87-35e3-4872-a732-0bae8855684c",
+      "at": "2026-09-04T01:22:53.974Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S01:capture",
+      "slice": "S01",
+      "hash": "5375ea098a6afd1da49ee619543766effd28a6cd48b1594fb63eee68810f996e",
+      "fileHash": "617ef5fcfe4f1e6e0dd376d21d094b33f53f5267f851d5c32eed5af2ac592672"
+    },
+    {
+      "seq": 15,
+      "id": "1164c13e-dadb-423f-8586-0112bd9d358c",
+      "at": "2026-09-04T01:22:54.053Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S01:postcondition:lib/auth/schema.ts::ensureAuthSchema",
+      "slice": "S01",
+      "hash": "0a04f607955ca2b77acf4a6325115553a36ab2d521431e0beea537d2d34b0410",
+      "fileHash": "8001c7739830c0208eee4ec5594ed8ba716cd068ecf720707dd5a87001bc184e"
+    },
+    {
+      "seq": 16,
+      "id": "25c5ef9a-3b13-47f1-a1a1-fdda0be06f4e",
+      "at": "2026-09-04T01:22:54.132Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S01:postcondition:lib/auth/server.ts::createAuthServer",
+      "slice": "S01",
+      "hash": "dc806201fe0d9e48d2987f4fb9f3da09af48d9c46b91ae65317186a795f85f50",
+      "fileHash": "4e8c38258862a8a69aac00cb81018720c2d3392159f97ee8fe1469f300bee4ca"
+    },
+    {
+      "seq": 17,
+      "id": "3d8b1091-bb5e-4525-a161-3ad1096746ed",
+      "at": "2026-09-04T01:22:54.201Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S01:postcondition:lib/auth/index.ts::getSession",
+      "slice": "S01",
+      "hash": "634b32dd84b784bec8f4903085087025e5b8a8f5e23ba558a6adc8669b9b9f51",
+      "fileHash": "aec8a0699fcf654fb2b15cfe3d3ae174f3da073a2083f30165d4bd96e1afa224"
+    },
+    {
+      "seq": 18,
+      "id": "7a52d6ac-0e26-499f-ba0b-4c43f2f7a775",
+      "at": "2026-09-04T01:22:54.284Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S01:postcondition:lib/auth/index.ts::requireSession",
+      "slice": "S01",
+      "hash": "6cddef5301846d372e2ac83310921645e46a03c025aec1f677162036c80f4348",
+      "fileHash": "68245714510d33e28e6103f91f52d3e3cd5914b791007e116f36bfd663e2176a"
+    },
+    {
+      "seq": 19,
+      "id": "53abc06a-a7c3-4110-8f89-b87108d480be",
+      "at": "2026-09-04T01:22:54.350Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S01:postcondition:lib/auth/index.ts::listRoles",
+      "slice": "S01",
+      "hash": "bec56904e7db06df37b91588e8d00cb80ec0400d945ca2c2209b26f2cecd0f84",
+      "fileHash": "a277ab227ad6b066e40e16dd5b89f2ec4455f28fa7598bb16ec0128c83fbb272"
+    },
+    {
+      "seq": 20,
+      "id": "2a898ab0-2838-43bb-9a4c-931e3cdb931f",
+      "at": "2026-09-04T01:22:54.423Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S01:postcondition:lib/persistence/server-provider.ts::createServerPersistenceProvider",
+      "slice": "S01",
+      "hash": "865e80b8e79e842931b062f8c49b575f2bc8804066e3ea29d0e2ccd7760d3032",
+      "fileHash": "37ff8b3311d63c6a9bb83216cf0a669754981c61a320fad756c7a6617280ea32"
+    },
+    {
+      "seq": 21,
+      "id": "658f16d1-a08e-4143-b550-8fb99e817a4b",
+      "at": "2026-09-04T01:23:11.490Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S02:target-add:lib/auth/roles.ts::ROLE_RANKS",
+      "slice": "S02",
+      "hash": "b9424f0a47b7b0c9a0c657593eff39e9aa4c878a4c3e03d2bc4484f0753a561f",
+      "fileHash": "f6d28dc57cddd6eff9222212bc1a08a2b98c2a6ef517a8532b3b06b2f6e7d691"
+    },
+    {
+      "seq": 22,
+      "id": "7fc60c71-0294-4b56-88b2-9b9356edf201",
+      "at": "2026-09-04T01:23:11.546Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S02:target-add:lib/auth/roles.ts::seedRoleGrants",
+      "slice": "S02",
+      "hash": "a5882bfcc431faddf69c204b54527b23ffc7fc895909bb5a6f4ecee1aaf1f31a",
+      "fileHash": "915c3789aa3d363546c7c35ebcff565dd1c18304f844820e626eb30983664323"
+    },
+    {
+      "seq": 23,
+      "id": "24e7d9fe-3ddc-4c7f-86f6-5695f2c95574",
+      "at": "2026-09-04T01:23:11.598Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S02:target-add:lib/auth/roles.ts::listRoles",
+      "slice": "S02",
+      "hash": "0c5666458b561a968337eca2cf115a6e3f99acd7f6b9f74a75faaff2362a024d",
+      "fileHash": "1dd810629350a9a03acaf1a42e966323f41a69fa3a4f22cb2294dab2fad81dda"
+    },
+    {
+      "seq": 24,
+      "id": "c49f6f27-948a-4882-a326-1e5307be2d39",
+      "at": "2026-09-04T01:23:11.643Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S02:target-add:lib/auth/roles-config.ts::loadRoleDefaults",
+      "slice": "S02",
+      "hash": "d89030b5e1484a3394185516619c147855b9c146b7eefd8da4ed922281f8ea82",
+      "fileHash": "e45baadf01ef78e2a477ba25bd29c551922dd3fd01954ccb23bf3a42ba58f92d"
+    },
+    {
+      "seq": 25,
+      "id": "2a3dd505-883b-427f-8a18-40e62766bfde",
+      "at": "2026-09-04T01:23:11.694Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S02:capture",
+      "slice": "S02",
+      "hash": "176e3c703dd33c8788808b343f56aa37fd2625dcc5258ab5f99d8a51683c44fc",
+      "fileHash": "508cc70cb8258649194e7edbe18b5fd1c1180c64e12ee938cd381f57e6fc7175"
+    },
+    {
+      "seq": 26,
+      "id": "c009a86c-24e3-4c80-9faa-97b3e9a7b6eb",
+      "at": "2026-09-04T01:23:11.743Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S02:postcondition:lib/auth/roles.ts::ROLE_RANKS",
+      "slice": "S02",
+      "hash": "383b2208c382ab7a74fea7976406e8cc9e3cbe5726d07aedbd934cea79fd07fc",
+      "fileHash": "f1c2b53e5d12410300a1f58a9980465acbde944380e68988a5a57de36dcbb0e0"
+    },
+    {
+      "seq": 27,
+      "id": "1fddcce3-bf09-4e31-b56e-907a2d2ae70f",
+      "at": "2026-09-04T01:23:11.797Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S02:postcondition:lib/auth/roles.ts::seedRoleGrants",
+      "slice": "S02",
+      "hash": "64cc3831f9a353ca77a0c6a65646f9f64bae3a8207ea11901355a281ad66f607",
+      "fileHash": "319d87ea9e2f01592ec37608a1f4bbbbd59851d3870894886ba9007cf63d1cb2"
+    },
+    {
+      "seq": 28,
+      "id": "31a7c215-1ccc-4d11-8638-e153a86bd26c",
+      "at": "2026-09-04T01:23:11.846Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S02:postcondition:lib/auth/roles.ts::listRoles",
+      "slice": "S02",
+      "hash": "594ae7b0d3e81dc4adb1d6d6958223aebc3cb18fe8a81c46d3ba6b5f302c3451",
+      "fileHash": "64b674f720baeab262a52fc124601ec7a54425443fe14446db52b85d861975d2"
+    },
+    {
+      "seq": 29,
+      "id": "e53191b8-b92e-4e00-b4c5-0a97984aa6c9",
+      "at": "2026-09-04T01:23:11.900Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S02:postcondition:lib/auth/roles-config.ts::loadRoleDefaults",
+      "slice": "S02",
+      "hash": "8430bdeb0cba1f4c87f96d75c21066f04693d6d635e52176b053c2328fe1b41b",
+      "fileHash": "eedaf9b48728592cc833ddcf20c69ddc6857b9ae3301eb3b67252424be3c55b4"
+    },
+    {
+      "seq": 30,
+      "id": "1e0c22f6-902d-49e9-9b0f-aaee5e3a7672",
+      "at": "2026-09-04T01:23:24.648Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S03:target-add:app/signup/page.tsx::Page",
+      "slice": "S03",
+      "hash": "9729cc5bd1684b4099d416c592295464aab79092c004760ec06eef54dc9b26d0",
+      "fileHash": "161d2eb4746202e9d2d92d863d76d1237273806ee823fa06b851d95737226ef2"
+    },
+    {
+      "seq": 31,
+      "id": "4ac79348-92fd-4b79-b9c0-d4132a831be6",
+      "at": "2026-09-04T01:23:24.706Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S03:target-add:app/login/page.tsx::Page",
+      "slice": "S03",
+      "hash": "453fe2975302f784dd205192fdd4e58a75ddb6a139c8baa6b9d7d68e6c130afb",
+      "fileHash": "e3f3bc8df5e91acb8fec1e23e7a98354999acbd7a2b525aa0a9d86c6d1488ff4"
+    },
+    {
+      "seq": 32,
+      "id": "05b0de49-6526-4df9-b52d-c9be3e985e7c",
+      "at": "2026-09-04T01:23:24.760Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S03:target-add:app/verify/page.tsx::Page",
+      "slice": "S03",
+      "hash": "852d5e18b382a873addf4ba36477a71a8421af1f2852e313e0c5999ea55f32ed",
+      "fileHash": "c98dd81a2adfc836b9d78107ceb8cfdf82bca39271b1e6e69eef95b76a494d39"
+    },
+    {
+      "seq": 33,
+      "id": "88c9dcd5-3f53-4a29-8447-6d83fe16ac24",
+      "at": "2026-09-04T01:23:24.825Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S03:target-add:components/header.tsx::Header",
+      "slice": "S03",
+      "hash": "69a20b656a0ec46aa27f93514b0d70c1000ea639bf341793731c77b0233871f5",
+      "fileHash": "e9052fc43f6311431bfd4f964504e94c37abdc85323a3bf802794f8cd78c94ce"
+    },
+    {
+      "seq": 34,
+      "id": "45ff097a-f843-4ed8-be84-1c14c5c3a196",
+      "at": "2026-09-04T01:23:24.882Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S03:target-add:lib/auth/client.ts::createAuthClient",
+      "slice": "S03",
+      "hash": "bff29b9969b8e1020ecbafca7c1f76fa8ed9b339bcfbe477b56298013bc35174",
+      "fileHash": "7d0fd8c1afc2d608192e2fb323558fc9fe163db86796e7df4d036413d34b2b53"
+    },
+    {
+      "seq": 35,
+      "id": "ad330e81-8728-4323-94b9-363692e86759",
+      "at": "2026-09-04T01:23:24.945Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S03:capture",
+      "slice": "S03",
+      "hash": "9258a46f3db830a81db53174dfc19b05ab29cebd279ed3eef376b1f34cd8a374",
+      "fileHash": "e950edf209be6686de998ee35ecc3ab001ba9917e8d519f8c9185ecad69f9ad1"
+    },
+    {
+      "seq": 36,
+      "id": "9f229132-fc25-40c9-99b4-a816b7aea8b0",
+      "at": "2026-09-04T01:23:25.001Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S03:postcondition:app/signup/page.tsx::Page",
+      "slice": "S03",
+      "hash": "0f4ff8d5eaf87a1ac79e8d5cb1eacbcfbe0508117959bb7559b78b3c9e40eb8d",
+      "fileHash": "48e795f69c97ebcd063bec50afd661156224213097a9c5119e2d2be86c4584da"
+    },
+    {
+      "seq": 37,
+      "id": "12e8d1d6-d2ad-43b3-b154-63b30a73f0ba",
+      "at": "2026-09-04T01:23:25.060Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S03:postcondition:app/login/page.tsx::Page",
+      "slice": "S03",
+      "hash": "584a69244af8e9483069c88950e1f62b2e7396a3c6ab6689e61f8bd96deff322",
+      "fileHash": "57cb4ed2263348dbf098ce681040bd3dc84d22795c12b78f087329c0f5bd3da1"
+    },
+    {
+      "seq": 38,
+      "id": "1177d8e1-91ea-4a9d-b33b-a6c84c166d2e",
+      "at": "2026-09-04T01:23:25.121Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S03:postcondition:app/verify/page.tsx::Page",
+      "slice": "S03",
+      "hash": "f3b1cca596878bf0ccbe9cc87c480e680cc8758cacb0ef2b4070df008b01ad81",
+      "fileHash": "e80dc7688366d12b9330e5f05f6682c256111bafb75b523520fea73ef411d486"
+    },
+    {
+      "seq": 39,
+      "id": "f1da4064-8d4f-441c-b99b-e9cca4fca4e7",
+      "at": "2026-09-04T01:23:25.181Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S03:postcondition:components/header.tsx::Header",
+      "slice": "S03",
+      "hash": "27482d48bdccb908d0fcdd64bfa670d6e7191a936291a3e8e4da3bf59227a2c3",
+      "fileHash": "a33b935f2f6b27b456fe2ad65c1e9f2627f3bf5b44659ddc27bcc0ac3680a0bc"
+    },
+    {
+      "seq": 40,
+      "id": "66a8c188-9842-4b2e-b1db-73c53fa7ae1b",
+      "at": "2026-09-04T01:23:25.232Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S03:postcondition:lib/auth/client.ts::createAuthClient",
+      "slice": "S03",
+      "hash": "c4ad5127a926fc02323552d80835b476b8b9e9103a5adf4284fabba3c90e5db0",
+      "fileHash": "2e647807a03ced52dff7cae878717ebdb33bfac27511d16890677172474eb7ca"
+    },
+    {
+      "seq": 41,
+      "id": "231a716a-9e84-432f-8d48-364261f9ed16",
+      "at": "2026-09-04T01:23:43.211Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S04:target-add:lib/auth/claim.ts::claimAnonOwnership",
+      "slice": "S04",
+      "hash": "8cf69c02defc37d592a39841ad061f2e313f746f8827b1ab2366e38c6eed28cb",
+      "fileHash": "67af8bf4a0f9a075ef2abb396a617fca8f7cbcb70e1ee4dd07f24fdf99ffb513"
+    },
+    {
+      "seq": 42,
+      "id": "a6a1eca2-9245-4b58-a159-ba87c2ca246a",
+      "at": "2026-09-04T01:23:43.269Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S04:target-add:lib/server/agent-runtime/owner.ts::resolveRequestOwnerId",
+      "slice": "S04",
+      "hash": "e2fd617f1d5478fecc16ec2b7a808d27034a33998551171a75ed3dae2acd33b7",
+      "fileHash": "485566afc0c902aa5e8c97b4c7b4469869c0f98be616136e00acc0d0deb89d01"
+    },
+    {
+      "seq": 43,
+      "id": "a4fbf700-a098-402a-a66b-f5c600c707c7",
+      "at": "2026-09-04T01:23:43.319Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S04:target-add:lib/server/agent-runtime/with-owner.ts::withRequestOwnerId",
+      "slice": "S04",
+      "hash": "f979f13f6ec562ce07a84ec9971700828cc90ad5f705defefdf76c07a955e1fc",
+      "fileHash": "569185350273ce0cb6758c59e1cad0030033f17cbad6736afced6e8ce6d23ca3"
+    },
+    {
+      "seq": 44,
+      "id": "96b84907-731f-4fb5-b754-e3cd6c2d937c",
+      "at": "2026-09-04T01:23:43.367Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S04:target-add:app/api/agent/owner-events/route.ts::GET",
+      "slice": "S04",
+      "hash": "c56b2623cb6c7d95f557a4c6f99b3262b05c08d8f8db198771a904807981c9b1",
+      "fileHash": "e76b76faa94a1cabefe906e0a7535f68000bc29c0f9a1a10f4196c999674fc7f"
+    },
+    {
+      "seq": 45,
+      "id": "f810710f-a347-414a-ad22-84091ec2cda9",
+      "at": "2026-09-04T01:23:43.422Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S04:target-add:app/api/agent/sessions/[id]/events/route.ts::GET",
+      "slice": "S04",
+      "hash": "a1bb370d39c5aa3c701ea4c03ee2b137fc9718b603f2837fcf125b88a5fe1b30",
+      "fileHash": "013ac991fc388391d697ea6c7ddcda3ff8ca843a505e7450eed223bb29ffe812"
+    },
+    {
+      "seq": 46,
+      "id": "d510030d-5669-4608-b3b8-62922f6ae9dc",
+      "at": "2026-09-04T01:23:43.473Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S04:target-add:app/api/stages/[id]/freshness/route.ts::GET",
+      "slice": "S04",
+      "hash": "f1edd4ba4e5bc2e884e03ebdd33633eb3e8b59ca2a7228737f0527b5a16f37cd",
+      "fileHash": "e13dd0af1d53ce652b8ae6a3eb23d980197d4a7832ebac1f57b0459c0298cc23"
+    },
+    {
+      "seq": 47,
+      "id": "ff97a73b-7c56-4b05-afaa-c2a7785f8b66",
+      "at": "2026-09-04T01:23:43.542Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S04:capture",
+      "slice": "S04",
+      "hash": "b6520bd4c09121048b9e8929cf771104b8288192635dc172cfc2de2a85191702",
+      "fileHash": "1862d1487db3226bbddeab6b090c959a87c35cf3ca6baf09ec216abe61dce2eb"
+    },
+    {
+      "seq": 48,
+      "id": "15169afc-13d8-450e-aa45-22344fc0f59e",
+      "at": "2026-09-04T01:23:43.597Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S04:postcondition:lib/auth/claim.ts::claimAnonOwnership",
+      "slice": "S04",
+      "hash": "b1dfb261e5f0775b496b4f516c14f6710fd05ef3fab4d18f01a20ced68be2295",
+      "fileHash": "87b24dc9176d8e51ab2b670f213f0c0a8769802076beafab5db70811c3cb27c9"
+    },
+    {
+      "seq": 49,
+      "id": "f3e76c6d-6951-40f1-823f-38a671c7f8c6",
+      "at": "2026-09-04T01:23:43.651Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S04:postcondition:lib/server/agent-runtime/owner.ts::resolveRequestOwnerId",
+      "slice": "S04",
+      "hash": "deae4ef900c3ff38ba484e802e18211f3663981351a6b60507d343c26b04b25b",
+      "fileHash": "baec0a07c76d42eeb282337a76a9c1327c80fe687d687ac87470f7ccb54b7a5e"
+    },
+    {
+      "seq": 50,
+      "id": "bf780809-c062-45d5-9dad-852900854fe3",
+      "at": "2026-09-04T01:23:43.701Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S04:postcondition:lib/server/agent-runtime/with-owner.ts::withRequestOwnerId",
+      "slice": "S04",
+      "hash": "e35ffdbbc52db828274488702b4c8db66b022e477239506a70dd37d769b24036",
+      "fileHash": "52c71f400d509325dc31ecf979a42bcbe4a4751cdca5d3c4dda35bb47f10f4bb"
+    },
+    {
+      "seq": 51,
+      "id": "d5a670ba-efd2-4152-b10e-013f4b810d72",
+      "at": "2026-09-04T01:23:43.752Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S04:postcondition:app/api/agent/owner-events/route.ts::GET",
+      "slice": "S04",
+      "hash": "df701c902bef1776e6e91b506d6d7cd482f8940a54d041fa218263d589d58ccb",
+      "fileHash": "5bb67396bcdc83a587d35aea02b75b61b105aaea7714ef4b74ae45420341d657"
+    },
+    {
+      "seq": 52,
+      "id": "cc17ccba-c926-4b95-b325-3f0835dc78f5",
+      "at": "2026-09-04T01:23:43.802Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S04:postcondition:app/api/agent/sessions/[id]/events/route.ts::GET",
+      "slice": "S04",
+      "hash": "9d5a7a605e95d62bc414f66adf8ebfbc0bd0aa1392dbf0bca1f8194068966d35",
+      "fileHash": "f2380d1abb627dc2d999781691b3a90f455fb62998e0580a98c65a42f4e61997"
+    },
+    {
+      "seq": 53,
+      "id": "c6bde57a-94e4-4e6c-b40d-c2268508a56e",
+      "at": "2026-09-04T01:23:43.854Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S04:postcondition:app/api/stages/[id]/freshness/route.ts::GET",
+      "slice": "S04",
+      "hash": "611944cd1bcecfbe9928ae24b7b741c88528fac0f386de4eb431f666d1cb2101",
+      "fileHash": "f2a5888741bc6b37074b2c66ab433f4580adc8c39fa08d7180218f3a548c77bb"
+    },
+    {
+      "seq": 54,
+      "id": "e8eb0cd6-b273-4a5a-b960-d6ce68c7e88a",
+      "at": "2026-09-04T01:23:53.780Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S05:target-add:lib/auth/mailer.ts::createMailer",
+      "slice": "S05",
+      "hash": "dc8aab229147c41bb791e56987ad28d04806213ebc77507939b17ef8ceb81fde",
+      "fileHash": "6d383ce1eccd6a30bf96d8df8edb056101a7e898c67c048b2dd2d8713e294541"
+    },
+    {
+      "seq": 55,
+      "id": "d49d84be-f749-434d-9c82-2d916fc3d4f6",
+      "at": "2026-09-04T01:23:53.837Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S05:target-add:lib/auth/mailer.ts::sendVerificationLink",
+      "slice": "S05",
+      "hash": "39a1a2916f5fb646346a389ab771684f5694bc681c8a664b2322967606f0033e",
+      "fileHash": "31c79486a932b085ca7f5daf12a5a681970cb376e177658666a1a425fc4271b4"
+    },
+    {
+      "seq": 56,
+      "id": "c68b518c-5940-4bcd-8e9e-c35fc34a5c16",
+      "at": "2026-09-04T01:23:53.901Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S05:target-add:lib/auth/server.ts::createAuthServer",
+      "slice": "S05",
+      "hash": "9895e1c50bc8780bd2f14092ea67ffc8444512f9162ee20ac7f5ec056e74f857",
+      "fileHash": "2ced4ef8aae864ba4970296a0a6b9386567f8cf901c3133e1cbd2b2f0b4464da"
+    },
+    {
+      "seq": 57,
+      "id": "73737f1e-191d-4a5b-bd18-633f73ef3b04",
+      "at": "2026-09-04T01:23:53.960Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S05:capture",
+      "slice": "S05",
+      "hash": "4eeb6dceb69d3ed58f17afc5bc1e55d3a9c2694694257c405141ea8cd77dc2da",
+      "fileHash": "257f737f38619959e154bb36bc433bbcc89a2c62304c857763183c155bda62f8"
+    },
+    {
+      "seq": 58,
+      "id": "e605538c-39cf-4c64-8fb0-317282ef69c4",
+      "at": "2026-09-04T01:23:54.035Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S05:postcondition:lib/auth/mailer.ts::createMailer",
+      "slice": "S05",
+      "hash": "5165ec6fa7c605ae70c8999ce5f9af3e70f36198b6bf40162bd3656f976099df",
+      "fileHash": "a3dbba69f634761b44b1763036a28e0c9d2a7ecdcdc4c6372a37c1cf93ae0f78"
+    },
+    {
+      "seq": 59,
+      "id": "cbb0a519-562d-49d4-97e8-766f24a5674b",
+      "at": "2026-09-04T01:23:54.103Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S05:postcondition:lib/auth/mailer.ts::sendVerificationLink",
+      "slice": "S05",
+      "hash": "4abdae95465c63aeb025812cd86a4eaa443db41c02fdad9ec00bc45648e688a5",
+      "fileHash": "7ebcbb5b4d5233bf8291ee108eb02d68df2d22320950947df07667fde93d9a89"
+    },
+    {
+      "seq": 60,
+      "id": "9053548d-dee8-43fb-a612-3820e7ea48ba",
+      "at": "2026-09-04T01:23:54.182Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S05:postcondition:lib/auth/server.ts::createAuthServer",
+      "slice": "S05",
+      "hash": "894d84f8dc8e3585a48a38fa7e9e2171e16e97efdb99816639aaf02a82039db6",
+      "fileHash": "3b4f68b5b0d8a494a0420233e56d3d444ce9d5b2548660cb056147de5caf24e1"
+    },
+    {
+      "seq": 61,
+      "id": "3f0bf960-1a4d-4860-a830-050e49ba1a89",
+      "at": "2026-09-04T01:24:11.860Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect-symbol:lib/auth/schema.ts::ensureAuthSchema",
+      "slice": "S01",
+      "hash": "89136c6674206b2220b461ccf6f9652b9002dc6ba9a039fea07597eaf3dd9a74",
+      "expectationHash": "6bca083a7878227246341b4521c33bfe775bcc4e0553b53a4ecaa59664482a42",
+      "fileHash": "ef3df06a79bf23ec219460a36daea9f596695785f419f43555b7d63e3444932b"
+    },
+    {
+      "seq": 62,
+      "id": "fee2e9df-17b1-4c94-8e3a-b7f5b567a4a1",
+      "at": "2026-09-04T01:24:11.919Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect-symbol:lib/auth/server.ts::createAuthServer",
+      "slice": "S01",
+      "hash": "53c6936e239ef25c4e772058fe476b084bce1f8858ffdb9f899b5d170e031ea2",
+      "expectationHash": "364728d63a7968aee726a34f436554dbaf5eed392aac3fbcbb210e6a803c3657",
+      "fileHash": "9af21dde5b0b874cc7deedead37ff2f4d8d523905bda531bc6c1d856a725823f"
+    },
+    {
+      "seq": 63,
+      "id": "01565559-2315-4d1b-a3e5-d70953ed87af",
+      "at": "2026-09-04T01:24:11.978Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect-symbol:lib/auth/index.ts::getSession",
+      "slice": "S01",
+      "hash": "cb652d69ef4b7a85bb38a932835fbdf4e8128dfe71243e3f4ec6c669791e7c26",
+      "expectationHash": "89b5094097d4552153e410c913d1c4a3113a4b3ea032f28539434ab093ae822b",
+      "fileHash": "62b79312b83180db77c38a93af2c6bf1b3f1736d8f3a2e5212628338eb25d62e"
+    },
+    {
+      "seq": 64,
+      "id": "394dc46e-a18a-4d10-92ff-aa61a13f5ea1",
+      "at": "2026-09-04T01:24:12.038Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect-symbol:lib/auth/index.ts::requireSession",
+      "slice": "S01",
+      "hash": "597d49dc29b4be5cd86b40ddb6a724c1e61283f10708e8b543dddf5a6d02f4a1",
+      "expectationHash": "ac19477b65219e04416a4bb8c8bd0e8d47d20a748842942d073b804bd5e75f74",
+      "fileHash": "d7d572c50b7045f04366d63ab1e52939ee72efc5c1968622a3795269c842b0c4"
+    },
+    {
+      "seq": 65,
+      "id": "2cabd43d-7a2a-4172-b88f-35e2c25c0bf4",
+      "at": "2026-09-04T01:24:12.097Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect-symbol:lib/auth/index.ts::listRoles",
+      "slice": "S01",
+      "hash": "8893659cb6b70f14c7dcfe56f249de3c17b045c1b42f09b1ba4919070c764a62",
+      "expectationHash": "a9853ed7d6a4bcaf1ae7ad9b3a59fd4aa0f01f2f9d2dcaff545ba789b80a2a70",
+      "fileHash": "f38207b59b8b7b392911dd0c6b9ea3697865dcdf0f92f7b5e95ad54d9f37fb91"
+    },
+    {
+      "seq": 66,
+      "id": "672c688e-3454-4506-aba9-9abcede2aa32",
+      "at": "2026-09-04T01:24:12.156Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect-symbol:lib/persistence/server-provider.ts::createServerPersistenceProvider",
+      "slice": "S01",
+      "hash": "bcfebd1e2d866d77e37425a8dc1b40d6fd512b78298dc6bb361ede4f9ae447a0",
+      "expectationHash": "639692931a67e7df5c63352cda203940477d7d0cab723db92ba2d16252ae99bc",
+      "fileHash": "d66589c00c902d454308fee948de71fa354c8d15536ce1d740da3daf0af9ba92"
+    },
+    {
+      "seq": 67,
+      "id": "7bdeccb8-ab3b-4d13-9f5f-b7d3340e3cf6",
+      "at": "2026-09-04T01:24:12.209Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S02:expect-symbol:lib/auth/roles.ts::ROLE_RANKS",
+      "slice": "S02",
+      "hash": "476ab3ca3f6bca14ef4101ec159e433263c8a5939bea83d4454dcfbd2a3e77da",
+      "expectationHash": "c910bb51b7ed7827d5c718c0a88806e932408ea43a11a82a89138816eabf1ba7",
+      "fileHash": "f9f3db57f8f94ffa2104efd175162909c603ca24616be404092d0c15fc77dcd4"
+    },
+    {
+      "seq": 68,
+      "id": "c95297e4-f685-4fb2-b46b-cd12ac3d8e9e",
+      "at": "2026-09-04T01:24:12.267Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S02:expect-symbol:lib/auth/roles.ts::seedRoleGrants",
+      "slice": "S02",
+      "hash": "ffd8c81280c2df60400a569acc13ba3bde0ab7807ee422d0910df9d7fa2c2c14",
+      "expectationHash": "d7b0784e9933c1c3b1d64ffc108791dc4cd3863a8e0e82f09e366e69b9fcc3f1",
+      "fileHash": "5ae379378eafb1f3e8e0ba3f113d4277730664a96cc7cb534647288832aa3319"
+    },
+    {
+      "seq": 69,
+      "id": "c03f2ef0-f125-4de1-81b2-699aed335d8c",
+      "at": "2026-09-04T01:24:12.322Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S02:expect-symbol:lib/auth/roles.ts::listRoles",
+      "slice": "S02",
+      "hash": "d870ccf330d75ef20a54138b9321cec67f62ff44a7ac0f278a5c6aa78c6565d3",
+      "expectationHash": "a9853ed7d6a4bcaf1ae7ad9b3a59fd4aa0f01f2f9d2dcaff545ba789b80a2a70",
+      "fileHash": "10f2954046b459c6b0cc928dae451d5c78240ab4c0a7c913de3b04a5f7f27692"
+    },
+    {
+      "seq": 70,
+      "id": "50aa485d-6735-4f43-93b5-e3db47f52326",
+      "at": "2026-09-04T01:24:12.386Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S02:expect-symbol:lib/auth/roles-config.ts::loadRoleDefaults",
+      "slice": "S02",
+      "hash": "425687d4f92d94e0fd27ee4e13502b40d69dc423cff11cea07ff8b46a692c470",
+      "expectationHash": "0b8f166306ae8f99f36ca60cdc76d337df82e2cf870f82fb6b2209f0f0b93870",
+      "fileHash": "eacfcbfac5342a455ef9152553e1f345e14866aa313db823d18156d512ecefea"
+    },
+    {
+      "seq": 71,
+      "id": "40ca0e9b-fac5-455c-a2ca-870bd431a05a",
+      "at": "2026-09-04T01:24:12.439Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S03:expect-symbol:app/signup/page.tsx::Page",
+      "slice": "S03",
+      "hash": "af6b7ca38df285b606c8cb5afea8018be4cf020f65317806f57490fc0f5a9f73",
+      "expectationHash": "7a3376089d6a39a1a9ca27552bf537531c7169468b235389d808dbfdc73c1c09",
+      "fileHash": "33c4888842483c9d29d7d814ff57855cbb766ceb56b07e237e0b90301c1b6762"
+    },
+    {
+      "seq": 72,
+      "id": "0b84a3be-8ee5-42a4-9513-dc11d6b8c6f6",
+      "at": "2026-09-04T01:24:12.495Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S03:expect-symbol:app/login/page.tsx::Page",
+      "slice": "S03",
+      "hash": "e56a97d6029f0107a172992c8ae0dd07f17589ab5bf931e5e65fcdfa30f7f7b6",
+      "expectationHash": "c9f6a8bad73090b7676cbf1d3f45a722c99a65938ad0fbefa9f53c54a026bf73",
+      "fileHash": "ff3713fb7632e0d100daaa5cd9b6ee49d86b8c6c030f984df38859da6e77ba1f"
+    },
+    {
+      "seq": 73,
+      "id": "aac1b921-bd85-44d8-91b5-81dfbb5871a0",
+      "at": "2026-09-04T01:24:12.544Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S03:expect-symbol:app/verify/page.tsx::Page",
+      "slice": "S03",
+      "hash": "405a502003e2562bbe7dd5e4782b0fade714fc28d18bfed6631ef71a5c995e39",
+      "expectationHash": "62dd82b14984f2adcd5986add2404834d9ba253898df8c33c105afa7cea0afa5",
+      "fileHash": "e1353ae42fc916861aa3a473bb53178c59b2eea6b240fb504b7def46216bb51b"
+    },
+    {
+      "seq": 74,
+      "id": "29ef5308-8c2c-4ada-8e28-bb37c176c31f",
+      "at": "2026-09-04T01:24:12.599Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S03:expect-symbol:components/header.tsx::Header",
+      "slice": "S03",
+      "hash": "ffad0352c988e3ce78404b2633469101c6a4dde18f1ecb1fcfc3ff4fd3dd3bc3",
+      "expectationHash": "a87d9fc1f497138e4744beb885ae047ac9200b5184cf33cb4738f285ffc3de16",
+      "fileHash": "7ab2a1e7993b44525f9cb3b15ba2f17462f589304b3a5f7ba35f6136439a2968"
+    },
+    {
+      "seq": 75,
+      "id": "e20a8834-e5b5-4291-96f4-4e87bd08e04b",
+      "at": "2026-09-04T01:24:12.645Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S03:expect-symbol:lib/auth/client.ts::createAuthClient",
+      "slice": "S03",
+      "hash": "a4bcf02dbc2e89bc3c9016aef6a736d363bd9755bc2eaeabbd50182008c7c41e",
+      "expectationHash": "e2faa67b43a9be219001e75613cf1b983baa8995224cfac128821399e1e119ad",
+      "fileHash": "a91069dfcb4954e7a6613878b108c412a24c5a2b54559f52b8f95c39f9b4e383"
+    },
+    {
+      "seq": 76,
+      "id": "54d6d286-d08b-4258-9b2c-0ec4fab15519",
+      "at": "2026-09-04T01:24:12.697Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S04:expect-symbol:lib/auth/claim.ts::claimAnonOwnership",
+      "slice": "S04",
+      "hash": "d6dc4105b3adae31edbb00e5f7c44d3333e283d99d8a5629c9e4497ccfa571bc",
+      "expectationHash": "443eaa06309083f75fcf8da44294c8ec0a8f8cec568156b4e03fe5e927d35244",
+      "fileHash": "90c5cfde76bcdd766b8baa9949202c6e99377725dc1e4cbb39a243076037864e"
+    },
+    {
+      "seq": 77,
+      "id": "02a41cca-356b-4599-868b-0c216d7e0aa5",
+      "at": "2026-09-04T01:24:12.746Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S04:expect-symbol:lib/server/agent-runtime/owner.ts::resolveRequestOwnerId",
+      "slice": "S04",
+      "hash": "ba81b98cc6244ca5049d16a5cb97a5b523f366dd2378e5852e06f698c5c4049a",
+      "expectationHash": "64478e079a49399cc48d98f698ab85b82debe44d26aac5572acf1f5c83835b76",
+      "fileHash": "813d336ceb3d4501430c0172d634a5e8dc37a26f3758729ce7bb53744330e576"
+    },
+    {
+      "seq": 78,
+      "id": "40e00631-a25c-493a-af9a-684c3bc59c72",
+      "at": "2026-09-04T01:24:12.798Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S04:expect-symbol:lib/server/agent-runtime/with-owner.ts::withRequestOwnerId",
+      "slice": "S04",
+      "hash": "77216042b44602e2b3830df8f0b158a68bd0f79c4a4864b5b191747ef47cc3c5",
+      "expectationHash": "26ceab1f39b39707c73d710fada6cc67e58897e31a8ffd218cb4f97a8273cfc9",
+      "fileHash": "0fd88fe63387ff2c8c980995fbbf027eba839a9fc94a9e2e8b93b4c1eaa11ccb"
+    },
+    {
+      "seq": 79,
+      "id": "29959300-0bf2-4467-bcb2-7137d12b2edc",
+      "at": "2026-09-04T01:24:12.852Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S04:expect-symbol:app/api/agent/owner-events/route.ts::GET",
+      "slice": "S04",
+      "hash": "dbdb7007329bc0904cbd99835a1567a1856d9e50298dfd3aba501b7d54c21cfc",
+      "expectationHash": "38b7057aca52de0153a266d86be2465ff44aa1c02b760abcd41c1f631099e3df",
+      "fileHash": "7aa9e43ab5446cabbed9e4c058f90359d9dc3af73b2b1c1d01956ae04564e2c7"
+    },
+    {
+      "seq": 80,
+      "id": "afb3c9aa-3727-451d-a701-1fe17cfb9960",
+      "at": "2026-09-04T01:24:12.909Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S04:expect-symbol:app/api/agent/sessions/[id]/events/route.ts::GET",
+      "slice": "S04",
+      "hash": "fdb6dd2cfd5781c340021ce01e3c0d70ea4f5a9a3dcc5cf1ced56ae6eaa6afa9",
+      "expectationHash": "38b7057aca52de0153a266d86be2465ff44aa1c02b760abcd41c1f631099e3df",
+      "fileHash": "f2a11bf271ed1bc37cb695c4c68aaa7663733603862d26602f406aa31c6fb9ff"
+    },
+    {
+      "seq": 81,
+      "id": "7d4453e2-713d-4dff-9523-a05a83df3c27",
+      "at": "2026-09-04T01:24:12.963Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S04:expect-symbol:app/api/stages/[id]/freshness/route.ts::GET",
+      "slice": "S04",
+      "hash": "1433e22ade551908cbaa5626a972de5aead0298444104e4001bbf59e7302c535",
+      "expectationHash": "38b7057aca52de0153a266d86be2465ff44aa1c02b760abcd41c1f631099e3df",
+      "fileHash": "cf6d5f629799634916cb9110c8c582a636228cde5846977edbf8b50f1020ce0c"
+    },
+    {
+      "seq": 82,
+      "id": "4f90c99e-7a8e-4f68-87dc-5326c8b56ad1",
+      "at": "2026-09-04T01:24:13.016Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S05:expect-symbol:lib/auth/mailer.ts::createMailer",
+      "slice": "S05",
+      "hash": "a150baca82a0c3ad5b24aec24706e6c1c3bf117ed7d3ab3f741535a0d6f3dd8e",
+      "expectationHash": "5e12a71ebd142706f81dc2693f854fc4f915b7e34c62a25ee4b91e06bf5f1a09",
+      "fileHash": "d0682df51b4aaa4a83b954a2b57e8db6c5efb6b3c4b0484c16e91846e2229bd2"
+    },
+    {
+      "seq": 83,
+      "id": "0f9f8980-9281-463c-9eba-c5060b2eae31",
+      "at": "2026-09-04T01:24:13.072Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S05:expect-symbol:lib/auth/mailer.ts::sendVerificationLink",
+      "slice": "S05",
+      "hash": "651e741e00ca309feea53b43fe0f77fe425e12de825754f7ef0eb5a30948f551",
+      "expectationHash": "94e3cfc501c55973e5010589b095077188deb39754d443cfc2c4cc8f6adb36c3",
+      "fileHash": "d6337aa98143c25dc20a3bca58844e4ad0f82553a8f76403e4b4bd6dfd69bbc5"
+    },
+    {
+      "seq": 84,
+      "id": "8e13bf4b-89c2-4c4a-90fe-9e23a5f2ebea",
+      "at": "2026-09-04T01:24:13.135Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S05:expect-symbol:lib/auth/server.ts::createAuthServer",
+      "slice": "S05",
+      "hash": "3298f10d5c857b343556f8a10a1af316b17d4639cfac13c168777d59b7a6aa7f",
+      "expectationHash": "fb59e690b18add5f770aefff31be99f8a4df9d609ae5f6625191a2bf05992401",
+      "fileHash": "154c4643a1fb5088bbbbe4836dddfc6d9f2221131d3949f3e6d30f9a9d7ad6a4"
+    },
+    {
+      "seq": 85,
+      "id": "3786a4e7-5db1-4ba9-a9e6-655ed4b4dfe8",
+      "at": "2026-09-04T01:24:42.508Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S01:gate-add:g1",
+      "slice": "S01",
+      "hash": "df838fb95dec42359d3ff468c5e39f13c12406043316280bf6c643ad96a73165",
+      "fileHash": "84197db1350033d7a04232d5700656cee2ccd6802abdd676a2af8e7c95d24b3e"
+    },
+    {
+      "seq": 86,
+      "id": "fccb60dc-bc44-4ad8-b502-027a3c0f0ad7",
+      "at": "2026-09-04T01:24:42.560Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S01:gate-add:g2",
+      "slice": "S01",
+      "hash": "33031f6cb20b77fc69bb3cbf9770e15a154594912c9ec72f708937c4aa835e37",
+      "fileHash": "17d50df27b7c4bb900da5be1523045a954aee17bcc0c73a7c35d5deb0be00502"
+    },
+    {
+      "seq": 87,
+      "id": "331e1d0c-442f-4e05-9cfc-4e872f14e35f",
+      "at": "2026-09-04T01:24:42.613Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S01:gate-add:g3",
+      "slice": "S01",
+      "hash": "ee8f747c41fc2766f8fffcae40f89bc72e73a6e3b4deed6f3bee4fca6352495a",
+      "fileHash": "26211d2a50c326dadbd6f1534d9d0f9e456d4e20e442340ac389dbd517e73c22"
+    },
+    {
+      "seq": 88,
+      "id": "5cb4cbb0-a42a-49d8-ace3-d69fe383d01e",
+      "at": "2026-09-04T01:24:42.660Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S01:gate-add:g4",
+      "slice": "S01",
+      "hash": "899205070a55d110d1b9ab720a983337315e81d10acd1a414b0501715171b6ce",
+      "fileHash": "371102c22493a6634ad17d1f8b28df8c9c690031cf5f99513548dffbee24143d"
+    },
+    {
+      "seq": 89,
+      "id": "5267c3d6-b3b8-46fa-ad82-76937ad2453b",
+      "at": "2026-09-04T01:24:42.713Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S02:gate-add:g1",
+      "slice": "S02",
+      "hash": "d316b2735eda27666bdc917e23b78f135fcf08cb3ff467f5a3c4aac29a7703d3",
+      "fileHash": "9d57bad2486c883693baa2ef4ac247caca4a4c0cc18f2428d3f69bb57384ddc5"
+    },
+    {
+      "seq": 90,
+      "id": "99c5512c-8af7-4130-a2b0-768878c7f32f",
+      "at": "2026-09-04T01:24:42.761Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S02:gate-add:g2",
+      "slice": "S02",
+      "hash": "71d1bc57630b8cf5e04c19a85df2877c77fb08c8f888cf7b1e16af3209dbe3f6",
+      "fileHash": "98d9c507303aea230d1c35035eaaf8f46d43d6752262b115377e0a036f51a87b"
+    },
+    {
+      "seq": 91,
+      "id": "163f08e1-1168-4868-8edc-dea8b4395fb1",
+      "at": "2026-09-04T01:24:42.815Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S02:gate-add:g3",
+      "slice": "S02",
+      "hash": "1eaa54739bab0f68e6637e2f804c9ca86199c8c7aacccf5ced110970b5e7d50c",
+      "fileHash": "b4bdcd01e3d87a4179bde96270dccd935cfeb00bd233c8c2379f428f1cc173a6"
+    },
+    {
+      "seq": 92,
+      "id": "d8c45b86-d087-40d4-b41f-ef9ae5000168",
+      "at": "2026-09-04T01:24:42.870Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S03:gate-add:g1",
+      "slice": "S03",
+      "hash": "3d13ac3bc8db786e71e73ea787eb0216a872acc6e6ab29cc669ec1309ae84ce6",
+      "fileHash": "0d91e6bfa822b02226b82d68d01b656b7e55e1092f766996a8e8816f30da8496"
+    },
+    {
+      "seq": 93,
+      "id": "80dcbeb6-269b-4600-a76c-00502490422d",
+      "at": "2026-09-04T01:24:42.923Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S03:gate-add:g2",
+      "slice": "S03",
+      "hash": "9fde76ebb499197004fe9975be20498ddaa1d08abae03d176290973203557762",
+      "fileHash": "4b7ea1d0dac599c739997cd111757379339a3e87b85cf774f7c4a69262419771"
+    },
+    {
+      "seq": 94,
+      "id": "010511e8-4a8f-4049-8d93-3ae82f6c90f3",
+      "at": "2026-09-04T01:24:42.971Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S03:gate-add:g3",
+      "slice": "S03",
+      "hash": "75ad8e6180a33e32979ee923976c74a9302e0248b6b046c635c9696edb9be5c1",
+      "fileHash": "60d3f91559e03864033c715c821ae6f12b06bf5e33e2ef73c773e3a5ab4eb354"
+    },
+    {
+      "seq": 95,
+      "id": "0e4bd1fa-56ea-4bfc-8600-0bcbe6813767",
+      "at": "2026-09-04T01:24:43.023Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S03:gate-add:g4",
+      "slice": "S03",
+      "hash": "dfc5f9742cc6ee6571678de208363235a31036d73518445e97ff5acafc2e2f51",
+      "fileHash": "e15f7f2bc0d5661d3623e334551340316162c356f53c924013f5ceea4a6b321e"
+    },
+    {
+      "seq": 96,
+      "id": "d72ac466-c93c-4a05-acee-a220205e21ac",
+      "at": "2026-09-04T01:24:43.070Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S04:gate-add:g1",
+      "slice": "S04",
+      "hash": "32adc02d08e8681accf10a42e5a30ff227a2ad1b85b7e7317310dfce91ddd62f",
+      "fileHash": "ceee1c35e60cfbd53341d5417ce88ae27db601d0c45afbe05137c914daa45752"
+    },
+    {
+      "seq": 97,
+      "id": "d6ef3568-943f-4eea-9105-bff686e3b2b1",
+      "at": "2026-09-04T01:24:43.124Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S04:gate-add:g2",
+      "slice": "S04",
+      "hash": "bb399a47195aa71c3c614ac5d6f0629973d834e347acd12345116adffeaa9239",
+      "fileHash": "d0ad538081545c13a699eebd67c0972e689c4ef29e66b8ac554016dce81e7605"
+    },
+    {
+      "seq": 98,
+      "id": "8b58d075-c353-4262-8158-dd371c54c18d",
+      "at": "2026-09-04T01:24:43.173Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S04:gate-add:g3",
+      "slice": "S04",
+      "hash": "3a34cc1d1abff18b153fd6c52e7031a253cd3225c2b4e140ec0cbe87610ef44e",
+      "fileHash": "5bf38fcd4859ac8714ac9d91cdbd1f1d26b138a98e922a426fccec1771936295"
+    },
+    {
+      "seq": 99,
+      "id": "e11b15ab-7441-499f-8d16-e572adc7c176",
+      "at": "2026-09-04T01:24:43.225Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S04:gate-add:g4",
+      "slice": "S04",
+      "hash": "4993cefde04734ec60c9d34afed0950a796f0a76568e827334c42f5f6701202f",
+      "fileHash": "a786f361cf613ae701f5c6a426249e8c987b3b08083dffd69f947db61efcb184"
+    },
+    {
+      "seq": 100,
+      "id": "d0679b61-2911-4254-b5d7-93c246c95e3f",
+      "at": "2026-09-04T01:24:43.274Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S04:gate-add:g5",
+      "slice": "S04",
+      "hash": "779c2b81cd65cd2dafb52294d6d9a1af6e03bb6dd1aca528d491c775d31f8832",
+      "fileHash": "1759e4be1971091a5c99509668a533b5187b374c90443b2c91885bf8c4fe8ca0"
+    },
+    {
+      "seq": 101,
+      "id": "86176640-f43d-4180-b1e8-6c3834b827e9",
+      "at": "2026-09-04T01:24:43.326Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S05:gate-add:g1",
+      "slice": "S05",
+      "hash": "ccef0a0a808d2e14178c2a9bdb7257c6d0ef8c2c476e0882c8a59e2f49163d28",
+      "fileHash": "6b2237d9319dfc3d3e042fbc79eaa64a1740a6219f0a3d311f000bf9fd2d7409"
+    },
+    {
+      "seq": 102,
+      "id": "7eef3f2e-70ec-47c1-ba15-90e7af954d9e",
+      "at": "2026-09-04T01:24:43.375Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S05:gate-add:g2",
+      "slice": "S05",
+      "hash": "665944a75728c29563039f5f413fa92e5efa9451efbd53595ccb9e0d0a00c650",
+      "fileHash": "3d40712f6ead83f26ff46c73233b024854c305218eb4b882b9a214cdeb2775c3"
+    },
+    {
+      "seq": 103,
+      "id": "da64f650-db0c-446a-a801-16ae03908ad2",
+      "at": "2026-09-04T01:24:43.427Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S05:gate-add:g3",
+      "slice": "S05",
+      "hash": "5d1666a9f2c67b6526f75cb20dae7866c325d9d9f6f2587ace8106839d836f09",
+      "fileHash": "969b1b9c72270cd5f415531605a1bb99ae24e45a3b9119c809f801df159c4636"
+    },
+    {
+      "seq": 104,
+      "id": "3baf9a8d-c783-4ce2-8c88-bf4bf41b2b81",
+      "at": "2026-09-04T01:25:18.762Z",
+      "actor": "researcher",
+      "command": "gate_remove",
+      "transition": "slice:S05:gate-remove:g1",
+      "slice": "S05",
+      "hash": "3261dcac668ebe68afe376792edd0778dd984a8d9b3992a902ca72abcfcfe3e8",
+      "fileHash": "a12257dab7aafb34c6a6671d7978a7c321cf7fc4f0b0a2a82bd1bcbf728d1e06"
+    },
+    {
+      "seq": 105,
+      "id": "c82f5bb9-24d4-487f-be6d-229e694c947b",
+      "at": "2026-09-04T01:25:18.823Z",
+      "actor": "researcher",
+      "command": "gate_remove",
+      "transition": "slice:S05:gate-remove:g2",
+      "slice": "S05",
+      "hash": "06b70e36ba81592985a09cd40a44bcd158cb2f1b0f40b702dcf13f080b6e3be2",
+      "fileHash": "ee7094b954b68a831d6525f8369cba83f66f1e41e62ed957a7b06045d12eef50"
+    },
+    {
+      "seq": 106,
+      "id": "667556d2-da91-4559-8fc0-22aaca22d252",
+      "at": "2026-09-04T01:25:18.878Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S05:gate-add:g1",
+      "slice": "S05",
+      "hash": "0038b20820ff25c6a9fcf0aa7607b422b89d03791c4c5daa2207b7e96b670d59",
+      "fileHash": "d39c9339fe94c40984f63a165831bdacc9e0ffd2cd97a3f757404fa3df62f498"
+    },
+    {
+      "seq": 107,
+      "id": "e12efaaa-c3ca-4adf-af0e-c7c622296a8a",
+      "at": "2026-09-04T01:25:18.944Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S05:gate-add:g2",
+      "slice": "S05",
+      "hash": "e5c4854a45e43ba7b144d6828b7873d2f3c4b4909a0445bf1787fb73d563645b",
+      "fileHash": "bd4da401f1c902f978ee42abb1ca52074fe4efaf0f0f21a7be3ad1ae2797f766"
+    },
+    {
+      "seq": 108,
+      "id": "e337a08b-8b1c-42b5-9105-62ac82edaac9",
+      "at": "2026-09-04T01:25:40.048Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "cd7b3950066668f9be18f3b55f5d6aac32e2b9b354a49df1b54278ba0e4edfea",
+      "fileHash": "530abb96800de5e0cfe6b359ddf7da2f0202fe7ab82fe530995c262e9924efe3"
+    }
+  ],
+  "fileHash": "30b21abc4076646628b2834d8387905b3c5bf94b3794392d1b9654732fe6ea3d"
+}

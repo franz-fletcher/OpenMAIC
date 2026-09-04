@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Signup — OpenMAIC Batch A preview</title>
+<link rel="icon" href="assets/logo-horizontal.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="theme-toolbar">
+  <div class="brand">OpenMAIC — Batch A UI preview<small>docs/design/rbac-batch-a · static mockups · no app code</small></div>
+  <div class="controls">
+    <div class="seg" id="themeSeg"><button data-mode="light" class="active">Light</button><button data-mode="dark">Dark</button></div>
+    <a class="btn btn-ghost btn-sm" href="index.html">Index</a>
+  </div>
+</div>
+
+<!-- ═══ S-01 BASE ═══ -->
+<section class="artboard" id="signup-base">
+  <div class="artboard-cap">
+    <span class="dot"></span><h2>Signup — base form</h2><span class="tag">S-01</span>
+    <code>auth.signup.title · auth.signup.submit</code>
+  </div>
+  <div class="artboard-stage">
+    <div class="page">
+      <div class="blob blob-blue"></div><div class="blob blob-purple"></div>
+      <div class="auth-hero">
+        <img class="auth-logo" src="assets/logo-horizontal.png" alt="OpenMAIC">
+        <h1 class="auth-title">Create your account</h1>
+        <p class="auth-sub">Join OpenMAIC to save classrooms, keep your course library, and pick up where you left off.</p>
+        <form class="auth-card" onsubmit="return false">
+          <div class="field">
+            <label class="label" for="s01-email">Email</label>
+            <input class="input" id="s01-email" type="email" placeholder="you@example.com" autocomplete="email">
+          </div>
+          <div class="field">
+            <label class="label" for="s01-pass">Password</label>
+            <input class="input" id="s01-pass" type="password" placeholder="••••••••" autocomplete="new-password">
+            <span class="field-hint" id="s01-hint">At least 8 characters, with letters and numbers.</span>
+          </div>
+          <div class="field">
+            <label class="label" for="s01-confirm">Confirm password</label>
+            <input class="input" id="s01-confirm" type="password" placeholder="••••••••" autocomplete="new-password">
+          </div>
+          <button class="btn btn-default btn-block" type="submit">Create account<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
+          <div class="auth-footer">Already have an account? <a href="login.html">Sign in</a></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S-02 VALIDATION ERRORS ═══ -->
+<section class="artboard" id="signup-validation">
+  <div class="artboard-cap">
+    <span class="dot"></span><h2>Signup — validation errors</h2><span class="tag">S-02</span>
+    <code>auth.signup.validation.*</code>
+  </div>
+  <div class="artboard-stage">
+    <div class="page">
+      <div class="blob blob-blue"></div><div class="blob blob-purple"></div>
+      <div class="auth-hero">
+        <img class="auth-logo" src="assets/logo-horizontal.png" alt="OpenMAIC">
+        <h1 class="auth-title">Create your account</h1>
+        <p class="auth-sub">Join OpenMAIC to save classrooms, keep your course library, and pick up where you left off.</p>
+        <form class="auth-card" onsubmit="return false">
+          <div class="field">
+            <label class="label" for="s02-email">Email</label>
+            <input class="input" id="s02-email" type="email" value="alex@example.com" autocomplete="email" aria-invalid="false">
+          </div>
+          <div class="field">
+            <label class="label" for="s02-pass">Password</label>
+            <input class="input input-error" id="s02-pass" type="password" value="abc123" autocomplete="new-password" aria-invalid="true" aria-describedby="s02-strength s02-pass-error">
+            <p class="field-error" id="s02-pass-error" role="alert">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              Password is too weak — use 8+ characters with letters and numbers.
+            </p>
+            <ul class="checklist" id="s02-strength" aria-label="Password requirements">
+              <li class="ok"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>8+ characters</li>
+              <li class="bad"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>Letters and numbers</li>
+              <li class="bad"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>Different from your email</li>
+            </ul>
+          </div>
+          <div class="field">
+            <label class="label" for="s02-confirm">Confirm password</label>
+            <input class="input input-error" id="s02-confirm" type="password" value="abc12" autocomplete="new-password" aria-invalid="true" aria-describedby="s02-confirm-error">
+            <p class="field-error" id="s02-confirm-error" role="alert">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              Passwords do not match.
+            </p>
+          </div>
+          <button class="btn btn-default btn-block" type="submit">Create account<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
+          <div class="auth-footer">Already have an account? <a href="login.html">Sign in</a></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S-03 EMAIL ALREADY REGISTERED ═══ -->
+<section class="artboard" id="signup-duplicate">
+  <div class="artboard-cap">
+    <span class="dot"></span><h2>Signup — account already registered</h2><span class="tag">S-03</span>
+    <code>auth.signup.errors.emailExists</code>
+  </div>
+  <div class="artboard-stage">
+    <div class="page">
+      <div class="blob blob-blue"></div><div class="blob blob-purple"></div>
+      <div class="auth-hero">
+        <img class="auth-logo" src="assets/logo-horizontal.png" alt="OpenMAIC">
+        <h1 class="auth-title">Create your account</h1>
+        <p class="auth-sub">Join OpenMAIC to save classrooms, keep your course library, and pick up where you left off.</p>
+        <form class="auth-card" onsubmit="return false">
+          <div class="alert alert-error" role="alert">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <div>An account with this email already exists. <a href="login.html">Sign in instead</a>.</div>
+          </div>
+          <div class="field">
+            <label class="label" for="s03-email">Email</label>
+            <input class="input" id="s03-email" type="email" value="alex@example.com" autocomplete="email">
+          </div>
+          <div class="field">
+            <label class="label" for="s03-pass">Password</label>
+            <input class="input" id="s03-pass" type="password" placeholder="••••••••" autocomplete="new-password">
+            <span class="field-hint">At least 8 characters, with letters and numbers.</span>
+          </div>
+          <div class="field">
+            <label class="label" for="s03-confirm">Confirm password</label>
+            <input class="input" id="s03-confirm" type="password" placeholder="••••••••" autocomplete="new-password">
+          </div>
+          <button class="btn btn-default btn-block" type="submit">Create account<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
+          <div class="auth-footer">Already have an account? <a href="login.html">Sign in</a></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S-04 CHECK YOUR EMAIL ═══ -->
+<section class="artboard" id="signup-pending">
+  <div class="artboard-cap">
+    <span class="dot"></span><h2>Signup — verification pending ("check your email")</h2><span class="tag">S-04</span>
+    <code>auth.signup.pending.*</code>
+  </div>
+  <div class="artboard-stage">
+    <div class="page">
+      <div class="blob blob-blue"></div><div class="blob blob-purple"></div>
+      <div class="auth-hero">
+        <img class="auth-logo" src="assets/logo-horizontal.png" alt="OpenMAIC">
+        <div class="ring-icon ring-success" style="margin-bottom:18px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        </div>
+        <h1 class="auth-title">Check your email</h1>
+        <p class="auth-sub">We sent a verification link to <strong style="color:var(--foreground);font-weight:600">alex@example.com</strong>. Open it to activate your account. You can close this tab.</p>
+        <div class="auth-card" style="gap:10px">
+          <button class="btn btn-default btn-block" type="button">Open email app<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
+          <button class="btn btn-ghost btn-block" type="button">Resend verification email</button>
+          <span class="field-hint" style="text-align:center">Make sure to check your spam folder if it doesn't arrive in a few minutes.</span>
+        </div>
+        <div class="auth-footer">Wrong address? <a href="#">Start over with a different email</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="page-footer">
+  Preview set for <code>feature:rbac-minimal-mode</code> batch A · proposed keys under <code>auth.*</code> — see <a href="README.md">README.md</a> · all 12 locales need parity at implementation.
+</div>
+
+<script>
+  const seg = document.getElementById('themeSeg');
+  const setMode = (m) => {
+    document.documentElement.classList.toggle('dark', m === 'dark');
+    seg.querySelectorAll('button').forEach((b) => b.classList.toggle('active', b.dataset.mode === m));
+  };
+  seg.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) setMode(b.dataset.mode); });
+</script>
+</body>
+</html>

@@ -1,0 +1,491 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   OpenMAIC — Batch A (rbac-minimal-mode) UI preview mockups
+   Shared stylesheet. Tokens are COPIED EXACTLY from app/globals.css
+   (oklch palette, radius, shadcn component recipes) so these static
+   previews render pixel-faithfully against the live app. Everything in
+   this file maps 1:1 to an existing Tailwind class or token; where a
+   value is NEW (auth only) it is marked [NEW] and discussed in README.md.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Fonts: app uses @fontsource-variable/inter as "Inter Variable".
+      Mockups load Inter from Google Fonts with the app's exact fallback
+      chain; implementation must use @fontsource-variable/inter. ── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* ── Design tokens — verbatim from app/globals.css :root / .dark ── */
+:root {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: #722ed1;
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.58 0.22 27);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: #8b47ea;
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.371 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  color-scheme: dark;
+}
+
+/* ── Base ── */
+* { box-sizing: border-box; }
+html { scrollbar-gutter: stable; overflow-y: scroll; }
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--background);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+}
+button { font-family: inherit; cursor: pointer; }
+input { font-family: inherit; }
+
+/* ══════════════════════════════════════════════════════════════════
+   Artboard frame (preview chrome — NOT part of the designed surface)
+   ══════════════════════════════════════════════════════════════════ */
+.artboard {
+  border-top: 1px dashed color-mix(in oklch, var(--border) 80%, transparent);
+}
+.artboard-cap {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 24px;
+  font-size: 13px;
+}
+.artboard-cap .dot {
+  width: 9px; height: 9px; border-radius: 999px; flex: none;
+  background: var(--primary); opacity: .85;
+}
+.artboard-cap h2 { margin: 0; font-size: 14px; font-weight: 700; letter-spacing: -.01em; }
+.artboard-cap .tag {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .12em; color: var(--muted-foreground);
+  background: var(--muted); border-radius: 999px; padding: 3px 8px;
+}
+.artboard-cap code {
+  font-size: 11px; color: var(--muted-foreground);
+  background: var(--muted); border-radius: 5px; padding: 2px 6px;
+}
+.artboard-stage {
+  position: relative;
+  overflow: hidden;
+}
+
+.page {
+  position: relative;
+  min-height: 640px;
+  background: var(--background);
+  color: var(--foreground);
+  display: flex; flex-direction: column; align-items: center;
+  padding: 0 24px 56px;
+}
+
+/* Background decor — same blobs as home hero (app/page.tsx:814-824),
+   static in mockups (hero pulses; auth pages stay calm — see README). */
+.blob {
+  position: absolute; border-radius: 9999px; filter: blur(72px);
+  pointer-events: none;
+}
+.blob-blue  { top: 0; left: 25%; width: 384px; height: 384px; background: rgb(59 130 246 / .10); }
+.blob-purple{ bottom: 0; right: 25%; width: 384px; height: 384px; background: rgb(168 85 247 / .10); }
+
+/* ══════════════════════════════════════════════════════════════════
+   shadcn component recipes — copied from components/ui/*.tsx
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Button (components/ui/button.tsx) */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: calc(var(--radius) - 2px); border: 1px solid transparent;
+  background-clip: padding-box; font-size: 14px; font-weight: 500;
+  white-space: nowrap; transition: all 150ms; outline: none;
+  gap: 6px; flex: none; user-select: none;
+}
+.btn:focus-visible { box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 50%, transparent); }
+.btn:disabled { pointer-events: none; opacity: .5; }
+.btn-default { height: 36px; gap: 6px; padding: 0 10px; background: var(--primary); color: var(--primary-foreground); }
+.btn-default:hover { background: color-mix(in oklch, var(--primary) 80%, transparent); }
+.btn-outline { height: 36px; gap: 6px; padding: 0 10px; border-color: var(--border); background: var(--background); box-shadow: 0 1px 2px rgb(0 0 0 / .03); }
+.btn-outline:hover { background: var(--muted); color: var(--foreground); }
+.btn-secondary { height: 36px; padding: 0 10px; background: var(--secondary); color: var(--secondary-foreground); }
+.btn-secondary:hover { background: color-mix(in oklch, var(--secondary) 80%, transparent); }
+.btn-ghost { height: 36px; padding: 0 10px; }
+.btn-ghost:hover { background: var(--muted); color: var(--foreground); }
+.btn-link { height: auto; padding: 0; color: var(--primary); text-decoration: none; font-weight: 500; }
+.btn-link:hover { text-decoration: underline; text-underline-offset: 4px; }
+.btn-sm { height: 32px; padding: 0 10px; border-radius: min(calc(var(--radius) - 2px), 10px); }
+.btn-lg { height: 40px; padding: 0 12px; }
+.btn-lg.btn { border-radius: calc(var(--radius) - 2px); }
+.btn-block { width: 100%; }
+
+/* Input (components/ui/input.tsx) */
+.input {
+  width: 100%; min-width: 0; height: 36px;
+  border: 1px solid var(--input); border-radius: calc(var(--radius) - 2px);
+  background: transparent; padding: 4px 10px; font-size: 14px;
+  color: var(--foreground);
+  transition: color 150ms, box-shadow 150ms;
+  outline: none;
+}
+.input::placeholder { color: var(--muted-foreground); }
+.input:focus-visible {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 50%, transparent);
+}
+.input-error {
+  border-color: var(--destructive);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--destructive) 20%, transparent);
+}
+.input-error:focus-visible {
+  border-color: var(--destructive);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--destructive) 40%, transparent);
+}
+
+/* Field label — standard shadcn label recipe */
+.label { display: block; font-size: 14px; font-weight: 500; color: var(--foreground); }
+.field { display: flex; flex-direction: column; gap: 6px; }
+
+/* Field error text */
+.field-error {
+  display: flex; align-items: flex-start; gap: 6px;
+  font-size: 13px; color: var(--destructive);
+}
+.field-error svg { flex: none; margin-top: 2px; }
+.field-hint { font-size: 12px; color: var(--muted-foreground); line-height: 1.5; }
+
+/* Inline alert banners — mirror destructive-button tint from button.tsx
+   (bg-destructive/10 text-destructive) and the in-app cyan tint precedent
+   (app/page.tsx:983 vocational-test pill) for info/success states. */
+.alert {
+  display: flex; gap: 10px; align-items: flex-start;
+  border-radius: calc(var(--radius) - 2px);
+  padding: 10px 12px; font-size: 13px; line-height: 1.5;
+}
+.alert svg { flex: none; margin-top: 1px; }
+.alert-error { background: color-mix(in oklch, var(--destructive) 10%, transparent); color: var(--destructive); }
+.alert-error a { color: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.alert-info {
+  background: color-mix(in srgb, #06b6d4 12%, transparent);
+  color: #0e7490;
+}
+.dark .alert-info { background: color-mix(in srgb, #06b6d4 16%, transparent); color: #67e8f9; }
+
+/* Green/cyan success accent (see README "success token" decision) */
+.success-color { color: #059669; }
+.dark .success-color { color: #34d399; }
+
+/* ── Header capsule (components/stage/header-controls.tsx:141-147) ── */
+.capsule {
+  display: flex; align-items: center; gap: 4px;
+  background: rgb(255 255 255 / .6);
+  border: 1px solid rgb(243 244 246 / .5);
+  border-radius: 9999px; padding: 6px 8px;
+  backdrop-filter: blur(12px); box-shadow: 0 1px 2px rgb(0 0 0 / .04);
+}
+.dark .capsule {
+  background: rgb(31 41 55 / .6);
+  border-color: rgb(55 65 81 / .5);
+}
+
+/* Icon button inside capsule (theme / gear) */
+.icon-btn {
+  padding: 8px; border-radius: 9999px; border: 0; background: transparent;
+  color: rgb(156 163 175); transition: all 150ms;
+}
+.icon-btn:hover { background: #fff; color: #1f2937; box-shadow: 0 1px 2px rgb(0 0 0 / .05); }
+.dark .icon-btn:hover { background: rgb(55 65 81); color: rgb(229 231 235); }
+
+/* Language pill (components/language-switcher.tsx:35) */
+.lang-pill {
+  display: flex; align-items: center; gap: 4px;
+  padding: 6px 12px; border-radius: 9999px; border: 0; background: transparent;
+  font-size: 12px; font-weight: 700; color: rgb(107 114 128);
+  transition: all 150ms;
+}
+.lang-pill:hover { background: #fff; color: #1f2937; box-shadow: 0 1px 2px rgb(0 0 0 / .05); }
+.dark .lang-pill { color: rgb(156 163 175); }
+.dark .lang-pill:hover { background: rgb(55 65 81); color: rgb(229 231 235); }
+
+/* ── Dropdown menu (components/ui/dropdown-menu.tsx) ── */
+.dropdown {
+  min-width: 160px; padding: 4px; border-radius: calc(var(--radius) - 2px);
+  background: var(--popover); color: var(--popover-foreground);
+  box-shadow: 0 4px 10px rgb(0 0 0 / .12); ring: 0;
+  border: 1px solid color-mix(in oklch, var(--foreground) 10%, transparent);
+}
+.dropdown-item {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; text-align: left; background: transparent; border: 0;
+  border-radius: 4px; padding: 6px 8px; font-size: 14px; color: var(--popover-foreground);
+}
+.dropdown-item:hover, .dropdown-item:focus { background: var(--accent); color: var(--accent-foreground); outline: none; }
+.dropdown-item svg { width: 16px; height: 16px; flex: none; color: var(--muted-foreground); }
+.dropdown-item:hover svg { color: var(--accent-foreground); }
+.dropdown-item:disabled, .dropdown-item.is-disabled {
+  pointer-events: none; opacity: .5;
+}
+.dropdown-sep { height: 1px; background: var(--border); margin: 4px -4px; }
+.dropdown-label {
+  padding: 6px 8px; font-size: 12px; font-weight: 500;
+  color: var(--muted-foreground);
+}
+.dropdown-shortcut { margin-left: auto; font-size: 12px; color: var(--muted-foreground); letter-spacing: .12em; }
+
+/* "Soon" pill — honest stub marker for batch E destinations */
+.soon-pill {
+  display: inline-flex; align-items: center;
+  margin-left: auto; flex: none;
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
+  color: var(--muted-foreground); background: var(--muted);
+  border-radius: 999px; padding: 2px 7px;
+}
+
+/* ── Role badge [NEW] — avatar-zone rank label.
+      Single brand tint for all roles (rank name is text; tint is uniform), so
+      hierarchy never rides color alone. ── */
+.role-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--primary);
+  background: color-mix(in oklch, var(--primary) 10%, transparent);
+  border: 1px solid color-mix(in oklch, var(--primary) 18%, transparent);
+  border-radius: 999px; padding: 2px 7px; white-space: nowrap;
+}
+.role-badge-admin {
+  color: color-mix(in oklch, var(--destructive) 78%, var(--foreground));
+  background: color-mix(in oklch, var(--destructive) 10%, transparent);
+  border-color: color-mix(in oklch, var(--destructive) 20%, transparent);
+}
+
+/* ── GreetingBar pill seat (app/page.tsx:1448-1477, exact recipe) ── */
+.greet-pill {
+  display: inline-flex; align-items: center; gap: 10px;
+  border-radius: 9999px; padding: 6px 10px;
+  border: 1px solid color-mix(in oklch, var(--border) 50%, transparent);
+  color: color-mix(in oklch, var(--muted-foreground) 70%, transparent);
+  transition: all 200ms;
+}
+.greet-pill:hover { color: var(--foreground); background: color-mix(in oklch, var(--muted) 60%, transparent); }
+.greet-pill .avatar {
+  width: 32px; height: 32px; border-radius: 9999px; overflow: hidden; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: #fff;
+  background: linear-gradient(135deg, #722ed1, #8b47ea);
+}
+.greet-pill .greet-name { font-size: 13px; font-weight: 600; color: color-mix(in oklch, var(--foreground) 85%, transparent); line-height: 1; }
+.greet-pill .greet-name:hover { color: var(--foreground); }
+
+/* Inverted ghost/primary pair for the signed-out pill seat [NEW] */
+.pill-action {
+  display: inline-flex; align-items: center; gap: 4px;
+  border-radius: 9999px; padding: 6px 12px; font-size: 12px; font-weight: 600;
+  border: 0; transition: all 150ms; line-height: 1;
+}
+.pill-action-ghost { background: transparent; color: var(--muted-foreground); }
+.pill-action-ghost:hover { background: color-mix(in oklch, var(--muted) 60%, transparent); color: var(--foreground); }
+.pill-action-primary { background: var(--primary); color: var(--primary-foreground); box-shadow: 0 1px 2px rgb(0 0 0 / .12); }
+.pill-action-primary:hover { background: color-mix(in oklch, var(--primary) 80%, transparent); }
+.pill-action-outline { background: transparent; color: var(--foreground); border: 1px solid var(--border); }
+.pill-action-outline:hover { background: var(--muted); }
+
+/* ── Composer card (app/page.tsx:875-878) ── */
+.composer {
+  width: 100%; max-width: 800px;
+  border-radius: 16px; border: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
+  background: rgb(255 255 255 / .8); box-shadow: 0 20px 25px -5px rgb(0 0 0 / .04);
+  backdrop-filter: blur(16px);
+}
+.dark .composer { background: rgb(15 23 42 / .8); box-shadow: 0 20px 25px -5px rgb(0 0 0 / .2); }
+
+/* ── Auth page layout ── */
+.auth-hero {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: center;
+  width: 100%; max-width: 800px; margin-top: 7vh;
+}
+.auth-logo { height: 48px; margin-bottom: 8px; }
+.auth-title { margin: 0 0 6px; font-size: 24px; font-weight: 700; letter-spacing: -.02em; text-align: center; }
+.auth-sub { margin: 0 0 28px; font-size: 14px; color: color-mix(in oklch, var(--muted-foreground) 60%, transparent); text-align: center; max-width: 420px; line-height: 1.5; }
+
+/* Auth form card — reuses the composer surface recipe (see README:
+   "auth card is the composer card", not shadcn card). Narrow column by
+   design: 400px ≈ 65-75ch forms beat 800px. */
+.auth-card {
+  width: 100%; max-width: 400px;
+  border-radius: 16px; border: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
+  background: rgb(255 255 255 / .8); box-shadow: 0 20px 25px -5px rgb(0 0 0 / .04);
+  backdrop-filter: blur(16px);
+  padding: 24px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.dark .auth-card { background: rgb(15 23 42 / .8); box-shadow: 0 20px 25px -5px rgb(0 0 0 / .2); }
+
+.auth-footer { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; margin-top: 20px; font-size: 13px; color: var(--muted-foreground); }
+.auth-footer a { color: var(--primary); font-weight: 500; text-decoration: none; }
+.auth-footer a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* Password strength checklist [NEW] — progressive helper under password */
+.checklist { display: flex; flex-direction: column; gap: 6px; padding: 8px 10px; border-radius: 8px; background: var(--muted); font-size: 12px; color: var(--muted-foreground); }
+.checklist li { display: flex; align-items: center; gap: 7px; list-style: none; }
+.checklist .ok { color: #059669; }
+.dark .checklist .ok { color: #34d399; }
+.checklist .bad { color: var(--destructive); font-weight: 500; }
+
+/* Success check ring — big circular state (verify page, sign-in success) */
+.ring-icon {
+  width: 64px; height: 64px; border-radius: 9999px;
+  display: flex; align-items: center; justify-content: center;
+}
+.ring-icon svg { width: 30px; height: 30px; }
+.ring-success {
+  background: color-mix(in srgb, #10b981 14%, transparent);
+  border: 1px solid color-mix(in srgb, #10b981 30%, transparent);
+  color: #059669;
+}
+.dark .ring-success { background: color-mix(in srgb, #10b981 18%, transparent); color: #34d399; }
+.ring-failure {
+  background: color-mix(in oklch, var(--destructive) 12%, transparent);
+  border: 1px solid color-mix(in oklch, var(--destructive) 26%, transparent);
+  color: var(--destructive);
+}
+
+/* Spinner (redirect state) */
+.spinner {
+  width: 16px; height: 16px; border-radius: 9999px;
+  border: 2px solid color-mix(in oklch, var(--muted-foreground) 35%, transparent);
+  border-top-color: var(--foreground);
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Toast (sonner, bottom-right default) */
+.toast {
+  position: fixed; right: 24px; bottom: 24px; z-index: 60;
+  display: flex; align-items: center; gap: 10px;
+  min-width: 260px; max-width: 360px;
+  background: var(--card); color: var(--card-foreground);
+  border: 1px solid var(--border); border-radius: calc(var(--radius) + 2px);
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / .18);
+  padding: 12px 14px; font-size: 13px;
+}
+.toast svg { flex: none; }
+.toast-success svg { color: #059669; }
+.dark .toast-success svg { color: #34d399; }
+
+/* ── Header / stage chrome (components/header.tsx:52, 77-87) ── */
+.stage-header {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  height: 80px; padding: 0 32px;
+}
+.stage-header .back-btn {
+  display: inline-flex; flex: none; padding: 8px; border-radius: 8px; border: 0; background: transparent;
+  color: rgb(156 163 175);
+}
+.stage-header .back-btn:hover { background: rgb(243 244 246); color: rgb(55 65 81); }
+.dark .stage-header .back-btn:hover { background: rgb(31 41 55); color: rgb(209 213 219); }
+.stage-title-kicker { font-size: 10px; text-transform: uppercase; letter-spacing: .12em; font-weight: 700; color: rgb(156 163 175); margin: 0 0 3px; }
+.dark .stage-title-kicker { color: rgb(107 114 128); }
+.stage-title { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -.02em; color: rgb(31 41 55); }
+.dark .stage-title { color: rgb(229 231 235); }
+
+/* Mock classroom scene (decor only — NOT part of any designed surface) */
+.mock-scene {
+  padding: 8px 32px 48px;
+}
+.scene-card {
+  height: 140px; border-radius: 14px; margin-bottom: 16px;
+  background: linear-gradient(135deg, color-mix(in oklch, var(--primary) 8%, var(--background)), color-mix(in oklch, rgb(59 130 246) 6%, var(--background)));
+  border: 1px solid color-mix(in oklch, var(--border) 70%, transparent);
+  display: flex; align-items: flex-end; padding: 16px;
+}
+.scene-card span { font-size: 12px; color: var(--muted-foreground); }
+
+/* Account menu button seated inside the capsule [NEW V2] */
+.capsule-account {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 4px 10px 4px 4px; border-radius: 9999px; border: 0; background: transparent;
+  transition: all 150ms;
+}
+.capsule-account:hover { background: #fff; box-shadow: 0 1px 2px rgb(0 0 0 / .05); }
+.dark .capsule-account:hover { background: rgb(55 65 81); }
+.capsule-account .avatar {
+  width: 26px; height: 26px; border-radius: 9999px; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; color: #fff;
+  background: linear-gradient(135deg, #722ed1, #8b47ea);
+}
+.capsule-account .name { font-size: 12px; font-weight: 600; color: rgb(55 65 81); line-height: 1; }
+.dark .capsule-account .name { color: rgb(229 231 235); }
+.capsule-account .chev { color: var(--muted-foreground); }
+
+/* Dropdown header row (avatar + identity) [NEW — extends shadcn dropdown
+   with a non-interactive header, mirroring GreetingBar's expanded panel] */
+.dd-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 8px 10px;
+}
+.dd-header .avatar {
+  width: 36px; height: 36px; border-radius: 9999px; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: #fff;
+  background: linear-gradient(135deg, #722ed1, #8b47ea);
+}
+.dd-header .dd-name { font-size: 14px; font-weight: 600; color: var(--card-foreground); margin: 0 0 1px; }
+.dd-header .dd-email { font-size: 12px; color: var(--muted-foreground); margin: 0; }
+.dd-header .dd-role { display: inline-flex; margin-top: 2px; }
+
+/* Theme toggle, page footer */
+.theme-toolbar {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px 24px;
+  background: color-mix(in oklch, var(--background) 82%, transparent);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+}
+.theme-toolbar .brand { font-size: 13px; font-weight: 700; letter-spacing: -.01em; }
+.theme-toolbar .brand small { display: block; font-size: 10px; font-weight: 500; color: var(--muted-foreground); letter-spacing: .04em; }
+.theme-toolbar .controls { display: flex; gap: 8px; align-items: center; }
+.seg { display: inline-flex; padding: 3px; gap: 2px; border-radius: 999px; background: var(--muted); border: 1px solid var(--border); }
+.seg button { border: 0; background: transparent; border-radius: 999px; padding: 5px 12px; font-size: 12px; font-weight: 600; color: var(--muted-foreground); }
+.seg button.active { background: var(--card); color: var(--foreground); box-shadow: 0 1px 2px rgb(0 0 0 / .1); }
+
+.page-footer { padding: 28px 24px 48px; text-align: center; font-size: 12px; color: var(--muted-foreground); line-height: 1.7; }
+.page-footer a { color: var(--primary); }
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner { animation-duration: 1.6s; }
+  * { transition-duration: .01ms !important; }
+}
