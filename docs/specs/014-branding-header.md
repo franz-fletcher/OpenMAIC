@@ -1,6 +1,6 @@
 # Batch 014 spec: branding-header
 
-Spec status: research_update
+Spec status: closed
 
 ## Problem Statement
 
@@ -387,3 +387,146 @@ route serves the JSON `{ name, tagline, showLogo, showHeadline }`, and Safari
 shows a console-clean session. The gate command text is unchanged.
 Round-1 verification pinned the six signature strings to outline truth, and
 the GET route gained its `: Promise<Response>` annotation.
+
+## Research update (2026-09-04)
+
+### What shipped
+
+Batch G certified both slices. The final state in the working tree:
+
+- S1 shipped the client and server split. `lib/config/site-branding.ts`
+  carries the client-safe surface: `readBoolean` at `:13`, the `SiteBranding`
+  type at `:17`, and `SITE_BRANDING_DEFAULTS` at `:24`.
+  `lib/config/site-branding.server.ts` carries `DEFAULT_FILENAME` at `:13`,
+  the module-private `loadYamlFile` at `:20`, and `loadSiteBranding` at
+  `:37`. The route `app/api/site-branding/route.ts` runs on `nodejs` at `:4`
+  and serves the branding JSON from `GET` at `:10`. The hook
+  `lib/hooks/use-site-branding.ts::useSiteBranding` starts at `:16` and
+  returns defaults first.
+- S2 shipped the capsule and the chrome. `HeaderCapsule` renders at
+  `components/header-capsule.tsx:34`, with `HeaderCapsuleProps` at `:25` and
+  the `accountSlot` prop at `:31`, rendered at `:115`.
+  `app/page.tsx::HomePage` starts at `:125` and `GreetingBar` at `:1250`.
+  The logo sites honor `showLogo` at `WorkspaceHome.tsx:48`,
+  `WorkspaceRail.tsx:183`, and `SlideNavRail.tsx:52`.
+- Four env vars ship, all documented in `.env.example`: `SITE_NAME` at
+  `:555`, `SITE_TAGLINE` at `:556`, `SHOW_LOGO` at `:557`, and
+  `SHOW_HEADLINE` at `:558`.
+- The `home.headline` key ships with the copy "Turn any material into a
+  living classroom" (`lib/i18n/locales/en-US.json:14`) with parity across
+  all 12 locale files.
+- The guard test `tests/branding/client-import-graph.test.ts` ships and
+  walks the hook import graph.
+
+### Deviations and surprises
+
+(a) Turbopack failed to bundle `node:fs` into the client, and the failure
+surfaced only at runtime after every static gate passed. The client and
+server split exists because of it. Lesson: a client-boundary proof must be a
+gate for any future module that crosses the server and client boundary.
+
+(b) Round-1 verification rejected both slices for signature-string drift.
+The pinned `(): JSX.Element` and the rows pinned as `exists` do not match
+outline truth. The fix pinned the six component signatures to the live
+outline output. Lesson: pin signatures from live outline captures at ledger
+build time, never from spec prose.
+
+(c) The amendment sentence about the GET annotation pre-dated the code
+change. The builder caught it during re-anchoring. The annotation now exists
+at `app/api/site-branding/route.ts:10`. Lesson: never write completion prose
+before the code lands.
+
+(d) The spec row pins `SiteBranding` with kind `type`, while the code
+declares an interface (`lib/config/site-branding.ts:17`). The CLI compares
+kinds strictly, so the ledger records the interface kind. Lesson: confirm
+the kind enum against the outline tool at target-add time.
+
+(e) The multi-line signatures of `WorkspaceHome` and `WorkspaceRail` store
+verbatim, at 486 and 1883 characters. Spec tables cannot carry them. The
+code-block binding entries are the pattern for multi-line signatures.
+
+(f) rivr caps expect strings at 300 characters. All seven markers are short
+literals, so this batch stayed under the cap. Lesson: keep expect strings
+short and literal.
+
+(g) `rivr ledger init-batch` is orchestrator-actor-only. The researcher
+cannot run it. Lesson: orchestration verbs belong to the orchestrator.
+
+(h) Stage and expectation rewrites are legal only in the research stage.
+Outside research every research-stage write exits 2. Lesson: finish
+expectation work in research, because later stages freeze the ledger.
+
+### Test results
+
+| Gate | Result | Marker |
+| --- | --- | --- |
+| S1 unit `tests/branding/site-branding.test.ts` | PASS | BRAND_CFG_OK |
+| S1 smoke `tests/branding/site-branding-route.test.ts` | PASS | BRAND_RT_OK |
+| S1 smoke `.env.example` presence grep | PASS | BRAND_ENV_OK |
+| S2 smoke `npx tsc --noEmit` | PASS | TSC_OK |
+| S2 integration `tests/branding/header-capsule.test.ts` | PASS | BRAND_HDR_OK |
+| S2 smoke provider-neutrality guard | PASS | NEUTRAL_OK |
+| S2 smoke `pnpm check:i18n-keys` | PASS | I18N_OK |
+
+The full suite runs 7498 passing tests with the single pre-existing
+env-sensitive failure family documented in prior batches. Safari round-2
+verification is console-clean. The batch lands on commits `e11a69e7` and
+`15016c2d`.
+
+### Retry accounting
+
+count=3 of 5. Both round-1 deficiencies resolved in one fix pass. No
+same-cause escalation: consecutive_same_cause=1.
+
+### What batch A inherits
+
+- The capsule `accountSlot` prop is ready
+  (`components/header-capsule.tsx:31`, rendered at `:115`). Batch A renders
+  its account menu into it.
+- The `useSiteBranding` pattern is proven
+  (`lib/hooks/use-site-branding.ts:16`): defaults first, server values
+  after, defaults kept on error.
+- The runtime-proof requirement. Any future module that crosses the server
+  and client boundary needs a runtime proof, not only static gates.
+## Certification Report
+
+Certified: 2026-09-04T05:26:48.403Z
+Signature: 4ae31ae4aaf2176d6c61c585088a0728dec78de374ec969a1ed92ae30ab1e798
+
+### Summary
+
+Slices: 2
+Symbols: 12
+Gates: 7
+
+### Implemented Symbols
+
+- **S2** (Header chrome):
+  - components/header-capsule.tsx::HeaderCapsule
+  - app/page.tsx::HomePage
+  - app/page.tsx::GreetingBar
+  - components/workbench/workspace/WorkspaceHome.tsx::WorkspaceHome
+  - components/edit/SlideNavRail/SlideNavRail.tsx::SlideNavRail
+  - components/workbench/workspace/WorkspaceRail.tsx::WorkspaceRail
+- **S1** (Branding config and public surface):
+  - lib/config/site-branding.ts::SiteBranding
+  - lib/config/site-branding.ts::SITE_BRANDING_DEFAULTS
+  - lib/config/site-branding.ts::readBoolean
+  - lib/config/site-branding.server.ts::loadSiteBranding
+  - app/api/site-branding/route.ts::GET
+  - lib/hooks/use-site-branding.ts::useSiteBranding
+
+### Gates Passed
+
+- **S2**:
+  - g1: {"id":"g1","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9","pathCount":30,"output":"TSC_OK\n","passed":true}
+  - g2: {"id":"g2","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9","pathCount":30,"output":"\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/branding/header-capsule.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/branding/header-capsule.test.ts \u001b[2m(\u001b[22m\u001b[2m2 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 7\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m2 passed\u001b[39m\u001b[22m\u001b[90m (2)\u001b[39m\n\u001b[2m   Start at \u001b[22m 17:20:41\n\u001b[2m   Duration \u001b[22m 174ms\u001b[2m (transform 37ms, setup 14ms, import 86ms, tests 7ms, environment 0ms)\u001b[22m\n\nBRAND_HDR_OK\n","passed":true}
+  - g3: {"id":"g3","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9","pathCount":30,"output":"\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/providers/provider-neutrality-guard.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/providers/provider-neutrality-guard.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 37\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m3 passed\u001b[39m\u001b[22m\u001b[90m (3)\u001b[39m\n\u001b[2m   Start at \u001b[22m 17:20:42\n\u001b[2m   Duration \u001b[22m 387ms\u001b[2m (transform 88ms, setup 15ms, import 273ms, tests 37ms, environment 0ms)\u001b[22m\n\nNEUTRAL_OK\n","passed":true}
+  - g4: {"id":"g4","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9","pathCount":30,"output":"\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> node scripts/check-i18n-keys.mjs\n\ni18n key alignment check passed (12 locale files, source: en-US.json).\nI18N_OK\n","passed":true}
+- **S1**:
+  - g1: {"id":"g1","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9","pathCount":30,"output":"\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/branding/site-branding.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/branding/site-branding.test.ts \u001b[2m(\u001b[22m\u001b[2m13 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 4\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m13 passed\u001b[39m\u001b[22m\u001b[90m (13)\u001b[39m\n\u001b[2m   Start at \u001b[22m 17:20:27\n\u001b[2m   Duration \u001b[22m 102ms\u001b[2m (transform 20ms, setup 14ms, import 17ms, tests 4ms, environment 0ms)\u001b[22m\n\nBRAND_CFG_OK\n","passed":true}
+  - g2: {"id":"g2","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9","pathCount":30,"output":"\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/branding/site-branding-route.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/branding/site-branding-route.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 4\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m3 passed\u001b[39m\u001b[22m\u001b[90m (3)\u001b[39m\n\u001b[2m   Start at \u001b[22m 17:20:27\n\u001b[2m   Duration \u001b[22m 120ms\u001b[2m (transform 19ms, setup 14ms, import 38ms, tests 4ms, environment 0ms)\u001b[22m\n\nBRAND_RT_OK\n","passed":true}
+  - g3: {"id":"g3","shell":"/bin/sh","cwd":"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC","exit":0,"pathHash":"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9","pathCount":30,"output":"BRAND_ENV_OK\n","passed":true}
+
+Certification hash: 4ae31ae4aaf2176d6c61c585088a0728dec78de374ec969a1ed92ae30ab1e798
+Certified: 2026-09-04T05:26:48.403Z | Signature: 4ae31ae4aaf2176d6c61c585088a0728dec78de374ec969a1ed92ae30ab1e798 | Certifier: verifier

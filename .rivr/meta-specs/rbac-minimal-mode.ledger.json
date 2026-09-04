@@ -28,7 +28,7 @@
     {
       "batch": "014-branding-header",
       "ledger": ".rivr/specs/014-branding-header.ledger.json",
-      "stage": "implementation"
+      "stage": "closed"
     }
   ],
   "audit": [
@@ -129,7 +129,29 @@
       "slice": null,
       "hash": "a24af1945da27bb9fdcdee304f86ab5de8141945bd7c7cb937050ace17c8c04e",
       "fileHash": "455d2922b820c7b2249f40596d936bb200ba46f261f21c77b6a5a770099987b9"
+    },
+    {
+      "seq": 10,
+      "id": "89fb827d-8a58-4943-b64b-0705b1c5869e",
+      "at": "2026-09-04T05:26:48.452Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:clarification:child 014 closed and accepted",
+      "slice": null,
+      "hash": "2e623be05341baba4bd780cc86e7a9ecae4a0e564d4df34740f50f5eb7122475",
+      "fileHash": "872030b6e3181c1e4e2e080ee5d2af02fbc76e3f20bfaaeeaebc0d41468b39bf"
+    },
+    {
+      "seq": 11,
+      "id": "1be09fd6-2620-46d5-b75b-5c734cfcfe61",
+      "at": "2026-09-04T05:26:48.453Z",
+      "actor": "orchestrator",
+      "command": "metaspec_child_link",
+      "transition": "child-link:014-branding-header:.rivr/specs/014-branding-header.ledger.json:closed",
+      "slice": null,
+      "hash": "be077502643e012b0eddf60528d4baac70c797e5a03d2aa28744134c1ab17087",
+      "fileHash": "872030b6e3181c1e4e2e080ee5d2af02fbc76e3f20bfaaeeaebc0d41468b39bf"
     }
   ],
-  "fileHash": "872030b6e3181c1e4e2e080ee5d2af02fbc76e3f20bfaaeeaebc0d41468b39bf"
+  "fileHash": "66085b2ddc82dd3004d858b5618a5777731c119961216197cd4676680cf0da61"
 }

@@ -4,12 +4,12 @@
   "spec": {
     "reference": "docs/specs/014-branding-header.md",
     "title": "Batch 014 spec: branding-header",
-    "hash": "84e7110ad548041f11a58fcf4f44c56392d738970e88d5c9ee291dc4db31a576"
+    "hash": "d0010a0acdd823a701f9940f709b5144deec7573275edfa6811b2edeb16ad9ec"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "research_update",
+  "stage": "closed",
   "retry": {
     "count": 3,
     "max": 5,
@@ -1740,7 +1740,41 @@
       "slice": null,
       "hash": "aa44b444b0a8d52d755f8e0a81f5a02056b1bcc3051ec65b3a66c68727a867bd",
       "fileHash": "bbcf3dea1fee82d7f26b3e6e752c98c2441ddc0fc26a7a107635da10218fff4f"
+    },
+    {
+      "seq": 100,
+      "id": "2e26cf22-cca9-4bba-b485-5e48adb1bc01",
+      "at": "2026-09-04T05:26:48.289Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:respecify:Stage-4 research update appended with deviations, lessons, test results, and batch-A inheritance",
+      "slice": null,
+      "hash": "778157e3fe4dec7d729d6dd3ab0aa534eb82107c513f9cb2e7a86d6838e34ef6",
+      "fileHash": "590576130a3f34b09ebc4e0f1b47d957b32708d65d7b28e8516021cb63f79168"
+    },
+    {
+      "seq": 101,
+      "id": "0eb53199-a9a0-464b-8d82-22710a148924",
+      "at": "2026-09-04T05:26:48.345Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research_update->closed",
+      "slice": null,
+      "hash": "3cf8b8cf73fdf4c805f0c1ba970f8b0a2774a1f55b7f55b635cce1a4851b8fbc",
+      "fileHash": "3d1b467eeec1caa253b38a31bf44daf962d96edbd753c03a390ec4a8f7fb06b5"
+    },
+    {
+      "seq": 102,
+      "id": "bc6d2eea-0b4a-4b29-8ad3-dff3707c62f6",
+      "at": "2026-09-04T05:26:48.403Z",
+      "actor": "verifier",
+      "command": "certify",
+      "transition": "certify:4ae31ae4aaf2176d6c61c585088a0728dec78de374ec969a1ed92ae30ab1e798",
+      "slice": null,
+      "hash": "488627aaa9d2072dcb06cd619934dfec7e81904e0283a156242a3e392f9aad30",
+      "oracle": "4ae31ae4aaf2176d6c61c585088a0728dec78de374ec969a1ed92ae30ab1e798",
+      "fileHash": "bfbb8f6475eb48861368bc2ed00946f6ec03439d7a577dab963738495026e1b8"
     }
   ],
-  "fileHash": "590576130a3f34b09ebc4e0f1b47d957b32708d65d7b28e8516021cb63f79168"
+  "fileHash": "66ee1acb8dfce61034c7b8df6cdb6f5d5684aa4fed90f72b3ebbde3dea47f845"
 }
