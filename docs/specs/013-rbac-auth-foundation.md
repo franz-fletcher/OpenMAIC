@@ -1,6 +1,6 @@
 # Batch 013 spec: rbac-auth-foundation
 
-Spec status: verification
+Spec status: research
 
 ## Problem Statement
 
@@ -101,7 +101,23 @@ Ledger bindings:
 | `lib/auth/index.ts::getSession` | function | `(headers: Headers): Promise<Session | null>` | returns the session for valid cookies, null otherwise |
 | `lib/auth/index.ts::requireSession` | function | `(headers: Headers): Promise<Session>` | returns the session or a 401-style refusal |
 | `lib/auth/index.ts::listRoles` | function | `(queryable: Queryable): Promise<Role[]>` | returns all roles with ranks |
-| `lib/persistence/server-provider.ts::createServerPersistenceProvider` | function | `(connectionString: string, poolFactory?: PersistencePoolFactory): Promise<ServerPersistenceProvider>` | modified: composes `ensureAuthSchema` into the lazy chain beside the five existing ensures |
+
+The `createServerPersistenceProvider` signature is multi-line in source and
+stores verbatim, so its binding uses the code-block pattern:
+
+- `lib/persistence/server-provider.ts::createServerPersistenceProvider` (kind
+  function, after-signature):
+
+  ```
+  (
+    connectionString: string,
+    poolFactory: PersistencePoolFactory,
+  ): Promise<ServerPersistenceProvider>
+  ```
+
+  Behavior: modified: composes `ensureAuthSchema` into the lazy chain
+  beside the five existing ensures. The `poolFactory` parameter is required,
+  not optional.
 
 Before-state capture notes: `createServerPersistenceProvider` runs five
 ensures at `lib/persistence/server-provider.ts:43-47` (`ensureSchema`,
@@ -138,9 +154,23 @@ Ledger bindings:
 | file::symbol | kind | after-signature or shape | behavior |
 | --- | --- | --- | --- |
 | `lib/auth/roles.ts::ROLE_RANKS` | constant | shape `{ ANONYMOUS: 0, GUEST: 1, LEARNER: 2, CREATOR: 3, ADMIN: 4 }` | the stable rank constants, anonymous virtual |
-| `lib/auth/roles.ts::seedRoleGrants` | function | `(queryable: Queryable, grants: RoleGrantSeed[]): Promise<number>` | seeds grants idempotently, non-destructive, overriding the guest default for emails with a configured role, returns applied count |
 | `lib/auth/roles.ts::listRoles` | function | `(queryable: Queryable): Promise<Role[]>` | returns all roles with ranks |
 | `lib/auth/roles-config.ts::loadRoleDefaults` | function | `(): RoleDefaults` | merges the `ADMIN_EMAILS` env and `server-roles.yml` default filename into defaults |
+
+The `seedRoleGrants` signature is multi-line in source and stores verbatim,
+so its binding uses the code-block pattern:
+
+- `lib/auth/roles.ts::seedRoleGrants` (kind function, after-signature):
+
+  ```
+  (
+    queryable: Queryable,
+    grants: RoleGrantSeed[],
+  ): Promise<number>
+  ```
+
+  Behavior: seeds grants idempotently, non-destructive, overriding the guest
+  default for emails with a configured role, returns applied count.
 
 Before-state capture notes: no `roles` or `user_roles` tables exist. No
 `server-roles.yml` exists. `.env.example` has no `ADMIN_EMAILS` entry. The
@@ -172,11 +202,32 @@ Ledger bindings:
 
 | file::symbol | kind | after-signature or shape | behavior |
 | --- | --- | --- | --- |
-| `app/signup/page.tsx::default` | component | exists | renders the signup form |
-| `app/login/page.tsx::default` | component | exists | renders the login form |
-| `app/verify/page.tsx::default` | component | exists | renders the verification status and resend action |
-| `components/header.tsx::Header` | component | exists | modified: renders the account menu with signed-in state and sign out, filling the batch G capsule account slot |
+| `app/signup/page.tsx::Page` | component | `()` | renders the signup form |
+| `app/login/page.tsx::Page` | component | `()` | renders the login form |
+| `app/verify/page.tsx::Page` | component | `()` | renders the verification status and resend action |
 | `lib/auth/client.ts::createAuthClient` | function | `(opts: AuthClientOptions): AuthClient` | returns the wrapped client for signup, sign in, sign out, resend |
+
+The `Header` signature is multi-line in source and stores verbatim, so its
+binding uses the code-block pattern:
+
+- `components/header.tsx::Header` (kind component, after-signature):
+
+  ```
+  ({
+    currentSceneTitle,
+    mode,
+    proModeActive,
+    canEdit,
+    onToggleEditMode,
+    backControl,
+    hideBackControl,
+    hideGlobalControls,
+    hideCourseActions,
+  }: HeaderProps)
+  ```
+
+  Behavior: modified: renders the account menu with signed-in state and sign
+  out, filling the batch G capsule account slot.
 
 Deliverables (gate-bound, not symbol-bound): the `auth` namespace in
 `lib/i18n/locales/en-US.json` and its 11 mirrors. The I18N_NS_OK and I18N_OK
@@ -234,11 +285,39 @@ Ledger bindings:
 | file::symbol | kind | after-signature or shape | behavior |
 | --- | --- | --- | --- |
 | `lib/auth/claim.ts::claimAnonOwnership` | function | `(anonId: string, userId: string): Promise<number>` | rewrites the owner columns listed above from `anon:<id>` to `user:<id>`, returns the row count |
-| `lib/server/agent-runtime/owner.ts::resolveRequestOwnerId` | function | `(req: Pick<Request, 'headers'>, responseHeaders: Headers, authenticatedOwnerId?: string): string` | modified: the accepted parameter becomes actually threaded by callers |
-| `lib/server/agent-runtime/with-owner.ts::withRequestOwnerId` | function | `(req: Pick<Request, 'headers'>, handler: OwnerHandler): Promise<Response>` | modified: resolves `user:<id>` when a session is present, else the anon identity |
-| `app/api/agent/owner-events/route.ts::GET` | function | `(req: NextRequest): Promise<Response>` | modified: resolves the authenticated owner when signed in |
-| `app/api/agent/sessions/[id]/events/route.ts::GET` | function | `(req: NextRequest, ctx: { params: Promise<{ id: string }> }): Promise<Response>` | modified: resolves the authenticated owner when signed in |
-| `app/api/stages/[id]/freshness/route.ts::GET` | function | `(req: NextRequest, ctx: { params: Promise<{ id: string }> }): Promise<Response>` | modified: resolves the authenticated owner when signed in |
+| `app/api/agent/owner-events/route.ts::GET` | function | `(req: NextRequest)` | modified: resolves the authenticated owner when signed in |
+| `app/api/agent/sessions/[id]/events/route.ts::GET` | function | `(req: NextRequest, { params }: { params: Promise<{ id: string }> })` | modified: resolves the authenticated owner when signed in |
+| `app/api/stages/[id]/freshness/route.ts::GET` | function | `(req: NextRequest, { params }: Params)` | modified: resolves the authenticated owner when signed in |
+
+The `resolveRequestOwnerId` and `withRequestOwnerId` signatures are multi-line
+in source and store verbatim, so their bindings use the code-block pattern:
+
+- `lib/server/agent-runtime/owner.ts::resolveRequestOwnerId` (kind function,
+  after-signature):
+
+  ```
+  (
+    req: Pick<Request, 'headers'>,
+    responseHeaders: Headers,
+    authenticatedOwnerId?: string,
+  ): string
+  ```
+
+  Behavior: modified: the accepted parameter becomes actually threaded by
+  callers.
+
+- `lib/server/agent-runtime/with-owner.ts::withRequestOwnerId` (kind
+  function, after-signature):
+
+  ```
+  (
+    req: Pick<Request, 'headers'>,
+    handler: OwnerHandler,
+  ): Promise<Response>
+  ```
+
+  Behavior: modified: resolves `user:<id>` when a session is present, else
+  the anon identity.
 
 Before-state capture notes: `resolveRequestOwnerId` accepts
 `authenticatedOwnerId` and returns it verbatim, but no caller passes it
@@ -520,3 +599,4 @@ with the env shape, without sending.
 The design-pass review caught that this spec did not state the default signup role. The approved decision record Q3 (`docs/research/rbac-minimal-mode-decision-round-1.md`) assigns `guest` at verified signup. This amendment records the explicit statement in the Role seed decision, user story 7, and the two clause refinements on S01 `createAuthServer` and S02 `seedRoleGrants`. The gate inventory is unchanged. The ledger binds this text via a `correction` amend and then re-syncs expectations.
 Round-1 pre-verification pinned the mailer rows to DI truth, and the mailer
 keeps runtime behavior unchanged.
+Round-1 pins re-anchored to outline truth for S01-S04.
