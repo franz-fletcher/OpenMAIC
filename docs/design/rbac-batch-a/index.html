@@ -3,13 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Batch A UI preview index — OpenMAIC</title>
-<link rel="icon" href="assets/logo-horizontal.png">
+<title>Batch A/G UI preview index — OpenMAIC</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <div class="theme-toolbar">
-  <div class="brand">OpenMAIC — Batch A UI preview<small>docs/design/rbac-batch-a · static mockups · no app code</small></div>
+  <div class="brand">OpenMAIC — Batch A/G UI preview<small>docs/design/rbac-batch-a · static mockups · no app code</small></div>
   <div class="controls">
     <div class="seg" id="themeSeg"><button data-mode="light" class="active">Light</button><button data-mode="dark">Dark</button></div>
   </div>
@@ -17,13 +16,19 @@
 
 <div class="page" style="align-items:flex-start;padding-top:40px;min-height:70vh">
   <div style="max-width:960px;width:100%">
-    <h1 class="auth-title" style="text-align:left">Batch A · rbac-minimal-mode — UI preview set</h1>
-    <p class="auth-sub" style="text-align:left;max-width:640px;margin-bottom:28px">
-      Pixel-faithful static mockups of every client surface in the auth foundation slice
-      (S03 of <code>docs/specs/013-rbac-auth-foundation.md</code>). Ground truth for tokens,
-      component recipes, and chrome is <code>app/globals.css</code>, <code>components/ui/*</code>,
-      <code>components/stage/header-controls.tsx</code>, and the home hero in
-      <code>app/page.tsx</code>. Toggle Light/Dark on any page.
+    <h1 class="auth-title" style="text-align:left">Batch A + G · rbac-minimal-mode — UI preview set</h1>
+    <p class="auth-sub" style="text-align:left;max-width:680px;margin-bottom:8px">
+      Pixel-faithful static mockups of the auth surfaces (S03 of
+      <code>docs/specs/013-rbac-auth-foundation.md</code>) plus the Round 3
+      revisions from the user's annotated home screenshot
+      (<code>docs/research/rbac-minimal-mode-decision-round-1.md</code> §Round 3 —
+      binding: canonical header chrome becomes child batch G, spec
+      <code>014-branding-header</code>, implemented before batch A).
+    </p>
+    <p class="auth-sub" style="text-align:left;max-width:680px;margin-bottom:28px">
+      <strong>Status:</strong> base batch A designs approved; Round 3 revisions below are the working set.
+      V1 placement was rejected — <strong>V2 (capsule) is canonical</strong> (see <code>header-v2-rev.html</code>).
+      Toggle Light/Dark on any page.
     </p>
 
     <style>
@@ -41,60 +46,91 @@
       .nav-card .badges { display:flex; gap:6px; flex-wrap:wrap; margin-top:auto; }
       .nav-card .badge { font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--primary); background:color-mix(in oklch, var(--primary) 10%, transparent); border-radius:999px; padding:3px 8px; }
       .nav-card .badge-muted { color:var(--muted-foreground); background:var(--muted); }
+      .nav-card .badge-cyan { color:#0e7490; background:color-mix(in srgb, #06b6d4 12%, transparent); }
+      .dark .nav-card .badge-cyan { color:#67e8f9; }
+      .nav-section { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.12em; color:var(--muted-foreground); margin:28px 0 10px; }
       .panel { border:1px solid color-mix(in oklch, var(--border) 70%, transparent); border-radius:16px; background: rgb(255 255 255 / .5); padding:20px 22px; margin-bottom:20px; font-size:13px; line-height:1.7; }
       .dark .panel { background: rgb(15 23 42 / .5); }
       .panel h2 { font-size:14px; margin:0 0 8px; font-weight:700; }
       .panel code { background: var(--muted); border-radius:5px; padding:1px 5px; font-size:12px; }
     </style>
 
+    <div class="nav-section">Round 3 revisions (binding — working set)</div>
+    <div class="card-grid">
+      <a class="nav-card" href="header-v2-rev.html">
+        <h3>Header (batch G) — canonical <code>R-1…R-3</code></h3>
+        <p>Site lockup (SITE_NAME + tagline + config badge) top-left; capsule order EN | theme | Pro toggle | account zone | gear. Q1 resolved → V2.</p>
+        <div class="badges"><span class="badge-cyan badge">canonical</span><span class="badge">R-1..R-3</span></div>
+      </a>
+      <a class="nav-card" href="home-full.html">
+        <h3>Home — full mode <code>F-01</code></h3>
+        <p>Creator/admin: headline + composer, no logo/tagline/GreetingBar; footer shows SHOW_LOGO=true.</p>
+        <div class="badges"><span class="badge">F-01</span><span class="badge badge-muted">1 artboard</span></div>
+      </a>
+      <a class="nav-card" href="home-minimal.html">
+        <h3>Home — minimal mode <code>M-1…M-2</code></h3>
+        <p>Anon/guest/learner: composer hidden, library expands to a 2-3-4 mixed folder/course grid; guest empty state + featured row (batch D preview).</p>
+        <div class="badges"><span class="badge-cyan badge">new layout</span><span class="badge">M-1..M-2</span></div>
+      </a>
+      <a class="nav-card" href="footer.html">
+        <h3>Footer — SHOW_LOGO toggle <code>G-1</code></h3>
+        <p>Footer with and without the OpenMAIC logo (SHOW_LOGO=false/true) side by side.</p>
+        <div class="badges"><span class="badge">G-1</span><span class="badge badge-muted">1 artboard</span></div>
+      </a>
+    </div>
+
+    <div class="nav-section">Approved batch A surfaces (unchanged)</div>
     <div class="card-grid">
       <a class="nav-card" href="signup.html">
-        <h3>1 · Signup <code style="font-weight:500;color:var(--muted-foreground)">/signup</code></h3>
-        <p>Email + password + confirm; insecure-password checklist, mismatch, already-registered, and the "check your email" pending sub-state.</p>
+        <h3>Signup <code style="font-weight:500;color:var(--muted-foreground)">/signup</code></h3>
+        <p>Email + password + confirm; insecure-password checklist, mismatch, already-registered, "check your email" pending.</p>
         <div class="badges"><span class="badge">S-01…S-04</span><span class="badge badge-muted">4 states</span></div>
       </a>
       <a class="nav-card" href="login.html">
-        <h3>2 · Login <code style="font-weight:500;color:var(--muted-foreground)">/login</code></h3>
-        <p>Base, unverified-account resend banner, wrong-credentials error, success redirect. Forgot-password is honest "Soon".</p>
+        <h3>Login <code style="font-weight:500;color:var(--muted-foreground)">/login</code></h3>
+        <p>Base, unverified-account resend, wrong-credentials, success redirect. Forgot-password honest "Soon".</p>
         <div class="badges"><span class="badge">L-01…L-04</span><span class="badge badge-muted">4 states</span></div>
       </a>
       <a class="nav-card" href="verify.html">
-        <h3>3 · Verify <code style="font-weight:500;color:var(--muted-foreground)">/verify</code></h3>
-        <p>Post-click states from the email link: verified + auto sign-in, and invalid/expired token with resend form.</p>
+        <h3>Verify <code style="font-weight:500;color:var(--muted-foreground)">/verify</code></h3>
+        <p>Verified + auto sign-in, and invalid/expired token with resend form.</p>
         <div class="badges"><span class="badge">V-01…V-02</span><span class="badge badge-muted">2 states</span></div>
       </a>
       <a class="nav-card" href="header-v1.html">
-        <h3>4a · Header — V1: home GreetingBar seat</h3>
-        <p>Account zone in the vacant hero pill: guest actions, signed-in pill with role badge, learner and admin dropdowns.</p>
-        <div class="badges"><span class="badge">H1-01…H1-03</span><span class="badge badge-muted">3 states</span></div>
+        <h3>Header V1 — home pill seat (superseded)</h3>
+        <p>Kept for reference. Q1 resolved → V2; the GreetingBar seat is retired. Do not implement V1.</p>
+        <div class="badges"><span class="badge badge-muted">rejected</span><span class="badge badge-muted">H1-01..H1-03</span></div>
       </a>
       <a class="nav-card" href="header-v2.html">
-        <h3>4b · Header — V2: stage capsule</h3>
-        <p>Account control inserted into the global capsule before the gear (keeps gear last). Guest before / signed-in after composites.</p>
-        <div class="badges"><span class="badge">H2-01…H2-03</span><span class="badge badge-muted">3 states</span></div>
+        <h3>Header V2 — capsule (precursor)</h3>
+        <p>Original V2 capsule demo without the batch G lockup/Pro-toggle changes; the account zone lives on unchanged in header-v2-rev.html.</p>
+        <div class="badges"><span class="badge">H2-01…H2-03</span><span class="badge badge-muted">pre-batch-G</span></div>
       </a>
     </div>
 
     <div class="panel">
-      <h2>Notes for the review</h2>
+      <h2>Round 3 decisions recorded</h2>
       <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px">
-        <li><strong>Pick placement:</strong> V1 (home GreetingBar seat) vs V2 (stage capsule) — the account zone variant the human approves will drive S03 implementation.</li>
-        <li><strong>i18n:</strong> all copy is proposed <code>auth.*</code> keys — full key list in <a href="README.md" style="color:var(--primary);font-weight:500">README.md</a>. All 12 locales need parity at implementation.</li>
+        <li><strong>Q1 → V2.</strong> Account zone in the header capsule; hero GreetingBar retired (Q2).</li>
+        <li><strong>Hero:</strong> logo + tagline removed; site name/tagline move to the header lockup (SITE_NAME / SITE_TAGLINE, env/yaml, admin override in batch E).</li>
+        <li><strong>Capsule order (binding):</strong> language → theme → Pro toggle → account zone → settings gear.</li>
+        <li><strong>Minimal mode (batch C layout, defined here):</strong> anon/guest/learner hide the composer; library expands to the 2-3-4 grid.</li>
+        <li><strong>SHOW_LOGO</strong> toggles all logo-bearing surfaces, footer included (footer.html).</li>
+        <li><strong>i18n:</strong> all copy is proposed <code>auth.*</code> / <code>classroom.*</code> / <code>home.headline</code> keys — full list in <a href="README.md" style="color:var(--primary);font-weight:500">README.md</a>. All 12 locales need parity at implementation.</li>
         <li><strong>Dark mode:</strong> toggle per page; screenshots captured for both modes in <code>shots/</code>.</li>
-        <li><strong>Deviation log:</strong> every decision that steps off existing component idioms is listed at the bottom of README.md.</li>
       </ul>
     </div>
 
     <div class="panel">
       <h2>Shot index (<code>shots/</code>)</h2>
-      <p id="shotList" style="margin:0">Screenshots (Safari, 1440 CSS px, full-page, light + dark) in <code>docs/design/rbac-batch-a/shots/</code>:</p>
-      <ul style="margin:8px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:3px">
+      <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:3px">
         <li><code>index-{light,dark}.png</code> — nav page</li>
-        <li><code>signup-{light,dark}.png</code> — S-01…S-04 (base, validation, duplicate, pending)</li>
-        <li><code>login-{light,dark}.png</code> — L-01…L-04 (base, unverified, invalid, success)</li>
-        <li><code>verify-{light,dark}.png</code> — V-01…V-02 (success, invalid/expired)</li>
-        <li><code>header-v1-{light,dark}.png</code> — H1-01…H1-03 (home GreetingBar seat)</li>
-        <li><code>header-v2-{light,dark}.png</code> — H2-01…H2-03 (stage capsule)</li>
+        <li><code>header-v2-rev-{light,dark}.png</code> — R-1..R-3 canonical header (batch G)</li>
+        <li><code>home-full-{light,dark}.png</code> — F-01 full-mode hero</li>
+        <li><code>home-minimal-{light,dark}.png</code> — M-1 populated grid + M-2 guest empty/featured</li>
+        <li><code>footer-{light,dark}.png</code> — G-1 SHOW_LOGO false|true</li>
+        <li><code>signup-{light,dark}.png</code> · <code>login-{light,dark}.png</code> · <code>verify-{light,dark}.png</code> — approved batch A surfaces</li>
+        <li><code>header-v1-{light,dark}.png</code> · <code>header-v2-{light,dark}.png</code> — superseded/precursor, kept for reference</li>
       </ul>
     </div>
   </div>

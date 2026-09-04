@@ -202,3 +202,27 @@ Your answer:
 I resolve follow-up branches if any answer opens one. When the frontier is
 empty, I write the meta-spec plus the batch-A spec for your explicit approval.
 No code lands before that.
+
+## Round 3 (2026-09-04, user-annotated home screenshot)
+
+The user annotated the live home page. These decisions are binding:
+
+- Q1 resolved: **V2 placement**. The account zone sits in the top header
+  capsule, stage/classroom style. The hero GreetingBar retires from the hero.
+- The hero OpenMAIC logo and tagline are removed from the home page.
+- The header top-left shows a configurable site name and tagline. Sources:
+  env (`SITE_NAME`, `SITE_TAGLINE`), yaml, and later the admin settings modal
+  (batch E override, same defaults-then-DB doctrine).
+- All OpenMAIC logos across the site honor a visibility toggle from env/yaml
+  (`SHOW_LOGO`).
+- The top-right capsule order: language, theme, Pro toggle, account zone,
+  settings gear.
+- Minimal-mode layout rule for anonymous, guest, and learner: the entire
+  composer and generation-toolbar container is hidden. The course and folder
+  library expands into a multi-column grid that fills the freed space. This
+  behavior ships in batch C; the layout is defined by the branding/header work.
+- Everything else in the batch A design preview is approved as shown.
+
+Program structure change: branding and header chrome become child batch G
+(spec `014-branding-header`), implemented BEFORE batch A, so the V2 capsule
+chrome exists when the account zone lands. Batch A S03 rides on it.

@@ -54,7 +54,7 @@ that with a six-batch RBAC and minimal-mode build.
 ## Solution
 
 The program ships a complete role-based access layer and a server-enforced
-minimal mode, in six sequenced child batches. Each batch is a full RIVR cycle
+minimal mode, in seven sequenced child batches. Each batch is a full RIVR cycle
 with its own spec, ledger, approval, and verification.
 
 The library is better-auth 1.7.x, pinned to the minor version and fully
@@ -133,17 +133,20 @@ already exist.
 
 | # | Batch | Ships | Depends on |
 | --- | --- | --- | --- |
-| A | auth-foundation | better-auth wiring, PG tables, signup and verification, login and logout, session helper, owner auto-claim, env and yaml role seeds | none |
+| A | auth-foundation | better-auth wiring, PG tables, signup and verification, login and logout, session helper, owner auto-claim, env and yaml role seeds | G |
 | B | permission-core | role model, permission catalog, `can()` helper, server route guards, client affordance hooks | A |
-| C | minimal-mode-gating | `MINIMAL_MODE` flag, gate every LLM route per matrix, guest 5 per day quota | A, B |
+| C | minimal-mode-gating | `MINIMAL_MODE` flag, gate every LLM route per matrix, guest 5 per day quota. The minimal-mode layout rule (composer container hidden for anonymous, guest, and learner; the library expands into a multi-column grid) is specced here and previewed in G's approved mockups | A, B |
 | D | publishing-visibility | status and audience columns, publish UI, audience-enforced read gate, public gallery page | A, B |
 | E | admin-suite | admin settings section: user list, role assign, ban, invite by email | A, B |
 | F | role-permission-editor | custom role CRUD UI, catalog toggles, yaml-default display | B (E for UI pattern) |
+| G | branding-header | branding config loader (env + `server-branding.yml`), public branding route and client hook, header chrome rebuild: top-left site name and tagline, V2 capsule standardization, Pro toggle seat, hero logo and tagline removal, site-wide logo visibility toggle | none |
 
 The scope lines above are the approved Q9 decomposition, verbatim in intent
 from `docs/research/rbac-minimal-mode-decision-round-1.md` (table at
 `:160-168`). Batch A scope is fully specified in
-`docs/specs/013-rbac-auth-foundation.md`.
+`docs/specs/013-rbac-auth-foundation.md`. Batch G scope comes from the Round
+3 section (`docs/research/rbac-minimal-mode-decision-round-1.md:206-228`) and
+is fully specified in `docs/specs/014-branding-header.md`.
 
 ## Decision Register
 
@@ -171,6 +174,20 @@ The mirror flag name is a settled deferral. Q4 and the decision doc name the
 client mirror flag `NEXT_PUBLIC_MINIMAL_MODE`. The batch-A brief names it
 `NEXT_PUBLIC_MIRROR`. Batch C owns the final name, and this register records
 both candidates for it. Neither exists before batch C.
+
+### Round 3 register (2026-09-04)
+
+| # | Decision | Approved answer |
+| --- | --- | --- |
+| R3-Q1 | Capsule V2 placement | The account zone sits in the top header capsule, stage/classroom style. The hero GreetingBar retires from the hero. Batch A S03 rides the V2 chrome. |
+| R3-Q2 | GreetingBar seat | The hero GreetingBar seat is retired. The greeting no longer renders on the home hero. |
+| R3-Q3 | Branding config | The header top-left shows a configurable site name and tagline. Sources: env (`SITE_NAME`, `SITE_TAGLINE`), yaml, then the admin settings modal in batch E. The doctrine stays defaults then database. All OpenMAIC logos honor a visibility toggle (`SHOW_LOGO`) from env and yaml. |
+| R3-Q4 | Capsule order | The top-right capsule order is language, theme, Pro toggle, account zone, settings gear. G ships the capsule with an empty account slot. |
+| R3-Q5 | Minimal-mode layout rule | For anonymous, guest, and learner, the composer and generation-toolbar container is hidden and the library expands into a multi-column grid. The behavior ships in batch C. The branding and header work defines the layout, and G's approved mockups preview it. |
+
+Program structure change: batch G certifies before batch A. The V2 capsule
+chrome must exist before the account zone lands
+(`docs/research/rbac-minimal-mode-decision-round-1.md:226-228`).
 
 ## Capability Matrix
 
@@ -237,15 +254,16 @@ more.
 
 | Batch | Depends on | May assume from predecessors |
 | --- | --- | --- |
-| A | none | Defines the owner id scheme, the roles table and ranks, and the session surface. Nothing else. |
+| G | none | Defines the branding config surface and the V2 capsule chrome. Nothing else. |
+| A | G | The V2 capsule chrome and its empty account slot from G, plus its own owner id scheme, roles table and ranks, and session surface. |
 | B | A | `user`, `session`, `roles`, `user_roles` tables, `requireSession`, the owner id scheme. Adds the permission catalog, `role_permissions`, and `can()`. |
 | C | A, B | Route guards from B, sessions from A. Adds `MINIMAL_MODE`, the client mirror, gates over every LLM route, and `quota_daily` with the guest 5 per day quota reset at UTC midnight. |
 | D | A, B | Owner id from A, `can()` from B. Adds `status` and `audience` to `stage_meta`, the publish UI, the enforced read gate, and the public gallery. Does not assume minimal mode. |
 | E | A, B | Sessions, roles, `can()`, and the mailer interface from A. Adds the `invites` table, the admin settings section, user list, role assign, ban, and invite by email. |
 | F | B | `role_permissions` and `can()`. Adds custom role CRUD, catalog toggles, and yaml-default display. Uses E's admin UI patterns once E certifies. |
 
-The strict sequence is A, then B, then C through F in order. D and E may
-prepare UI work in parallel after B certifies, but each still certifies in
+The strict sequence is G, then A, then B, then C through F in order. D and E
+may prepare UI work in parallel after B certifies, but each still certifies in
 sequence.
 
 ## Out of Scope
@@ -272,7 +290,7 @@ The program does not build these, even though adjacent products might.
   author. The review never replaces the human gate.
 - Every batch builds its own ledger and runs its own full cycle.
 - Every batch that touches UI holds a visual-preview checkpoint before code
-  lands. The approved decision extends this to all six batches. Mockups
+  lands. The approved decision extends this to all seven batches. Mockups
   render in localhost and are verified in Safari first.
 - Every client change is verified in Safari before certification.
 - The implementer never verifies their own work. Verification is a separate
@@ -282,7 +300,7 @@ The program does not build these, even though adjacent products might.
 
 The program is done when all of these hold.
 
-- All six child batches certify, each with its ledger closed and its
+- All seven child batches certify, each with its ledger closed and its
   postconditions met.
 - The capability matrix is enforced server-side. Route guards match every
   matrix cell, and UI hiding is only a second layer.

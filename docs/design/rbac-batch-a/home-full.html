@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home (full mode) — OpenMAIC preview</title>
+<link rel="icon" href="assets/logo-horizontal.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="theme-toolbar">
+  <div class="brand">OpenMAIC — Home, full mode<small>docs/design/rbac-batch-a · Round 3 revisions · creator/admin</small></div>
+  <div class="controls">
+    <div class="seg" id="themeSeg"><button data-mode="light" class="active">Light</button><button data-mode="dark">Dark</button></div>
+    <a class="btn btn-ghost btn-sm" href="index.html">Index</a>
+  </div>
+</div>
+
+<!-- ═══ F-01 FULL MODE HERO ═══ -->
+<section class="artboard" id="full-hero">
+  <div class="artboard-cap">
+    <span class="dot"></span><h2>Home (full) · creator/admin — headline + composer, no logo/tagline/GreetingBar</h2><span class="tag">F-01</span>
+    <code>SITE_NAME moved to header · hero badge retired</code>
+  </div>
+  <div class="artboard-stage">
+    <div class="page">
+      <div class="blob blob-blue"></div><div class="blob blob-purple"></div>
+
+      <!-- Header — batch G chrome -->
+      <div class="stage-header" style="position:relative;z-index:2;width:100%;max-width:1440px;margin:0 auto">
+        <div style="display:flex;align-items:center;gap:12px;min-width:0;flex:1">
+          <div class="site-lockup">
+            <h1 class="site-name">MAIC</h1>
+            <div class="site-tag">
+              <p class="site-tagline">Learn anything, together</p>
+              <span class="config-badge" title="From SITE_NAME / SITE_TAGLINE (env) or server-branding.yml">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7"/><path d="M4 10V3"/><path d="M12 21v-9"/><path d="M12 8V3"/><path d="M20 21v-5"/><path d="M20 12V3"/><path d="M1 14h6"/><path d="M9 8h6"/><path d="M17 16h6"/></svg>
+                env · yaml
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="capsule">
+          <button class="lang-pill">EN</button>
+          <button class="icon-btn" aria-label="Theme">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+          </button>
+          <span class="pro-pill" style="cursor:pointer" title="Pro mode — workbench">
+            <span class="pro-label">Pro</span>
+            <span class="pro-switch" data-checked="false" role="switch" aria-checked="false"></span>
+          </span>
+          <button class="capsule-account" aria-haspopup="menu" aria-expanded="false" title="Maya Torres · Admin">
+            <span class="avatar">MT</span>
+            <span class="name">Maya</span>
+            <span class="role-badge role-badge-admin" style="font-size:9px">Admin</span>
+            <svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <button class="icon-btn" aria-label="Settings">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Hero: headline + composer (no logo, no tagline, no GreetingBar) -->
+      <div class="auth-hero">
+        <h1 class="hero-headline" style="margin-top:9vh">Turn any material into a living classroom</h1>
+        <div class="composer">
+          <div style="display:flex;align-items:flex-start;justify-content:flex-end;position:relative;padding:12px 12px 0 0">
+            <div style="display:flex;gap:6px;align-items:center">
+              <span class="pill-action pill-action-outline" style="font-size:11px;padding:4px 10px;cursor:default">Teacher</span>
+              <span class="pill-action pill-action-outline" style="font-size:11px;padding:4px 10px;cursor:default">Assist</span>
+              <span class="pill-action pill-action-outline" style="font-size:11px;padding:4px 10px;cursor:default">Student</span>
+            </div>
+          </div>
+          <textarea class="input" rows="4" style="border:0;box-shadow:none;height:auto;resize:none;background:transparent;font-size:13px;padding:8px 16px 0;color:color-mix(in oklch,var(--muted-foreground) 45%, transparent)" placeholder="Upload a PDF or describe the classroom you want to generate…"></textarea>
+          <div style="padding:10px 14px 12px;display:flex;align-items:center;gap:8px">
+            <span class="soon-pill" style="font-size:9px;text-transform:none;letter-spacing:0">Attach</span>
+            <span class="soon-pill" style="font-size:9px;text-transform:none;letter-spacing:0">Web search</span>
+            <span class="soon-pill" style="font-size:9px;text-transform:none;letter-spacing:0">Interactive</span>
+            <span style="margin-left:auto" class="pill-action pill-action-primary" style="font-size:11px">Enter classroom ↵</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="foot" style="width:100%;max-width:960px">
+        <div class="foot-row">
+          <img class="foot-logo" src="assets/logo-horizontal.png" alt="OpenMAIC">
+        </div>
+        <span>OpenMAIC Open Source Project</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="page-footer">
+  Full mode = creator/admin: caption above mirrors the approved batch A mockups + Round 3 (logo/tagline retired to the header lockup; GreetingBar seat superseded by the V2 account zone). Library row below composer unchanged — see <a href="home-minimal.html">home-minimal.html</a> for the grid.
+</div>
+
+<script>
+  const seg = document.getElementById('themeSeg');
+  const setMode = (m) => {
+    document.documentElement.classList.toggle('dark', m === 'dark');
+    seg.querySelectorAll('button').forEach((b) => b.classList.toggle('active', b.dataset.mode === m));
+  };
+  seg.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) setMode(b.dataset.mode); });
+</script>
+</body>
+</html>

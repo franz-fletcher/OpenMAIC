@@ -489,3 +489,245 @@ input { font-family: inherit; }
   .spinner { animation-duration: 1.6s; }
   * { transition-duration: .01ms !important; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   ROUND 3 revisions (approved 2026-09-04) — batch G header chrome,
+   full/minimal home, footer branding toggle. New only where noted.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Site lockup (header top-left; replaces hero logo/tagline) [NEW] ── */
+.site-lockup { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.site-lockup .site-name {
+  margin: 0; font-size: 17px; font-weight: 700; letter-spacing: -.02em;
+  color: var(--foreground); line-height: 1.15;
+}
+.site-lockup .site-tag { display: flex; align-items: center; gap: 8px; }
+.site-lockup .site-tagline {
+  margin: 0; font-size: 12px; color: var(--muted-foreground); line-height: 1.4;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* Config badge — operator indicator that name/tagline come from env/yaml */
+.config-badge {
+  display: inline-flex; align-items: center; gap: 4px; flex: none;
+  font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
+  color: var(--muted-foreground); background: var(--muted);
+  border: 1px solid var(--border); border-radius: 999px; padding: 1px 6px;
+}
+.config-badge svg { width: 9px; height: 9px; }
+
+/* ── Pro toggle inside the capsule (compact recipe from
+      header-controls.tsx compact variant) [relocated] ── */
+.pro-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 32px; padding: 0 10px; border-radius: 9999px;
+  border: 1px solid var(--border);
+  background: rgb(255 255 255 / .6); box-shadow: 0 1px 2px rgb(0 0 0 / .04);
+  transition: border-color 150ms;
+}
+.dark .pro-pill { background: rgb(31 41 55 / .6); }
+.pro-pill:hover { border-color: color-mix(in oklch, var(--primary) 60%, transparent); }
+.pro-pill .pro-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .14em; color: var(--muted-foreground); user-select: none;
+}
+.pro-pill .pro-switch {
+  position: relative; width: 30px; height: 18px; border-radius: 999px;
+  background: color-mix(in oklch, var(--muted-foreground) 25%, transparent);
+  transition: background 150ms;
+}
+.pro-pill .pro-switch::after {
+  content: ''; position: absolute; top: 2px; left: 2px;
+  width: 14px; height: 14px; border-radius: 999px; background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / .2); transition: transform 150ms;
+}
+.pro-pill .pro-switch[data-checked='true'] {
+  background: #8b5cf6;
+}
+.dark .pro-pill .pro-switch[data-checked='true'] { background: #8b5cf6; }
+.pro-pill .pro-switch[data-checked='true']::after { transform: translateX(12px); }
+
+/* ── Sort control on the library header line [NEW for minimal mode] ── */
+.sort-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  border: 0; background: transparent; border-radius: 999px;
+  padding: 3px 8px; font-size: 12px; color: var(--muted-foreground);
+  transition: all 120ms;
+}
+.sort-pill:hover { background: color-mix(in oklch, var(--muted) 50%, transparent); color: var(--foreground); }
+.sort-pill svg { width: 12px; height: 12px; }
+
+/* ── Hero headline for full mode (replaces logo+tagline) [NEW copy] ── */
+.hero-headline {
+  margin: 0 auto 10px; max-width: 640px; text-align: center;
+  font-size: 30px; font-weight: 700; letter-spacing: -.03em; line-height: 1.15;
+}
+
+/* ── Library grid — verbatim recipe from app/page.tsx:1263
+      (grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-8) ── */
+.lib-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 32px 20px;
+}
+@media (min-width: 768px) { .lib-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1024px) { .lib-grid { grid-template-columns: repeat(4, 1fr); } }
+
+/* Card tiles — mirror ClassroomCard (app/page.tsx:1722-1739) + FolderCard
+   (components/discovery/folder-card.tsx:155-196) */
+.tile {
+  position: relative; width: 100%; aspect-ratio: 16/9;
+  border-radius: 16px; overflow: hidden;
+  transition: transform 200ms;
+}
+.tile:hover { transform: scale(1.02); }
+.tile-course { background: rgb(241 245 249); }
+.dark .tile-course { background: rgb(30 41 59 / .8); }
+.tile-folder {
+  background: linear-gradient(135deg, #f5f3ff, #eff6ff);
+  box-shadow: 0 0 0 1px rgb(221 214 254 / .5);
+}
+.dark .tile-folder {
+  background: linear-gradient(135deg, rgb(76 29 149 / .2), rgb(30 58 138 / .2));
+  box-shadow: 0 0 0 1px rgb(91 33 182 / .4);
+}
+.tile-thumb-placeholder {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+}
+.tile-thumb-placeholder .doc {
+  width: 48px; height: 48px; border-radius: 16px;
+  background: linear-gradient(135deg, #ede9fe, #dbeafe);
+  display: flex; align-items: center; justify-content: center;
+}
+.dark .tile-thumb-placeholder .doc {
+  background: linear-gradient(135deg, rgb(76 29 149 / .3), rgb(30 58 138 / .3));
+}
+.tile-folder-icon {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 8px;
+}
+.tile-folder-icon .box {
+  width: 56px; height: 56px; border-radius: 16px;
+  background: rgb(237 233 254); display: flex; align-items: center; justify-content: center;
+  color: #8b5cf6;
+}
+.dark .tile-folder-icon .box { background: rgb(76 29 149 / .4); color: #c4b5fd; }
+
+/* Tile hover actions (course rename/delete) — mirror page.tsx pills */
+.tile-actions { position: absolute; top: 8px; right: 8px; display: none; gap: 6px; z-index: 10; }
+.tile:hover .tile-actions { display: flex; }
+.tile-action {
+  width: 28px; height: 28px; border-radius: 999px; border: 0;
+  background: rgb(0 0 0 / .3); color: #fff; backdrop-filter: blur(4px);
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.tile-action:hover { background: rgb(0 0 0 / .5); }
+.tile-action-del:hover { background: color-mix(in oklch, var(--destructive) 80%, transparent); }
+.tile-action svg { width: 14px; height: 14px; }
+
+/* Tile badges */
+.tile-badge-count {
+  position: absolute; bottom: 8px; right: 8px; z-index: 10;
+  display: inline-flex; align-items: center; border-radius: 999px;
+  background: rgb(0 0 0 / .4); padding: 2px 8px;
+  font-size: 11px; font-weight: 500; color: #fff; backdrop-filter: blur(4px);
+}
+.tile-badge-mode {
+  position: absolute; bottom: 8px; left: 8px; z-index: 10;
+  width: 20px; height: 20px; border-radius: 999px;
+  background: rgb(255 255 255 / .7); backdrop-filter: blur(4px);
+  box-shadow: 0 1px 2px rgb(0 0 0 / .08);
+  display: inline-flex; align-items: center; justify-content: center;
+  color: #0891b2;
+}
+.dark .tile-badge-mode { background: rgb(15 23 42 / .6); color: #67e8f9; }
+.tile-badge-mode svg { width: 12px; height: 12px; }
+
+/* Card title rows */
+.card-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; padding: 0 4px; }
+.folder-chip {
+  display: inline-flex; align-items: center; flex: none;
+  border-radius: 999px; background: rgb(237 233 254);
+  padding: 2px 8px; font-size: 11px; font-weight: 500; color: #7c3aed;
+}
+.dark .folder-chip { background: rgb(76 29 149 / .3); color: #c4b5fd; }
+.card-title {
+  margin: 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-size: 15px; font-weight: 500; color: color-mix(in oklch, var(--foreground) 90%, transparent);
+}
+.card-sub { margin: 1px 0 0; padding: 0 4px; font-size: 12px; color: var(--muted-foreground); }
+
+/* ── Library header line (recent classrooms bar)
+      mirror app/page.tsx:1044-1196, made wider for minimal mode ── */
+.lib-bar {
+  display: flex; align-items: center; gap: 4px 14px; flex-wrap: wrap;
+  padding: 12px 0; border-top: 1px solid color-mix(in oklch, var(--border) 40%, transparent);
+  border-bottom: 1px solid color-mix(in oklch, var(--border) 40%, transparent);
+}
+.lib-bar .lib-title {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 13px; color: color-mix(in oklch, var(--muted-foreground) 60%, transparent);
+}
+.lib-bar .lib-title svg { width: 14px; height: 14px; }
+.lib-bar .lib-count {
+  font-size: 11px; color: color-mix(in oklch, var(--muted-foreground) 60%, transparent);
+}
+.lib-bar .lib-spacer { flex: 1; }
+.lib-icon-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; border-radius: 999px; border: 0; background: transparent;
+  color: color-mix(in oklch, var(--muted-foreground) 50%, transparent);
+  transition: all 120ms;
+}
+.lib-icon-btn:hover { background: color-mix(in oklch, var(--muted) 50%, transparent); color: color-mix(in oklch, var(--foreground) 70%, transparent); }
+.lib-icon-btn svg { width: 14px; height: 14px; }
+.lib-folder-btn {
+  width: 28px; height: 28px; border-radius: 999px; border: 0;
+  background: color-mix(in oklch, var(--muted) 40%, transparent);
+  color: var(--muted-foreground);
+  box-shadow: 0 0 0 1px color-mix(in oklch, var(--border) 50%, transparent);
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: all 120ms;
+}
+.lib-folder-btn:hover { background: var(--muted); color: var(--foreground); box-shadow: 0 0 0 1px var(--border); }
+.lib-folder-btn svg { width: 14px; height: 14px; }
+
+/* ── Empty library state (guest) [NEW] ── */
+.empty-state {
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+  padding: 56px 24px 40px; text-align: center;
+}
+.empty-state .empty-icon {
+  width: 64px; height: 64px; border-radius: 20px;
+  background: color-mix(in oklch, var(--primary) 10%, transparent);
+  color: var(--primary);
+  display: flex; align-items: center; justify-content: center;
+}
+.empty-state .empty-icon svg { width: 30px; height: 30px; }
+.empty-state h3 { margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -.01em; }
+.empty-state p { margin: 0; max-width: 420px; font-size: 13px; line-height: 1.6; color: var(--muted-foreground); }
+
+/* Featured row (batch D gallery placeholder) */
+.featured {
+  margin-top: 40px; padding-top: 24px;
+  border-top: 1px solid color-mix(in oklch, var(--border) 40%, transparent);
+}
+.featured-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 16px; }
+.featured-head h4 { margin: 0; font-size: 14px; font-weight: 700; }
+.featured-head span { font-size: 11px; color: var(--muted-foreground); }
+.featured-note {
+  margin-left: auto; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em;
+  color: var(--muted-foreground); background: var(--muted); border-radius: 999px; padding: 3px 8px;
+}
+
+/* ── Footer (with/without logo) — mirror app/page.tsx:1348-1350 ── */
+.foot {
+  margin-top: auto; padding: 48px 0 16px; text-align: center;
+  font-size: 12px; color: color-mix(in oklch, var(--muted-foreground) 40%, transparent);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.foot .foot-logo { height: 26px; opacity: .8; }
+.foot .foot-row { display: flex; align-items: center; gap: 8px; }
+
+/* 2-up artboard split for side-by-side comparisons */
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+.split > *:first-child { border-right: 1px dashed color-mix(in oklch, var(--border) 60%, transparent); }

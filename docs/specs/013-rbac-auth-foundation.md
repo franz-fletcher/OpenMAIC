@@ -175,7 +175,7 @@ Ledger bindings:
 | `app/signup/page.tsx::default` | component | exists | renders the signup form |
 | `app/login/page.tsx::default` | component | exists | renders the login form |
 | `app/verify/page.tsx::default` | component | exists | renders the verification status and resend action |
-| `components/header.tsx::Header` | component | exists | modified: renders the account menu with signed-in state and sign out |
+| `components/header.tsx::Header` | component | exists | modified: renders the account menu with signed-in state and sign out, filling the batch G capsule account slot |
 | `lib/auth/client.ts::createAuthClient` | function | `(opts: AuthClientOptions): AuthClient` | returns the wrapped client for signup, sign in, sign out, resend |
 
 Deliverables (gate-bound, not symbol-bound): the `auth` namespace in
@@ -188,9 +188,11 @@ exist under `app/`. The locale set is the 12 files in `lib/i18n/locales` and
 `en-US.json` is the source of truth. No `auth` key exists in any locale.
 
 Postcondition: a visitor can sign up, receive a verification link, verify
-the address, and sign in. The header shows an account menu with the
-signed-in state and a sign out action. Every visible string resolves through
-an `auth.*` key. Locale parity holds.
+the address, and sign in. The account zone renders in the top header
+capsule (V2) delivered by batch G chrome. The hero GreetingBar retires from
+the hero. The Pro toggle seat is unchanged. The header shows an account menu
+with the signed-in state and a sign out action. Every visible string resolves
+through an `auth.*` key. Locale parity holds.
 
 Gates:
 

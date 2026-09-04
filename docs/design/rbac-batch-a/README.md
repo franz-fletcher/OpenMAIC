@@ -1,32 +1,80 @@
-# Batch A UI Preview — `feature:rbac-minimal-mode`
+# Batch A/G UI Preview — `feature:rbac-minimal-mode`
 
-Pixel-faithful static mockups of every client surface in the auth foundation slice
-(S03 of `docs/specs/013-rbac-auth-foundation.md`). **No app code changed; no routes
-added to the real app.** Approval gate: the human reviews these in Safari, then
-implementation starts.
+Pixel-faithful static mockups of the auth client surfaces (S03 of
+`docs/specs/013-rbac-auth-foundation.md`) **plus the Round 3 revisions** from
+the user's annotated home screenshot (`docs/research/rbac-minimal-mode-decision-round-1.md`
+§Round 3, binding). **No app code changed; no routes added to the real app.**
+Approval gate: the human reviews these in Safari, then implementation starts.
 
 Served from: `python3 -m http.server 3100 --directory docs/design/rbac-batch-a`
-→ **http://localhost:3100/** (nav page). Each mockup page is self-contained
+→ **http://localhost:3100/** (nav page). Every mockup is self-contained
 (Google Fonts Inter with the app's fallback chain; implementation must use the
 app's existing `@fontsource-variable/inter`). All tokens in `styles.css` are
 copied verbatim from `app/globals.css`.
 
+## Surfaces
+
+### Round 3 revisions (binding — working set)
+
 | Surface | Page | States |
 |---|---|---|
-| Signup `/signup` | `signup.html` | S-01 base · S-02 validation errors · S-03 email already registered · S-04 check-your-email pending |
-| Login `/login` | `login.html` | L-01 base (forgot-password "Soon") · L-02 unverified + resend · L-03 wrong credentials · L-04 success redirect |
-| Verify `/verify` | `verify.html` | V-01 verified (auto sign-in) · V-02 invalid/expired + resend |
-| Header V1 — home GreetingBar seat | `header-v1.html` | H1-01 guest before · H1-02 learner signed-in (dropdown) · H1-03 admin signed-in (dropdown) |
-| Header V2 — stage capsule | `header-v2.html` | H2-01 guest before · H2-02 learner signed-in (dropdown) · H2-03 admin signed-in (dropdown) |
+| Header (batch G, canonical) | `header-v2-rev.html` | R-1 signed out · R-2 learner dropdown · R-3 admin dropdown |
+| Home — full mode (creator/admin) | `home-full.html` | F-01 headline + composer, no logo/tagline/GreetingBar |
+| Home — minimal mode (anon/guest/learner) | `home-minimal.html` | M-1 populated 2-3-4 grid · M-2 guest empty + featured row (batch D preview) |
+| Footer + logo toggle | `footer.html` | G-1 SHOW_LOGO false \| true |
 
-Screenshots (Safari, 1440 CSS px, light + dark): `shots/`.
+### Approved batch A surfaces (unchanged)
+
+| Surface | Page | States |
+|---|---|---|
+| Signup `/signup` | `signup.html` | S-01 base · S-02 validation errors · S-03 already registered · S-04 check-your-email |
+| Login `/login` | `login.html` | L-01 base · L-02 unverified + resend · L-03 wrong credentials · L-04 success |
+| Verify `/verify` | `verify.html` | V-01 verified (auto sign-in) · V-02 invalid/expired |
+| Header V1 — home pill (superseded) | `header-v1.html` | kept for reference only; **rejected** |
+| Header V2 — capsule precursor | `header-v2.html` | account-zone component precursor; lives on in `header-v2-rev.html` |
+
+Screenshots (Safari, 1440 CSS px, light + dark): `shots/` (files `*-rev.png`,
+`home-full-*.png`, `home-minimal-*.png`, `footer-*.png` are the Round 3 set).
 
 ---
 
-## Proposed `auth.*` i18n keys (en-US source of truth)
+## Round 3 decisions (recorded here as resolved)
 
-New namespace `auth`. All 12 locale files need parity at implementation
-(`pnpm check:i18n-keys` is the S03 gate — see README-standard table in spec §S03).
+- **Q1 resolved → V2.** The account zone sits in the top header capsule
+  (stage/classroom style). The hero GreetingBar **retires** (Q2 resolved: the
+  local-only profile seat is gone; server profile surfaces arrive later).
+- **Hero:** the OpenMAIC logo + `home.slogan` tagline are removed from the home
+  page. The header top-left becomes a configurable site lockup.
+- **Capsule order (binding):** language → theme → **Pro toggle** → **account
+  zone** → settings gear (gear stays last).
+- **Minimal-mode layout rule** (anon/guest/learner; behavior ships batch C,
+  layout defined by batch G): the entire composer + generation-toolbar
+  container is hidden; the course/folder library expands into the responsive
+  2-3-4 grid filling the freed space.
+- **SHOW_LOGO** env/yaml toggle governs every logo-bearing surface, including
+  the footer (`footer.html`).
+
+Branding config keys **approved in Round 3** (land in batch G, spec
+`014-branding-header` — env + `server-branding.yml`, same defaults-then-DB
+doctrine, admin override in batch E):
+
+| Key | Meaning | Example in mockups |
+|---|---|---|
+| `SITE_NAME` | Site display name (header lockup, text surfaces) | `MAIC` |
+| `SITE_TAGLINE` | One-line descriptor under the name | `Learn anything, together` |
+| `SHOW_LOGO` | Hide/show the OpenMAIC logo mark site-wide | footer G-1 |
+
+The mockups render a small `config-badge` ("env · yaml") beside the tagline to
+tell operators the text is config-driven, not code. **Note:** the badge copy is
+operator-facing, not user-facing — implement it outside the i18n gate (code
+tooltip is fine).
+
+---
+
+## Proposed i18n keys
+
+`auth.*` namespace (S03) + new Round 3 keys. All 12 locale files need parity at
+implementation (`pnpm check:i18n-keys` is the S03 gate).
 
 ### nav / account menu
 ```
@@ -37,7 +85,7 @@ auth.account.title             "Account"
 auth.account.settings          "Settings"                        // admin only, stub until batch E
 auth.account.admin             "Admin"                           // admin only, stub until batch E
 auth.account.signOut           "Sign out"
-auth.account.language          "Language"                        // V1 only (dropdown), V2 skips (switcher adjacent)
+auth.account.language          "Language"                        // V1-only dropdown (superseded); V2 drops it (switcher adjacent)
 auth.common.soon               "Soon"                            // stub badge + tooltip
 auth.common.soonTooltip        "Arrives in a later release"
 ```
@@ -111,119 +159,113 @@ auth.verify.failure.submit       "Send new link"
 auth.verify.failure.loginResend  "resend from the sign-in page"
 ```
 
-### mailer (proposed; server-side copy, needs the same parity decision — open question Q9)
+### home + library (Round 3 additions)
+```
+home.headline                    "Turn any material into a living classroom"   // full-mode hero (new; home.slogan is retired to SITE_TAGLINE)
+classroom.sortRecent             "Recent"        // new sort affordance on the library header line
+classroom.sortName               "Name"
+classroom.sortOldest             "Oldest"
+classroom.emptyTitle             "Your library is empty"                       // minimal-mode empty state
+classroom.emptyGuestBody         "Sign in to create classrooms, keep folders, and carry your progress across devices. Until then, explore what the community is building."
+classroom.browseFeatured         "Browse featured"
+classroom.featured               "Featured"                                    // batch D placeholder row (M-2)
+classroom.featuredSub            "Public courses from the community"
+classroom.featuredBy             "by {author} · {rating}★"                    // test data; batch D will finalize
+classroom.sortAria               "Sort library"
+```
+
+### mailer (proposed; server-side copy — same parity question as Q9)
 ```
 auth.email.verifySubject         "Verify your OpenMAIC email"
 auth.email.verifyBody            "Hello {name}, activate your account by opening the link below. It expires in 24 hours."
 auth.email.verifyCta             "Verify my email"
 ```
 
+### Deprecations
+- `home.slogan` ("Generative Learning in Multi-Agent Interactive Classroom")
+  is replaced by the operator-configurable `SITE_TAGLINE`; remove the key when
+  batch G lands (flag for i18n cleanup).
+- `classroom.emptyLibraryHint` ("No courses yet — create one above...") stays
+  for full mode; minimal mode uses `classroom.emptyTitle`/`classroom.emptyGuestBody`.
+
 ---
 
-## Open design questions (for the human)
+## Open design questions
 
-- **Q1 — V1 vs V2 placement.** This preview shows both; see the tradeoff note at
-  the bottom of this README and on `index.html`. S03's header work depends on the pick.
-- **Q2 — local-only GreetingBar fate.** Today the GreetingBar pill is a
-  localStorage profile (nickname/avatar/bio, `useUserProfileStore`). V1 replaces
-  it with the account zone when signed out/in. Should the local profile editor
-  (avatar picker + bio) die with the seat, or move under
-  Account → Profile until a server-side profile exists (batch C)? Recommended:
-  retire it from the hero; do not ship two competing "profile" affordances.
-- **Q3 — verify-page resend needs an email input.** An unparseable/expired token
-  carries no email, so the resend action on `/verify` needs a small inline email
-  field (V-02). Alternative: only ever route resend through `/login` and drop the
-  verify-page form — but spec S03 says the verify page renders "verification
-  status and resend action", so V-02 keeps the form.
+- **Q3 — verify-page resend needs an email input.** An unparseable/expired
+  token carries no email, so the resend action on `/verify` needs the small
+  inline email field (V-02). Spec S03 says the verify page renders "verification
+  status and resend action" — V-02 keeps the form.
 - **Q4 — admin stubs copy.** Product-facing "Soon" + tooltip (shown) vs
-  dev-facing "Batch E". Recommended: "Soon" (users should never read batch
-  names); the batch-E note lives in code comments.
+  dev-facing "Batch E". Recommended: "Soon"; the batch-E note lives in code
+  comments.
 - **Q5 — sign-in redirect target.** `returnTo` (pre-sign-in route, home if
-  absent) is recommended; batch A can ship plain "→ /" first. Needs an explicit
-  decision since the success state mockup shows "redirecting to your home".
-- **Q6 — role badge for Guest rank.** [ORCHESTRATOR CORRECTION 2026-09-04:
-  the premise was wrong. Per the approved decision record Q3 and the spec
-  amendment, verified signup defaults to GUEST (rank 1), so the Guest badge
-  is the FIRST badge real users see in batch A, not a future case. Keep the
-  key; design it like the others.]
-- **Q7 — toast placement.** Sonner default is bottom-right (L-04 shows it).
-  Keep default; app has no toast-position precedent to match.
-- **Q8 — password policy source of truth.** Mockup checklist assumes min-8 +
-  letter+number (better-auth default). Client validator and server error mapping
-  must agree; the en-US copy above is the source of truth.
-- **Q9 — mailer copy i18n.** The mailer template strings need the same
-  locale-parity treatment or they ship English-only. Recommend keys + en-US
-  source of truth; note that mail copy is read by email clients, not the app UI.
+  absent) recommended; batch A can ship plain "→ /" first. The success state
+  shows "redirecting to your home".
+- **Q6 — Guest badge (updated by Round 3).** With minimal mode, anonymous
+  users sit at Guest rank, so **Guest becomes the FIRST role badge a real user
+  ever sees** (before Learner). The R-series mockups keep the signed-out account
+  zone badge-free ("Sign in" pill). Open sub-question: should anonymous show a
+  Guest badge + menu (avatar-less identity) instead of the plain pill in batch C?
+  One-line swap either way; the `auth.roles.guest` key exists.
+- **Q7 — toast placement.** Sonner bottom-right default (L-04). Keep default.
+- **Q8 — password policy source of truth.** Client validator and server error
+  mapping must agree (min-8 + letter/number assumed from better-auth defaults).
+- **Q9 — mailer copy i18n.** Recommend keys + en-US source of truth.
+- **Q10 — footer text under SHOW_LOGO=false.** The today footer is the text
+  "OpenMAIC Open Source Project". Under SHOW_LOGO=false the mockup uses the
+  configured site name ("MAIC Open Source Project"); decide whether the text
+  follows `SITE_NAME` or stays the hardcoded brand string.
+
+Resolved by Round 3 (no longer open): Q1 (V2), Q2 (retire GreetingBar), plus
+the new approved branding keys `SITE_NAME` / `SITE_TAGLINE` / `SHOW_LOGO` and
+`server-branding.yml`.
 
 ---
 
 ## Deviations from existing component idioms (and why)
 
-1. **Auth surfaces use the composer-card recipe, not `Card`.** `auth-card` =
-   the home composer's exact surface (`rounded-2xl border-border/60
-   bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-xl`); matches hero
-   typography scale (same logo height 48px, `text-sm` secondary text) without
-   inventing a new card language. Slight padding reduction (24px) for forms.
-2. **400px form column, not the 800px composer width.** Forms at 65–75ch read
-   better than 800px fields; CTA is full-width inside the 400px card.
-3. **Static background blobs on auth pages.** Same blue/purple blobs as the
-   hero (`blob-blue`/`blob-purple`) but not pulsing (`animate-pulse` removed) —
-   auth pages should feel calm, not kinetic. Trivial change; flagging so nobody
-   "fixes" the mismatch.
-4. **"Soon" pill as the honest stub idiom.** The repo precedent for
-   not-ready-actions is the disabled Export button (`header-controls.tsx:270-282`,
-   `share.notReady`). For menu entries that must still be *visible* (admin
-   Settings/Admin) I used a muted uppercase "Soon" pill + disabled styling +
-   title tooltip rather than hiding or fully enabling. New but small; reuses the
-   `disabled:opacity-50` language of shadcn items.
-5. **Role badge is a new token.** `role-badge`: brand-tinted `--primary` 10%
-   surface, uppercase micro-label, uniform tint across Learner/Creator, admin
-   gets a destructive-tinted variant. Two reasons: (a) hierarchy must not ride
-   color alone, so rank is text + position; (b) the only existing badge recipe
-   is `ProBadge` (workbench-specific) and the `Server` badge (settings) — neither
-   fits a rank label. Carves no new global token; scoped class only.
-6. **Dropdown identity header.** The account menu adds a non-interactive header
-   row (initials avatar + name + email + role badge) above the first menu item —
-   an extension of the shadcn `DropdownMenuContent` pattern. Precedent: the
-   GreetingBar expanded panel (`app/page.tsx:1489`, white/95 rounded-2xl
-   identity row). Menu keeps shadcn `min-w`, padding, ring, and item recipes.
-7. **Signed-in home pill shows name + badge stacked, not on one line.**
-   The GreetingBar pill is 32px tall by design (`px-2.5 py-1.5`, 13px name); a
-   three-item single line (avatar + name + badge + chevron) would crowd at
-   13px. Stacking name over badge keeps the hero pill compact and the badge
-   legible. V2 capsule uses one-line (26px avatar, 12px name) because capsule
-   controls are smaller by design.
-8. **Forgot-password is present-but-deferred, not absent.** Spec S03 has no
-   reset flow, so the link exists as muted, non-navigating text with a "Soon"
-   pill, a native tooltip, and one deferral note under the form (L-01). The
-   alternative — hiding the link entirely — read worse in review: users
-   actively look for it.
-9. **Cyan for informational/success states.** Success check + info banners use
-   the app's existing cyan tint (`bg-cyan-50 dark:bg-cyan-950/40`,
-   `text-cyan-700 dark:text-cyan-300` from the vocational-test toggle,
-   `app/page.tsx:983`); green is reserved for the raw success check (emerald
-   pair). No new global semantic token is introduced; both colors stay inline.
-10. **Toast shown only in the login-success artboard.** The app does not yet
-    have a toast-style precedent in these surfaces; mock uses sonner's
-    bottom-right look. Copy in Q7.
+The approved batch A list (1-10) stands — see below for the Round 3 additions.
+Base list from the batch A review:
 
-## V1 vs V2 — tradeoff (3 sentences)
+1. Auth surfaces reuse the composer-card recipe, not `Card`.
+2. 400px auth form column (forms beat full-width fields).
+3. Static background blobs (hero's pulse removed on auth pages).
+4. "Soon" pill as the honest stub idiom.
+5. Role badge is a new scoped class (uniform tint; admin destructive-tinted).
+6. Dropdown identity header (initials + name + email + badge).
+7. Signed-in home pill stacks name over badge (superseded by V2 capsule).
+8. Forgot-password present-but-deferred.
+9. Cyan for info/success states.
+10. Toast in login-success only (sonner bottom-right look).
 
-**V1 (home GreetingBar seat)** wins on identity prominence and dares to explain
-itself: the hero is the only place a guest sees "Sign in / Create account" as a
-real action, and signed-in the pill reads as "this is your workspace identity".
-**V2 (stage capsule)** is mechanically invisible — it reuses the existing
-capsule seam, keeps the gear last, and costs zero new layout, but it lives
-inside a chrome element whose language/theme/gear neighbors are utilities, not
-identity, so account actions read as secondary and the guest state is
-plain "nothing here". **Recommendation: V1 for the account zone**, because
-batch A's job is making identity legible, and the hero seat is the only surface
-where that legibility is free; V2 remains the right *stage/classroom* placement
-for the same control (they are two placements of one component, not rivals).
+### Round 3 additions
+
+11. **Site lockup in the header** (name 17px bold over 12px tagline) replaces
+    the hero logo/tagline. New component; modeled on the stage-title kicker
+    pattern (components/header.tsx:77-87) inverted. `config-badge` beside the
+    tagline is operator-only.
+12. **Pro toggle relocated into the capsule** (binding order language → theme →
+    Pro → account → gear). Was a sibling pill outside the capsule in
+    `header-controls.tsx:219-261`; now uses the **compact** variant recipe
+    (h-32px, tighter padding) so the capsule stays h-9.
+13. **Sort pill added to the library header line** in minimal mode. Today the
+    library row has search/import/new-folder but no sort; minimal mode surfaces
+    it because the grid is the primary content.
+14. **Minimal-mode empty state + featured placeholder row.** The featured row's
+    "batch D gallery preview" marker is a preview-only annotation — it MUST NOT
+    ship; it flags the future gallery contract only.
+15. **Footer logo toggle.** Under SHOW_LOGO=true the footer gains the horizontal
+    lockup image above the existing text line; false keeps text-only (uses
+    `SITE_NAME`, see Q10).
+16. **Headline copy is new** (`home.headline`). The hero had no headline before
+    (logo + slogan only); with those retired to the lockup, the full-mode hero
+    needed an anchor line.
 
 ## Verification checklist
 
 - [ ] Opens at http://localhost:3100/ (python http.server, port 3100)
 - [ ] All artboards render in Safari with zero console errors (static pages)
-- [ ] Light + dark screenshots captured to `shots/`
+- [ ] Light + dark screenshots captured to `shots/` (Round 3 set: `header-v2-rev-*`,
+      `home-full-*`, `home-minimal-*`, `footer-*`)
 - [ ] Tokens verified against `app/globals.css` (oklch values, radius, button/input/dropdown recipes)

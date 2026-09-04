@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Header v2-rev (batch G chrome) — OpenMAIC preview</title>
+<link rel="icon" href="assets/logo-horizontal.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="theme-toolbar">
+  <div class="brand">OpenMAIC — Batch A/G UI preview<small>docs/design/rbac-batch-a · Round 3 revisions · approval binding</small></div>
+  <div class="controls">
+    <div class="seg" id="themeSeg"><button data-mode="light" class="active">Light</button><button data-mode="dark">Dark</button></div>
+    <a class="btn btn-ghost btn-sm" href="index.html">Index</a>
+  </div>
+</div>
+
+<!-- ═══ R-1 GUEST (SIGNED OUT) ═══ -->
+<section class="artboard" id="rev-guest">
+  <div class="artboard-cap">
+    <span class="dot"></span><h2>R-1 · Header (batch G) — signed out, site lockup left</h2><span class="tag">R-1</span>
+    <code>SITE_NAME · SITE_TAGLINE · capsule: EN | theme | Pro | account | gear</code>
+  </div>
+  <div class="artboard-stage">
+    <div class="page" style="padding:0 0 40px">
+      <div class="stage-header" style="width:100%;max-width:1440px;margin:0 auto">
+        <div style="display:flex;align-items:center;gap:12px;min-width:0;flex:1">
+          <div class="site-lockup">
+            <h1 class="site-name">MAIC</h1>
+            <div class="site-tag">
+              <p class="site-tagline">Learn anything, together</p>
+              <span class="config-badge" title="Site name &amp; tagline come from SITE_NAME / SITE_TAGLINE (env) or server-branding.yml — operator-configurable, not code">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7"/><path d="M4 10V3"/><path d="M12 21v-9"/><path d="M12 8V3"/><path d="M20 21v-5"/><path d="M20 12V3"/><path d="M1 14h6"/><path d="M9 8h6"/><path d="M17 16h6"/></svg>
+                env · yaml
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="capsule">
+          <button class="lang-pill">EN</button>
+          <button class="icon-btn" aria-label="Theme">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+          </button>
+          <span class="pro-pill" style="cursor:pointer" title="Pro mode — enter the workbench">
+            <span class="pro-label">Pro</span>
+            <span class="pro-switch" data-checked="false" role="switch" aria-checked="false"></span>
+          </span>
+          <a class="pill-action pill-action-ghost" href="login.html" style="font-size:12px">Sign in</a>
+          <button class="icon-btn" aria-label="Settings">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="mock-scene" style="width:100%;max-width:1440px;margin:0 auto">
+        <div class="scene-card"><span>Signed-out state — the account zone is a compact "Sign in" pill between Pro and gear. Guest flow: pill → /login.</span></div>
+        <div class="scene-card" style="flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:8px;padding-top:16px">
+          <span>Capsule order (binding): language → theme → Pro toggle → account zone → settings gear. Gear stays last.</span>
+          <span>Lockup: SITE_NAME (env/yaml) "MAIC" over SITE_TAGLINE "Learn anything, together", with the config-source badge.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ R-2 LEARNER SIGNED-IN, DROPDOWN OPEN ═══ -->
+<section class="artboard" id="rev-learner">
+  <div class="artboard-cap">
+    <span class="dot"></span><h2>R-2 · Header (batch G) — signed in (learner), dropdown open</h2><span class="tag">R-2</span>
+    <code>account zone = V2 component, unchanged internally</code>
+  </div>
+  <div class="artboard-stage">
+    <div class="page" style="padding:0 0 40px">
+      <div class="stage-header" style="width:100%;max-width:1440px;margin:0 auto">
+        <div style="display:flex;align-items:center;gap:12px;min-width:0;flex:1">
+          <div class="site-lockup">
+            <h1 class="site-name">MAIC</h1>
+            <div class="site-tag">
+              <p class="site-tagline">Learn anything, together</p>
+              <span class="config-badge" title="Site name &amp; tagline come from SITE_NAME / SITE_TAGLINE (env) or server-branding.yml">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7"/><path d="M4 10V3"/><path d="M12 21v-9"/><path d="M12 8V3"/><path d="M20 21v-5"/><path d="M20 12V3"/><path d="M1 14h6"/><path d="M9 8h6"/><path d="M17 16h6"/></svg>
+                env · yaml
+              </span>
+            </div>
+          </div>
+        </div>
+        <div style="position:relative">
+          <div class="capsule">
+            <button class="lang-pill">EN</button>
+            <button class="icon-btn" aria-label="Theme">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+            </button>
+            <span class="pro-pill" style="cursor:pointer" title="Pro mode — enter the workbench">
+              <span class="pro-label">Pro</span>
+              <span class="pro-switch" data-checked="false" role="switch" aria-checked="false"></span>
+            </span>
+            <button class="capsule-account" style="background:#fff;box-shadow:0 1px 2px rgb(0 0 0 / .05)" aria-haspopup="menu" aria-expanded="true">
+              <span class="avatar">AC</span>
+              <span class="name">Alex</span>
+              <span class="role-badge" style="font-size:9px">Learner</span>
+              <svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate(180deg)"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <button class="icon-btn" aria-label="Settings">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <div class="dropdown" role="menu" style="position:absolute;right:0;top:calc(100% + 10px);width:240px;padding:6px;border-radius:10px;background:var(--popover);box-shadow:0 8px 24px rgb(0 0 0 / .12), 0 0 0 1px color-mix(in oklch, var(--foreground) 8%, transparent);backdrop-filter:blur(16px)">
+            <div class="dd-header">
+              <span class="avatar">AC</span>
+              <div style="min-width:0">
+                <p class="dd-name">Alex Chen</p>
+                <p class="dd-email">alex@example.com</p>
+              </div>
+              <span class="role-badge" style="margin-left:auto">Learner</span>
+            </div>
+            <button class="dropdown-item" role="menuitem">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              Account
+            </button>
+            <div class="dropdown-sep"></div>
+            <button class="dropdown-item" role="menuitem" style="color:var(--destructive)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Sign out
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="mock-scene" style="width:100%;max-width:1440px;margin:0 auto">
+        <div class="scene-card"><span>Signed-in learner — account zone: initials avatar + name + role badge + chevron, opened menu below.</span></div>
+        <div class="scene-card" style="flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:8px;padding-top:16px">
+          <span>Menu (learner): Account → Sign out. No Language item — the EN switcher sits adjacent in the same capsule.</span>
+          <span>Guest badge note: a fresh signup lands as Learner, so Guest badge first appears for anonymous sessions in batch C minimal mode.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ R-3 ADMIN SIGNED-IN, DROPDOWN OPEN ═══ -->
+<section class="artboard" id="rev-admin">
+  <div class="artboard-cap">
+    <span class="dot"></span><h2>R-3 · Header (batch G) — signed in (admin), dropdown open</h2><span class="tag">R-3</span>
+    <code>auth.account.settings · auth.account.admin — stubbed until batch E</code>
+  </div>
+  <div class="artboard-stage">
+    <div class="page" style="padding:0 0 40px">
+      <div class="stage-header" style="width:100%;max-width:1440px;margin:0 auto">
+        <div style="display:flex;align-items:center;gap:12px;min-width:0;flex:1">
+          <div class="site-lockup">
+            <h1 class="site-name">MAIC</h1>
+            <div class="site-tag">
+              <p class="site-tagline">Learn anything, together</p>
+              <span class="config-badge" title="Site name &amp; tagline come from SITE_NAME / SITE_TAGLINE (env) or server-branding.yml">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7"/><path d="M4 10V3"/><path d="M12 21v-9"/><path d="M12 8V3"/><path d="M20 21v-5"/><path d="M20 12V3"/><path d="M1 14h6"/><path d="M9 8h6"/><path d="M17 16h6"/></svg>
+                env · yaml
+              </span>
+            </div>
+          </div>
+        </div>
+        <div style="position:relative">
+          <div class="capsule">
+            <button class="lang-pill">EN</button>
+            <button class="icon-btn" aria-label="Theme">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+            </button>
+            <span class="pro-pill" style="cursor:pointer;border-color:color-mix(in oklch, var(--primary) 60%, transparent)" title="Pro mode — currently active">
+              <span class="pro-label" style="color:color-mix(in oklch, var(--primary) 75%, transparent)">Pro</span>
+              <span class="pro-switch" data-checked="true" role="switch" aria-checked="true"></span>
+            </span>
+            <button class="capsule-account" style="background:#fff;box-shadow:0 1px 2px rgb(0 0 0 / .05)" aria-haspopup="menu" aria-expanded="true">
+              <span class="avatar">MT</span>
+              <span class="name">Maya</span>
+              <span class="role-badge role-badge-admin" style="font-size:9px">Admin</span>
+              <svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate(180deg)"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <button class="icon-btn" aria-label="Settings">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <div class="dropdown" role="menu" style="position:absolute;right:0;top:calc(100% + 10px);width:240px;padding:6px;border-radius:10px;background:var(--popover);box-shadow:0 8px 24px rgb(0 0 0 / .12), 0 0 0 1px color-mix(in oklch, var(--foreground) 8%, transparent);backdrop-filter:blur(16px)">
+            <div class="dd-header">
+              <span class="avatar">MT</span>
+              <div style="min-width:0">
+                <p class="dd-name">Maya Torres</p>
+                <p class="dd-email">maya@openmaic.dev</p>
+              </div>
+              <span class="role-badge role-badge-admin" style="margin-left:auto">Admin</span>
+            </div>
+            <button class="dropdown-item" role="menuitem">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              Account
+            </button>
+            <button class="dropdown-item is-disabled" role="menuitem" aria-disabled="true" title="Admin settings arrive in a later release (batch E)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+              Settings
+              <span class="soon-pill">Soon</span>
+            </button>
+            <button class="dropdown-item is-disabled" role="menuitem" aria-disabled="true" title="Admin dashboard arrives in a later release (batch E)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1 1 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>
+              Admin
+              <span class="soon-pill">Soon</span>
+            </button>
+            <div class="dropdown-sep"></div>
+            <button class="dropdown-item" role="menuitem" style="color:var(--destructive)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Sign out
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="mock-scene" style="width:100%;max-width:1440px;margin:0 auto">
+        <div class="scene-card"><span>Signed-in admin — Pro toggle shown in its active (violet) state; account menu gains Settings + Admin (both stubbed).</span></div>
+        <div class="scene-card" style="flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:8px;padding-top:16px">
+          <span>Admin entries render only for rank 4 and only because batch E will land behind them — disabled with "Soon" pills.</span>
+          <span>The site lockup is the SAME component on every page; home hero logo/tagline are gone (see home-full.html).</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="page-footer">
+  R-1..R-3 = canonical batch G header chrome (spec <code>014-branding-header</code>, lands before batch A) · account zone = approved V2 component · proposed keys under <code>auth.*</code> — see <a href="README.md">README.md</a>.
+</div>
+
+<script>
+  const seg = document.getElementById('themeSeg');
+  const setMode = (m) => {
+    document.documentElement.classList.toggle('dark', m === 'dark');
+    seg.querySelectorAll('button').forEach((b) => b.classList.toggle('active', b.dataset.mode === m));
+  };
+  seg.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) setMode(b.dataset.mode); });
+</script>
+</body>
+</html>

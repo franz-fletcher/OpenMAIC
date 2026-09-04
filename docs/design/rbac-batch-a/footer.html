@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Footer + logo toggle — OpenMAIC preview</title>
+<link rel="icon" href="assets/logo-horizontal.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="theme-toolbar">
+  <div class="brand">OpenMAIC — Footer &amp; SHOW_LOGO toggle<small>docs/design/rbac-batch-a · Round 3 revisions</small></div>
+  <div class="controls">
+    <div class="seg" id="themeSeg"><button data-mode="light" class="active">Light</button><button data-mode="dark">Dark</button></div>
+    <a class="btn btn-ghost btn-sm" href="index.html">Index</a>
+  </div>
+</div>
+
+<!-- ═══ G-1 FOOTER: SHOW_LOGO FALSE | TRUE ═══ -->
+<section class="artboard" id="footer-toggle">
+  <div class="artboard-cap">
+    <span class="dot"></span><h2>Footer — SHOW_LOGO = false | true (env/yaml branding toggle)</h2><span class="tag">G-1</span>
+    <code>SHOW_LOGO · applies to logo-bearing surfaces, incl. footer</code>
+  </div>
+  <div class="artboard-stage">
+    <div class="split">
+      <!-- FALSE -->
+      <div>
+        <div class="page" style="min-height:420px;align-items:center;justify-content:flex-end">
+          <div style="position:absolute;top:14px;left:16px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted-foreground);background:var(--muted);border-radius:999px;padding:3px 8px">SHOW_LOGO = false</div>
+          <div class="foot">
+            <span>MAIC Open Source Project</span>
+            <span style="opacity:.7">Learn anything, together</span>
+          </div>
+        </div>
+      </div>
+      <!-- TRUE -->
+      <div>
+        <div class="page" style="min-height:420px;align-items:center;justify-content:flex-end">
+          <div style="position:absolute;top:14px;left:16px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted-foreground);background:var(--muted);border-radius:999px;padding:3px 8px">SHOW_LOGO = true</div>
+          <div class="foot">
+            <div class="foot-row">
+              <img class="foot-logo" src="assets/logo-horizontal.png" alt="OpenMAIC">
+            </div>
+            <span>OpenMAIC Open Source Project</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="page-footer">
+  Current footer (app/page.tsx:1348-1350) is text-only "OpenMAIC Open Source Project". With SHOW_LOGO=false the text uses the configured site name; with SHOW_LOGO=true the horizontal lockup is added. Same toggle governs other logo-bearing surfaces (header lockup uses SITE_NAME text, not the logo — see README Q10).
+</div>
+
+<script>
+  const seg = document.getElementById('themeSeg');
+  const setMode = (m) => {
+    document.documentElement.classList.toggle('dark', m === 'dark');
+    seg.querySelectorAll('button').forEach((b) => b.classList.toggle('active', b.dataset.mode === m));
+  };
+  seg.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) setMode(b.dataset.mode); });
+</script>
+</body>
+</html>
