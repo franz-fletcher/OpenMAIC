@@ -4,12 +4,12 @@
   "spec": {
     "reference": "docs/specs/013-rbac-auth-foundation.md",
     "title": "Batch 013 spec: rbac-auth-foundation",
-    "hash": "654672024e4227c7051edcaf7d90e3df3a0b103d5caed0787a91847723095546"
+    "hash": "f68e5c6b23052ccd06380e3384909556a4e37e39978f91eae56de3531bd9b613"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "research_update",
+  "stage": "closed",
   "retry": {
     "count": 5,
     "max": 5,
@@ -3475,7 +3475,41 @@
       "slice": null,
       "hash": "736b45516ce4acceee9536a88fa069b8bd2a385b1a4ffc1652b7977f3d95c384",
       "fileHash": "b4ec4879bbcdd99c04115c4b0b19c15328e7a109d2b1fe5a189b46c28baea698"
+    },
+    {
+      "seq": 178,
+      "id": "083cc430-5be1-4a14-bb53-505bdc17a2e1",
+      "at": "2026-09-04T15:33:56.280Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:respecify:Stage-4 research update appended with deviations, lessons, test results, batch-B inheritance",
+      "slice": null,
+      "hash": "9d8031f2f150d8ce4dbf564d5af2411aacce4f7c350cc80fb9f3312bdfc1a1a1",
+      "fileHash": "2d2e0872e080fdb257486bbb102d48096cc42da1138dc98ba28ade83e93f8cce"
+    },
+    {
+      "seq": 179,
+      "id": "dc19b43f-5d5f-4915-9f8d-16b6c656ee43",
+      "at": "2026-09-04T15:33:56.324Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research_update->closed",
+      "slice": null,
+      "hash": "ba75533050199103dc941fb0bbaa03de8a18310985fbe304bc3c04e5f88aeb20",
+      "fileHash": "f1d997028f6498d88aef2fff54b0cb86585780804a9fcae0c4ccf1e948bef617"
+    },
+    {
+      "seq": 180,
+      "id": "3d586395-7bca-426c-b0ec-e08566beebf7",
+      "at": "2026-09-04T15:33:56.364Z",
+      "actor": "verifier",
+      "command": "certify",
+      "transition": "certify:db518a3904b673f82ccef96f2766201abc9600f2db9fc5af568968cecbf01284",
+      "slice": null,
+      "hash": "2eb8f9ff7433c2a09d854a06cd316c6f6aa76733f35f50710d66ecc5de6ab17d",
+      "oracle": "db518a3904b673f82ccef96f2766201abc9600f2db9fc5af568968cecbf01284",
+      "fileHash": "a15d8e4a35a72e2566790f1eff8cc9e8b0b4f9e82ee1ba60b3782e6b8004cb95"
     }
   ],
-  "fileHash": "2d2e0872e080fdb257486bbb102d48096cc42da1138dc98ba28ade83e93f8cce"
+  "fileHash": "14cdb2bd03fd0aa276d01d9a6fb836ed6a6f1223fb870e26d8f348d417543d6b"
 }

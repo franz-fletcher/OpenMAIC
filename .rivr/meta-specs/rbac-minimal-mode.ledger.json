@@ -23,7 +23,7 @@
     {
       "batch": "013-rbac-auth-foundation",
       "ledger": ".rivr/specs/013-rbac-auth-foundation.ledger.json",
-      "stage": "implementation"
+      "stage": "closed"
     },
     {
       "batch": "014-branding-header",
@@ -151,7 +151,29 @@
       "slice": null,
       "hash": "be077502643e012b0eddf60528d4baac70c797e5a03d2aa28744134c1ab17087",
       "fileHash": "872030b6e3181c1e4e2e080ee5d2af02fbc76e3f20bfaaeeaebc0d41468b39bf"
+    },
+    {
+      "seq": 12,
+      "id": "fe8c5740-34ac-418d-8719-aeffedef1422",
+      "at": "2026-09-04T15:33:56.401Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:clarification:child 013 closed and accepted",
+      "slice": null,
+      "hash": "7e4f2872f13c5ba4d5afb0848cb69f5e6a2762e1030e8d177ad8fe8337a5235a",
+      "fileHash": "66085b2ddc82dd3004d858b5618a5777731c119961216197cd4676680cf0da61"
+    },
+    {
+      "seq": 13,
+      "id": "f8b468d2-fd6d-424b-b671-b0ce93efaf03",
+      "at": "2026-09-04T15:33:56.401Z",
+      "actor": "orchestrator",
+      "command": "metaspec_child_link",
+      "transition": "child-link:013-rbac-auth-foundation:.rivr/specs/013-rbac-auth-foundation.ledger.json:closed",
+      "slice": null,
+      "hash": "34e8e6b281ff4827fec469df82b293a01fe7935285b1128c7efe313c344ab63e",
+      "fileHash": "66085b2ddc82dd3004d858b5618a5777731c119961216197cd4676680cf0da61"
     }
   ],
-  "fileHash": "66085b2ddc82dd3004d858b5618a5777731c119961216197cd4676680cf0da61"
+  "fileHash": "b67752a2aa14f0894f73a5497fa4e5a1edc730c58ccc0efecb0243941182f2a5"
 }
