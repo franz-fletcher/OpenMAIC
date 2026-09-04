@@ -4,14 +4,14 @@
   "spec": {
     "reference": "docs/specs/013-rbac-auth-foundation.md",
     "title": "Batch 013 spec: rbac-auth-foundation",
-    "hash": "0262fe59aba2407e98107f71138f62f841f8144a9402188c9ff224922c13f396"
+    "hash": "c4cf6f2b72b7095828bb99ddd927e99edd150ca047d4cdb94681948c7328d482"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "implementation",
+  "stage": "verification",
   "retry": {
-    "count": 2,
+    "count": 3,
     "max": 5,
     "consecutive_same_cause": 0,
     "escalate_at": 3
@@ -638,10 +638,10 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(env: MailerEnv): Mailer"
+                "signature": "(\n  env: MailerEnv,\n  deps: {\n    createTransport?: typeof createTransport;\n    Resend?: new (apiKey: string) => { emails: { send: (opts: unknown) => Promise<unknown> } };\n  } = {},\n): Mailer"
               },
               "postcondition_quality": "VERIFIED",
-              "expectation": "Selects the transport by MAIL_TRANSPORT: smtp, resend, or console fallback."
+              "expectation": "Selects the transport by MAIL_TRANSPORT: smtp, resend, or console fallback. The deps parameter injects transport dependencies for tests and defaults to an empty object."
             },
             {
               "name": "sendVerificationLink",
@@ -651,10 +651,10 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(to: string, url: string): Promise<void>"
+                "signature": "(mailer: Mailer, to: string, url: string): Promise<void>"
               },
               "postcondition_quality": "VERIFIED",
-              "expectation": "Sends the verification link through the selected transport."
+              "expectation": "Sends the verification link through the given mailer instance. The mailer parameter is explicit dependency injection."
             }
           ]
         },
@@ -2086,7 +2086,86 @@
       "slice": "S05",
       "hash": "324612c5f5e07980c17d2bdf3608636bc72d30c4170115b9462e3f1ff395956b",
       "fileHash": "9f9339cb3abf2c4d728981dfe7996f855459c8c03226a376addc1db3b3bc6692"
+    },
+    {
+      "seq": 123,
+      "id": "a902857a-a5fe-4a11-a3df-cee9a7de37e3",
+      "at": "2026-09-04T14:26:01.223Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:correction:Mailer binding rows re-pinned to DI outline truth per implementation diagnosis diff-risk table",
+      "slice": null,
+      "hash": "bfb837f2305074bcaddc135b0e88cc25d986cc4df753f3fdf37540ae2418b2a9",
+      "fileHash": "8ffd2e1bf5a80a07d00dae2e2919bac36f06de6aad4ae2990500fb5395780347"
+    },
+    {
+      "seq": 124,
+      "id": "3c28322c-1f5f-42b3-93d4-04c744ce9d3c",
+      "at": "2026-09-04T14:27:43.531Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S05:postcondition:lib/auth/mailer.ts::createMailer",
+      "slice": "S05",
+      "hash": "0bda21ff7acc9e7073c59e84442e042820a20f3ade0e0a94e0a556295914f306",
+      "fileHash": "cd578e7dcbeb965333e99c4d7fac5ef280acff26083a3f83ca67ae31b8c47b4c"
+    },
+    {
+      "seq": 125,
+      "id": "78b48028-e516-4c6a-90c6-99cb6e456629",
+      "at": "2026-09-04T14:27:43.568Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S05:expect-symbol:lib/auth/mailer.ts::createMailer",
+      "slice": "S05",
+      "hash": "c72916d9afc1b76c468125f77e4d24bb95492054626c6808f3b9e5b367fc5c91",
+      "expectationHash": "a10dc00dbc4818dd6468d0e79e0befde07cb983c74fe8c8c1409ff0c71e2f527",
+      "fileHash": "92935041894d8029e666643220b9fc1877fbfc383f1c72182fd8615614dcec7b"
+    },
+    {
+      "seq": 126,
+      "id": "ee3e2f86-969d-4378-a13f-5f277db75215",
+      "at": "2026-09-04T14:27:43.600Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S05:postcondition:lib/auth/mailer.ts::sendVerificationLink",
+      "slice": "S05",
+      "hash": "01debe6e2cf1e14ac26d113e44e061a702130d641c26d549c2a160e279137d80",
+      "fileHash": "70dfbea4a2ba202fe825692f07969b92be7569062689fa373f0ff176d9da6902"
+    },
+    {
+      "seq": 127,
+      "id": "13c8fcfb-f975-46a8-b0dc-1456dbf3499b",
+      "at": "2026-09-04T14:27:43.632Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S05:expect-symbol:lib/auth/mailer.ts::sendVerificationLink",
+      "slice": "S05",
+      "hash": "d3b5eee67c7bac7aa19efe0ea5ee2c262a2218b5c30ac90ffb121750fccfd749",
+      "expectationHash": "7a4ff015550053aa26290e5cec08d28b16e7b82b2deb418733894ea398beca06",
+      "fileHash": "83045b86f8185eb9b4b8c8d9addc7d472f78e15c625b0f59319c31d74cdfbbac"
+    },
+    {
+      "seq": 128,
+      "id": "77a56314-96d8-452f-a4b7-5f264605da82",
+      "at": "2026-09-04T14:27:57.190Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "49a575fb0afdf9fe16e2b4c0d5df7902e8921ad61064ac0786f9e4a52941a754",
+      "fileHash": "d9c6f13e3d1e1b74fd4e7a57515973d2567de4592fa6583ddb7a5e969399a1c6"
+    },
+    {
+      "seq": 129,
+      "id": "8a5e543a-5fe1-4b79-9328-00602b8d9306",
+      "at": "2026-09-04T14:28:58.110Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "bb25c55999e922a8d92f5d185a6d95564f9ab2eb95f2466e5da41b8ef01d6e30",
+      "fileHash": "02c10ef7f8650e5ecd015cc6ba72200f628385ca4e3d1eb9080be2a42a90ba3b"
     }
   ],
-  "fileHash": "8ffd2e1bf5a80a07d00dae2e2919bac36f06de6aad4ae2990500fb5395780347"
+  "fileHash": "d46b4bdea5310cf7c3dfed9d9c9a5c827aea1947e7221326465301fe19ec1065"
 }

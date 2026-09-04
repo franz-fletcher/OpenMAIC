@@ -3271,6 +3271,180 @@
       "actor": "implementer",
       "outcome": "ok",
       "extra": {}
+    },
+    {
+      "ts": "2026-09-04T14:25:18.861Z",
+      "command": "spec.check",
+      "flags": [],
+      "exit": 2,
+      "duration_ms": 2,
+      "stage": "implementation",
+      "outcome": "permission",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-04T14:26:01.225Z",
+      "command": "spec.amend",
+      "flags": [
+        "action",
+        "actor",
+        "reason"
+      ],
+      "exit": 0,
+      "duration_ms": 5,
+      "stage": "research",
+      "actor": "orchestrator",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-04T14:26:01.257Z",
+      "command": "report",
+      "flags": [],
+      "exit": 0,
+      "duration_ms": 1,
+      "stage": "research",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-04T14:26:42.858Z",
+      "command": "report",
+      "flags": [],
+      "exit": 0,
+      "duration_ms": 3,
+      "stage": "research",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-04T14:27:43.535Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 9,
+      "stage": "research",
+      "actor": "researcher",
+      "slice": "S05",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-04T14:27:43.569Z",
+      "command": "slice.expect",
+      "flags": [
+        "actor",
+        "file",
+        "slice",
+        "symbol",
+        "text"
+      ],
+      "exit": 0,
+      "duration_ms": 3,
+      "stage": "research",
+      "actor": "researcher",
+      "slice": "S05",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-04T14:27:43.601Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 3,
+      "stage": "research",
+      "actor": "researcher",
+      "slice": "S05",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-04T14:27:43.633Z",
+      "command": "slice.expect",
+      "flags": [
+        "actor",
+        "file",
+        "slice",
+        "symbol",
+        "text"
+      ],
+      "exit": 0,
+      "duration_ms": 3,
+      "stage": "research",
+      "actor": "researcher",
+      "slice": "S05",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-04T14:27:57.192Z",
+      "command": "stage.advance",
+      "flags": [
+        "actor",
+        "to"
+      ],
+      "exit": 0,
+      "duration_ms": 9,
+      "stage": "implementation",
+      "actor": "orchestrator",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-04T14:27:57.224Z",
+      "command": "spec.check",
+      "flags": [],
+      "exit": 0,
+      "duration_ms": 1,
+      "stage": "implementation",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-04T14:27:57.256Z",
+      "command": "audit.verify",
+      "flags": [
+        "actor"
+      ],
+      "exit": 0,
+      "duration_ms": 2,
+      "stage": "implementation",
+      "actor": "researcher",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-04T14:28:58.112Z",
+      "command": "stage.advance",
+      "flags": [
+        "actor",
+        "to"
+      ],
+      "exit": 0,
+      "duration_ms": 10,
+      "stage": "verification",
+      "actor": "orchestrator",
+      "outcome": "ok",
+      "extra": {}
     }
   ],
   "audit": [
@@ -5637,7 +5811,139 @@
       "slice": null,
       "hash": "1843786e62ecd2137297113e3ff2dc29e3499769255c59362c61acdd532adace",
       "fileHash": "2040359b3ef7345075d1b16c03821e1594b484ffa13d559ca21c76c21348dec2"
+    },
+    {
+      "seq": 216,
+      "id": "618eba8a-86b6-441e-be4c-812885425a4b",
+      "at": "2026-09-04T14:25:18.861Z",
+      "actor": "anonymous",
+      "command": "telemetry",
+      "transition": "command:spec.check:exit:2:outcome:permission",
+      "slice": null,
+      "hash": "a8e4ae2c712c817b04897a2ec72c69fe7ed0716dbf229137e4632b90c011a600",
+      "fileHash": "1f1a7e340fbcc1f37f724098d871efa544304d736faadbc7cd0161b1938b56b9"
+    },
+    {
+      "seq": 217,
+      "id": "6572b700-6367-45fb-9d6e-a60f4af8278c",
+      "at": "2026-09-04T14:26:01.225Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:spec.amend:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "948bd99dfdbaff5966d13d5e06c4caca1cc7475c1083fceefe28cff0be89b098",
+      "fileHash": "975369ea36ac40f1f05c7d171e3ee61f7b080b864f6d9a8af79bc2b9ceb8c222"
+    },
+    {
+      "seq": 218,
+      "id": "f60cc42a-674b-4e5a-a9e8-9cd70cbcaf33",
+      "at": "2026-09-04T14:26:01.257Z",
+      "actor": "anonymous",
+      "command": "telemetry",
+      "transition": "command:report:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "865c43c92a5302c4aa9ae8bc5e26825e505fe71c050254eca07bd2656e15a247",
+      "fileHash": "9bf03ccfccaee58b16ad15dbfb183c64ddc12a04c7edf5501424ada1fe5ded37"
+    },
+    {
+      "seq": 219,
+      "id": "0afa6678-2676-4afe-af82-4218c521100f",
+      "at": "2026-09-04T14:26:42.858Z",
+      "actor": "anonymous",
+      "command": "telemetry",
+      "transition": "command:report:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "13b6245e85dc2180046fd4274bb35db3185330c8649dd6edf46c08f1039f5612",
+      "fileHash": "46fcda29e854e395642a6b5d45feee72eeaeb3b91a729ac01d0216fe647b5f53"
+    },
+    {
+      "seq": 220,
+      "id": "092026d5-d101-45ce-b569-ea47519f52f9",
+      "at": "2026-09-04T14:27:43.535Z",
+      "actor": "researcher",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S05",
+      "hash": "da0f6b42a2a5956db55e71085b6a3863b98fe12f01b37ba54fb578bdd97bc438",
+      "fileHash": "219ba8177ae4436121afa4c23b69c4d910748d67907fa9aafd340da576d46331"
+    },
+    {
+      "seq": 221,
+      "id": "7f4f6716-2249-40dc-8b4a-2626d22a325d",
+      "at": "2026-09-04T14:27:43.569Z",
+      "actor": "researcher",
+      "command": "telemetry",
+      "transition": "command:slice.expect:exit:0:outcome:ok",
+      "slice": "S05",
+      "hash": "208ff4721108914bf69a1902fac0f6d7d0ffc77655e76fd34ea92a547e4512d8",
+      "fileHash": "403f57528cf976bd0dc5f44f68a5f51ea587b3e41269a5a640dc4ecdf1a7c572"
+    },
+    {
+      "seq": 222,
+      "id": "ebaee439-c65c-4db9-8966-8acb02099936",
+      "at": "2026-09-04T14:27:43.601Z",
+      "actor": "researcher",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S05",
+      "hash": "ba8863b8209f881ff886591146123d49062f3ade32c0f0dda6072f583ef6706a",
+      "fileHash": "64c3d42a5bccc938b87d6a597a444ec676fa294c402cec0fdb859484ef99314f"
+    },
+    {
+      "seq": 223,
+      "id": "977d06f9-bf6d-4088-a844-6b7426008877",
+      "at": "2026-09-04T14:27:43.633Z",
+      "actor": "researcher",
+      "command": "telemetry",
+      "transition": "command:slice.expect:exit:0:outcome:ok",
+      "slice": "S05",
+      "hash": "6189edb4361a2cfb050a4ebc3ee12ec93813ce93e98724f8a1d731edcf093f89",
+      "fileHash": "69770be90075dd9c45b234d44c179b51f9c6d0ab8a477804ff77cb4b94748523"
+    },
+    {
+      "seq": 224,
+      "id": "6723c612-3069-421e-aa6c-e78e8f56ce97",
+      "at": "2026-09-04T14:27:57.192Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:stage.advance:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "24660c26bc1833780c57a93705936b5878607881bb02e09fa027b2f64b003e96",
+      "fileHash": "cf7379680e6d962d487d2134e8d211c40374134abdd2327bf48459e2735de2cc"
+    },
+    {
+      "seq": 225,
+      "id": "1033acca-8df8-40fa-abbf-0b7bde886f0b",
+      "at": "2026-09-04T14:27:57.224Z",
+      "actor": "anonymous",
+      "command": "telemetry",
+      "transition": "command:spec.check:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "74e02f30ea056883efa2bb5aff2e3319c080f442d0e6041c00de3a7ccded9d7f",
+      "fileHash": "1542f71f40375747a8115c7bfdd9804eb8587898e34e5dc66f9e61f6128e80fa"
+    },
+    {
+      "seq": 226,
+      "id": "e4ffa3c4-83e1-43fc-89e9-beb1ce38224a",
+      "at": "2026-09-04T14:27:57.256Z",
+      "actor": "researcher",
+      "command": "telemetry",
+      "transition": "command:audit.verify:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "a163c6520de19cf608206b1dfc5287b6040d2315846f798197228fca92cb687d",
+      "fileHash": "454a440d73f4a99b86c52b4d3129eddfb14b511587b334bee7cb7b743ddfc23f"
+    },
+    {
+      "seq": 227,
+      "id": "f51bf4b5-61ed-407e-bb3a-b0181e0cb004",
+      "at": "2026-09-04T14:28:58.112Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:stage.advance:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "405f3692cde187f432c74c6b0924d2ad10c8a172ad60a859ecf77770f126a873",
+      "fileHash": "5d1d79e13fa90b3a767df5d107ea7def9a6138c6508d530cd8eb4d9ce038d8c1"
     }
   ],
-  "fileHash": "1f1a7e340fbcc1f37f724098d871efa544304d736faadbc7cd0161b1938b56b9"
+  "fileHash": "76db25466face9e4a5359e0259b2d36b62c5dfc7a7c3e5ff53595d72b83b2130"
 }

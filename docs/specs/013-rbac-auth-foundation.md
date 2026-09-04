@@ -1,6 +1,6 @@
 # Batch 013 spec: rbac-auth-foundation
 
-Spec status: implementation
+Spec status: verification
 
 ## Problem Statement
 
