@@ -4,14 +4,14 @@
   "spec": {
     "reference": "docs/specs/013-rbac-auth-foundation.md",
     "title": "Batch 013 spec: rbac-auth-foundation",
-    "hash": "0955f47f27eed3a64557951a138c6bfc2e646d587b07f3fcc4224a905858ec79"
+    "hash": "97c8dc8d14203699af3e461595b4d23e777f7b2f1c0943376335431844159758"
   },
   "tracker": {
     "mode": "none"
   },
   "stage": "implementation",
   "retry": {
-    "count": 0,
+    "count": 1,
     "max": 5,
     "consecutive_same_cause": 0,
     "escalate_at": 3
@@ -59,7 +59,7 @@
                 "signature": "(options: AuthServerOptions): AuthServer"
               },
               "postcondition_quality": "VERIFIED",
-              "expectation": "Returns the wrapped better-auth server with email and password, mandatory verification, and the verification callback wired."
+              "expectation": "Returns the wrapped better-auth server with email and password, mandatory verification, the verification callback wired, and verified signups assigned the guest default role."
             }
           ]
         },
@@ -138,7 +138,7 @@
         "status": "pending",
         "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
       },
-      "expectation": "After provider bootstrap the six auth tables exist; a valid session cookie resolves a session; a missing session makes requireSession refuse; lib/auth is the only module that imports better-auth; the better-auth dependency is pinned in package.json.",
+      "expectation": "Six auth tables exist after bootstrap; valid cookie resolves a session; missing session makes requireSession refuse; lib/auth is the only better-auth importer; dependency pinned in package.json; verified signup defaults to guest rank 1.",
       "gates": [
         {
           "id": "g1",
@@ -209,7 +209,7 @@
                 "signature": "(queryable: Queryable, grants: RoleGrantSeed[]): Promise<number>"
               },
               "postcondition_quality": "VERIFIED",
-              "expectation": "Seeds grants idempotently, non-destructive, returns applied count."
+              "expectation": "Seeds grants idempotently, non-destructive, overriding the guest default for emails with a configured role, returns applied count."
             },
             {
               "name": "listRoles",
@@ -1918,7 +1918,76 @@
       "slice": null,
       "hash": "cd7b3950066668f9be18f3b55f5d6aac32e2b9b354a49df1b54278ba0e4edfea",
       "fileHash": "530abb96800de5e0cfe6b359ddf7da2f0202fe7ab82fe530995c262e9924efe3"
+    },
+    {
+      "seq": 109,
+      "id": "2d2038b6-c65f-4b4f-bc5d-7c2e6b7ed51e",
+      "at": "2026-09-04T01:34:59.762Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:clarification:Explicit guest default role on verified signup per approved decision Q3; S01/S02 behavior clauses refined",
+      "slice": null,
+      "hash": "b34b0d4595cef9756265bccf748936a290658bb0b2a23767922cc2a5e95d7195",
+      "fileHash": "30b21abc4076646628b2834d8387905b3c5bf94b3794392d1b9654732fe6ea3d"
+    },
+    {
+      "seq": 110,
+      "id": "add26531-eed5-49e7-bbaa-7766c0682e76",
+      "at": "2026-09-04T01:37:27.228Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:correction:Guest default role provenance note appended; contract clauses re-sync follows on the research return",
+      "slice": null,
+      "hash": "759adc427d3551cf24489b0b5675ce81096ff352b15acd9da78f23be8a196b1a",
+      "fileHash": "e971cdd4b29e311e138fce1e1103b69a3c363b9ab22de647985b3194d216598a"
+    },
+    {
+      "seq": 111,
+      "id": "97f132d2-9f5d-4768-8ca3-d79a6a58add0",
+      "at": "2026-09-04T01:37:27.284Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect-symbol:lib/auth/server.ts::createAuthServer",
+      "slice": "S01",
+      "hash": "ae79d28b3b196f4b6d8e7758fe51dcbbc9b416452199881c8765df4a92c6475e",
+      "expectationHash": "4724bceea9c0ac3850fb778eef8502be8691cdf69ca536b0b89d5f72e766b7ff",
+      "fileHash": "0221d08b405b04041db733fb0248dd00e6557d43f7bf42fdba2011ab3fe03958"
+    },
+    {
+      "seq": 112,
+      "id": "6321dee0-f58e-4c44-8bae-38ae8d742178",
+      "at": "2026-09-04T01:37:27.340Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S02:expect-symbol:lib/auth/roles.ts::seedRoleGrants",
+      "slice": "S02",
+      "hash": "eba7d5ff4ab7989e27a04359b74b8db87c5fc8961eeeb321ac20065b0cf9df35",
+      "expectationHash": "7647d092160acd65c1f5ae9a670c3eb835748326357d6e1f09daf6fb7e565008",
+      "fileHash": "575b0ce4e391c1fc6c60b9b6bd9d935a8938730636c4b7b249bbb757e1208391"
+    },
+    {
+      "seq": 113,
+      "id": "c551c699-3805-4b86-8a8f-b69dd42f26cd",
+      "at": "2026-09-04T01:37:41.230Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S01:expect",
+      "slice": "S01",
+      "hash": "351da23bb038b69193da157f744881f1e6e245e875e366e7ed5c9ceb96068b14",
+      "expectationHash": "1f96aec43015c026f737fde3e43f92b3cd1922b4f9e8e30bde264f9a07a770ab",
+      "fileHash": "b2241438344674190c7d4ad1ba26cf173a14d5025ac22c1991124c53432e5758"
+    },
+    {
+      "seq": 114,
+      "id": "3d39b0d6-3db4-40fc-bfb3-8caedbf59340",
+      "at": "2026-09-04T01:37:41.273Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "395f14065e6133c9728d44d27839538ec839c31b67d386437adb0198e79aaa4b",
+      "fileHash": "74d23e8831e5a97669c4bea3f8e662cb55262230f2dd18796f056949506f9ac1"
     }
   ],
-  "fileHash": "30b21abc4076646628b2834d8387905b3c5bf94b3794392d1b9654732fe6ea3d"
+  "fileHash": "547345df43372225462eac77ee3221bb1a5f3b28e5f8a30b0f09700dffbd30ca"
 }

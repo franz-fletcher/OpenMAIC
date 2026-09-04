@@ -67,6 +67,8 @@ and the recorded round-2 deltas, as transcribed in
    admin exists before any admin UI ships.
 6. As an operator, I want verification email that works without a mail server,
    so that the flow is testable and self-hostable.
+7. As a new visitor, I want to create an account and land as a verified guest,
+   so that I know what my account can do before I am elevated.
 
 ## Slices
 
@@ -95,7 +97,7 @@ Ledger bindings:
 | file::symbol | kind | after-signature or shape | behavior |
 | --- | --- | --- | --- |
 | `lib/auth/schema.ts::ensureAuthSchema` | function | `(queryable: Queryable): Promise<void>` | creates the six tables idempotently. Tables: `user`, `session`, `account`, `verification` (better-auth canonical shapes), `roles`, `user_roles` |
-| `lib/auth/server.ts::createAuthServer` | function | `(options: AuthServerOptions): AuthServer` | returns the wrapped better-auth server with email and password, mandatory verification, and the verification callback wired |
+| `lib/auth/server.ts::createAuthServer` | function | `(options: AuthServerOptions): AuthServer` | returns the wrapped better-auth server with email and password, mandatory verification, the verification callback wired, and verified signups assigned the guest default role |
 | `lib/auth/index.ts::getSession` | function | `(headers: Headers): Promise<Session | null>` | returns the session for valid cookies, null otherwise |
 | `lib/auth/index.ts::requireSession` | function | `(headers: Headers): Promise<Session>` | returns the session or a 401-style refusal |
 | `lib/auth/index.ts::listRoles` | function | `(queryable: Queryable): Promise<Role[]>` | returns all roles with ranks |
@@ -112,6 +114,7 @@ Postcondition: after provider bootstrap the six tables exist. A valid session
 cookie resolves a session object. A missing session makes `requireSession`
 refuse. `lib/auth` is the only module that imports better-auth. The
 better-auth dependency is pinned in `package.json` and `node_modules` has it.
+A verified signup without a configured grant defaults to guest (rank 1).
 
 Gates:
 
@@ -135,7 +138,7 @@ Ledger bindings:
 | file::symbol | kind | after-signature or shape | behavior |
 | --- | --- | --- | --- |
 | `lib/auth/roles.ts::ROLE_RANKS` | constant | shape `{ ANONYMOUS: 0, GUEST: 1, LEARNER: 2, CREATOR: 3, ADMIN: 4 }` | the stable rank constants, anonymous virtual |
-| `lib/auth/roles.ts::seedRoleGrants` | function | `(queryable: Queryable, grants: RoleGrantSeed[]): Promise<number>` | seeds grants idempotently, non-destructive, returns applied count |
+| `lib/auth/roles.ts::seedRoleGrants` | function | `(queryable: Queryable, grants: RoleGrantSeed[]): Promise<number>` | seeds grants idempotently, non-destructive, overriding the guest default for emails with a configured role, returns applied count |
 | `lib/auth/roles.ts::listRoles` | function | `(queryable: Queryable): Promise<Role[]>` | returns all roles with ranks |
 | `lib/auth/roles-config.ts::loadRoleDefaults` | function | `(): RoleDefaults` | merges the `ADMIN_EMAILS` env and `server-roles.yml` default filename into defaults |
 
@@ -360,6 +363,12 @@ with the env shape, without sending.
   `loadYamlFile` (`lib/server/provider-config.ts:208`) with a default
   filename in the same style (`:354`). Seeding is idempotent and
   non-destructive. The database is truth after the first seed.
+
+  A verified email-and-password signup defaults to the `guest` role (rank 1).
+  An email present in `ADMIN_EMAILS` or `server-roles.yml` receives its
+  configured role grant at seed time, which overrides the default. A rank-1
+  session is legitimate and renders the Guest badge. Promotion beyond guest
+  happens only through admin assignment or an accepted invite (batch E).
 - UTC-midnight quota day belongs to batch C. The owner id scheme is defined
   here because the claim migration needs it. Role rank integers are defined
   here because the roles table lands here. Anonymous rank 0 is a virtual
@@ -479,3 +488,7 @@ with the env shape, without sending.
   owns the final name. The meta-spec register records the two candidate
   names, `NEXT_PUBLIC_MINIMAL_MODE` and `NEXT_PUBLIC_MIRROR`, for batch C.
   Neither is introduced in this batch.
+
+## Amendment 2026-09-04 (guest default role)
+
+The design-pass review caught that this spec did not state the default signup role. The approved decision record Q3 (`docs/research/rbac-minimal-mode-decision-round-1.md`) assigns `guest` at verified signup. This amendment records the explicit statement in the Role seed decision, user story 7, and the two clause refinements on S01 `createAuthServer` and S02 `seedRoleGrants`. The gate inventory is unchanged. The ledger binds this text via a `correction` amend and then re-syncs expectations.

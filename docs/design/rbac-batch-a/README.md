@@ -141,10 +141,11 @@ auth.email.verifyCta             "Verify my email"
 - **Q5 — sign-in redirect target.** `returnTo` (pre-sign-in route, home if
   absent) is recommended; batch A can ship plain "→ /" first. Needs an explicit
   decision since the success state mockup shows "redirecting to your home".
-- **Q6 — role badge for Guest rank.** Signed-in users are at least Learner by
-  construction (signup seeds learner), so Guest badge never renders on a session.
-  Keep the key for future guest-mode sessions or drop it? Recommended: keep the
-  key; batch C minimal mode may surface guest sessions.
+- **Q6 — role badge for Guest rank.** [ORCHESTRATOR CORRECTION 2026-09-04:
+  the premise was wrong. Per the approved decision record Q3 and the spec
+  amendment, verified signup defaults to GUEST (rank 1), so the Guest badge
+  is the FIRST badge real users see in batch A, not a future case. Keep the
+  key; design it like the others.]
 - **Q7 — toast placement.** Sonner default is bottom-right (L-04 shows it).
   Keep default; app has no toast-position precedent to match.
 - **Q8 — password policy source of truth.** Mockup checklist assumes min-8 +
