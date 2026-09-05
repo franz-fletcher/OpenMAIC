@@ -1,0 +1,1381 @@
+{
+  "schema_version": 2,
+  "$schema": "https://rivr.dev/schemas/ledger/v2",
+  "spec": {
+    "reference": "docs/specs/017-publishing-visibility.md",
+    "title": "Batch 017 spec: publishing-visibility",
+    "hash": "706a1266855951fbce79eca0eea891fb7a10bda14f86e73be6099697e6cda6d3"
+  },
+  "tracker": {
+    "mode": "none"
+  },
+  "stage": "implementation",
+  "retry": {
+    "count": 0,
+    "max": 5,
+    "consecutive_same_cause": 0,
+    "escalate_at": 3
+  },
+  "slices": [
+    {
+      "id": "S1",
+      "title": "Schema, migration, and visibility writer",
+      "intent": "Delivers the status and audience columns, the idempotent backfill of legacy public rows, the gallery index, and the writer that sets visibility.",
+      "user_stories": [
+        1,
+        5
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/persistence/stage-meta.ts",
+          "symbols": [
+            {
+              "name": "STAGE_META_SCHEMA",
+              "kind": "const",
+              "expectation": "Modified: appends the two ADD COLUMN IF NOT EXISTS statements for status and audience, the guarded backfill UPDATE, and the new gallery partial index to the lazy ensure string.",
+              "before": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "VERIFIED"
+            },
+            {
+              "name": "StageMetaRow",
+              "kind": "interface",
+              "expectation": "Modified: adds status 'draft' | 'published' and audience number; isPublic stays as the derived compatibility field.",
+              "before": {
+                "exists": true,
+                "kind": "interface"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "interface",
+                "signature": "{ stageId, ownerId, isPublic, status, audience, publishedAt, generationComplete, deletedAt }"
+              },
+              "postcondition_quality": "INFERRED"
+            },
+            {
+              "name": "readStageMeta",
+              "kind": "function",
+              "expectation": "Modified: reads status and audience, derives isPublic from status.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  queryable: Queryable,\n  stageId: string,\n): Promise<StageMetaRow | null>"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  queryable: Queryable,\n  stageId: string,\n): Promise<StageMetaRow | null>"
+              },
+              "postcondition_quality": "VERIFIED"
+            },
+            {
+              "name": "setStageVisibility",
+              "kind": "function",
+              "expectation": "New: writes status and audience, mirrors is_public and published_at, refuses soft-deleted rows.",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable, stageId: string, status: 'draft' | 'published', audience: number): Promise<void>"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "lib/server/stage-access.ts",
+          "symbols": [
+            {
+              "name": "StageAccess",
+              "kind": "interface",
+              "expectation": "Modified: adds status and audience, keeps isPublic derived.",
+              "before": {
+                "exists": true,
+                "kind": "interface"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "interface",
+                "signature": "{ stageId, ownerId, name, isPublic, status, audience, publishedAt, generationComplete, source, deletedAt }"
+              },
+              "postcondition_quality": "INFERRED"
+            },
+            {
+              "name": "readStageAccessIncludingDeleted",
+              "kind": "function",
+              "expectation": "Modified: selects and maps the status and audience columns.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  stageId: string,\n  queryable?: StageAccessQueryable,\n): Promise<StageAccess | null>"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  stageId: string,\n  queryable?: StageAccessQueryable,\n): Promise<StageAccess | null>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "e4f875b1-8b28-4696-b841-b9f4328256e6",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "The stage_meta table gains status and audience columns, a guarded legacy backfill, a gallery partial index, and setStageVisibility keeping the mirror columns in agreement.",
+      "gates": [
+        {
+          "id": "g1",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/publishing/visibility-columns.test.ts && echo COLUMNS_OK",
+          "expect": "COLUMNS_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pending"
+        },
+        {
+          "id": "g2",
+          "type": "smoke",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pending"
+        }
+      ]
+    },
+    {
+      "id": "S2",
+      "title": "Audience-enforced read gate",
+      "intent": "Delivers the rank resolver, the audience rule inside decideDocumentAccess, and the adoption of the rule on the three content seams, plus the generation pipeline row claim.",
+      "user_stories": [
+        4,
+        5,
+        7
+      ],
+      "blocked_by": [
+        "S1"
+      ],
+      "targets": [
+        {
+          "path": "lib/persistence/audience.ts",
+          "symbols": [
+            {
+              "name": "AUDIENCE_RANK",
+              "kind": "const",
+              "expectation": "New: frozen rank constants shared by the picker and the gate.",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable",
+                "signature": "{ EVERYONE: 0, GUEST: 1, LEARNER: 2 }"
+              },
+              "postcondition_quality": "INFERRED"
+            },
+            {
+              "name": "resolveViewerRank",
+              "kind": "function",
+              "expectation": "New: returns 0 for anon and unknown owners, the role rank join for user owners.",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable, ownerId: string): Promise<number>"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "lib/persistence/document-access.ts",
+          "symbols": [
+            {
+              "name": "decideDocumentAccess",
+              "kind": "function",
+              "expectation": "Modified: read case allows the owner, then requires published status and viewerRank >= audience, else not-found.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  action: DocumentAction,\n  ownerId: string | undefined,\n  readMeta: StageMetaReader,\n  documentExists: DocumentExistenceReader,\n  rereadMeta: StageMetaReader = readMeta,\n): Promise<DocumentAccess>"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(action: DocumentAction, ownerId: string | undefined, readMeta: StageMetaReader, documentExists: DocumentExistenceReader, rereadMeta?: StageMetaReader, viewerRank?: number): Promise<DocumentAccess>"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/persistence/[...path]/route.ts",
+          "symbols": [
+            {
+              "name": "handlePersistenceRequest",
+              "kind": "function",
+              "expectation": "Modified: resolves viewerRank once and passes it into decideDocumentAccess.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  request: Request,\n  deps: PersistenceRequestDeps = {},\n): Promise<Response>"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(request: Request, deps?: PersistenceRequestDeps): Promise<Response>"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/stage-meta/[stageId]/route.ts",
+          "symbols": [
+            {
+              "name": "GET",
+              "kind": "function",
+              "expectation": "Modified: returns 404 for non-owner drafts and wrong-audience courses, keeps 200 for owners.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest, { params }: Params)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest, { params }: Params)"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/classroom/route.ts",
+          "symbols": [
+            {
+              "name": "GET",
+              "kind": "function",
+              "expectation": "Modified: applies the audience rule to every id, flag-on 404 with no created row, flag-off parity unchanged.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(request: NextRequest)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(request: NextRequest)"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "lib/server/classroom-generation.ts",
+          "symbols": [
+            {
+              "name": "generateClassroom",
+              "kind": "function",
+              "expectation": "Modified: claims the stage_meta row for the creating owner after persistClassroom.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  input: GenerateClassroomInput,\n  options: {\n    baseUrl: string;\n    onProgress?: (progress: ClassroomGenerationProgress) => Promise<void> | void;\n  },\n): Promise<GenerateClassroomResult>"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(input: GenerateClassroomInput, options: { baseUrl: string; onProgress?: (progress: ClassroomGenerationProgress) => Promise<void> | void; ownerId?: string }): Promise<GenerateClassroomResult>"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 3,
+      "uuid": "b604c89e-9bcf-4d36-967d-4563dac90a5d",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "The read gate resolves the viewer rank once per request and answers 404 for drafts and wrong-audience courses on the persistence, stage-meta, and classroom seams; the generation pipeline claims its stage_meta row.",
+      "gates": [
+        {
+          "id": "g1",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/publishing/read-gate.test.ts && echo GATE_OK",
+          "expect": "GATE_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pending"
+        },
+        {
+          "id": "g2",
+          "type": "integration",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/publishing/read-gate.pg.test.ts && echo GATE_PG_OK",
+          "expect": "GATE_PG_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pending"
+        },
+        {
+          "id": "g3",
+          "type": "smoke",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pending"
+        }
+      ]
+    },
+    {
+      "id": "S3",
+      "title": "Publish flow, audience picker, and i18n",
+      "intent": "Delivers the rewritten publish and unpublish routes, the publish dialog with the audience picker, the home library wiring, and the new i18n keys.",
+      "user_stories": [
+        1,
+        2,
+        6
+      ],
+      "blocked_by": [
+        "S1",
+        "S2"
+      ],
+      "targets": [
+        {
+          "path": "app/api/stages/[id]/publish/route.ts",
+          "symbols": [
+            {
+              "name": "POST",
+              "kind": "function",
+              "expectation": "Modified: calls requirePermission course.publish in the Response-rethrow catch, reads optional audience default 0, allows an admin to publish any course, writes setStageVisibility.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest, { params }: Params)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest, { params }: Params)"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/stages/[id]/unpublish/route.ts",
+          "symbols": [
+            {
+              "name": "POST",
+              "kind": "function",
+              "expectation": "Modified: calls requirePermission course.publish in the Response-rethrow catch, allows an admin to unpublish any course, writes setStageVisibility draft keeping the stored audience.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest, { params }: Params)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest, { params }: Params)"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "components/publishing/publish-dialog.tsx",
+          "symbols": [
+            {
+              "name": "PublishDialog",
+              "kind": "function",
+              "expectation": "New: dialog with the audience picker, publish and unpublish actions, status feedback.",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "({ open, stageId, onOpenChange }: PublishDialogProps)"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "app/page.tsx",
+          "symbols": [
+            {
+              "name": "HomePage",
+              "kind": "function",
+              "expectation": "Modified: mounts the publish dialog from the course card menu and refreshes the library after a visibility change.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "()"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "()"
+              },
+              "postcondition_quality": "VERIFIED"
+            },
+            {
+              "name": "ClassroomCard",
+              "kind": "function",
+              "expectation": "Modified: gains a publish affordance next to rename and delete.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "({\n  classroom,\n  slide,\n  formatDate,\n  overlay,\n  onDelete,\n  onRename,\n  confirmingDelete,\n  onConfirmDelete,\n  onCancelDelete,\n  onClick,\n}: {\n  classroom: StageListItem;\n  slide?: Slide;\n  formatDate: (ts: number) => string;\n  /** Extra absolutely-positioned layers over the thumbnail (move menu, badges). */\n  overlay?: React.ReactNode;\n  onDelete: (id: string, e: React.MouseEvent) => void;\n  onRename: (id: string, newName: string) => void;\n  confirmingDelete: boolean;\n  onConfirmDelete: () => void;\n  onCancelDelete: () => void;\n  onClick: () => void;\n})"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "props unchanged plus `onPublish`"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "lib/i18n/locales/en-US.json",
+          "symbols": [
+            {
+              "name": "en-US.json",
+              "kind": "file",
+              "expectation": "Modified: source-of-truth keys for the dialog, the badges, and the gallery under a new publishing group.",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable",
+                "signature": "new `publishing` group"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 3,
+      "uuid": "b681a4d8-9102-4398-9578-6b2d1fd909b1",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "Publish and unpublish enforce course.publish through the typed 403, write setStageVisibility with the chosen audience, and the dialog renders in every mode with the picker.",
+      "gates": [
+        {
+          "id": "g1",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/publishing/publish-routes.test.ts && echo PUBLISH_ROUTES_OK",
+          "expect": "PUBLISH_ROUTES_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pending"
+        },
+        {
+          "id": "g2",
+          "type": "integration",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/publishing/publish-live-wire.pg.test.ts && echo PUBLISH_LIVE_OK",
+          "expect": "PUBLISH_LIVE_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pending"
+        },
+        {
+          "id": "g3",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm check:i18n-keys && echo I18N_OK",
+          "expect": "I18N_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pending"
+        }
+      ]
+    },
+    {
+      "id": "S4",
+      "title": "Public gallery page",
+      "intent": "Delivers the rank-filtered listing query, the gallery page, the gallery i18n keys, and the home entry link.",
+      "user_stories": [
+        3
+      ],
+      "blocked_by": [
+        "S1",
+        "S2"
+      ],
+      "targets": [
+        {
+          "path": "lib/persistence/gallery.ts",
+          "symbols": [
+            {
+              "name": "listGalleryCourses",
+              "kind": "function",
+              "expectation": "New: lists published, non-deleted courses with audience <= viewerRank, ordered by published_at descending.",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable, viewerRank: number): Promise<GalleryCourse[]>"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "app/gallery/page.tsx",
+          "symbols": [
+            {
+              "name": "GalleryPage",
+              "kind": "function",
+              "expectation": "New: server component resolving the viewer rank from the request, rendering the filtered list, linking each card to /classroom/[id], empty state for zero results.",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "()"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "app/page.tsx",
+          "symbols": [
+            {
+              "name": "HomePage",
+              "kind": "function",
+              "expectation": "Modified: renders the gallery entry link in the library action bar, visible to every rank.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "()"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "()"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 3,
+      "uuid": "50f9bad6-32f2-4bd4-b077-f125dbe7a3e2",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "listGalleryCourses lists published, non-deleted courses with audience <= viewerRank; the gallery page and the home action-bar link render for every rank.",
+      "gates": [
+        {
+          "id": "g1",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/publishing/gallery-list.test.ts && echo GALLERY_LIST_OK",
+          "expect": "GALLERY_LIST_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pending"
+        },
+        {
+          "id": "g2",
+          "type": "integration",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/publishing/gallery.pg.test.ts && echo GALLERY_PG_OK",
+          "expect": "GALLERY_PG_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pending"
+        },
+        {
+          "id": "g3",
+          "type": "smoke",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pending"
+        }
+      ]
+    },
+    {
+      "id": "S5",
+      "title": "No-leak adversarial proof",
+      "intent": "Delivers the adversarial suite that proves the read gate leaks no cross-audience content through any seam.",
+      "user_stories": [
+        7
+      ],
+      "blocked_by": [
+        "S2"
+      ],
+      "targets": [
+        {
+          "path": "tests/publishing/no-leak.pg.test.ts",
+          "symbols": [
+            {
+              "name": "no-leak.pg.test.ts",
+              "kind": "suite",
+              "expectation": "New: probes the persistence route, the stage-meta route, and the classroom route across every role class and course state, plus the JSON-only no-row classroom case with the flag toggled in-process.",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "describe('publishing no-leak probes')"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 4,
+      "uuid": "a6934f38-a89a-4646-9557-4445f3f7a227",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "The cross-tab suite proves the exact 404/200 pair per seam for every course state and caller rank, including the no-row classroom case with the flag toggled in-process.",
+      "gates": [
+        {
+          "id": "g1",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/publishing/read-gate.test.ts && echo GATE_OK",
+          "expect": "GATE_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pending"
+        },
+        {
+          "id": "g2",
+          "type": "integration",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/publishing/read-gate.pg.test.ts && echo GATE_PG_OK",
+          "expect": "GATE_PG_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pending"
+        },
+        {
+          "id": "g3",
+          "type": "adversarial",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/publishing/no-leak.pg.test.ts && echo NO_LEAK_OK",
+          "expect": "NO_LEAK_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pending"
+        },
+        {
+          "id": "g4",
+          "type": "smoke",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pending"
+        }
+      ]
+    }
+  ],
+  "audit": [
+    {
+      "seq": 1,
+      "id": "9f619b3c-6ae4-4033-a1a4-d3b19728f0bf",
+      "at": "2026-09-05T11:25:48.915Z",
+      "actor": "orchestrator",
+      "command": "init",
+      "transition": "spec-approved:docs/specs/017-publishing-visibility.md",
+      "slice": null,
+      "hash": "2e8806aa9feb919d98bf45c2987a63a76a3d135bd7126209f269f675ee6bedcd"
+    },
+    {
+      "seq": 2,
+      "id": "67b3a99e-4a63-4bdb-a4ef-c6803a6b6df3",
+      "at": "2026-09-05T11:25:48.916Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect",
+      "slice": "S1",
+      "hash": "c51c92b08b70264fe8cd8f6b2d7816297526c861405946df0bdc04c6a511432d",
+      "expectationHash": "e222b0171c3586e3d589ce84343376645bdec646aead6af86c0f2887c20534e5"
+    },
+    {
+      "seq": 3,
+      "id": "9add48fd-7c83-499f-90ba-89b94489275e",
+      "at": "2026-09-05T11:25:48.916Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/persistence/stage-meta.ts::STAGE_META_SCHEMA",
+      "slice": "S1",
+      "hash": "47efe453f6ea5ffaa4bed17b1b7990822fddd282ae5a31794952de43e014cf08",
+      "expectationHash": "8980114c0a1fe271906e21a33fe82081dc6d710b7f8f65a5f32a75fa5b386af4"
+    },
+    {
+      "seq": 4,
+      "id": "24246e53-b241-41f0-be1b-54a3c768d5f3",
+      "at": "2026-09-05T11:25:48.916Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/persistence/stage-meta.ts::StageMetaRow",
+      "slice": "S1",
+      "hash": "1ced1add2000311810240d11f4a3b6bce72fb50a3cb0f623716f44a430fa4336",
+      "expectationHash": "d125e18b45a89af13f53f95a276fcc5837cafd1044aaa43a321613fa9f4e7bdc"
+    },
+    {
+      "seq": 5,
+      "id": "b4237e1f-3754-4c9a-a767-31c34bda5a9c",
+      "at": "2026-09-05T11:25:48.916Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/persistence/stage-meta.ts::readStageMeta",
+      "slice": "S1",
+      "hash": "0d26c66dda1bad3856a72c610d0e2dc8b8156a4191a589b21a58edb5713d458e",
+      "expectationHash": "3fa1324800d7f7bf167db7c6f3f1bf19aa47274ec849d5303e4120a97eb67c45"
+    },
+    {
+      "seq": 6,
+      "id": "71bde39d-1af0-4820-82d3-42c5ae5ffe13",
+      "at": "2026-09-05T11:25:48.916Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/persistence/stage-meta.ts::setStageVisibility",
+      "slice": "S1",
+      "hash": "57d1b284b08d61d12370191eaa0d53450e6f97aa401b9c037d9b9c97205ff28b",
+      "expectationHash": "e1cece34117a4921218d399003847aab01d4692b5421a39b59bfdde2056ce773"
+    },
+    {
+      "seq": 7,
+      "id": "c7016085-74f0-4762-9866-daa0bc4ca1c2",
+      "at": "2026-09-05T11:25:48.916Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/server/stage-access.ts::StageAccess",
+      "slice": "S1",
+      "hash": "173a1b48e4025db62c99711569679a7acd272601d090bc61e8c297c59d450d4c",
+      "expectationHash": "c024ab59fb01fbf4d0bd397979ce21a9f335764b6e944fc7c6229fc960a1a52d"
+    },
+    {
+      "seq": 8,
+      "id": "ff88ac2b-0fba-4f01-afeb-5d491d51245c",
+      "at": "2026-09-05T11:25:48.916Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/server/stage-access.ts::readStageAccessIncludingDeleted",
+      "slice": "S1",
+      "hash": "f6c554df69d5a40d22a841c61130542e75e0e154b06f0efc3204186b06ebede5",
+      "expectationHash": "3d8d955c1f72380aa6c9b9668f0b061cb9641e5ab17bb2fb87b4e8ed70bcdc52"
+    },
+    {
+      "seq": 9,
+      "id": "59ea334c-f130-42f5-ae56-f8c5d6721561",
+      "at": "2026-09-05T11:25:48.916Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect",
+      "slice": "S2",
+      "hash": "7706b9082a5403ec97b991f9caa280223276d8f6663fddbf880b7caf489eae51",
+      "expectationHash": "1a951cedcba58b3fb75d5243f9f32321e8239ea629810116af0776216f3afa45"
+    },
+    {
+      "seq": 10,
+      "id": "b42a780f-2bac-4212-9e4f-b449a5499aab",
+      "at": "2026-09-05T11:25:48.916Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/persistence/audience.ts::AUDIENCE_RANK",
+      "slice": "S2",
+      "hash": "2cb95769e3c5554540615272ccd174fdec13fd94551531b0f67d6efcb18b212a",
+      "expectationHash": "1ac856d1e69eb3d28b7f900641440bc81c483a720f4fdf467812f76bdf4a98a2"
+    },
+    {
+      "seq": 11,
+      "id": "93dcb8fb-2254-4231-80eb-5dfa9f88b2a0",
+      "at": "2026-09-05T11:25:48.916Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/persistence/audience.ts::resolveViewerRank",
+      "slice": "S2",
+      "hash": "35b474851005f958a2ece2513ba6e0c87867c2fc034387aee34c135c03a6187e",
+      "expectationHash": "1702bbab3bab197c6754c2083bb05cb65d7926ce787f53575c242571e8d603d3"
+    },
+    {
+      "seq": 12,
+      "id": "c8bb4aff-3b48-4af0-9441-29a7c869b133",
+      "at": "2026-09-05T11:25:48.916Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/persistence/document-access.ts::decideDocumentAccess",
+      "slice": "S2",
+      "hash": "762029be1a868de5802bfdb24d1e96651eb7a87081284026b7ec806a5d43cdd7",
+      "expectationHash": "439502cdc7dbaddf5753fe4a33eca164a60a391780553ccc1970f762f2016081"
+    },
+    {
+      "seq": 13,
+      "id": "833193b4-c3c7-4279-bb9b-25ebce29efd0",
+      "at": "2026-09-05T11:25:48.916Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/persistence/[...path]/route.ts::handlePersistenceRequest",
+      "slice": "S2",
+      "hash": "bc404b9a40a306defa330b5adbf3fbd861a246910f6dd021eea018b6917b22ee",
+      "expectationHash": "9fcb7d3cdc4a678fe7bdff16a7e389e6c15395dbf71db51c88fe00517ee0b703"
+    },
+    {
+      "seq": 14,
+      "id": "5b2bc77e-d5a6-4024-b088-934c1aafd87e",
+      "at": "2026-09-05T11:25:48.916Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/stage-meta/[stageId]/route.ts::GET",
+      "slice": "S2",
+      "hash": "6d047339d6deb6882700bb20a3a7684d04fb41abe707c4202d6517b642871ddc",
+      "expectationHash": "f169a0ae1dc067930e5d7ea3d5259c71632c96b9a930f1a95cd5341c2efec86a"
+    },
+    {
+      "seq": 15,
+      "id": "26dcda25-bdbe-47e9-b8f6-eabec1d7e97b",
+      "at": "2026-09-05T11:25:48.916Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/classroom/route.ts::GET",
+      "slice": "S2",
+      "hash": "583107c3e5c8a92fd5fe3c525a11fbc8d1d7e3b5ffea59e71d29505237bf5209",
+      "expectationHash": "147d4bc9e846694d4420909c2d6c104c4dd77a7b191dfb6ea3029a9ef38ffadd"
+    },
+    {
+      "seq": 16,
+      "id": "becac663-b4b6-4b4f-a6aa-b6f26a07c602",
+      "at": "2026-09-05T11:25:48.916Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/server/classroom-generation.ts::generateClassroom",
+      "slice": "S2",
+      "hash": "bd68e72b092b5c2305518f76690c158fb7ff3b720ecb046b5daf5954d89bcd8b",
+      "expectationHash": "8bbaadbcaef790d27f3cd680500aa022ea6580581c920b696cf863994ef0e774"
+    },
+    {
+      "seq": 17,
+      "id": "26c34b3a-5ed5-4012-8953-ae824b9245f3",
+      "at": "2026-09-05T11:25:48.916Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect",
+      "slice": "S3",
+      "hash": "4da20d562f0abbe7d9b6a4b8110a0c987d3803218215a34e23699c9b3b415493",
+      "expectationHash": "00f876b4ec33e396691b3158ab8de5f6c61967d32cfa22bc0c423de10fcbde00"
+    },
+    {
+      "seq": 18,
+      "id": "8553d401-8576-417f-97c3-1daeaf9c7c9a",
+      "at": "2026-09-05T11:25:48.916Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:app/api/stages/[id]/publish/route.ts::POST",
+      "slice": "S3",
+      "hash": "ccc4485a8e1ab8ff5b8c013fe3c2b836ecd560713f889d97c88b61f507276331",
+      "expectationHash": "283c9debbdd0783a33ce494820fffe6f1e9a2370cac6ea2dc8194e9f430f6fc8"
+    },
+    {
+      "seq": 19,
+      "id": "873e029e-b8f9-4fc4-9a49-d9796bdec851",
+      "at": "2026-09-05T11:25:48.916Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:app/api/stages/[id]/unpublish/route.ts::POST",
+      "slice": "S3",
+      "hash": "2b7b219f3577e73179f8ade886e67e1a6ba6a5fba3293af3aef40e101e0036b0",
+      "expectationHash": "e859ec125d1bc55d849b7fa9c337840a2e37b7015065d8f215e36a5b31f9975f"
+    },
+    {
+      "seq": 20,
+      "id": "e96f6ac9-85cb-49f0-b133-af41e287d4cc",
+      "at": "2026-09-05T11:25:48.916Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:components/publishing/publish-dialog.tsx::PublishDialog",
+      "slice": "S3",
+      "hash": "676bb1b0fd9dad41a8260dff4b2635fcee0ae0c13e584e73bd739d7bbe04406d",
+      "expectationHash": "6cdfef3079be5ffeb02acb99dbc029922876ed12287ef2a795ae085f339d31a1"
+    },
+    {
+      "seq": 21,
+      "id": "2224a53e-9bc6-45f9-8fa5-18fa751bcdf3",
+      "at": "2026-09-05T11:25:48.916Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:app/page.tsx::HomePage",
+      "slice": "S3",
+      "hash": "2f431401260b85283a5e7a14a461c9eaf80742a8cf0305f73c0ecf3f55456687",
+      "expectationHash": "023863e6bd4d1613d6e85487c79819db0cc1a52c2cb3e03615724f93b658d51a"
+    },
+    {
+      "seq": 22,
+      "id": "0dcf85f1-31d1-400c-baf9-2407d37cdd30",
+      "at": "2026-09-05T11:25:48.916Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:app/page.tsx::ClassroomCard",
+      "slice": "S3",
+      "hash": "c92a513063ec0b6b2586fba62f8b9b65ca7cdf8add646edf533bb998db642605",
+      "expectationHash": "f31bacbd213d59c72bce8681ad1baad85ef6138689bab73c058be4ba6753adec"
+    },
+    {
+      "seq": 23,
+      "id": "80b029d8-9478-420c-88c2-0dfba75c8f10",
+      "at": "2026-09-05T11:25:48.916Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:lib/i18n/locales/en-US.json::en-US.json",
+      "slice": "S3",
+      "hash": "7e3efea4a850a5f3fe1141a423d991431127df8e57660f80ea9fc28d6d745902",
+      "expectationHash": "b0cc5a2a4f9143421b855d8041d4dccd690c2e9d770338c08ff051d5a52a985d"
+    },
+    {
+      "seq": 24,
+      "id": "69a70c04-eef5-40d4-b6ae-d4976d48c26f",
+      "at": "2026-09-05T11:25:48.916Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect",
+      "slice": "S4",
+      "hash": "46de1ee0bd01d5387700cbbb38fd35d4559c73fd36d4a5b14197b04f92bbabee",
+      "expectationHash": "d6af4e493c054f5369cbee4eeb7df68c78716f98a25f0ae5903aa365ffe74ca0"
+    },
+    {
+      "seq": 25,
+      "id": "cd65c3c1-4a75-4ab7-87dd-692b5eba985b",
+      "at": "2026-09-05T11:25:48.916Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect-symbol:lib/persistence/gallery.ts::listGalleryCourses",
+      "slice": "S4",
+      "hash": "d000645a3b3a0245f333c7cd0a8f8ed28b3cf15ce730090b42a063a03ba97643",
+      "expectationHash": "99eb5edb1deb979f2f7f6eec8a2f1bd66c8dbcee11d00f85dc92cdf4d95e8459"
+    },
+    {
+      "seq": 26,
+      "id": "21c08f49-db09-42a9-8f50-ff732994c066",
+      "at": "2026-09-05T11:25:48.916Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect-symbol:app/gallery/page.tsx::GalleryPage",
+      "slice": "S4",
+      "hash": "292e7172089d2f1bb1e05c806fbb9e8a7ec9e44ec90714752fa4be01c941beec",
+      "expectationHash": "24a0608b2d3140d8679bd614233d52a9df4c18c5d49cbd4bbd89b55dad9f7931"
+    },
+    {
+      "seq": 27,
+      "id": "09aa86c8-c262-4169-8adb-7cfb929b4b88",
+      "at": "2026-09-05T11:25:48.916Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect-symbol:app/page.tsx::HomePage",
+      "slice": "S4",
+      "hash": "7d59bbbf53a5285aeda21376ae3ad5f9d75d78fe0fb1cc214b12a05a6cb7a9ce",
+      "expectationHash": "64d2515a5b77b97e07489bf2c38611ba6efe22b56773bb3325c99b54631cd304"
+    },
+    {
+      "seq": 28,
+      "id": "4ecf8017-1995-401b-b6e5-2425f379b36a",
+      "at": "2026-09-05T11:25:48.916Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S5:expect",
+      "slice": "S5",
+      "hash": "8f48adaf4d7beaccff6cf74949bb546acdda4764630c7dc1e741399918013f7e",
+      "expectationHash": "7720d1c5426f8be58faaa5ce09cf81c03b717b146d2b9a66c2c8c0cac0f5dc99"
+    },
+    {
+      "seq": 29,
+      "id": "7413fce1-bbc8-4833-852d-421caee6531f",
+      "at": "2026-09-05T11:25:48.916Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S5:expect-symbol:tests/publishing/no-leak.pg.test.ts::no-leak.pg.test.ts",
+      "slice": "S5",
+      "hash": "07b57d65e38edaf037a94f2c52a125ed0b5d724cd59e4797d11afe70f082ebfc",
+      "expectationHash": "f4fb003579bbda5d8aa1fe056c9507d1bfed7481f450879ee347873f1936970a"
+    },
+    {
+      "seq": 30,
+      "id": "8236aff1-a391-4439-ad09-5312343ecea7",
+      "at": "2026-09-05T11:25:48.916Z",
+      "actor": "orchestrator",
+      "command": "init_batch",
+      "transition": "batch-init:S1,S2,S3,S4,S5",
+      "slice": null,
+      "hash": "4f6337e10cbc4588fed87ecceb78daf46506afafeb50d506d5a54470215d60c3"
+    },
+    {
+      "seq": 31,
+      "id": "83b11d77-6ad9-4e0f-bc1d-555ae405b5d1",
+      "at": "2026-09-05T11:25:52.600Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S1:capture",
+      "slice": "S1",
+      "hash": "2ef64eb5622e75bb417a344d9bc391e43f3c2835c20aa97ab941e8dd51d2e7e0",
+      "fileHash": "03c90defe65deb44cc1d479ff4f2d6c8b90e9a04866375438f5eedcbee348bb8"
+    },
+    {
+      "seq": 32,
+      "id": "80a5625d-7fd8-4b54-8336-07944edfb371",
+      "at": "2026-09-05T11:25:52.666Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S2:capture",
+      "slice": "S2",
+      "hash": "df11900470fae01a1d88de5e35d87c67a0dab4213dd33052f51203840392f317",
+      "fileHash": "9e8d269d2b8bb255ed9843ba10b2f8570798d4952cc5d0e096048155e41d5f20"
+    },
+    {
+      "seq": 33,
+      "id": "60cacaf2-72f0-497a-8566-ef04f56158d8",
+      "at": "2026-09-05T11:25:52.724Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S3:capture",
+      "slice": "S3",
+      "hash": "ea718152ceb3814e32da997b54680318501e0662127195cd184195578566d5fe",
+      "fileHash": "7ec1a46c12c23c2ead7f5ad78ff2a2a62b2c290ada0123e3133efc4b8e0de6af"
+    },
+    {
+      "seq": 34,
+      "id": "61199ada-ef0b-45e4-b5d2-691b51cb293d",
+      "at": "2026-09-05T11:25:52.788Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S4:capture",
+      "slice": "S4",
+      "hash": "daba5c5e36ecb91e4bbcd2002e3ef7115160f645cf12db942822ee33a0787967",
+      "fileHash": "ff0e2a9bf98e6f87ca903b6a791b626f357c11d736edd7b42a468cee93622f85"
+    },
+    {
+      "seq": 35,
+      "id": "e4de5281-b4d1-4f68-8725-29d8d401db56",
+      "at": "2026-09-05T11:25:52.831Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S5:capture",
+      "slice": "S5",
+      "hash": "d24fc813434ec820654ad173d97841343c51381b3eb24d93038165365363a18a",
+      "fileHash": "686e2693712276ea7792506216fe221e7cf1bd46e5fe20bad6e034d5fa2a8844"
+    },
+    {
+      "seq": 36,
+      "id": "f4492217-7964-4112-87ca-7ef12d8d4a91",
+      "at": "2026-09-05T11:26:08.054Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/persistence/stage-meta.ts::STAGE_META_SCHEMA",
+      "slice": "S1",
+      "hash": "032cae75c2a20af2543f4432eab856acb6ac33573463ed163e9a10390a65e867",
+      "fileHash": "fda5af11515ce51e49fb4327385946427aefe152ba07ce26be239667689540cc"
+    },
+    {
+      "seq": 37,
+      "id": "cb4ce840-2ca4-40c2-be73-14e3402f11bd",
+      "at": "2026-09-05T11:26:08.100Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/persistence/stage-meta.ts::StageMetaRow",
+      "slice": "S1",
+      "hash": "4c3d8e2d18af73ba25765aacc08ccb4e36f0cf1b5907185bb9fd6e58700963ff",
+      "fileHash": "9f55baca6e6edcea03391732ea1d328745ced024b7815b5ccf4d5b8908ab6189"
+    },
+    {
+      "seq": 38,
+      "id": "cb2c384d-1332-4846-b76e-08856d89353c",
+      "at": "2026-09-05T11:26:08.145Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/persistence/stage-meta.ts::readStageMeta",
+      "slice": "S1",
+      "hash": "ef077a49e1142d6c4622784f6ebffc039fac56b360dff38fd8977aff0d4f566e",
+      "fileHash": "5e590887e34186c20eb09407b315e7dfe205263be9f3905b649a6d887b7399d3"
+    },
+    {
+      "seq": 39,
+      "id": "2f1391e4-2eab-475c-bbf0-27958d413c8a",
+      "at": "2026-09-05T11:26:08.186Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/persistence/stage-meta.ts::setStageVisibility",
+      "slice": "S1",
+      "hash": "d09d40e90594ca5cd893b77103970e7d4559ecb7155900211726fe8cfad65c04",
+      "fileHash": "06010255357c1677c3d5f4b06ca51bc34a0d0767ed746d3793af5f85624ed43f"
+    },
+    {
+      "seq": 40,
+      "id": "e727b7a2-9d7c-4775-b5d8-f93215956852",
+      "at": "2026-09-05T11:26:08.230Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/server/stage-access.ts::StageAccess",
+      "slice": "S1",
+      "hash": "589613da624882b5b396bd775ff0147092ea7883f70f23546b0cadd99719dae8",
+      "fileHash": "67469b2c7b7f3db1436f21895036cc6677da070b0af6a5d86950eedcf8294492"
+    },
+    {
+      "seq": 41,
+      "id": "012c636c-8ea6-4150-94ab-c9b603cde114",
+      "at": "2026-09-05T11:26:08.271Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/server/stage-access.ts::readStageAccessIncludingDeleted",
+      "slice": "S1",
+      "hash": "6c12748bd664f47123d4476967eae474284de5b62b8ffafb0ebd65017090a311",
+      "fileHash": "bacfa05bf2e6be3b0b5033029bfd5408e117595c6b749c0f804b28c0d61a0f7d"
+    },
+    {
+      "seq": 42,
+      "id": "f2721673-66f7-4561-bd11-80c38221dbe5",
+      "at": "2026-09-05T11:26:08.315Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/persistence/audience.ts::AUDIENCE_RANK",
+      "slice": "S2",
+      "hash": "c0a609c72461c02e2ddbae76c4abe29cf277ffa5e9b060f726d066da2ad65362",
+      "fileHash": "6f4d58b70e3b75bc52a20490a2b563a21a69eafe7b2d402c745714c7a33f3f5a"
+    },
+    {
+      "seq": 43,
+      "id": "b9169d57-6f91-4fea-8a36-f62381edd2c6",
+      "at": "2026-09-05T11:26:08.357Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/persistence/audience.ts::resolveViewerRank",
+      "slice": "S2",
+      "hash": "9890c23aeed258fa9f6b5a7eaf33aaaa5c1adbb5976bec003b2529a740822edb",
+      "fileHash": "cbb6e807612c94c6d10184ced46a04cf6f87cb18a3035c860a87b02dfd35c57f"
+    },
+    {
+      "seq": 44,
+      "id": "e9193bfe-af64-4b61-b5f6-161930cb527b",
+      "at": "2026-09-05T11:26:08.403Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/persistence/document-access.ts::decideDocumentAccess",
+      "slice": "S2",
+      "hash": "cab767c85d32c86b6006661a47211defb4214b2feeb183745f6511376917413a",
+      "fileHash": "a7e007d935d015fe33639d9913403d8c80c2daead4f1f11e4022451ead0ebca3"
+    },
+    {
+      "seq": 45,
+      "id": "0e05d242-0244-46ee-a683-11abd6ef1fef",
+      "at": "2026-09-05T11:26:08.444Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/persistence/[...path]/route.ts::handlePersistenceRequest",
+      "slice": "S2",
+      "hash": "eed19f101374506ba4fa90744abc55fb440c387f83817a54059841418c18602a",
+      "fileHash": "aeb3e4f9942b8ab29c729d967bb944fd9aa304d04d367bc061afee7ecdfc7079"
+    },
+    {
+      "seq": 46,
+      "id": "9b986ff4-9bd5-4635-a3ee-3f0470ddef82",
+      "at": "2026-09-05T11:26:08.489Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/stage-meta/[stageId]/route.ts::GET",
+      "slice": "S2",
+      "hash": "13c982d33fff2a37a212f3ccc379104097089f6111fb8a0d839efcccfa3aeb0a",
+      "fileHash": "8f8a498158d902d4728119319552e188ea8770ffad2beddf3446f74d45621af5"
+    },
+    {
+      "seq": 47,
+      "id": "64c07821-4c1c-48b8-8c33-489d05872464",
+      "at": "2026-09-05T11:26:08.530Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/classroom/route.ts::GET",
+      "slice": "S2",
+      "hash": "f04f94bc81db286c7ea8f73d91ceb47bd18c7964ed2313f60879f99a7840ecf7",
+      "fileHash": "50c15aade53e5e615914b2c858955a0651f9d952918052acba4ff65d463d757d"
+    },
+    {
+      "seq": 48,
+      "id": "e1239cc7-f81b-40f6-b9af-b1322d7c7617",
+      "at": "2026-09-05T11:26:08.576Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/server/classroom-generation.ts::generateClassroom",
+      "slice": "S2",
+      "hash": "e1eef7feed64b010a3b148cfadbb237ffb22c2911d38036efcd0e937629cbf99",
+      "fileHash": "c719fec1e62d009cc1e445e7002d3e563b0cdb23c7836c65728aa24633461df3"
+    },
+    {
+      "seq": 49,
+      "id": "4be36756-c3f5-4fc4-9c5a-f0921e2a6be2",
+      "at": "2026-09-05T11:26:08.617Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:app/api/stages/[id]/publish/route.ts::POST",
+      "slice": "S3",
+      "hash": "65d196a54e9d41147d419b47f2aaf364c6276fe4325c66de656c153c21d8d2c9",
+      "fileHash": "6d8a507d7b377404b4d3005e7ad7950046edbd367cc88f280b8947bdf9446372"
+    },
+    {
+      "seq": 50,
+      "id": "1ba87bba-9cba-423a-8193-f7f533ecf7eb",
+      "at": "2026-09-05T11:26:08.663Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:app/api/stages/[id]/unpublish/route.ts::POST",
+      "slice": "S3",
+      "hash": "c0e525aad7c90a8e0ad456b3f97b5e72b74cfe0acf6fa332dcc1be8c88ec0b0a",
+      "fileHash": "bdcc4d53bf5be7d7c7a91acc95f201bc8dbbfa4a1d74d3cf167cea2aa9107cf5"
+    },
+    {
+      "seq": 51,
+      "id": "bd5073ed-e056-4e0d-bd63-f0cd0ed57a44",
+      "at": "2026-09-05T11:26:08.703Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:components/publishing/publish-dialog.tsx::PublishDialog",
+      "slice": "S3",
+      "hash": "e34b53af5f042f91edc2d80295e49881ac3577f4f7615340755a8ddc2c444ba0",
+      "fileHash": "0cfdfa23fe4e062658fb23beafcdd0b9bc6104cc356951bdf6d5cab56f378028"
+    },
+    {
+      "seq": 52,
+      "id": "167fbfac-b872-47ad-a462-fef81a024e19",
+      "at": "2026-09-05T11:26:08.748Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:app/page.tsx::HomePage",
+      "slice": "S3",
+      "hash": "2ab35103019b9016c1b69c3f61f26da789d3f7cf0b4c258625c9e02a60bf2917",
+      "fileHash": "0c27da54c8150a1f0d8a4bebc03073d40684adaadeb8e7228275881c7361a583"
+    },
+    {
+      "seq": 53,
+      "id": "1ef0ae14-7651-4a0b-8464-1400d359d3a0",
+      "at": "2026-09-05T11:26:08.789Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:app/page.tsx::ClassroomCard",
+      "slice": "S3",
+      "hash": "d3117737a4005aeebc3b998cbbfd2f9e839bbc4d4d2e7452a513e85f5ccb9d44",
+      "fileHash": "c5a2c4e2528544ba68e33301f96f8b38d1b0f38313f0d1ea2f0e8ca39f9f089f"
+    },
+    {
+      "seq": 54,
+      "id": "7c506596-8799-42f0-98b9-7a5166b73719",
+      "at": "2026-09-05T11:26:08.833Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:lib/i18n/locales/en-US.json::en-US.json",
+      "slice": "S3",
+      "hash": "830a692bd375bc141e547bc043be9f43e6d9b8cc6395072c473f20ef8949fd0e",
+      "fileHash": "14f6c385a272e6f42ab960c542060e9ae6ef70d42a98977936888cdea15e12d9"
+    },
+    {
+      "seq": 55,
+      "id": "5726443c-a8e9-49a2-9eff-430d658b19b6",
+      "at": "2026-09-05T11:26:08.875Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S4:postcondition:lib/persistence/gallery.ts::listGalleryCourses",
+      "slice": "S4",
+      "hash": "530e8ae3a8397c20c321c68f9d9425672fb8b04fd5523d81c7c592c608351d14",
+      "fileHash": "66ebd961db80aa192c150df20eb0468095496ad0a6dc12ce7e9c7a2da5ae9981"
+    },
+    {
+      "seq": 56,
+      "id": "95118ba1-4fc9-42b8-8e91-1d8607985735",
+      "at": "2026-09-05T11:26:08.922Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S4:postcondition:app/gallery/page.tsx::GalleryPage",
+      "slice": "S4",
+      "hash": "39e178e67e9c0ee9ffd96f300c32c76aded6a5cf554f5ed9890a75ed318231a5",
+      "fileHash": "352ec7cd82e7d52f30986e2bc6e7ba2f0cce112e4d7c8035673f8fed9d0e46ef"
+    },
+    {
+      "seq": 57,
+      "id": "27efbf3c-9570-4a55-a459-84881e1df591",
+      "at": "2026-09-05T11:26:08.963Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S4:postcondition:app/page.tsx::HomePage",
+      "slice": "S4",
+      "hash": "e70e953525b108831d48702d92a8aeb167c9d1247153e81c485e073924322490",
+      "fileHash": "40c6b460ad1ed3c592db2713e2e919c945079ea5ba533be516ef338c93e494c8"
+    },
+    {
+      "seq": 58,
+      "id": "1c902641-ffc4-4a89-9df5-01e07dc23cf8",
+      "at": "2026-09-05T11:26:09.006Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S5:postcondition:tests/publishing/no-leak.pg.test.ts::no-leak.pg.test.ts",
+      "slice": "S5",
+      "hash": "779797e570793e7ef24fcb76ce81545a26d6058d1d417e6146f59404a478f489",
+      "fileHash": "cce916428df2fd7fa39dd61ae4004be21412395631b37f9c27524a8974d7c200"
+    },
+    {
+      "seq": 59,
+      "id": "24d2f4e5-43bd-4808-9389-f72818851551",
+      "at": "2026-09-05T11:26:14.636Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:clarification:User reviewed the document and has no feedback; marker approved -> research",
+      "slice": null,
+      "hash": "9c962f63a38b26edba9aa77e7850da95a8bb88508406bdfb0ca93ab047b5eef0",
+      "fileHash": "67bd752394071af14cc6c2293b07a94b4ca33a6707e02dc093e4495b68cc2092"
+    },
+    {
+      "seq": 60,
+      "id": "128a0e50-0540-4912-869c-1257da9478f1",
+      "at": "2026-09-05T11:26:52.427Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:clarification:Marker normalized approved -> research so the stage gate accepts it; hash rebound to edited bytes",
+      "slice": null,
+      "hash": "46c99a39a9b763db417c55d639aa6a3a5777eb6e583a782d49df08009723645a",
+      "fileHash": "d8053352bd59249bcc783b532dd9a273d24a0d4bacccee914d59022042f98b80"
+    },
+    {
+      "seq": 61,
+      "id": "6622a262-9ef9-413b-92cb-523b04e8a92e",
+      "at": "2026-09-05T11:26:52.472Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "1007724ac3db47f81590a104f0e28de0e082071d552cbc9999554cb934bc5959",
+      "fileHash": "8f2ce9e895ea378387a5a3a50284762ba0b4fd2935d7775ea96ac6f814596b4b"
+    }
+  ],
+  "fileHash": "665c8d0d30402d7d9a0fc2ff4ae103e99d2090b0288e90da1afc8540ca2dec8b"
+}
