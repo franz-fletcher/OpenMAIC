@@ -23,7 +23,8 @@
  */
 
 import { getProvider, warnBareModelIdDeprecation } from '@/lib/ai/providers';
-import { isAgentRuntimeEnabled, isMinimalModeEnabled } from '@/lib/config/feature-flags';
+import { isAgentRuntimeEnabled } from '@/lib/config/feature-flags';
+import { isMinimalModeEnabled } from '@/lib/config/feature-flags';
 import { LLM_STAGES } from '@/lib/server/model-routes';
 import {
   isServerConfiguredProvider,

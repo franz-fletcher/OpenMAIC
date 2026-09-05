@@ -15,7 +15,8 @@ import { useTheme } from '@/lib/hooks/use-theme';
 import { cn } from '@/lib/utils';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import { ProBadge } from '@/components/workbench/ProBadge';
-import { isProWorkbenchEnabled } from '@/lib/config/feature-flags';
+import { isProWorkbenchEnabled, isMinimalModeClientEnabled } from '@/lib/config/feature-flags';
+import { usePermissions } from '@/lib/hooks/use-permissions';
 import { startProSwap, arrivedByProSwap } from '@/lib/workbench/pro-swap';
 import {
   readLastWorkspaceSessionId,
@@ -36,6 +37,8 @@ export function HeaderCapsule({ onSettingsOpen, accountSlot }: HeaderCapsuleProp
   const [themeOpen, setThemeOpen] = useState(false);
 
   const workbenchBuildEnabled = isProWorkbenchEnabled();
+  const minimalMode = isMinimalModeClientEnabled();
+  const { can } = usePermissions();
   const enterWorkbench = () => {
     const href = workspaceResumeHref(readLastWorkspaceSessionId());
     startProSwap(href, () => {});
@@ -109,7 +112,9 @@ export function HeaderCapsule({ onSettingsOpen, accountSlot }: HeaderCapsuleProp
       <div className="w-[1px] h-4 bg-gray-200 dark:bg-gray-700" />
 
       {/* 3. Pro Toggle (workbench entry affordance) */}
-      {workbenchBuildEnabled && <ProBadge active={false} onToggle={enterWorkbench} />}
+      {workbenchBuildEnabled && (!minimalMode || can('course.create')) && (
+        <ProBadge active={false} onToggle={enterWorkbench} />
+      )}
 
       {/* 4. Account slot (empty in G, batch A fills it) */}
       {accountSlot ?? null}

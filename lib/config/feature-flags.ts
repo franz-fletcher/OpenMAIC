@@ -127,19 +127,25 @@ export function isPptxImportEnabled(): boolean {
   return readBoolean(process.env.NEXT_PUBLIC_ENABLE_PPTX_IMPORT);
 }
 /**
- * Minimal-mode kill-switch. Server-only source of truth. When set, the guard
- * wrapper enforces the RBAC capability matrix on every model-spending route.
- * When unset the app behaves byte-for-byte as today.
- */
-export function isMinimalModeEnabled(): boolean {
-  return readBoolean(process.env.MINIMAL_MODE);
-}
-
-/**
  * Build-inlined client mirror of the minimal-mode flag. UI affordances gate on
  * this so the home layout and capsule can react without a server round-trip.
  * Changing the value requires a rebuild.
  */
 export function isMinimalModeClientEnabled(): boolean {
   return readBoolean(process.env.NEXT_PUBLIC_MINIMAL_MODE);
+}
+
+/**
+ * Server-only gate for the minimal-mode kill-switch. When set, the guard
+ * wrapper enforces the RBAC capability matrix on every model-spending route.
+ * When unset the app behaves byte-for-byte as today.
+ *
+ * Uses globalThis.process to survive Turbopack's compile-time env replacement.
+ * The bundler replaces process.env.X at compile time, but globalThis.process
+ * is a dynamic reference that cannot be statically analyzed.
+ */
+export function isMinimalModeEnabled(): boolean {
+  // eslint-disable-next-line no-restricted-globals -- runtime env access for server-only flag
+  const runtimeProcess = globalThis.process as NodeJS.Process | undefined;
+  return readBoolean(runtimeProcess?.env?.MINIMAL_MODE);
 }

@@ -66,7 +66,11 @@ export async function requirePermissionIfMinimalMode(
   headers: Headers,
   permission: Permission,
 ): Promise<void> {
-  if (process.env.MINIMAL_MODE !== 'true' && process.env.MINIMAL_MODE !== '1') return;
+  // Use globalThis.process to survive Turbopack's compile-time env replacement.
+  // eslint-disable-next-line no-restricted-globals -- runtime env access for server-only flag
+  const runtimeProcess = globalThis.process as NodeJS.Process | undefined;
+  const mode = runtimeProcess?.env?.MINIMAL_MODE;
+  if (mode !== 'true' && mode !== '1') return;
   await requirePermission(headers, permission);
 }
 

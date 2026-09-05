@@ -88,5 +88,25 @@ export function getServerPersistenceProvider(
     },
   );
   providerState.providerPromise = initialization;
+  providerState.providerPromise = initialization;
   return initialization;
+}
+
+/**
+ * Reset the cached provider state. Test-only: allows integration tests to
+ * close the app-side pool before terminating scratch database connections,
+ * preventing unhandled errors from terminated sockets.
+ */
+export async function resetServerPersistenceProvider(): Promise<void> {
+  const state = providerState;
+  if (state.providerPromise) {
+    try {
+      const provider = await state.providerPromise;
+      await provider.pool.end().catch(() => {});
+    } catch {
+      // Provider creation may have failed; ignore.
+    }
+  }
+  state.providerPromise = undefined;
+  state.connectionString = undefined;
 }

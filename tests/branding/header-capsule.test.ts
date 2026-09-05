@@ -20,6 +20,15 @@ vi.mock('@/components/workbench/ProBadge', () => ({
 
 vi.mock('@/lib/config/feature-flags', () => ({
   isProWorkbenchEnabled: () => true,
+  isMinimalModeClientEnabled: () => false,
+}));
+
+vi.mock('@/lib/hooks/use-permissions', () => ({
+  usePermissions: () => ({
+    permissions: [] as string[],
+    loading: false,
+    can: () => false,
+  }),
 }));
 
 vi.mock('@/lib/workbench/pro-swap', () => ({

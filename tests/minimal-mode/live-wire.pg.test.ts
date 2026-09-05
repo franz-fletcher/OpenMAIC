@@ -107,12 +107,16 @@ describe.skipIf(!PG_URL || process.env.MINIMAL_MODE !== 'true')(
         await pool.query('DELETE FROM "user" WHERE id = $1', [guestUserId]);
       }
 
-      // Close the pool so no test connections remain
+      // Close the local test pool first
       if (pool) await pool.end();
 
+      // Close the cached app-side pool so no connections to the scratch DB remain.
+      // This prevents unhandled errors when we terminate connections below.
+      const { resetServerPersistenceProvider } = await import('@/lib/persistence/server-provider');
+      await resetServerPersistenceProvider();
+
       // Point DATABASE_URL back at the maintenance DB so that
-      // getServerPersistenceProvider's cached pool no longer targets
-      // the scratch DB (it will create a new provider for the new URL).
+      // getServerPersistenceProvider creates a new provider for the new URL.
       process.env.DATABASE_URL = PG_URL;
 
       // Drop the scratch database. Give the DB a moment for cached

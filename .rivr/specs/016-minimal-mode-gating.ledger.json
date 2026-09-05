@@ -99,8 +99,10 @@
       "riskTier": 2,
       "uuid": "aec3529a-8ac4-40a0-b34b-114efd3c3c9c",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "59ab5248630d64bfb83099f6289fdb6c3d9b2ae65d18fbe20dbcfd9bf5cc7145",
+        "actor": "implementer",
+        "at": "2026-09-05T07:03:58.141Z"
       },
       "verification": {
         "status": "rejected",
@@ -706,8 +708,10 @@
       "riskTier": 3,
       "uuid": "41bfda16-add8-416b-b697-2db4c784daf5",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "683a75d67407b9c19b4811f0d1aa4c3a6014d5632731b5c9fcd379613ab20ee9",
+        "actor": "implementer",
+        "at": "2026-09-05T07:04:02.729Z"
       },
       "verification": {
         "status": "rejected",
@@ -944,8 +948,10 @@
       "riskTier": 4,
       "uuid": "ff97e6ae-48e7-4de6-a000-05a8b907299e",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "e20d77558c20052035460bd3d374be007fd61321f345c4a118936eaf65c86e1c",
+        "actor": "implementer",
+        "at": "2026-09-05T07:04:03.473Z"
       },
       "verification": {
         "status": "rejected",
@@ -1064,8 +1070,10 @@
       "riskTier": 3,
       "uuid": "58a72500-8806-4dec-8d3c-cdb0d0222bbb",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "b7c073fcd532ed41d07a694bf14fe1b718a832b17ca2b3e7a1628225e10ec273",
+        "actor": "implementer",
+        "at": "2026-09-05T07:04:03.724Z"
       },
       "verification": {
         "status": "rejected",
@@ -2190,7 +2198,51 @@
       "slice": null,
       "hash": "2d576f47e33cddc33d91db382d9735df1c65f9f5508d3e7a5cf86388b1b83d51",
       "fileHash": "df5bf30216d297912f7c578425c1b85681a96028a6ca8f34c57d9a6720f7af42"
+    },
+    {
+      "seq": 95,
+      "id": "4f1b2e50-f84d-4d24-bdc6-2b01c4dd9ced",
+      "at": "2026-09-05T07:03:58.141Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S1:impl:pending->ready_for_verification",
+      "slice": "S1",
+      "hash": "45c0d69f5ce4dcaca3c752faacc30b6ad65cc6f92f3dbcfcf7b2a2227f4b2053",
+      "fileHash": "6bff3b22dc3cea9cc7bc987f1d40dbfdda8ebd2fd0f7e55485492afc706293ca"
+    },
+    {
+      "seq": 96,
+      "id": "7347fee9-6e4a-483d-a6dc-265a63006e20",
+      "at": "2026-09-05T07:04:02.729Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S2:impl:pending->ready_for_verification",
+      "slice": "S2",
+      "hash": "9a2914830793524d783aa5064347124c0270b31bb530de034bf3f62c0d50884e",
+      "fileHash": "aae99a68f8574dee4234ef98ff345e2b2e7e478b227321bbe84c4d2af92cb72b"
+    },
+    {
+      "seq": 97,
+      "id": "1e8b1aa2-0387-439c-a2ea-fefed4078cfd",
+      "at": "2026-09-05T07:04:03.473Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S4:impl:pending->ready_for_verification",
+      "slice": "S4",
+      "hash": "799700ac5df85d80b9baf10e3ebc203d022c7112b0a2423d704170f3029189c9",
+      "fileHash": "221ea9da942d7f5cf86e7699492a6cdcb88d05477498606f89cb29c6724edf95"
+    },
+    {
+      "seq": 98,
+      "id": "584fb109-e144-4386-a839-dd887749a25a",
+      "at": "2026-09-05T07:04:03.724Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S5:impl:pending->ready_for_verification",
+      "slice": "S5",
+      "hash": "ea3749de35074b1c9d16ad07990107fe0057da465d6430275c313a8ea8d4a491",
+      "fileHash": "02e7c3a0619689b83aa2aa0432b25797f4e05816029238c30e3e400655904cf6"
     }
   ],
-  "fileHash": "6bff3b22dc3cea9cc7bc987f1d40dbfdda8ebd2fd0f7e55485492afc706293ca"
+  "fileHash": "6cab0aabe12b53c62f36020a2e326d97183980b8f3ef127415eae43c3b8882f2"
 }

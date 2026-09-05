@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useI18n } from '@/lib/hooks/use-i18n';
@@ -8,7 +8,7 @@ import { createAuthClient } from '@/lib/auth/client';
 
 const auth = createAuthClient({});
 
-export default function Page() {
+function VerifyContent() {
   const { t } = useI18n();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -146,5 +146,19 @@ export default function Page() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-[100dvh] flex items-center justify-center bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-4">
+          <div className="text-sm text-gray-500">Loading...</div>
+        </div>
+      }
+    >
+      <VerifyContent />
+    </Suspense>
   );
 }

@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { isMinimalModeClientEnabled, isMinimalModeEnabled } from '@/lib/config/feature-flags';
-
 describe('isMinimalModeEnabled', () => {
   const FLAG = 'MINIMAL_MODE';
   let original: string | undefined;

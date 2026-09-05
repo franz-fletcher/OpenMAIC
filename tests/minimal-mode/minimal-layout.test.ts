@@ -81,6 +81,47 @@ vi.mock('@/lib/config/feature-flags', async (importOriginal) => {
   };
 });
 
+// Configurable permissions mock: tests set _testPermissions before rendering.
+let _testPermissions: string[] = [];
+
+vi.mock('@/lib/hooks/use-permissions', () => ({
+  usePermissions: () => ({
+    permissions: _testPermissions,
+    loading: false,
+    can: (perm: string) => _testPermissions.includes(perm),
+  }),
+}));
+
+vi.mock('@/lib/workbench/pro-swap', () => ({
+  startProSwap: vi.fn(),
+  arrivedByProSwap: vi.fn(),
+}));
+
+vi.mock('@/lib/workbench/workspace-session-memory', () => ({
+  readLastWorkspaceSessionId: vi.fn(() => 'test-session'),
+  workspaceResumeHref: vi.fn(() => '/workbench'),
+}));
+
+vi.mock('@/components/workbench/ProBadge', () => ({
+  ProBadge: (props: { active: boolean; onToggle: () => void }) =>
+    `PRO_BADGE_${props.active ? 'active' : 'inactive'}`,
+}));
+
+vi.mock('@/components/language-switcher', () => ({
+  LanguageSwitcher: () => 'LANGUAGE_SWITCHER',
+}));
+
+vi.mock('@/lib/hooks/use-theme', () => ({
+  useTheme: () => ({ theme: 'light', setTheme: vi.fn() }),
+}));
+
+vi.mock('lucide-react', () => ({
+  Settings: () => 'SETTINGS_ICON',
+  Sun: () => 'SUN_ICON',
+  Moon: () => 'MOON_ICON',
+  Monitor: () => 'MONITOR_ICON',
+}));
+
 // Mock fetch for the session check in AccountZone.
 global.fetch = vi.fn() as unknown as typeof fetch;
 
@@ -158,6 +199,93 @@ describe('Minimal-mode account zone', () => {
       const html = container.innerHTML;
       expect(html).toContain('auth.nav.signIn');
       expect(html).not.toContain('auth.nav.createAccount');
+    });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// HeaderCapsule composition tests (jsdom)
+// ---------------------------------------------------------------------------
+
+// @vitest-environment jsdom
+describe('Minimal-mode header capsule Pro toggle', () => {
+  let root: any;
+  let container: HTMLDivElement;
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    document.body.innerHTML = '';
+    const { createRoot } = await import('react-dom/client');
+    const { createElement } = await import('react');
+    const { act } = await import('react');
+
+    container = document.createElement('div');
+    document.body.appendChild(container);
+    root = createRoot(container);
+  });
+
+  afterEach(async () => {
+    const { act } = await import('react');
+    act(() => {
+      root?.unmount();
+    });
+    document.body.innerHTML = '';
+  });
+
+  describe('LAYOUT_OK: capsule Pro toggle visibility', () => {
+    it('flag OFF + workbench enabled: Pro toggle present', async () => {
+      process.env.NEXT_PUBLIC_PRO_WORKBENCH_ENABLED = 'true';
+      delete process.env.NEXT_PUBLIC_MINIMAL_MODE;
+
+      const { HeaderCapsule } = await import('@/components/header-capsule');
+      const { createElement } = await import('react');
+      const { act } = await import('react');
+
+      await act(async () => {
+        root.render(createElement(HeaderCapsule, { onSettingsOpen: vi.fn() }));
+        await new Promise((r) => setTimeout(r, 0));
+      });
+
+      const html = container.innerHTML;
+      expect(html).toContain('PRO_BADGE');
+    });
+
+    it('flag ON + no course.create: Pro toggle hidden', async () => {
+      process.env.NEXT_PUBLIC_PRO_WORKBENCH_ENABLED = 'true';
+      process.env.NEXT_PUBLIC_MINIMAL_MODE = 'true';
+
+      const { HeaderCapsule } = await import('@/components/header-capsule');
+      const { createElement } = await import('react');
+      const { act } = await import('react');
+
+      await act(async () => {
+        root.render(createElement(HeaderCapsule, { onSettingsOpen: vi.fn() }));
+        await new Promise((r) => setTimeout(r, 0));
+      });
+
+      const html = container.innerHTML;
+      expect(html).not.toContain('PRO_BADGE');
+    });
+
+    it('flag ON + creator (has course.create): Pro toggle present', async () => {
+      process.env.NEXT_PUBLIC_PRO_WORKBENCH_ENABLED = 'true';
+      process.env.NEXT_PUBLIC_MINIMAL_MODE = 'true';
+
+      _testPermissions = ['course.create'];
+
+      const { HeaderCapsule } = await import('@/components/header-capsule');
+      const { createElement } = await import('react');
+      const { act } = await import('react');
+
+      await act(async () => {
+        root.render(createElement(HeaderCapsule, { onSettingsOpen: vi.fn() }));
+        await new Promise((r) => setTimeout(r, 0));
+      });
+
+      const html = container.innerHTML;
+      expect(html).toContain('PRO_BADGE');
+
+      _testPermissions = [];
     });
   });
 });
