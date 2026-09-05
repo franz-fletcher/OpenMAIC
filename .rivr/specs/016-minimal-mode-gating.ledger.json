@@ -9,12 +9,13 @@
   "tracker": {
     "mode": "none"
   },
-  "stage": "verification",
+  "stage": "implementation",
   "retry": {
-    "count": 0,
+    "count": 1,
     "max": 5,
-    "consecutive_same_cause": 0,
-    "escalate_at": 3
+    "consecutive_same_cause": 1,
+    "escalate_at": 3,
+    "last_cause": "runtime-flag-bake"
   },
   "slices": [
     {
@@ -98,14 +99,41 @@
       "riskTier": 2,
       "uuid": "aec3529a-8ac4-40a0-b34b-114efd3c3c9c",
       "impl": {
-        "status": "ready_for_verification",
-        "hash": "a394f42a91a2b0de8b6e3abc6261b74066a9fa7186634029847336f4faddd4a7",
-        "actor": "implementer",
-        "at": "2026-09-05T03:34:08.969Z"
-      },
-      "verification": {
         "status": "pending",
         "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "rejected",
+        "hash": "7e5012fed288189f2c956809ede1e28a23ba643033592ba3b18a37da454d2c9b",
+        "actor": "verifier",
+        "at": "2026-09-05T06:30:04.524Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "g1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/minimal-mode/feature-flags.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/minimal-mode/feature-flags.test.ts \u001b[2m(\u001b[22m\u001b[2m15 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 193\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m15 passed\u001b[39m\u001b[22m\u001b[90m (15)\u001b[39m\n\u001b[2m   Start at \u001b[22m 17:35:14\n\u001b[2m   Duration \u001b[22m 282ms\u001b[2m (transform 92ms, setup 14ms, import 15ms, tests 193ms, environment 0ms)\u001b[22m\n\nMINIMAL_FLAG_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        },
+        "deficiencies": [
+          "isMinimalModeEnabled compiles to a constant false in the Turbopack server bundle. Reproduced three ways with MINIMAL_MODE=true set (pnpm dev, next dev direct, .env.local entry); worker process env verified present via NODE_OPTIONS preload. The prod build with MINIMAL_MODE=true exported also bakes readBoolean(false). The postcondition server-only runtime read returning true for true/1 fails on the live wire: the kill-switch can never engage in the built app."
+        ]
       },
       "expectation": "The server-only MINIMAL_MODE flag and the build-inlined NEXT_PUBLIC_MINIMAL_MODE mirror both read through readBoolean. Boot logs one [config] warning when both are set. .env.example documents both vars and the kill-switch contract.",
       "gates": [
@@ -115,7 +143,7 @@
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/minimal-mode/feature-flags.test.ts && echo MINIMAL_FLAG_OK",
           "expect": "MINIMAL_FLAG_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/minimal-mode/feature-flags.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/minimal-mode/feature-flags.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m15 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 193\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m15 passed\\u001b[39m\\u001b[22m\\u001b[90m (15)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 17:35:14\\n\\u001b[2m   Duration \\u001b[22m 282ms\\u001b[2m (transform 92ms, setup 14ms, import 15ms, tests 193ms, environment 0ms)\\u001b[22m\\n\\nMINIMAL_FLAG_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g2",
@@ -123,7 +151,20 @@
           "check": "npx tsc --noEmit && echo TSC_OK",
           "expect": "TSC_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}"
+        }
+      ],
+      "findings": [
+        {
+          "id": 1,
+          "correlation": "40dd811c8db63ba4ea974bc3d25f4a384b0737629dc88b60eda4daf94963ca53",
+          "at": "2026-09-05T06:30:04.524Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "isMinimalModeEnabled compiles to a constant false in the Turbopack server bundle. Reproduced three ways with MINIMAL_MODE=true set (pnpm dev, next dev direct, .env.local entry); worker process env verified present via NODE_OPTIONS preload. The prod build with MINIMAL_MODE=true exported also bakes readBoolean(false). The postcondition server-only runtime read returning true for true/1 fails on the live wire: the kill-switch can never engage in the built app.",
+          "evidence": "runtime-flag-bake"
         }
       ]
     },
@@ -665,14 +706,17 @@
       "riskTier": 3,
       "uuid": "41bfda16-add8-416b-b697-2db4c784daf5",
       "impl": {
-        "status": "ready_for_verification",
-        "hash": "756e06370b0be97741643eb06675214724d2906715aefb0eb024bb2f6fda3ddb",
-        "actor": "implementer",
-        "at": "2026-09-05T03:50:07.937Z"
-      },
-      "verification": {
         "status": "pending",
         "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "rejected",
+        "hash": "1f67c62da2525493cb376b9cde91d5d42ac56cd77bc6fc8c1f01104e72122840",
+        "actor": "verifier",
+        "at": "2026-09-05T06:30:04.524Z",
+        "deficiencies": [
+          "LIVE_OK gate fails deterministically 3/3 runs: tests/minimal-mode/live-wire.pg.test.ts exits 1 on unhandled terminating connection due to administrator command from the app-side cached persistence pool during afterAll teardown of the scratch DB. Both assertions pass but the suite never exits 0 so the gate cannot pass. Runtime: with MINIMAL_MODE=true exported, anon POST /api/chat returns 200 SSE not the typed 403; the guard is compiled to an unconditional return. Diff: 23/25 postcondition rows deviate, signature pins claim explicit return types the handlers never had (before-state POST(req: NextRequest) unannotated), violating PIN-FROM-OUTLINE re-pin duty."
+        ]
       },
       "expectation": "Every model spending route in the matrix adopts requirePermissionIfMinimalMode as the first statement. Flag off restores today's behavior exactly. Flag on denies without permission via the typed 403 before any model call.",
       "gates": [
@@ -699,6 +743,19 @@
           "expect": "TSC_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
           "evidence": "pending"
+        }
+      ],
+      "findings": [
+        {
+          "id": 1,
+          "correlation": "353806d706f58963b047c57b346d10276755cf1698f07c87723e871b522abcf2",
+          "at": "2026-09-05T06:30:04.524Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "LIVE_OK gate fails deterministically 3/3 runs: tests/minimal-mode/live-wire.pg.test.ts exits 1 on unhandled terminating connection due to administrator command from the app-side cached persistence pool during afterAll teardown of the scratch DB. Both assertions pass but the suite never exits 0 so the gate cannot pass. Runtime: with MINIMAL_MODE=true exported, anon POST /api/chat returns 200 SSE not the typed 403; the guard is compiled to an unconditional return. Diff: 23/25 postcondition rows deviate, signature pins claim explicit return types the handlers never had (before-state POST(req: NextRequest) unannotated), violating PIN-FROM-OUTLINE re-pin duty.",
+          "evidence": "live-wire-gate-fail"
         }
       ]
     },
@@ -743,8 +800,44 @@
         "at": "2026-09-05T04:06:05.136Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "verified",
+        "hash": "87f3e5d6f2105a5f39ad15eb7e68ab8ecf25a5a056188c3eb102dca5fdd59acc",
+        "actor": "verifier",
+        "at": "2026-09-05T05:38:02.316Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "g1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/minimal-mode/route-guard-matrix.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/minimal-mode/route-guard-matrix.test.ts\u001b[2m > \u001b[22m\u001b[2mroute-guard matrix — flag-off parity\u001b[2m > \u001b[22m\u001b[2m@/app/api/verify-image-provider/route guard returns without touching session when flag is off\n\u001b[22m\u001b[39m[2026-09-05T05:38:01.190Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 3 LLM, 1 TTS, 1 ASR, 1 PDF, 0 Image, 1 Video, 2 WebSearch providers\n\n \u001b[32m✓\u001b[39m tests/minimal-mode/route-guard-matrix.test.ts \u001b[2m(\u001b[22m\u001b[2m71 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 1562\u001b[2mms\u001b[22m\u001b[39m\n     \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m @/app/api/chat/route returns typed 403 for classroom.chat \u001b[33m 755\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m71 passed\u001b[39m\u001b[22m\u001b[90m (71)\u001b[39m\n\u001b[2m   Start at \u001b[22m 17:37:59\n\u001b[2m   Duration \u001b[22m 1.65s\u001b[2m (transform 767ms, setup 10ms, import 26ms, tests 1.56s, environment 0ms)\u001b[22m\n\nMATRIX_OK\n\u001b[90mstderr\u001b[2m | tests/minimal-mode/route-guard-matrix.test.ts\u001b[2m > \u001b[22m\u001b[2mroute-guard matrix — flag-on anonymous 403\u001b[2m > \u001b[22m\u001b[2m@/app/api/chat/route returns typed 403 for classroom.chat\n\u001b[22m\u001b[39m2026-09-05T05:38:00.380Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\n\n\u001b[90mstderr\u001b[2m | tests/minimal-mode/route-guard-matrix.test.ts\u001b[2m > \u001b[22m\u001b[2mroute-guard matrix — flag-off parity\u001b[2m > \u001b[22m\u001b[2m@/app/api/chat/route guard returns without touching session when flag is off\n\u001b[22m\u001b[39m[2026-09-05T05:38:01.177Z] [ERROR] [Chat API] Chat request failed [model=unknown, messages=0]: SyntaxError: Unexpected end of JSON input\n    at JSON.parse (<anonymous>)\n    at parseJSONFromBytes (node:internal/deps/undici/undici:5852:19)\n    at successSteps (node:internal/deps/undici/undici:5833:27)\n    at consumeBody (node:internal/deps/undici/undici:5839:9)\n    at NextRequest.json (node:internal/deps/undici/undici:5779:18)\n    at POST (/Users/franky/Projects/MyOpenMAIC/Source/openMAIC/app/api/chat/route.ts:58:50)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at /Users/franky/Projects/MyOpenMAIC/Source/openMAIC/tests/minimal-mode/route-guard-matrix.test.ts:148:20\n    at file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/@vitest+runner@4.1.8/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20\n\n\u001b[90mstderr\u001b[2m | tests/minimal-mode/route-guard-matrix.test.ts\u001b[2m > \u001b[22m\u001b[2mroute-guard matrix — flag-off parity\u001b[2m > \u001b[22m\u001b[2m@/app/api/extract-document/route guard returns without touching session when flag is off\n\u001b[22m\u001b[39m[2026-09-05T05:38:01.182Z] [ERROR] [Extract Document] Invalid Content-Type for document upload: \n\n\u001b[90mstderr\u001b[2m | tests/minimal-mode/route-guard-matrix.test.ts\u001b[2m > \u001b[22m\u001b[2mroute-guard matrix — flag-off parity\u001b[2m > \u001b[22m\u001b[2m@/app/api/generate/agent-profiles/route guard returns without touching session when flag is off\n\u001b[22m\u001b[39m[2026-09-05T05:38:01.182Z] [ERROR] [Agent Profiles API] Agent profiles generation failed [stage=\"unknown\", model=unknown]: SyntaxError: Unexpected end of JSON input\n    at JSON.parse (<anonymous>)\n    at parseJSONFromBytes (node:internal/deps/undici/undici:5852:19)\n    at successSteps (node:internal/deps/undici/undici:5833:27)\n    at consumeBody (node:internal/deps/undici/undici:5839:9)\n    at NextRequest.json (node:internal/deps/undici/undici:5779:18)\n    at POST (/Users/franky/Projects/MyOpenMAIC/Source/openMAIC/app/api/generate/agent-profiles/route.ts:142:29)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at /Users/franky/Projects/MyOpenMAIC/Source/openMAIC/tests/minimal-mode/route-guard-matrix.test.ts:148:20\n",
+              "passed": true
+            },
+            {
+              "id": "g2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/minimal-mode/client-import-graph.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/minimal-mode/client-import-graph.test.ts \u001b[2m(\u001b[22m\u001b[2m2 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 1\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m2 passed\u001b[39m\u001b[22m\u001b[90m (2)\u001b[39m\n\u001b[2m   Start at \u001b[22m 17:38:01\n\u001b[2m   Duration \u001b[22m 72ms\u001b[2m (transform 11ms, setup 10ms, import 7ms, tests 1ms, environment 0ms)\u001b[22m\n\nGRAPH_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/providers/provider-neutrality-guard.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/providers/provider-neutrality-guard.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 35\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m3 passed\u001b[39m\u001b[22m\u001b[90m (3)\u001b[39m\n\u001b[2m   Start at \u001b[22m 17:38:01\n\u001b[2m   Duration \u001b[22m 353ms\u001b[2m (transform 79ms, setup 10ms, import 251ms, tests 35ms, environment 0ms)\u001b[22m\n\nNEUTRAL_OK\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "The hermetic suite enumerates every spend route to its matrix permission. The parity suite proves the wrapper no-ops without session or database access when the flag is unset. The import graph guard keeps the wrapper out of client bundles.",
       "gates": [
@@ -754,7 +847,7 @@
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/minimal-mode/route-guard-matrix.test.ts && echo MATRIX_OK",
           "expect": "MATRIX_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/minimal-mode/route-guard-matrix.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/minimal-mode/route-guard-matrix.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mroute-guard matrix — flag-off parity\\u001b[2m > \\u001b[22m\\u001b[2m@/app/api/verify-image-provider/route guard returns without touching session when flag is off\\n\\u001b[22m\\u001b[39m[2026-09-05T05:38:01.190Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 3 LLM, 1 TTS, 1 ASR, 1 PDF, 0 Image, 1 Video, 2 WebSearch providers\\n\\n \\u001b[32m✓\\u001b[39m tests/minimal-mode/route-guard-matrix.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m71 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[33m 1562\\u001b[2mms\\u001b[22m\\u001b[39m\\n     \\u001b[33m\\u001b[2m✓\\u001b[22m\\u001b[39m @/app/api/chat/route returns typed 403 for classroom.chat \\u001b[33m 755\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m71 passed\\u001b[39m\\u001b[22m\\u001b[90m (71)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 17:37:59\\n\\u001b[2m   Duration \\u001b[22m 1.65s\\u001b[2m (transform 767ms, setup 10ms, import 26ms, tests 1.56s, environment 0ms)\\u001b[22m\\n\\nMATRIX_OK\\n\\u001b[90mstderr\\u001b[2m | tests/minimal-mode/route-guard-matrix.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mroute-guard matrix — flag-on anonymous 403\\u001b[2m > \\u001b[22m\\u001b[2m@/app/api/chat/route returns typed 403 for classroom.chat\\n\\u001b[22m\\u001b[39m2026-09-05T05:38:00.380Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\\n\\n\\u001b[90mstderr\\u001b[2m | tests/minimal-mode/route-guard-matrix.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mroute-guard matrix — flag-off parity\\u001b[2m > \\u001b[22m\\u001b[2m@/app/api/chat/route guard returns without touching session when flag is off\\n\\u001b[22m\\u001b[39m[2026-09-05T05:38:01.177Z] [ERROR] [Chat API] Chat request failed [model=unknown, messages=0]: SyntaxError: Unexpected end of JSON input\\n    at JSON.parse (<anonymous>)\\n    at parseJSONFromBytes (node:internal/deps/undici/undici:5852:19)\\n    at successSteps (node:internal/deps/undici/undici:5833:27)\\n    at consumeBody (node:internal/deps/undici/undici:5839:9)\\n    at NextRequest.json (node:internal/deps/undici/undici:5779:18)\\n    at POST (/Users/franky/Projects/MyOpenMAIC/Source/openMAIC/app/api/chat/route.ts:58:50)\\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\\n    at /Users/franky/Projects/MyOpenMAIC/Source/openMAIC/tests/minimal-mode/route-guard-matrix.test.ts:148:20\\n    at file:///Users/franky/Projects/MyOpenMAIC/Source/openMAIC/node_modules/.pnpm/@vitest+runner@4.1.8/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20\\n\\n\\u001b[90mstderr\\u001b[2m | tests/minimal-mode/route-guard-matrix.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mroute-guard matrix — flag-off parity\\u001b[2m > \\u001b[22m\\u001b[2m@/app/api/extract-document/route guard returns without touching session when flag is off\\n\\u001b[22m\\u001b[39m[2026-09-05T05:38:01.182Z] [ERROR] [Extract Document] Invalid Content-Type for document upload: \\n\\n\\u001b[90mstderr\\u001b[2m | tests/minimal-mode/route-guard-matrix.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mroute-guard matrix — flag-off parity\\u001b[2m > \\u001b[22m\\u001b[2m@/app/api/generate/agent-profiles/route guard returns without touching session when flag is off\\n\\u001b[22m\\u001b[39m[2026-09-05T05:38:01.182Z] [ERROR] [Agent Profiles API] Agent profiles generation failed [stage=\\\"unknown\\\", model=unknown]: SyntaxError: Unexpected end of JSON input\\n    at JSON.parse (<anonymous>)\\n    at parseJSONFromBytes (node:internal/deps/undici/undici:5852:19)\\n    at successSteps (node:internal/deps/undici/undici:5833:27)\\n    at consumeBody (node:internal/deps/undici/undici:5839:9)\\n    at NextRequest.json (node:internal/deps/undici/undici:5779:18)\\n    at POST (/Users/franky/Projects/MyOpenMAIC/Source/openMAIC/app/api/generate/agent-profiles/route.ts:142:29)\\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\\n    at /Users/franky/Projects/MyOpenMAIC/Source/openMAIC/tests/minimal-mode/route-guard-matrix.test.ts:148:20\\n\",\"passed\":true}"
         },
         {
           "id": "g2",
@@ -762,7 +855,7 @@
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/minimal-mode/client-import-graph.test.ts && echo GRAPH_OK",
           "expect": "GRAPH_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/minimal-mode/client-import-graph.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/minimal-mode/client-import-graph.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m2 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 1\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m2 passed\\u001b[39m\\u001b[22m\\u001b[90m (2)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 17:38:01\\n\\u001b[2m   Duration \\u001b[22m 72ms\\u001b[2m (transform 11ms, setup 10ms, import 7ms, tests 1ms, environment 0ms)\\u001b[22m\\n\\nGRAPH_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g3",
@@ -770,7 +863,7 @@
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/providers/provider-neutrality-guard.test.ts && echo NEUTRAL_OK",
           "expect": "NEUTRAL_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/providers/provider-neutrality-guard.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/providers/provider-neutrality-guard.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m3 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 35\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m3 passed\\u001b[39m\\u001b[22m\\u001b[90m (3)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 17:38:01\\n\\u001b[2m   Duration \\u001b[22m 353ms\\u001b[2m (transform 79ms, setup 10ms, import 251ms, tests 35ms, environment 0ms)\\u001b[22m\\n\\nNEUTRAL_OK\\n\",\"passed\":true}"
         }
       ]
     },
@@ -851,14 +944,17 @@
       "riskTier": 4,
       "uuid": "ff97e6ae-48e7-4de6-a000-05a8b907299e",
       "impl": {
-        "status": "ready_for_verification",
-        "hash": "2390dbab649962e27503f037d1b6cad84c9a4190488d60f135e027c02c1b7823",
-        "actor": "implementer",
-        "at": "2026-09-05T04:22:29.285Z"
-      },
-      "verification": {
         "status": "pending",
         "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "rejected",
+        "hash": "0ad0322c0d36dad2970866bd498f6d93d623ec9f54ffbfa70ab8491af56c3bb3",
+        "actor": "verifier",
+        "at": "2026-09-05T06:30:04.524Z",
+        "deficiencies": [
+          "LIVE_OK gate fails deterministically 3/3 runs (shared unhandled pg teardown error exits 1), so the route-stack quota proof never passes. Runtime: verified guest 6th /api/quiz-grade in the same UTC day returns 200 not 429 quota_exhausted, and quiz_grade_quota holds zero rows after six grades, so the quota consumer is compiled to an unconditional no-op (flag baked). QUOTA_OK, QUOTA_PG_OK, QUOTA_RACE_OK pass but prove only the isolated consumer against scratch DBs, not the live flag-gated path."
+        ]
       },
       "expectation": "ensureAuthSchema composes quiz_grade_quota into the chain. consumeQuizGradeQuota allows five grades per UTC day for rank 1 and throws 429 with quota_exhausted past the cap. Learners and above never write. The quiz-grade route stacks quota after the guard.",
       "gates": [
@@ -893,6 +989,19 @@
           "expect": "QUOTA_RACE_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
           "evidence": "pending"
+        }
+      ],
+      "findings": [
+        {
+          "id": 1,
+          "correlation": "eccc03965b50f0e61e545ca4b48e58a70538263774f3a0d37924257fa2bb24dc",
+          "at": "2026-09-05T06:30:04.524Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "LIVE_OK gate fails deterministically 3/3 runs (shared unhandled pg teardown error exits 1), so the route-stack quota proof never passes. Runtime: verified guest 6th /api/quiz-grade in the same UTC day returns 200 not 429 quota_exhausted, and quiz_grade_quota holds zero rows after six grades, so the quota consumer is compiled to an unconditional no-op (flag baked). QUOTA_OK, QUOTA_PG_OK, QUOTA_RACE_OK pass but prove only the isolated consumer against scratch DBs, not the live flag-gated path.",
+          "evidence": "live-wire-gate-fail"
         }
       ]
     },
@@ -955,14 +1064,51 @@
       "riskTier": 3,
       "uuid": "58a72500-8806-4dec-8d3c-cdb0d0222bbb",
       "impl": {
-        "status": "ready_for_verification",
-        "hash": "d5f598ee5f774185c91f87df236b45a03c536054214ade3e6b235ef9c4b8bb89",
-        "actor": "implementer",
-        "at": "2026-09-05T05:28:25.862Z"
-      },
-      "verification": {
         "status": "pending",
         "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "rejected",
+        "hash": "c28d4af49f6fa89a99267c6598af67cc3abdab760cfe1ecb3f4b2f6eaee30bb1",
+        "actor": "verifier",
+        "at": "2026-09-05T06:30:04.524Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "g1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/minimal-mode/minimal-layout.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/minimal-mode/minimal-layout.test.ts \u001b[2m(\u001b[22m\u001b[2m11 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 52\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m11 passed\u001b[39m\u001b[22m\u001b[90m (11)\u001b[39m\n\u001b[2m   Start at \u001b[22m 17:38:06\n\u001b[2m   Duration \u001b[22m 391ms\u001b[2m (transform 30ms, setup 13ms, import 20ms, tests 52ms, environment 249ms)\u001b[22m\n\nLAYOUT_OK\n\u001b[90mstderr\u001b[2m | tests/minimal-mode/minimal-layout.test.ts\u001b[2m > \u001b[22m\u001b[2mMinimal-mode account zone\u001b[2m > \u001b[22m\u001b[2mLAYOUT_OK: signed-out capsule shows Sign in and Create account\u001b[2m > \u001b[22m\u001b[2mshows both entries when the client mirror is on and user is signed out\n\u001b[22m\u001b[39mThe current testing environment is not configured to support act(...)\n\n\u001b[90mstderr\u001b[2m | tests/minimal-mode/minimal-layout.test.ts\u001b[2m > \u001b[22m\u001b[2mMinimal-mode account zone\u001b[2m > \u001b[22m\u001b[2mLAYOUT_OK: signed-out capsule shows Sign in and Create account\u001b[2m > \u001b[22m\u001b[2mshows both entries when the client mirror is on and user is signed out\n\u001b[22m\u001b[39mThe current testing environment is not configured to support act(...)\n\n\u001b[90mstderr\u001b[2m | tests/minimal-mode/minimal-layout.test.ts\u001b[2m > \u001b[22m\u001b[2mMinimal-mode account zone\u001b[2m > \u001b[22m\u001b[2mLAYOUT_OK: signed-out capsule shows Sign in and Create account\u001b[2m > \u001b[22m\u001b[2mshows only Sign in when the client mirror is off and user is signed out\n\u001b[22m\u001b[39mThe current testing environment is not configured to support act(...)\n\n\u001b[90mstderr\u001b[2m | tests/minimal-mode/minimal-layout.test.ts\u001b[2m > \u001b[22m\u001b[2mMinimal-mode account zone\u001b[2m > \u001b[22m\u001b[2mLAYOUT_OK: signed-out capsule shows Sign in and Create account\u001b[2m > \u001b[22m\u001b[2mshows only Sign in when the client mirror is off and user is signed out\n\u001b[22m\u001b[39mThe current testing environment is not configured to support act(...)\n\n",
+              "passed": true
+            },
+            {
+              "id": "g2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/minimal-mode/client-import-graph.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/minimal-mode/client-import-graph.test.ts \u001b[2m(\u001b[22m\u001b[2m2 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 1\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m2 passed\u001b[39m\u001b[22m\u001b[90m (2)\u001b[39m\n\u001b[2m   Start at \u001b[22m 17:38:06\n\u001b[2m   Duration \u001b[22m 76ms\u001b[2m (transform 12ms, setup 11ms, import 7ms, tests 1ms, environment 0ms)\u001b[22m\n\nGRAPH_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> node scripts/check-i18n-keys.mjs\n\ni18n key alignment check passed (12 locale files, source: en-US.json).\nI18N_OK\n",
+              "passed": true
+            }
+          ]
+        },
+        "deficiencies": [
+          "The capsule Pro toggle is not hidden for ranks without course.create. Safari with the flag ON shows the PRO switch for both anonymous and a signed-in verified guest; HeaderCapsule gates ProBadge only on NEXT_PUBLIC_PRO_WORKBENCH_ENABLED (file unchanged in c9177339), so the postcondition the capsule hides the Pro toggle is unmet. The LAYOUT_OK gate cannot see this: it renders only AccountZone and re-implements the showHero arithmetic in the test body instead of rendering HomePage."
+        ]
       },
       "expectation": "HomePage hides the composer for ranks without course.create under the client mirror and renders the library expanded with the existing grid recipe. AccountZone shows Sign in and Create account for signed-out visitors. The capsule hides the Pro toggle. New i18n keys pass 12-locale parity.",
       "gates": [
@@ -972,7 +1118,7 @@
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/minimal-mode/minimal-layout.test.ts && echo LAYOUT_OK",
           "expect": "LAYOUT_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/minimal-mode/minimal-layout.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/minimal-mode/minimal-layout.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m11 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 52\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m11 passed\\u001b[39m\\u001b[22m\\u001b[90m (11)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 17:38:06\\n\\u001b[2m   Duration \\u001b[22m 391ms\\u001b[2m (transform 30ms, setup 13ms, import 20ms, tests 52ms, environment 249ms)\\u001b[22m\\n\\nLAYOUT_OK\\n\\u001b[90mstderr\\u001b[2m | tests/minimal-mode/minimal-layout.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mMinimal-mode account zone\\u001b[2m > \\u001b[22m\\u001b[2mLAYOUT_OK: signed-out capsule shows Sign in and Create account\\u001b[2m > \\u001b[22m\\u001b[2mshows both entries when the client mirror is on and user is signed out\\n\\u001b[22m\\u001b[39mThe current testing environment is not configured to support act(...)\\n\\n\\u001b[90mstderr\\u001b[2m | tests/minimal-mode/minimal-layout.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mMinimal-mode account zone\\u001b[2m > \\u001b[22m\\u001b[2mLAYOUT_OK: signed-out capsule shows Sign in and Create account\\u001b[2m > \\u001b[22m\\u001b[2mshows both entries when the client mirror is on and user is signed out\\n\\u001b[22m\\u001b[39mThe current testing environment is not configured to support act(...)\\n\\n\\u001b[90mstderr\\u001b[2m | tests/minimal-mode/minimal-layout.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mMinimal-mode account zone\\u001b[2m > \\u001b[22m\\u001b[2mLAYOUT_OK: signed-out capsule shows Sign in and Create account\\u001b[2m > \\u001b[22m\\u001b[2mshows only Sign in when the client mirror is off and user is signed out\\n\\u001b[22m\\u001b[39mThe current testing environment is not configured to support act(...)\\n\\n\\u001b[90mstderr\\u001b[2m | tests/minimal-mode/minimal-layout.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mMinimal-mode account zone\\u001b[2m > \\u001b[22m\\u001b[2mLAYOUT_OK: signed-out capsule shows Sign in and Create account\\u001b[2m > \\u001b[22m\\u001b[2mshows only Sign in when the client mirror is off and user is signed out\\n\\u001b[22m\\u001b[39mThe current testing environment is not configured to support act(...)\\n\\n\",\"passed\":true}"
         },
         {
           "id": "g2",
@@ -980,7 +1126,7 @@
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/minimal-mode/client-import-graph.test.ts && echo GRAPH_OK",
           "expect": "GRAPH_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/minimal-mode/client-import-graph.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/minimal-mode/client-import-graph.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m2 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 1\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m2 passed\\u001b[39m\\u001b[22m\\u001b[90m (2)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 17:38:06\\n\\u001b[2m   Duration \\u001b[22m 76ms\\u001b[2m (transform 12ms, setup 11ms, import 7ms, tests 1ms, environment 0ms)\\u001b[22m\\n\\nGRAPH_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g3",
@@ -988,7 +1134,20 @@
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm check:i18n-keys && echo I18N_OK",
           "expect": "I18N_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> node scripts/check-i18n-keys.mjs\\n\\ni18n key alignment check passed (12 locale files, source: en-US.json).\\nI18N_OK\\n\",\"passed\":true}"
+        }
+      ],
+      "findings": [
+        {
+          "id": 1,
+          "correlation": "0abba4cc595fc2df9e80090d5a72ddc5a8b4ca790bc4ef215a920adee0ac92c9",
+          "at": "2026-09-05T06:30:04.524Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "The capsule Pro toggle is not hidden for ranks without course.create. Safari with the flag ON shows the PRO switch for both anonymous and a signed-in verified guest; HeaderCapsule gates ProBadge only on NEXT_PUBLIC_PRO_WORKBENCH_ENABLED (file unchanged in c9177339), so the postcondition the capsule hides the Pro toggle is unmet. The LAYOUT_OK gate cannot see this: it renders only AccountZone and re-implements the showHero arithmetic in the test body instead of rendering HomePage.",
+          "evidence": "capsule-pro-toggle-missing"
         }
       ]
     }
@@ -1981,7 +2140,57 @@
       "slice": null,
       "hash": "220792a3b998c6af485c0e47bd07d14040fb60f8545ab379d9ab26c1b90e9408",
       "fileHash": "87af3ec10bc759a6757a8db8c1cc8f579db05d06ead34833866c7188eadc8674"
+    },
+    {
+      "seq": 91,
+      "id": "f3c46af4-09ec-49af-b8a1-f94afe1970f7",
+      "at": "2026-09-05T05:35:20.580Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S1:verification:pending->verified",
+      "slice": "S1",
+      "hash": "ddd7821bbcaeb02482339e5f98d3ce608d7360e5b480d058198ef9169a2541d0",
+      "oracle": "68ee0ae0c3b152830175eaed2a8e5666a009115c347b2012973ea7aafa05e79e",
+      "evidence": "16b9e994652a68ea44b2150a97dcf85ce7106ed091b74080e91583e497613b14",
+      "fileHash": "8dc8338286653382d208ecdbcb09d602169f425e330fe18c498e1472d749d193"
+    },
+    {
+      "seq": 92,
+      "id": "b84a44a8-5bee-4169-87bc-fcae3a75954d",
+      "at": "2026-09-05T05:38:02.316Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S3:verification:pending->verified",
+      "slice": "S3",
+      "hash": "86ca48b2c6cc9c553ada30367ee9b5b483d5343d698a0ac2df3599478b3b5df6",
+      "oracle": "c9a71f29fb822977581d99ac38194901c6cae24aa0940186ee55ac3fe58981f1",
+      "evidence": "b4ab264b3460433221072033f85db583e4ee0060418d70da61fd2c3439b2a58d",
+      "fileHash": "7e572229ba87d6f7151960468a51541a2ef63bae920e4fe8c8028c7a38c42d9f"
+    },
+    {
+      "seq": 93,
+      "id": "bcee55a1-6e74-4568-9f37-c38a497c4d26",
+      "at": "2026-09-05T05:38:07.042Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S5:verification:pending->verified",
+      "slice": "S5",
+      "hash": "f4ab68f098d1fb4a89c8fad843e1e2a403a3239cb759d80edaeb05d7d4bb6d7d",
+      "oracle": "39251de5f0a62bf7a1cfa4d70c35bb52214d3d280860c8ce013a6c4282b14569",
+      "evidence": "a7525641e872cc2a270d92322e2b16214ee47f81f2fddd82ca36ceeb58cf3d95",
+      "fileHash": "7ae4e5c2047594064a43e095a5611e0a6dcdaa8b37b6bc0ef0c6659510c05261"
+    },
+    {
+      "seq": 94,
+      "id": "1bcffb94-206a-407d-ae1a-9bd8267cbf19",
+      "at": "2026-09-05T06:30:04.524Z",
+      "actor": "verifier",
+      "command": "slice_reject_batch",
+      "transition": "reject-batch:S1,S2,S4,S5",
+      "slice": null,
+      "hash": "2d576f47e33cddc33d91db382d9735df1c65f9f5508d3e7a5cf86388b1b83d51",
+      "fileHash": "df5bf30216d297912f7c578425c1b85681a96028a6ca8f34c57d9a6720f7af42"
     }
   ],
-  "fileHash": "8dc8338286653382d208ecdbcb09d602169f425e330fe18c498e1472d749d193"
+  "fileHash": "6bff3b22dc3cea9cc7bc987f1d40dbfdda8ebd2fd0f7e55485492afc706293ca"
 }
