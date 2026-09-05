@@ -1,0 +1,1107 @@
+{
+  "schema_version": 2,
+  "$schema": "https://rivr.dev/schemas/ledger/v2",
+  "spec": {
+    "reference": "docs/specs/015-permission-core.md",
+    "title": "Batch 015 spec: permission-core",
+    "hash": "22473e44750a6d2f4c4994894a6642ba5f05e8cb860c0f713a1b4e052ab2905c"
+  },
+  "tracker": {
+    "mode": "none"
+  },
+  "stage": "implementation",
+  "retry": {
+    "count": 0,
+    "max": 5,
+    "consecutive_same_cause": 0,
+    "escalate_at": 3
+  },
+  "slices": [
+    {
+      "id": "S1",
+      "title": "Catalog, rank defaults, and the pure can() helper",
+      "intent": "The fixed permission catalog, the rank-derived default statements, and the pure can() function in lib/auth/permissions.ts. The module stays client-safe: it imports nothing from Node and nothing from the database.",
+      "user_stories": [
+        2,
+        3
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/auth/permissions.ts",
+          "symbols": [
+            {
+              "name": "PERMISSION_CATALOG",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "The fixed, exhaustive permission vocabulary. Shape: eleven catalog entries verified against the capability matrix."
+            },
+            {
+              "name": "defaultPermissionsForRank",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(rank: number): Permission[]"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "The rank-derived default statement set per the capability matrix."
+            },
+            {
+              "name": "can",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(principal: Principal | null, permission: Permission, overrides?: ReadonlyMap<Permission, boolean>): boolean"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Pure: rank defaults plus override booleans, no I/O. False for anonymous, true for matrix cells."
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "d2d32007-a9fb-4bd0-a0ee-106ae479552e",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "The catalog is exhaustive and fixed. Rank defaults match the capability matrix. can() returns false for anonymous, true for matrix cells, and honors override booleans without touching the database.",
+      "gates": [
+        {
+          "id": "g1",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/permissions/permissions-core.test.ts && echo PERM_CORE_OK",
+          "expect": "PERM_CORE_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "unit"
+        },
+        {
+          "id": "g2",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "smoke"
+        },
+        {
+          "id": "g3",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/providers/provider-neutrality-guard.test.ts && echo NEUTRAL_OK",
+          "expect": "NEUTRAL_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "smoke"
+        }
+      ]
+    },
+    {
+      "id": "S2",
+      "title": "Role permission overrides and the server resolver",
+      "intent": "The role_permissions table in the lazy ensure chain, the server resolver that merges database rows over rank defaults, the per-request cache, and the custom-role groundwork on the existing isSystem column.",
+      "user_stories": [
+        4
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/auth/schema.ts",
+          "symbols": [
+            {
+              "name": "ensureAuthSchema",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable): Promise<void>"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable): Promise<void>"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Modified: composes role_permissions into the ensure chain beside the six tables."
+            }
+          ]
+        },
+        {
+          "path": "lib/auth/permissions-server.ts",
+          "symbols": [
+            {
+              "name": "resolvePermissionSet",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable, role: Role): Promise<PermissionSet>"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Merges rank defaults with role_permissions rows. Granted true adds, granted false removes. Caches per request."
+            }
+          ]
+        }
+      ],
+      "riskTier": 3,
+      "uuid": "952535d1-5185-444e-a7c6-b29421d34386",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "The override table exists app-side. A denied row removes the permission from the default set, and a granted row adds it. The resolver resolves once per request. Custom roles resolve through their rank without new schema.",
+      "gates": [
+        {
+          "id": "g1",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/permissions/role-permissions.test.ts && echo ROLE_PERM_OK",
+          "expect": "ROLE_PERM_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "unit"
+        },
+        {
+          "id": "g2",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/permissions/role-permissions.pg.test.ts && echo ROLE_PERM_PG_OK",
+          "expect": "ROLE_PERM_PG_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "integration"
+        },
+        {
+          "id": "g3",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "smoke"
+        }
+      ]
+    },
+    {
+      "id": "S3",
+      "title": "Server guard and the quiz-grade reference adoption",
+      "intent": "requirePermission in the server module, re-exported through the public surface, and the single reference adoption in the quiz-grade route that proves the seam end to end.",
+      "user_stories": [
+        1
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/auth/permissions-server.ts",
+          "symbols": [
+            {
+              "name": "requirePermission",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(headers: Headers, permission: Permission): Promise<Session>"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Returns the session or throws the typed 403 refusal with shape { message, code }."
+            }
+          ]
+        },
+        {
+          "path": "lib/auth/index.ts",
+          "symbols": [
+            {
+              "name": "requirePermission",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(headers: Headers, permission: Permission): Promise<Session>"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Modified: re-exports the guard through the public surface."
+            }
+          ]
+        },
+        {
+          "path": "app/api/quiz-grade/route.ts",
+          "symbols": [
+            {
+              "name": "POST",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<Response>"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Modified: adopts the guard as the single batch B route, preserving the existing callLLM flow."
+            }
+          ]
+        }
+      ],
+      "riskTier": 3,
+      "uuid": "17ab24e7-269a-4ef7-a84c-2aa017357192",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "An anonymous quiz-grade request returns the typed 403. A guest holds quiz.grade and passes the guard. The LLM call never runs before the guard resolves.",
+      "gates": [
+        {
+          "id": "g1",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/permissions/require-permission.test.ts && echo REQPERM_OK",
+          "expect": "REQPERM_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "unit"
+        },
+        {
+          "id": "g2",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/permissions/quiz-grade-gate.test.ts && echo QUIZ_GATE_OK",
+          "expect": "QUIZ_GATE_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "integration"
+        },
+        {
+          "id": "g3",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "smoke"
+        }
+      ]
+    },
+    {
+      "id": "S4",
+      "title": "Client surface and account zone consumption",
+      "intent": "The permissions route, the client hook with defaults-deny, the permission-gate component, and the account zone visibility delta.",
+      "user_stories": [
+        5,
+        6
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "app/api/auth/permissions/route.ts",
+          "symbols": [
+            {
+              "name": "GET",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<Response>"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Returns the resolved permission list for the session. Defaults-deny for anonymous."
+            }
+          ]
+        },
+        {
+          "path": "lib/hooks/use-permissions.ts",
+          "symbols": [
+            {
+              "name": "usePermissions",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(): PermissionState"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Fetches the permission list, defaults to empty, pure import graph."
+            }
+          ]
+        },
+        {
+          "path": "components/permission-gate.tsx",
+          "symbols": [
+            {
+              "name": "PermissionGate",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "({ permission, fallback, children }: PermissionGateProps)"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Render-prop hiding: shows children when allowed, fallback otherwise."
+            }
+          ]
+        },
+        {
+          "path": "components/account-zone.tsx",
+          "symbols": [
+            {
+              "name": "AccountZone",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "({ onSignOut }: AccountZoneProps)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(): JSX.Element"
+              },
+              "postcondition_quality": "VERIFIED",
+              "expectation": "Modified: Settings entry gated by settings.manage, Admin entry gated by users.manage."
+            }
+          ]
+        }
+      ],
+      "riskTier": 3,
+      "uuid": "cde0fb09-4bbd-42c4-b8c6-39132372dcd8",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "The more specific route wins over the catch-all. Anonymous clients receive an empty permission list. The hook never imports a server module. The account zone hides Settings without settings.manage and shows an Admin entry only with users.manage.",
+      "gates": [
+        {
+          "id": "g1",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/permissions/use-permissions.test.ts && echo PERMS_CLI_OK",
+          "expect": "PERMS_CLI_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "unit"
+        },
+        {
+          "id": "g2",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/permissions/permissions-route.test.ts && echo PERMS_ROUTE_OK",
+          "expect": "PERMS_ROUTE_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "integration"
+        },
+        {
+          "id": "g3",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/permissions/client-import-graph.test.ts && echo PERMS_GRAPH_OK",
+          "expect": "PERMS_GRAPH_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "unit"
+        },
+        {
+          "id": "g4",
+          "check": "pnpm check:i18n-keys && echo I18N_OK",
+          "expect": "I18N_OK",
+          "evidence": "pending",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "type": "smoke"
+        }
+      ]
+    }
+  ],
+  "audit": [
+    {
+      "seq": 1,
+      "id": "8f661083-419c-4e80-b7ba-19c88223a4d6",
+      "at": "2026-09-05T00:10:04.584Z",
+      "actor": "orchestrator",
+      "command": "init",
+      "transition": "spec-approved:docs/specs/015-permission-core.md",
+      "slice": null,
+      "hash": "7aa1e1f9d6c4ed1458cb37941348488d17880b1fc287077d08f7fa69341af60e"
+    },
+    {
+      "seq": 2,
+      "id": "37cb8b55-0e79-4bfd-8cc8-06e83c6c5e10",
+      "at": "2026-09-05T00:10:04.585Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect",
+      "slice": "S1",
+      "hash": "53520184f5f6480178a6c980896870cfd47b60257092f4c0794676fe54dd798b",
+      "expectationHash": "9072bfb4742bf992da7b4d780507dae9da33a6dac9ec38d86f92b1c096319359"
+    },
+    {
+      "seq": 3,
+      "id": "5c21d0c4-03e9-4368-94d7-99abe0c5051b",
+      "at": "2026-09-05T00:10:04.585Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect",
+      "slice": "S2",
+      "hash": "043284a5c34eb88795f3877e704e8527664a5074bc1d7d37a881fe68ec274c0a",
+      "expectationHash": "1302e5bfdbe1387e98a3e103fdc3cca54faae51b79ea00958f89a29867c7b13f"
+    },
+    {
+      "seq": 4,
+      "id": "c7dfe021-ea1c-40f0-a21e-10fc9e43524b",
+      "at": "2026-09-05T00:10:04.585Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect",
+      "slice": "S3",
+      "hash": "d4f5f63c3ea693a7352495067c381cb04b8ed23760cfdbbd522c7f9fbc6785d2",
+      "expectationHash": "0a7943170ba335f72154edd85fea86940f1a71ffd0dcf9cb6ebedb4a1620fd84"
+    },
+    {
+      "seq": 5,
+      "id": "64537629-5516-425d-84b7-0bdf5bc208e6",
+      "at": "2026-09-05T00:10:04.585Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect",
+      "slice": "S4",
+      "hash": "d0b717b3c46ad2d9581792635464d7868ed3954e1f12a2109342ddabd7a366b3",
+      "expectationHash": "fd40924053d31462c67b044cf769d44a6eeb97157f6e595add6425fe6329fb92"
+    },
+    {
+      "seq": 6,
+      "id": "e4167834-53aa-4ac7-b323-e23a1bd621ad",
+      "at": "2026-09-05T00:10:04.585Z",
+      "actor": "orchestrator",
+      "command": "init_batch",
+      "transition": "batch-init:S1,S2,S3,S4",
+      "slice": null,
+      "hash": "3d08278861e1e0907bc69ee645992e03367e80e8dc766d235f4b8750d9773e00"
+    },
+    {
+      "seq": 7,
+      "id": "0deef637-26d3-4d41-b19d-1469c1d7d3f8",
+      "at": "2026-09-05T00:11:07.190Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S1:target-add:lib/auth/permissions.ts::PERMISSION_CATALOG",
+      "slice": "S1",
+      "hash": "480e75580e9eaa3c5ccfbb6baa021d1342f4a17774ec55e5b8eb01c5741dff0c",
+      "fileHash": "ed82e832690d37f3422ecf8ba9d9a80bf24ad43b755341ee99e8ee4b125f896b"
+    },
+    {
+      "seq": 8,
+      "id": "5fe9bbfb-548b-4e5a-90ad-f32c752550d8",
+      "at": "2026-09-05T00:11:07.242Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S1:target-add:lib/auth/permissions.ts::defaultPermissionsForRank",
+      "slice": "S1",
+      "hash": "5d9ebe824341986bd6d9f731fb6f322001055073c5197a23520a70e89894166c",
+      "fileHash": "e2ccb69e54e2caf6f66bb618a3757ebc6dcfb014c0410d937554b2c9d41bde3c"
+    },
+    {
+      "seq": 9,
+      "id": "ec96f434-7786-4f20-8956-e60441feb0a1",
+      "at": "2026-09-05T00:11:07.287Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S1:target-add:lib/auth/permissions.ts::can",
+      "slice": "S1",
+      "hash": "4b8a61ead40f028338c41ad9557514a6fbf3398451de1133498d101b452a7cfc",
+      "fileHash": "cfe6bb04ec7f8a02f30794db76827c0894b48ee131f26c7a56f05eafbf09335e"
+    },
+    {
+      "seq": 10,
+      "id": "c1d40016-8a6f-48a6-8551-d676693d5865",
+      "at": "2026-09-05T00:11:07.325Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:target-add:lib/auth/schema.ts::ensureAuthSchema",
+      "slice": "S2",
+      "hash": "52cb7f50a47e1c8f973ab746a56ed3c293f2ecfe5bc4ded939454b7c85e64f31",
+      "fileHash": "1826ef2005cf786f6fbb70c334b242ecd0c55fa4901854106097adb9d71c03e4"
+    },
+    {
+      "seq": 11,
+      "id": "ca964a91-c64f-4fd9-a9fa-62d433a1a79b",
+      "at": "2026-09-05T00:11:07.368Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:target-add:lib/auth/permissions-server.ts::resolvePermissionSet",
+      "slice": "S2",
+      "hash": "b2e7147e0210e177f590b488ef9c2047ae022c34a7fcd9763176400b2e97bf36",
+      "fileHash": "77646c97fd056e4c6ad4054c331a7c372e4474b3e75a57e0bb391ee9e34c600d"
+    },
+    {
+      "seq": 12,
+      "id": "df0c07b6-7ba8-4a93-a454-0c390f64a6bf",
+      "at": "2026-09-05T00:11:07.407Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S3:target-add:lib/auth/permissions-server.ts::requirePermission",
+      "slice": "S3",
+      "hash": "5709eaf28024e3981b3f4debe6e05670f10193b3ecd2ad9db3e40a893d6b38c7",
+      "fileHash": "99ec6fb074001780354c85f5f8ba85d35a6943330cf17773c6a6bffb0e2b6d2a"
+    },
+    {
+      "seq": 13,
+      "id": "665408c6-1d8c-4572-b70d-82f334cdaa26",
+      "at": "2026-09-05T00:11:07.451Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S3:target-add:lib/auth/index.ts::requirePermission",
+      "slice": "S3",
+      "hash": "978b472f3337af95b17c04c793ad2b88a70537e45228f25cea1775805d26bc4c",
+      "fileHash": "4b429ff608a71b1b1c1b05b7764dd31ea7ad11c3a89f9b67071f956b91727a10"
+    },
+    {
+      "seq": 14,
+      "id": "729de10f-77bf-454d-80e0-ef6b3180d52d",
+      "at": "2026-09-05T00:11:07.491Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S3:target-add:app/api/quiz-grade/route.ts::POST",
+      "slice": "S3",
+      "hash": "bc5dd183721c46ca2415e4173df04ebab54d04970258021072fdc392f578f48a",
+      "fileHash": "9385d794cde4076c141e64c8b45c37e203438d2905c5d8ba2ffb2500b9c6243e"
+    },
+    {
+      "seq": 15,
+      "id": "69355e32-05fd-4715-8ac4-7268f6ab167c",
+      "at": "2026-09-05T00:11:07.540Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S4:target-add:app/api/auth/permissions/route.ts::GET",
+      "slice": "S4",
+      "hash": "0eb043d98d75f51cda651d42b2677ecbde8e59f60d6cdb526e9728f86307e367",
+      "fileHash": "9faab19925960fe47ed27fe3e45d6ff7b21abc0628782892ba9314afc6a70961"
+    },
+    {
+      "seq": 16,
+      "id": "d5096eca-0f05-4068-bfd2-2041994d341a",
+      "at": "2026-09-05T00:11:07.582Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S4:target-add:lib/hooks/use-permissions.ts::usePermissions",
+      "slice": "S4",
+      "hash": "db2a41e6aefd794df3653d8cb1e44f360dd982891c6483f63f7eca67e8dd08fa",
+      "fileHash": "9fe4764d3e612d9fafb38673608d24be75df3a4defb5378648568b3ceb11824d"
+    },
+    {
+      "seq": 17,
+      "id": "d67d089f-b632-4bc6-9a54-1d08d0701aff",
+      "at": "2026-09-05T00:11:07.623Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S4:target-add:components/permission-gate.tsx::PermissionGate",
+      "slice": "S4",
+      "hash": "b18514e02adc6baadfcd4802359d887a1bfb938950c7639760e0cf9ea8ea3f12",
+      "fileHash": "2130025f06f1ec97f0da648ef9c1ff80b6b51d9be4dc1333b0852f188ce728b6"
+    },
+    {
+      "seq": 18,
+      "id": "96743202-7580-4609-b576-17aa53c5ed67",
+      "at": "2026-09-05T00:11:07.665Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S4:target-add:components/account-zone.tsx::AccountZone",
+      "slice": "S4",
+      "hash": "a45c1ab79a2df2e8a1a488d2b31db51a44544346038f3010101f2ba0379c3f53",
+      "fileHash": "698b8ca2c2ed1ae77abf4ebb0cb4a4f015534ae8a09a6b00e40294eb32e23b86"
+    },
+    {
+      "seq": 19,
+      "id": "d7f55e04-5150-407b-8544-08a215dda448",
+      "at": "2026-09-05T00:11:07.712Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S1:capture",
+      "slice": "S1",
+      "hash": "301a23f1d618582c6245f49e1b56cff467c3ccb3e87f8d11872794475191e605",
+      "fileHash": "bbfd73de542641ddf21aee81280b1e1b02556299b67ef9598a2488a0821b112d"
+    },
+    {
+      "seq": 20,
+      "id": "e0992767-c29c-4ad2-abf0-d1d3228814d2",
+      "at": "2026-09-05T00:11:07.753Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S2:capture",
+      "slice": "S2",
+      "hash": "899ded3797ee81b34b44fd5776220eaafbda574b413867d9adef59c2ecfcbf73",
+      "fileHash": "c6211cfd6be4ea6a0405ab887183b01b2a4ca524a8d250418f8f372c22971374"
+    },
+    {
+      "seq": 21,
+      "id": "2800e0e2-3d2a-4d77-9680-a66fb94ccead",
+      "at": "2026-09-05T00:11:07.803Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S3:capture",
+      "slice": "S3",
+      "hash": "3f1fb27ac4e77a0cfcfbde22c52258f17df944588d6d221f8ac5a9862203cd23",
+      "fileHash": "3d724f37d7b2a10bebedeff44818e07b3d3a0a0b13da60cd1b61ca24c51db90d"
+    },
+    {
+      "seq": 22,
+      "id": "07f9140e-5ef9-4b72-b9eb-2ddb52a7022d",
+      "at": "2026-09-05T00:11:07.866Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S4:capture",
+      "slice": "S4",
+      "hash": "0a92889b57785517b73573d1243e9205f9f7f691070fd94d235647659cad3135",
+      "fileHash": "9ff2377e112411073d992b9fba55acf1a957b59e15c6907a9b9661db62705907"
+    },
+    {
+      "seq": 23,
+      "id": "4ae3004f-e842-4252-b247-644d521e986d",
+      "at": "2026-09-05T00:11:19.959Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/auth/permissions.ts::PERMISSION_CATALOG",
+      "slice": "S1",
+      "hash": "6b5518ea5871d0a2822b2462752294a88162cab95efe06b705513de438b13ca4",
+      "fileHash": "c12bc57708ba2165a083cf457b40f698398676032d3d2d447384f9efa1c7574e"
+    },
+    {
+      "seq": 24,
+      "id": "8841e4e8-eb7a-477d-94a0-9c3b8f4183d5",
+      "at": "2026-09-05T00:11:20.013Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/auth/permissions.ts::defaultPermissionsForRank",
+      "slice": "S1",
+      "hash": "704bb1279b78ff3e63a2b98cb360b204857c5c653b615997ef5a6fc585924f3b",
+      "fileHash": "bdc03453ae1deef5ecfb49694035825aa6be0d8d1deaf94a8b5a378b524e37e2"
+    },
+    {
+      "seq": 25,
+      "id": "1acc841b-dd35-4f4d-acd3-16f619534185",
+      "at": "2026-09-05T00:11:20.061Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/auth/permissions.ts::can",
+      "slice": "S1",
+      "hash": "d557b8adf664e1a79a4289822bbec5d21fce4f4c23ac8fef25dc2c7b94dc1dae",
+      "fileHash": "9c76cd82e649f77db51f27cb6a1dede93e1bd99d3f4174ca3f31d9059b43c629"
+    },
+    {
+      "seq": 26,
+      "id": "f5218492-b013-4ee0-8a0b-a73c5324bef5",
+      "at": "2026-09-05T00:11:20.111Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/auth/schema.ts::ensureAuthSchema",
+      "slice": "S2",
+      "hash": "700d51ee63c0f5c9d6d7ce0c46133ec531ca3aa761d724c9c5d7192ae7ffc90e",
+      "fileHash": "f6fb9e67176804b1f405af9dab5aa8993c6bcc0eb310b8c0e175c1e410c7edcf"
+    },
+    {
+      "seq": 27,
+      "id": "b52a2dfb-00b4-4720-bcf4-118471b11421",
+      "at": "2026-09-05T00:11:20.152Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/auth/permissions-server.ts::resolvePermissionSet",
+      "slice": "S2",
+      "hash": "c21b3ba2cd849f15b1910c5083c4e9ecc72ac668b18ddde076b35c2fb1f1b620",
+      "fileHash": "1dbc758df301c18c40e10abba2c01d99383273ef08684cd464cb8dd82ccd3d0f"
+    },
+    {
+      "seq": 28,
+      "id": "98efb7e3-104a-43dd-a77e-0a353334f7fe",
+      "at": "2026-09-05T00:11:20.195Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:lib/auth/permissions-server.ts::requirePermission",
+      "slice": "S3",
+      "hash": "ba67c667f915bca16312c43bc6dc1d8ba8a70b3fa206ae1d0bba7076f9a946be",
+      "fileHash": "7c845d9387278807a2f8e755d02c92f317cd9b8d3c0560cd4498abf512473d75"
+    },
+    {
+      "seq": 29,
+      "id": "99577c34-6896-4cf2-b5d3-0ba544dc2041",
+      "at": "2026-09-05T00:11:20.235Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:lib/auth/index.ts::requirePermission",
+      "slice": "S3",
+      "hash": "8dd3f8420f0dcb381ec3abc8e32277178f26739832ac692585b17d7ad29fb206",
+      "fileHash": "cabb9c1f104c0c18ce892820f6bf310465e891270922165c4e12a10c4c3e23e1"
+    },
+    {
+      "seq": 30,
+      "id": "99f071bb-ff16-4aa2-8635-c5803e5f2f59",
+      "at": "2026-09-05T00:11:20.277Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:app/api/quiz-grade/route.ts::POST",
+      "slice": "S3",
+      "hash": "14e5fd2afc8a1e7de90d6c9dba64023674fd7196c4cf3a9050da137c4d117141",
+      "fileHash": "c5b135b5c3170f351a986e942e009fc67e1256b2e04354ab03e8bb8392b63103"
+    },
+    {
+      "seq": 31,
+      "id": "36ff6ad5-4eb6-47f2-b391-add4dbe907a8",
+      "at": "2026-09-05T00:11:20.316Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S4:postcondition:app/api/auth/permissions/route.ts::GET",
+      "slice": "S4",
+      "hash": "698fa35ac5ca4a302f947f7ac1953de6367b5cd3b2148fe42add90b10b928c6c",
+      "fileHash": "8d7d8c8cf2a4039caa2b9be652146c4bb0cca32068f2e57b12b9881fedb6fa97"
+    },
+    {
+      "seq": 32,
+      "id": "aaffb55b-7a0f-44bf-b7f7-5ceffd78744d",
+      "at": "2026-09-05T00:11:20.359Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S4:postcondition:lib/hooks/use-permissions.ts::usePermissions",
+      "slice": "S4",
+      "hash": "edc838422d0207ebcf69dd09f418cb55cfbd7ea3268083293313ca323665dd4b",
+      "fileHash": "2c7b85946febc52becbaef13dd73bf19c614dfacfdb2a78cc9917218a28d5868"
+    },
+    {
+      "seq": 33,
+      "id": "65256df0-257e-4f81-9c06-4ae318e64068",
+      "at": "2026-09-05T00:11:20.399Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S4:postcondition:components/permission-gate.tsx::PermissionGate",
+      "slice": "S4",
+      "hash": "898ae587ac7395ebe1e6857f9cacd58993eff4a87d4c3cf093607f66a09177ca",
+      "fileHash": "4135f75d14af79797d90c986a94f6329d8591b4571719d612234998c1ed50e21"
+    },
+    {
+      "seq": 34,
+      "id": "9344f946-d9d6-42f2-ad43-6410e5cff880",
+      "at": "2026-09-05T00:11:20.441Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S4:postcondition:components/account-zone.tsx::AccountZone",
+      "slice": "S4",
+      "hash": "37be8f1838e9c9348f387cf4cb8ea7c39d040173a38d55639623c831cbf1feee",
+      "fileHash": "1728c07eafa3590f786763e5048055ee5f7d4db192c2131e622dbde2058d9b98"
+    },
+    {
+      "seq": 35,
+      "id": "7ae0f0b9-fd8e-4b86-9e8d-ef0d0e336f3e",
+      "at": "2026-09-05T00:11:30.796Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/auth/permissions.ts::PERMISSION_CATALOG",
+      "slice": "S1",
+      "hash": "0915159c614b1f65cee6647e09657a184073c09945655348f1776201e030aae7",
+      "expectationHash": "41b7c6ea54658c21897830f6fe7ca749bfb6951bcdbc8cde226418b461333815",
+      "fileHash": "ce768e686df771cbf1a2c1a8205afd250b8dc464a7a5d131cea364ee198e6a34"
+    },
+    {
+      "seq": 36,
+      "id": "25642c2e-9c1e-4e5b-852f-f4a09e48038b",
+      "at": "2026-09-05T00:11:30.851Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/auth/permissions.ts::defaultPermissionsForRank",
+      "slice": "S1",
+      "hash": "35cad601d826c0dd4c7f7ba6661e9524386d5d33232fdb50c3bc52a99ccd6067",
+      "expectationHash": "e2653c711738c02e5e9d759d4bf4c88d13764e9b3303fd352f42dce34ecaf0bd",
+      "fileHash": "0a8370f23a636366b91b12c8a8a1ddaa3f550f3becaf91f3e6f65722291a08dd"
+    },
+    {
+      "seq": 37,
+      "id": "1cf92b17-f23a-4d8c-8742-807b4007cae2",
+      "at": "2026-09-05T00:11:30.900Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/auth/permissions.ts::can",
+      "slice": "S1",
+      "hash": "0152dd5dfc2a8411359b4c549318ee194fc21e5ef6a68924bef639dac9510ec4",
+      "expectationHash": "160b8d65c75412be93ee9934eac9bc25ffee3768da6be4f19ce4a2efd48644d2",
+      "fileHash": "2b1c0ac73754cc9cd31c8288a0a710f39c25edcdf62e16eace8c0ea35e9d6e4a"
+    },
+    {
+      "seq": 38,
+      "id": "61cd313e-2401-4ef7-bc53-c17fa05acb56",
+      "at": "2026-09-05T00:11:30.947Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/auth/schema.ts::ensureAuthSchema",
+      "slice": "S2",
+      "hash": "a8c005b618f99ede79c0878e120ea3a99cf58f4ec6c2485a3110369c8a0bd739",
+      "expectationHash": "8da43d19e282822fb4d5d8b41b2d30c3950e1f5c779d99eed85b70e1605befd4",
+      "fileHash": "d5c29154a224f5fdc5cf8338f12a6efbf8875ae4038fa25e5a345236165be7d0"
+    },
+    {
+      "seq": 39,
+      "id": "73a0557c-fcd7-4bb4-9aa8-ea2a45eb8dca",
+      "at": "2026-09-05T00:11:30.989Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/auth/permissions-server.ts::resolvePermissionSet",
+      "slice": "S2",
+      "hash": "46573b174b50845bc2c1bc48aca59b014f36005b0af418665bd708393d5d7353",
+      "expectationHash": "b4f598a78a2710fc9c8f93ffe428d6d19992db25cc9241085d5d44deab7cf886",
+      "fileHash": "680ec7128aad1f724bae065ca0b42a136a4f9ac1b4f24d2fce13bca9e5209ad6"
+    },
+    {
+      "seq": 40,
+      "id": "30f2ae00-cd61-4e39-a9ee-1158dc264491",
+      "at": "2026-09-05T00:11:31.036Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:lib/auth/permissions-server.ts::requirePermission",
+      "slice": "S3",
+      "hash": "d2b3a2de550d5fb883e018a741de057474b6683c2196ce65c8eb718c95807da6",
+      "expectationHash": "d3df64c08c78d3f15e79fade74aa5c1d7ae1ec21729185f46f733c4390e6ed5b",
+      "fileHash": "9ec5a13962fd8b9f1c566394cda48fe38271f8535d0b19d30de3203696a10cb9"
+    },
+    {
+      "seq": 41,
+      "id": "6028caaf-4f5b-4617-b065-4d9a80d4f9cd",
+      "at": "2026-09-05T00:11:31.076Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:lib/auth/index.ts::requirePermission",
+      "slice": "S3",
+      "hash": "a94757c22bb6a265142bf112130fdeb5bed0b5aaa3d7781425c288077cece07d",
+      "expectationHash": "b437bb20b3a681190d404603b8f5109272bbb55f9be3a9f07ba22d229d1b0ddd",
+      "fileHash": "cff37ac6b7c058e868c9e59aa98ffeef3fda18397f9d9598991000eefeb9de0c"
+    },
+    {
+      "seq": 42,
+      "id": "eeb6caf1-0165-4381-9def-d61f4f9ee680",
+      "at": "2026-09-05T00:11:31.116Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:app/api/quiz-grade/route.ts::POST",
+      "slice": "S3",
+      "hash": "64a82af703daf185ceeb9b8ce4bec751aa8a7875a49b56a48f5decc5ba56afdd",
+      "expectationHash": "95f04e281377ce39011d958cd8d7426858c0ff1b17689c54fd729032b4fc606c",
+      "fileHash": "7d63baf86abf903c10f0da227fed3043d41347b3b8bd1977471a69da15720bbc"
+    },
+    {
+      "seq": 43,
+      "id": "ffb3b2a4-8156-443f-9fa3-2f883d76096f",
+      "at": "2026-09-05T00:11:31.155Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect-symbol:app/api/auth/permissions/route.ts::GET",
+      "slice": "S4",
+      "hash": "322370a1813fe86827bd4ebf2ccb8966f33e8b5c9832463efab425aa700de263",
+      "expectationHash": "aea93692d6f8899399da7efc59f3fd79275cb86916c66c14276278e8aa5c8c71",
+      "fileHash": "595d3499c6f769fa8de91ed8fa4620279e55b62034176f1de3a7e970773aed6e"
+    },
+    {
+      "seq": 44,
+      "id": "12af644b-0134-4d42-b1a4-fc6929168932",
+      "at": "2026-09-05T00:11:31.197Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect-symbol:lib/hooks/use-permissions.ts::usePermissions",
+      "slice": "S4",
+      "hash": "58d861a925d87e76ceef8ee2d0ea96dc3df705809a536356ec357be1e47c47a5",
+      "expectationHash": "f0c0685cc5a95b71f3a58b4250e11dd293d80853c2fa2e14bef35c1b95b998f6",
+      "fileHash": "401a2afc13cb2d3a56c502a07dea4bf062c0c057802d7f6884840d3a61563498"
+    },
+    {
+      "seq": 45,
+      "id": "ed9a99f3-1204-4099-860e-238845bb2a90",
+      "at": "2026-09-05T00:11:31.236Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect-symbol:components/permission-gate.tsx::PermissionGate",
+      "slice": "S4",
+      "hash": "392b0628a4b60d2955a6de2fdc987be8d62c52037e6241462cdf3f77e43ebbe2",
+      "expectationHash": "f944cee9bd8fa3d0765c9776a5079f9d52001a3c6f7e7d6978a49ec40fb61c49",
+      "fileHash": "72f43ec1e4d22e49d943c2b8f911278a8f7ec1f537d39b574c933b189678fb1b"
+    },
+    {
+      "seq": 46,
+      "id": "1d693ba7-aa0c-4687-a37f-0ce5c68d91ca",
+      "at": "2026-09-05T00:11:31.283Z",
+      "actor": "researcher",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect-symbol:components/account-zone.tsx::AccountZone",
+      "slice": "S4",
+      "hash": "759b11c8bf99ef4b6ce02f4835cb4d0ee5ce4d106ebd88ec5aecd4e4dc6f346e",
+      "expectationHash": "60b13973cfb6fc30bd9decf10ec598630723514feaf8daa9dc4921bbbeb2f2dc",
+      "fileHash": "8ebea9e84703df3f82d397b793361f020db616525f8878c3cbdadd5d5f913d59"
+    },
+    {
+      "seq": 47,
+      "id": "b9c80be7-61c4-4d2d-baf8-696c01816677",
+      "at": "2026-09-05T00:11:44.597Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S1:gate-add:g1",
+      "slice": "S1",
+      "hash": "8247aff4136fc3fb9bd82f6dc77e50101c49cdfbcb5f8f0a8b47a15468be123f",
+      "fileHash": "dd0484dbc104b3d8ba45d9778d57871cf8dc928445dffdb2c97abe2d349c70e6"
+    },
+    {
+      "seq": 48,
+      "id": "24d58271-d78a-4af2-8cc1-2fb7172823b7",
+      "at": "2026-09-05T00:11:44.650Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S1:gate-add:g2",
+      "slice": "S1",
+      "hash": "e2db4eb4ae3112625cb5c55a23d145cef067920223719b0f54f8cad9f6768c52",
+      "fileHash": "90e78a1c83c40825596c8639d7272cf79ffd856fc279b471553930622ab08961"
+    },
+    {
+      "seq": 49,
+      "id": "66aa9faf-f83e-4771-8d28-7d4300482ab5",
+      "at": "2026-09-05T00:11:44.697Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S1:gate-add:g3",
+      "slice": "S1",
+      "hash": "90db86f270f34fc807db79a40e665a17445863701fb2367cbbb8da05bd27d7ae",
+      "fileHash": "855a57aa96b2ff06b822181b7833c2794c0796aca7c2b38d38d40c9cc0952cc0"
+    },
+    {
+      "seq": 50,
+      "id": "b372b70c-8835-4143-9d0c-c3ebd9645d57",
+      "at": "2026-09-05T00:11:44.736Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S2:gate-add:g1",
+      "slice": "S2",
+      "hash": "83cab24e9566702e4c88243965b0473a5fc362c351a0a87e6abbed93326e0b71",
+      "fileHash": "c65a9aab5ee0242794fc41f7e61b118e998d6028460efbc16952bbaf99ba6d9e"
+    },
+    {
+      "seq": 51,
+      "id": "3f93cb62-17e7-472b-b75e-6f88c51ec97f",
+      "at": "2026-09-05T00:11:44.779Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S2:gate-add:g2",
+      "slice": "S2",
+      "hash": "79c21f633f812d6c746d806ad6bf97cc27be3e82d3b33422bb4203fa8eb50093",
+      "fileHash": "fe7aefcade1242bacf74bda00ab620f5516347da1c39569e7a712cd38eb66527"
+    },
+    {
+      "seq": 52,
+      "id": "1d0c169f-4506-4adb-adfe-7e42b93d9c2b",
+      "at": "2026-09-05T00:11:44.818Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S2:gate-add:g3",
+      "slice": "S2",
+      "hash": "550d8d6a3d9ca93c54fb916136c82235646a335a6534437050df9d75f2400f73",
+      "fileHash": "f8eee4f57cbe191ae8e7fa1055c94108003833ef4694de2e5277b901f3654494"
+    },
+    {
+      "seq": 53,
+      "id": "30115adb-1780-4a06-8a77-76e9057b6d64",
+      "at": "2026-09-05T00:11:44.862Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S3:gate-add:g1",
+      "slice": "S3",
+      "hash": "b2e3b4a0939f6ed245e342cf1337c105913bd4f9ece79b2886896908f162a72b",
+      "fileHash": "eafb118c1b0afead9e6a85e210e737a48e0ac2db091ca305e824cfd23024b8e6"
+    },
+    {
+      "seq": 54,
+      "id": "784ac180-4608-4e23-b7cd-bc27ce09ec4a",
+      "at": "2026-09-05T00:11:44.902Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S3:gate-add:g2",
+      "slice": "S3",
+      "hash": "4fff230bbb695c124c69e2ed9543bed04c9b98a7f39dbce688a53f2898028c88",
+      "fileHash": "5bb3cabae2030a9060426d0dbc3663f50448ab3bccf9588167af5b8e3195f6b8"
+    },
+    {
+      "seq": 55,
+      "id": "aa52924d-96f7-411d-864f-0632e95374d6",
+      "at": "2026-09-05T00:11:44.950Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S3:gate-add:g3",
+      "slice": "S3",
+      "hash": "910b9f6c5443cb8e225fc077e6159c0a1fb0f24064bf7846696b80d9e2797adb",
+      "fileHash": "547c73855354642aac977b0bf11fe1c6aa611a850f89e23d7f971ebdc3877308"
+    },
+    {
+      "seq": 56,
+      "id": "7925cceb-f529-49a5-8cd7-2f6802524adc",
+      "at": "2026-09-05T00:11:44.992Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S4:gate-add:g1",
+      "slice": "S4",
+      "hash": "93e5efbc548ef8446c2edf8649797e85fc4e1028b13dcc2442ca2450486d024f",
+      "fileHash": "575602d72f2a6c89851ac2de6807755cdee785bb746b30967ae76be04945014f"
+    },
+    {
+      "seq": 57,
+      "id": "5947080a-f072-4baf-b19e-cadad47be673",
+      "at": "2026-09-05T00:11:45.033Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S4:gate-add:g2",
+      "slice": "S4",
+      "hash": "eb93fcb0f3d04d2ea9f1ca8b912b09e390636f2bda6f687198e7cfd97fd9f91a",
+      "fileHash": "a0b353c968ce70c1504006650bf9df750c99735fc345aab47ba496f6a0b20083"
+    },
+    {
+      "seq": 58,
+      "id": "7d0330f3-b324-4981-94ce-6f35ab3f08dc",
+      "at": "2026-09-05T00:11:45.078Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S4:gate-add:g3",
+      "slice": "S4",
+      "hash": "68ab7271316b4e9ce7e06036e5f4d011527421dfea9c71c88a40783761323456",
+      "fileHash": "7c741f6a4b9a9627592c85683f5ff68c8cf4c36f5fb74d4f55e37808c6983e06"
+    },
+    {
+      "seq": 59,
+      "id": "edf173f1-894c-48c3-bbea-0e1c83426edc",
+      "at": "2026-09-05T00:11:45.121Z",
+      "actor": "researcher",
+      "command": "gate_add",
+      "transition": "slice:S4:gate-add:g4",
+      "slice": "S4",
+      "hash": "c14e58b26589573f31c633833244cb05f919b31377e98c785307d38dc7d12426",
+      "fileHash": "dbf92b05b48dafaf7cf17ca28ee73523657b049d2897033716c48bf824ef5f0f"
+    },
+    {
+      "seq": 60,
+      "id": "76ac7621-11d8-4225-b12a-9bd9d57393e3",
+      "at": "2026-09-05T00:12:04.285Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "170c09801a23a1136694bf1ec083e93a08b8cf24ce379fdd51e5df2395a62926",
+      "fileHash": "bdd518d9ede9867d6734ce487a120be4d3b7fd3d4dfa7872824d574cde575a34"
+    }
+  ],
+  "fileHash": "c61a28f182337e309fc19d454141ecc903ebc6f49bc506660a9b0d25fb302691"
+}

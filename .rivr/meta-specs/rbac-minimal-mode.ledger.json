@@ -5,7 +5,7 @@
   "spec": {
     "reference": "docs/meta-specs/rbac-minimal-mode.md",
     "title": "Meta-spec: rbac-minimal-mode",
-    "hash": "cd65ff7518110ea7eb7d34c0db59e2bfd20c99e459d19bb8c59f5d8e3a720948"
+    "hash": "addd16adce5d55dbc51b1ff03cacfaccdd4095c345bfd2c28ea9618fbe57a2ab"
   },
   "tracker": {
     "mode": "none"
@@ -29,6 +29,11 @@
       "batch": "014-branding-header",
       "ledger": ".rivr/specs/014-branding-header.ledger.json",
       "stage": "closed"
+    },
+    {
+      "batch": "015-permission-core",
+      "ledger": ".rivr/specs/015-permission-core.ledger.json",
+      "stage": "implementation"
     }
   ],
   "audit": [
@@ -173,7 +178,51 @@
       "slice": null,
       "hash": "34e8e6b281ff4827fec469df82b293a01fe7935285b1128c7efe313c344ab63e",
       "fileHash": "66085b2ddc82dd3004d858b5618a5777731c119961216197cd4676680cf0da61"
+    },
+    {
+      "seq": 14,
+      "id": "8ac949cd-8e02-4c53-b0c2-4c5bfa40641d",
+      "at": "2026-09-05T00:12:04.234Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:clarification:Register child batch ledger 015-permission-core into the meta-ledger.",
+      "slice": null,
+      "hash": "9663ab7b564df9db11755a31ca13a803e59db6be4a647bf90f69660b04979d95",
+      "fileHash": "b67752a2aa14f0894f73a5497fa4e5a1edc730c58ccc0efecb0243941182f2a5"
+    },
+    {
+      "seq": 15,
+      "id": "ad468c9e-6aff-4647-9968-d89c059e86da",
+      "at": "2026-09-05T00:12:04.235Z",
+      "actor": "orchestrator",
+      "command": "metaspec_child_link",
+      "transition": "child-link:015-permission-core:.rivr/specs/015-permission-core.ledger.json:research",
+      "slice": null,
+      "hash": "0c6538ea86105744c6f21f0733548149dcb90c2d9c21e4b0ba8a0fce1798f866",
+      "fileHash": "b67752a2aa14f0894f73a5497fa4e5a1edc730c58ccc0efecb0243941182f2a5"
+    },
+    {
+      "seq": 16,
+      "id": "d77a73fb-d831-46b9-96db-92e113df0aff",
+      "at": "2026-09-05T00:12:04.332Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:clarification:Refresh recorded child stage after batch 015 advanced to implementation.",
+      "slice": null,
+      "hash": "941bc614860cd7ee04b3831d017b36ba9013423019ac97b3cad513ef44de678a",
+      "fileHash": "aef13ab9f5b9470b426efc8aff025adc45139e65cc71ff3d22cb3ba9c366843c"
+    },
+    {
+      "seq": 17,
+      "id": "6ee101f3-c780-4820-8a23-c0936c9f50c3",
+      "at": "2026-09-05T00:12:04.333Z",
+      "actor": "orchestrator",
+      "command": "metaspec_child_link",
+      "transition": "child-link:015-permission-core:.rivr/specs/015-permission-core.ledger.json:implementation",
+      "slice": null,
+      "hash": "9fbf70ff503505661f3067f7d97c212c8df87869c5af74b34616046ac4548afa",
+      "fileHash": "aef13ab9f5b9470b426efc8aff025adc45139e65cc71ff3d22cb3ba9c366843c"
     }
   ],
-  "fileHash": "b67752a2aa14f0894f73a5497fa4e5a1edc730c58ccc0efecb0243941182f2a5"
+  "fileHash": "c2b0b52766b7fb29654fe3dda1046cdcd4c40afa6c2dad9fabc59de0f52e73b3"
 }

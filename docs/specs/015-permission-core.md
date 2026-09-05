@@ -1,6 +1,6 @@
 # Batch 015 spec: permission-core
 
-Spec status: draft
+Spec status: implementation
 
 ## Problem Statement
 
