@@ -27,6 +27,8 @@ import { buildSearchQuery } from '@/lib/server/search-query-builder';
 import { formatSearchResultsAsContext, searchWeb } from '@/lib/web-search';
 import type { BaiduSubSources, WebSearchProviderId } from '@/lib/web-search/types';
 import { persistClassroom } from '@/lib/server/classroom-storage';
+import { claimStageMeta } from '@/lib/persistence/stage-meta';
+import { getServerPersistenceProvider } from '@/lib/persistence/server-provider';
 import {
   generateMediaForClassroom,
   replaceMediaPlaceholders,
@@ -178,6 +180,7 @@ export async function generateClassroom(
   options: {
     baseUrl: string;
     onProgress?: (progress: ClassroomGenerationProgress) => Promise<void> | void;
+    ownerId?: string;
   },
 ): Promise<GenerateClassroomResult> {
   const { requirement, pdfContent } = input;
@@ -718,6 +721,20 @@ export async function generateClassroom(
   );
 
   log.info(`Classroom persisted: ${persisted.id}, URL: ${persisted.url}`);
+
+  // Claim the stage_meta row for the creating owner so the new course carries
+  // owner and the column defaults status 'draft' and audience 3.
+  if (options.ownerId) {
+    try {
+      const { pool } = await getServerPersistenceProvider(process.env.DATABASE_URL ?? '');
+      await claimStageMeta(pool, stageId, options.ownerId);
+    } catch (err) {
+      log.warn(
+        `Failed to claim stage_meta for ${stageId}; classroom JSON was persisted without it.`,
+        err,
+      );
+    }
+  }
 
   await options.onProgress?.({
     step: 'completed',

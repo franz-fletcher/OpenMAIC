@@ -107,6 +107,14 @@ describe('reference-fidelity stage access', () => {
     const visitor = ownerStore(pool, `anon:${visitorCookie}`);
     await owner.saveDocument(courseDocument(stageId));
 
+    // Insert a stage_meta row so the audience gate can verify the course.
+    await pool.query(
+      `INSERT INTO stage_meta (stage_id, owner_id, status, audience, is_public, published_at, generation_complete, deleted_at)
+       VALUES ($1, $2, 'published', 0, true, $3, false, null)
+       ON CONFLICT (stage_id) DO UPDATE SET status = EXCLUDED.status, audience = EXCLUDED.audience`,
+      [stageId, `anon:${ownerCookie}`, Date.now()],
+    );
+
     await expect(visitor.loadDocument(stageId)).resolves.toMatchObject({ stage: { id: stageId } });
     await expect(
       visitor.saveDocument(courseDocument(stageId, 'Foreign edit')),

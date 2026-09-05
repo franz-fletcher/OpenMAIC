@@ -82,7 +82,8 @@ describe('GET /api/stage-meta/[stageId]', () => {
       new NextRequest(`http://localhost/api/stage-meta/${STAGE_ID}`),
       stageMetaParams(STAGE_ID),
     );
-    await expect(response.json()).resolves.toMatchObject({ isOwner: false });
+    // Non-owner reading a draft course answers 404 (audience-enforced gate).
+    await expect(response.status).toBe(404);
   });
 
   it('answers 404 for an absent or tombstoned course', async () => {

@@ -61,6 +61,7 @@ export async function decideDocumentAccess(
   readMeta: StageMetaReader,
   documentExists: DocumentExistenceReader,
   rereadMeta: StageMetaReader = readMeta,
+  viewerRank: number = 0,
 ): Promise<DocumentAccess> {
   if (!ownerId) return 'forbid';
   switch (action.kind) {
@@ -70,7 +71,14 @@ export async function decideDocumentAccess(
     case 'read': {
       const meta = await readMeta(action.stageId);
       if (!meta) return 'not-found';
-      return meta.deletedAt === null ? 'allow' : 'not-found';
+      // Tombstoned courses answer 404 for everyone.
+      if (meta.deletedAt !== null) return 'not-found';
+      // Owner always passes, including drafts.
+      if (meta.ownerId === ownerId) return 'allow';
+      // Non-owner: course must be published and audience must be at or below viewer rank.
+      if (meta.status !== 'published') return 'not-found';
+      if (viewerRank < meta.audience) return 'not-found';
+      return 'allow';
     }
     case 'write': {
       const meta = await readMeta(action.stageId);

@@ -14,6 +14,7 @@ import {
   parseDocumentAction,
   type DocumentAccess,
 } from '@/lib/persistence/document-access';
+import { resolveViewerRank } from '@/lib/persistence/audience';
 import { createOwnerBoundDocumentStore } from '@/lib/persistence/owner-bound-document-store';
 import { authenticatePersistenceRequest } from '@/lib/persistence/server-auth';
 import {
@@ -288,6 +289,7 @@ export async function handlePersistenceRequest(
       if (path === '/documents' || path.startsWith('/documents/')) {
         const { pool } = await getServerPersistenceProvider(connectionString, deps.poolFactory);
         const queryable = pool;
+        const viewerRank = await resolveViewerRank(queryable, ownerId);
         access = await decideDocumentAccess(
           action,
           ownerId,
@@ -297,6 +299,7 @@ export async function handlePersistenceRequest(
               .query('SELECT 1 FROM document_stages WHERE id = $1', [stageId])
               .then((result) => result.rows.length > 0),
           (stageId) => readStageMeta(queryable, stageId),
+          viewerRank,
         );
       }
 

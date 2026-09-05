@@ -8,8 +8,23 @@ import {
   readClassroom,
 } from '@/lib/server/classroom-storage';
 import { createLogger } from '@/lib/logger';
+import { resolveViewerRank } from '@/lib/persistence/audience';
+import { resolveStageAccess, getStageAccessDb } from '@/lib/server/stage-access';
 
 const log = createLogger('Classroom API');
+
+/**
+ * Flag-gated MINIMAL_MODE check.
+ *
+ * Uses globalThis.process to survive Turbopack's compile-time env replacement.
+ */
+function isMinimalMode(): boolean {
+  // Use globalThis.process to survive Turbopack's compile-time env replacement.
+  // eslint-disable-next-line no-restricted-globals -- runtime env access for server-only flag
+  const runtimeProcess = globalThis.process as NodeJS.Process | undefined;
+  const mode = runtimeProcess?.env?.MINIMAL_MODE;
+  return mode === 'true' || mode === '1';
+}
 
 export async function POST(request: NextRequest) {
   let stageId: string | undefined;
@@ -62,6 +77,35 @@ export async function GET(request: NextRequest) {
 
     if (!isValidClassroomId(id)) {
       return apiError(API_ERROR_CODES.INVALID_REQUEST, 400, 'Invalid classroom id');
+    }
+
+    // Audience-enforced gate: resolve the viewer rank and check against the
+    // course audience.
+    const viewerRank = await resolveViewerRank(await getStageAccessDb(), 'anon:guest');
+
+    // Check stage_meta for this id.
+    const access = await resolveStageAccess(id);
+
+    // No stage_meta row: under MINIMAL_MODE answer 404 (creates nothing).
+    // Flag-off keeps today's file serving (parity).
+    if (!access) {
+      if (isMinimalMode()) {
+        return apiError(API_ERROR_CODES.INVALID_REQUEST, 404, 'Classroom not found');
+      }
+      // Flag-off: keep today's file serving.
+      const classroom = await readClassroom(id);
+      if (!classroom) {
+        return apiError(API_ERROR_CODES.INVALID_REQUEST, 404, 'Classroom not found');
+      }
+      return apiSuccess({ classroom });
+    }
+
+    // stage_meta exists: apply the audience rule.
+    if (access.status !== 'published') {
+      return apiError(API_ERROR_CODES.INVALID_REQUEST, 404, 'Classroom not found');
+    }
+    if (viewerRank < access.audience) {
+      return apiError(API_ERROR_CODES.INVALID_REQUEST, 404, 'Classroom not found');
     }
 
     const classroom = await readClassroom(id);

@@ -12,9 +12,15 @@ describe('embedded persistence route', () => {
       readStageMeta: vi.fn().mockResolvedValue({
         stageId: 'adapter-test',
         ownerId: 'adapter-test-owner',
-        isPublic: false,
+        isPublic: true,
+        status: 'published',
+        audience: 0,
+        publishedAt: Date.now(),
         deletedAt: null,
       }),
+    }));
+    vi.doMock('@/lib/persistence/audience', () => ({
+      resolveViewerRank: vi.fn().mockResolvedValue(0),
     }));
     vi.doMock('@/lib/persistence/owner-materials', () => ({
       ensureOwnerMaterialSchema: vi.fn().mockResolvedValue(undefined),
@@ -643,7 +649,10 @@ describe('embedded persistence route', () => {
 
   const readAdapterBody = async (path: string) => {
     const { handlePersistenceRequest } = await import('@/app/api/persistence/[...path]/route');
-    const pool = { end: vi.fn().mockResolvedValue(undefined) };
+    const pool = {
+      end: vi.fn().mockResolvedValue(undefined),
+      query: vi.fn().mockReturnValue(Promise.resolve({ rows: [] })),
+    };
     const response = await handlePersistenceRequest(
       new Request(`http://localhost/api/persistence/${path}`, {
         headers: { authorization: 'Bearer test-token' },

@@ -25,8 +25,9 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
 import { isAgentRuntimeConfigured } from '@/lib/config/feature-flags';
-import { resolveStageAccess } from '@/lib/server/stage-access';
+import { resolveStageAccess, getStageAccessDb } from '@/lib/server/stage-access';
 import { withRequestOwnerId } from '@/lib/server/agent-runtime/with-owner';
+import { resolveViewerRank } from '@/lib/persistence/audience';
 
 // Per-viewer and mutable on every publish/unpublish/delete: this response must
 // never be cached, by Next or by anything in front of it.
@@ -53,6 +54,24 @@ export async function GET(req: NextRequest, { params }: Params) {
       // owner-bound store will be accepted (the store re-checks the owner
       // scope inside its write transactions).
       const isOwner = access.ownerId === ownerId;
+
+      // Non-owner: course must be published and audience must be at or below
+      // viewer rank. Drafts and wrong-audience courses answer 404.
+      if (!isOwner) {
+        const viewerRank = await resolveViewerRank(await getStageAccessDb(), ownerId);
+        if (access.status !== 'published') {
+          return NextResponse.json(
+            { error: 'not_found' },
+            { status: 404, headers: responseHeaders },
+          );
+        }
+        if (viewerRank < access.audience) {
+          return NextResponse.json(
+            { error: 'not_found' },
+            { status: 404, headers: responseHeaders },
+          );
+        }
+      }
 
       return NextResponse.json(
         {
