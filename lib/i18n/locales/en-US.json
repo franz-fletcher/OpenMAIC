@@ -2144,6 +2144,8 @@
     "audienceHint": "Choose who can view this course",
     "publishFailed": "Publishing failed. Please try again.",
     "unpublishFailed": "Unpublishing failed. Please try again.",
-    "unpublishConfirm": "Unpublish this course?"
+    "unpublishConfirm": "Unpublish this course?",
+    "galleryTitle": "Gallery",
+    "galleryEmpty": "No courses available yet."
   }
 }

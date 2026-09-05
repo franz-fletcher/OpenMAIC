@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect, useMemo, useRef, useDeferredValue } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ArrowUp,
+  BookOpen,
   Check,
   ChevronDown,
   ChevronRight,
@@ -1068,6 +1070,15 @@ function HomePage() {
                 )}
               </AnimatePresence>
 
+              <Link
+                href="/gallery"
+                className="group/gallery grid grid-cols-[auto_0fr] hover:grid-cols-[auto_1fr] items-center gap-1 rounded-full px-1.5 py-0.5 text-[12px] text-muted-foreground/35 hover:text-muted-foreground/70 hover:bg-muted/50 transition-all duration-200 cursor-pointer"
+              >
+                <BookOpen className="size-3" />
+                <span className="overflow-hidden opacity-0 group-hover/gallery:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+                  {t('publishing.galleryTitle')}
+                </span>
+              </Link>
               <button
                 onClick={triggerImport}
                 disabled={importing}
