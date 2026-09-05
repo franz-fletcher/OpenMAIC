@@ -34,6 +34,11 @@
       "batch": "015-permission-core",
       "ledger": ".rivr/specs/015-permission-core.ledger.json",
       "stage": "closed"
+    },
+    {
+      "batch": "016-minimal-mode-gating",
+      "ledger": ".rivr/specs/016-minimal-mode-gating.ledger.json",
+      "stage": "implementation"
     }
   ],
   "audit": [
@@ -266,7 +271,51 @@
       "slice": null,
       "hash": "0b6f5de56bdd08a1ede2f4d5d7c931fb08686f13d662d2b04d28309f1d49b868",
       "fileHash": "605ae3cf43058ee825f5e3646b9858b363452ac39200746e60034a9b5ba70b27"
+    },
+    {
+      "seq": 22,
+      "id": "1a5f2996-ff20-49b7-b8c0-4a48b4824c90",
+      "at": "2026-09-05T03:28:17.717Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:clarification:Link batch 016 as child; human approved 2026-09-05",
+      "slice": null,
+      "hash": "83b3ee17037d73cad9311e6c18ce5fa2e3d31485c50ce5b8a71b07521320c5ba",
+      "fileHash": "0c7e2d20a5b171b4925c7926d0d5c84264d25e3174b3371faf0676de3df2bb24"
+    },
+    {
+      "seq": 23,
+      "id": "c6f32fcb-b749-40cb-9a66-bcfbd47fe03e",
+      "at": "2026-09-05T03:28:17.718Z",
+      "actor": "orchestrator",
+      "command": "metaspec_child_link",
+      "transition": "child-link:016-minimal-mode-gating:.rivr/specs/016-minimal-mode-gating.ledger.json:research",
+      "slice": null,
+      "hash": "5e4c2dd5ab4908741f1eecbb43895b74d8a622088757c7aa16fb75c54b7e6846",
+      "fileHash": "0c7e2d20a5b171b4925c7926d0d5c84264d25e3174b3371faf0676de3df2bb24"
+    },
+    {
+      "seq": 24,
+      "id": "bcb5fb8e-49eb-474a-a432-433d6845c05a",
+      "at": "2026-09-05T03:28:26.113Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:clarification:Refresh child stage after advance to implementation",
+      "slice": null,
+      "hash": "1c0a7be44339e72e4170af2fded5b128aa751dc351c08b431a18985ba8d302fe",
+      "fileHash": "9386f74822df79794030de21bc283830af8198fdccac0ffef34edce8dbe55819"
+    },
+    {
+      "seq": 25,
+      "id": "aea4e557-9862-400d-ab96-4714d5c36718",
+      "at": "2026-09-05T03:28:26.114Z",
+      "actor": "orchestrator",
+      "command": "metaspec_child_link",
+      "transition": "child-link:016-minimal-mode-gating:.rivr/specs/016-minimal-mode-gating.ledger.json:implementation",
+      "slice": null,
+      "hash": "344e7c025aa37a8382c5a26e141c80f8779579c68e4f0afd351ffcdb9478d25c",
+      "fileHash": "9386f74822df79794030de21bc283830af8198fdccac0ffef34edce8dbe55819"
     }
   ],
-  "fileHash": "0c7e2d20a5b171b4925c7926d0d5c84264d25e3174b3371faf0676de3df2bb24"
+  "fileHash": "fed827b2b280364bb129390c442ea6ffc9b3a60095df7b153b9b99ac149f7a23"
 }

@@ -1,6 +1,6 @@
 # Batch 016 spec: minimal-mode-gating
 
-Spec status: draft
+Spec status: implementation
 
 ## Problem Statement
 

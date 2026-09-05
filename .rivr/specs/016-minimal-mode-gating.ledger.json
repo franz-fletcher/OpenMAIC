@@ -1,0 +1,1911 @@
+{
+  "schema_version": 2,
+  "$schema": "https://rivr.dev/schemas/ledger/v2",
+  "spec": {
+    "reference": "docs/specs/016-minimal-mode-gating.md",
+    "title": "Batch 016 spec: minimal-mode-gating",
+    "hash": "21e201d1fbab2f1c50ae7548f2036dd74da8315dc40ebced8686aa7e15007686"
+  },
+  "tracker": {
+    "mode": "none"
+  },
+  "stage": "implementation",
+  "retry": {
+    "count": 0,
+    "max": 5,
+    "consecutive_same_cause": 0,
+    "escalate_at": 3
+  },
+  "slices": [
+    {
+      "id": "S1",
+      "title": "Flag pair, mirror, boot warning, and env docs",
+      "intent": "Delivers the server-only MINIMAL_MODE flag, the build-inlined NEXT_PUBLIC_MINIMAL_MODE mirror, the ACCESS_CODE coexistence boot warning, and the .env.example entries.",
+      "user_stories": [
+        1
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/config/feature-flags.ts",
+          "symbols": [
+            {
+              "name": "isMinimalModeEnabled",
+              "kind": "function",
+              "expectation": "Server-only runtime read of MINIMAL_MODE through readBoolean; true only for 'true' or '1'.",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(): boolean"
+              },
+              "postcondition_quality": "VERIFIED"
+            },
+            {
+              "name": "isMinimalModeClientEnabled",
+              "kind": "function",
+              "expectation": "Build-inlined read of NEXT_PUBLIC_MINIMAL_MODE through readBoolean; reads only the NEXT_PUBLIC_ variable.",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(): boolean"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "lib/server/config-validation.ts",
+          "symbols": [
+            {
+              "name": "validateMinimalMode",
+              "kind": "function",
+              "expectation": "Warn-first boot validator logging one [config] coexistence note when both MINIMAL_MODE and ACCESS_CODE are set.",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(): void"
+              },
+              "postcondition_quality": "VERIFIED"
+            },
+            {
+              "name": "validateServerConfig",
+              "kind": "function",
+              "expectation": "Modified: calls validateMinimalMode beside the existing four validators in the warn-first boot path.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(): void"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(): void"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "aec3529a-8ac4-40a0-b34b-114efd3c3c9c",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "The server-only MINIMAL_MODE flag and the build-inlined NEXT_PUBLIC_MINIMAL_MODE mirror both read through readBoolean. Boot logs one [config] warning when both are set. .env.example documents both vars and the kill-switch contract.",
+      "gates": [
+        {
+          "id": "g1",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/minimal-mode/feature-flags.test.ts && echo MINIMAL_FLAG_OK",
+          "expect": "MINIMAL_FLAG_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pending"
+        },
+        {
+          "id": "g2",
+          "type": "smoke",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pending"
+        }
+      ]
+    },
+    {
+      "id": "S2",
+      "title": "Guard wrapper and per-route adoption",
+      "intent": "Delivers the flag-gated guard wrapper, its public re-export, and adoption on every model spending route listed in the matrix.",
+      "user_stories": [
+        2,
+        4,
+        8
+      ],
+      "blocked_by": [
+        "S1"
+      ],
+      "targets": [
+        {
+          "path": "lib/auth/permissions-server.ts",
+          "symbols": [
+            {
+              "name": "requirePermissionIfMinimalMode",
+              "kind": "function",
+              "expectation": "New flag-gated wrapper: returns immediately when MINIMAL_MODE is off; delegates to requirePermission otherwise, throwing the typed 403.",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  headers: Headers,\n  permission: Permission,\n): Promise<void>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "lib/auth/index.ts",
+          "symbols": [
+            {
+              "name": "requirePermissionIfMinimalMode",
+              "kind": "function",
+              "expectation": "Modified: re-exports requirePermissionIfMinimalMode through the public surface.",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  headers: Headers,\n  permission: Permission,\n): Promise<void>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/chat/route.ts",
+          "symbols": [
+            {
+              "name": "POST",
+              "kind": "function",
+              "expectation": "Modified: adopts requirePermissionIfMinimalMode with classroom.chat as the first statement.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<Response>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/chat/pi/route.ts",
+          "symbols": [
+            {
+              "name": "POST",
+              "kind": "function",
+              "expectation": "Modified: adopts requirePermissionIfMinimalMode with classroom.chat as the first statement.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<NextResponse>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/generate/scene-content/route.ts",
+          "symbols": [
+            {
+              "name": "POST",
+              "kind": "function",
+              "expectation": "Modified: adopts requirePermissionIfMinimalMode with course.create as the first statement.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<NextResponse>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/generate/scene-actions/route.ts",
+          "symbols": [
+            {
+              "name": "POST",
+              "kind": "function",
+              "expectation": "Modified: adopts requirePermissionIfMinimalMode with course.create as the first statement.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<NextResponse>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/generate/scene-outlines-stream/route.ts",
+          "symbols": [
+            {
+              "name": "POST",
+              "kind": "function",
+              "expectation": "Modified: adopts requirePermissionIfMinimalMode with course.create as the first statement.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<NextResponse>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/generate/agent-profiles/route.ts",
+          "symbols": [
+            {
+              "name": "POST",
+              "kind": "function",
+              "expectation": "Modified: adopts requirePermissionIfMinimalMode with course.create as the first statement.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<NextResponse>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/generate-classroom/route.ts",
+          "symbols": [
+            {
+              "name": "POST",
+              "kind": "function",
+              "expectation": "Modified: adopts requirePermissionIfMinimalMode with course.create as the first statement.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<Response>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/generate/tts/route.ts",
+          "symbols": [
+            {
+              "name": "POST",
+              "kind": "function",
+              "expectation": "Modified: adopts requirePermissionIfMinimalMode with tts.use as the first statement.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<NextResponse>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/generate/image/route.ts",
+          "symbols": [
+            {
+              "name": "POST",
+              "kind": "function",
+              "expectation": "Modified: adopts requirePermissionIfMinimalMode with course.create as the first statement.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(request: NextRequest)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(request: NextRequest): Promise<NextResponse>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/generate/video/route.ts",
+          "symbols": [
+            {
+              "name": "POST",
+              "kind": "function",
+              "expectation": "Modified: adopts requirePermissionIfMinimalMode with course.create as the first statement.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(request: NextRequest)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(request: NextRequest): Promise<NextResponse>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/generate/voice/route.ts",
+          "symbols": [
+            {
+              "name": "POST",
+              "kind": "function",
+              "expectation": "Modified: adopts requirePermissionIfMinimalMode with tts.use as the first statement.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<NextResponse>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/transcription/route.ts",
+          "symbols": [
+            {
+              "name": "POST",
+              "kind": "function",
+              "expectation": "Modified: adopts requirePermissionIfMinimalMode with asr.use as the first statement.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<NextResponse>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/web-search/route.ts",
+          "symbols": [
+            {
+              "name": "POST",
+              "kind": "function",
+              "expectation": "Modified: adopts requirePermissionIfMinimalMode with course.create as the first statement.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<NextResponse>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/extract-document/route.ts",
+          "symbols": [
+            {
+              "name": "POST",
+              "kind": "function",
+              "expectation": "Modified: adopts requirePermissionIfMinimalMode with course.create as the first statement.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<NextResponse>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/parse-pdf/route.ts",
+          "symbols": [
+            {
+              "name": "POST",
+              "kind": "function",
+              "expectation": "Modified: adopts requirePermissionIfMinimalMode with course.create as the first statement.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<NextResponse>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/pbl/v2/instructor/route.ts",
+          "symbols": [
+            {
+              "name": "POST",
+              "kind": "function",
+              "expectation": "Modified: adopts requirePermissionIfMinimalMode with classroom.chat as the first statement.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<Response>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/pbl/v2/open-task/route.ts",
+          "symbols": [
+            {
+              "name": "POST",
+              "kind": "function",
+              "expectation": "Modified: adopts requirePermissionIfMinimalMode with classroom.chat as the first statement.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<NextResponse>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/pbl/v2/evaluate/route.ts",
+          "symbols": [
+            {
+              "name": "POST",
+              "kind": "function",
+              "expectation": "Modified: adopts requirePermissionIfMinimalMode with classroom.chat as the first statement.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<NextResponse>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/pbl/v2/simulator/route.ts",
+          "symbols": [
+            {
+              "name": "POST",
+              "kind": "function",
+              "expectation": "Modified: adopts requirePermissionIfMinimalMode with classroom.chat as the first statement.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<NextResponse>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/verify-model/route.ts",
+          "symbols": [
+            {
+              "name": "POST",
+              "kind": "function",
+              "expectation": "Modified: adopts requirePermissionIfMinimalMode with settings.manage as the first statement.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<NextResponse>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/verify-image-provider/route.ts",
+          "symbols": [
+            {
+              "name": "POST",
+              "kind": "function",
+              "expectation": "Modified: adopts requirePermissionIfMinimalMode with settings.manage as the first statement.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(request: NextRequest)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(request: NextRequest): Promise<NextResponse>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/verify-video-provider/route.ts",
+          "symbols": [
+            {
+              "name": "POST",
+              "kind": "function",
+              "expectation": "Modified: adopts requirePermissionIfMinimalMode with settings.manage as the first statement.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(request: NextRequest)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(request: NextRequest): Promise<NextResponse>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/verify-pdf-provider/route.ts",
+          "symbols": [
+            {
+              "name": "POST",
+              "kind": "function",
+              "expectation": "Modified: adopts requirePermissionIfMinimalMode with settings.manage as the first statement.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<NextResponse>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 3,
+      "uuid": "41bfda16-add8-416b-b697-2db4c784daf5",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "Every model spending route in the matrix adopts requirePermissionIfMinimalMode as the first statement. Flag off restores today's behavior exactly. Flag on denies without permission via the typed 403 before any model call.",
+      "gates": [
+        {
+          "id": "g1",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/minimal-mode/flag-off-parity.test.ts && echo PARITY_OK",
+          "expect": "PARITY_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pending"
+        },
+        {
+          "id": "g2",
+          "type": "integration",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; MINIMAL_MODE=true pnpm test tests/minimal-mode/live-wire.pg.test.ts && echo LIVE_OK",
+          "expect": "LIVE_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pending"
+        },
+        {
+          "id": "g3",
+          "type": "smoke",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pending"
+        }
+      ]
+    },
+    {
+      "id": "S3",
+      "title": "Route-guard matrix suite",
+      "intent": "Delivers the hermetic route-guard matrix suite, the flag-off parity suite, and the client import graph guard for the wrapper surface.",
+      "user_stories": [
+        2,
+        4
+      ],
+      "blocked_by": [
+        "S2"
+      ],
+      "targets": [
+        {
+          "path": "lib/auth/permissions-server.ts",
+          "symbols": [
+            {
+              "name": "requirePermissionIfMinimalMode",
+              "kind": "function",
+              "expectation": "Tested: flag-off no-op, flag-on delegation, typed 403 shape.",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  headers: Headers,\n  permission: Permission,\n): Promise<void>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "78f1fcd5-670e-495f-be6f-d3fb395ef243",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "The hermetic suite enumerates every spend route to its matrix permission. The parity suite proves the wrapper no-ops without session or database access when the flag is unset. The import graph guard keeps the wrapper out of client bundles.",
+      "gates": [
+        {
+          "id": "g1",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/minimal-mode/route-guard-matrix.test.ts && echo MATRIX_OK",
+          "expect": "MATRIX_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pending"
+        },
+        {
+          "id": "g2",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/minimal-mode/client-import-graph.test.ts && echo GRAPH_OK",
+          "expect": "GRAPH_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pending"
+        },
+        {
+          "id": "g3",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/providers/provider-neutrality-guard.test.ts && echo NEUTRAL_OK",
+          "expect": "NEUTRAL_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pending"
+        }
+      ]
+    },
+    {
+      "id": "S4",
+      "title": "Guest quiz quota",
+      "intent": "Delivers the quiz_grade_quota table in the ensure chain, the flag-gated quota consumer, and the quiz-grade route stacking quota over the existing guard.",
+      "user_stories": [
+        3,
+        4
+      ],
+      "blocked_by": [
+        "S1"
+      ],
+      "targets": [
+        {
+          "path": "lib/auth/schema.ts",
+          "symbols": [
+            {
+              "name": "ensureAuthSchema",
+              "kind": "function",
+              "expectation": "Modified: composes quiz_grade_quota into the lazy ensure chain beside the six auth tables.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable): Promise<void>"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable): Promise<void>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "lib/auth/quiz-quota.ts",
+          "symbols": [
+            {
+              "name": "consumeQuizGradeQuota",
+              "kind": "function",
+              "expectation": "New flag-gated consumer: resolves rank; rank 1 performs one atomic per-UTC-day upsert and throws 429 past five; learner and above and flag-off return without writing.",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  queryable: Queryable,\n  userId: string,\n): Promise<void>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/quiz-grade/route.ts",
+          "symbols": [
+            {
+              "name": "POST",
+              "kind": "function",
+              "expectation": "Modified: stacks consumeQuizGradeQuota after the quiz.grade guard and before resolveModelFromRequest inside the nested Response-rethrow catch, passing session.userId.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<Response>"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<Response>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 4,
+      "uuid": "ff97e6ae-48e7-4de6-a000-05a8b907299e",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "ensureAuthSchema composes quiz_grade_quota into the chain. consumeQuizGradeQuota allows five grades per UTC day for rank 1 and throws 429 with quota_exhausted past the cap. Learners and above never write. The quiz-grade route stacks quota after the guard.",
+      "gates": [
+        {
+          "id": "g1",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/minimal-mode/quiz-quota.test.ts && echo QUOTA_OK",
+          "expect": "QUOTA_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pending"
+        },
+        {
+          "id": "g2",
+          "type": "integration",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/minimal-mode/quiz-quota.pg.test.ts && echo QUOTA_PG_OK",
+          "expect": "QUOTA_PG_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pending"
+        },
+        {
+          "id": "g3",
+          "type": "integration",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; MINIMAL_MODE=true pnpm test tests/minimal-mode/live-wire.pg.test.ts && echo LIVE_OK",
+          "expect": "LIVE_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pending"
+        },
+        {
+          "id": "g4",
+          "type": "adversarial",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/minimal-mode/quiz-quota-concurrency.pg.test.ts && echo QUOTA_RACE_OK",
+          "expect": "QUOTA_RACE_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pending"
+        }
+      ]
+    },
+    {
+      "id": "S5",
+      "title": "Minimal layout and signed-out capsule",
+      "intent": "Delivers the home composer gating, the library-up 2-3-4 layout, the capsule Pro toggle gating, the signed-out capsule entries, and the new i18n keys.",
+      "user_stories": [
+        5,
+        6,
+        7
+      ],
+      "blocked_by": [
+        "S1"
+      ],
+      "targets": [
+        {
+          "path": "app/page.tsx",
+          "symbols": [
+            {
+              "name": "HomePage",
+              "kind": "function",
+              "expectation": "Modified: hides the hero block when the client mirror is on and the user lacks course.create; forces the library section expanded at the top.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "()"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "()"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "components/account-zone.tsx",
+          "symbols": [
+            {
+              "name": "AccountZone",
+              "kind": "function",
+              "expectation": "Modified: signed-out branch renders Sign in and Create account when the client mirror is on, else today's single Sign in pill.",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "({ onSignOut }: AccountZoneProps)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "({ onSignOut }: AccountZoneProps)"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 3,
+      "uuid": "58a72500-8806-4dec-8d3c-cdb0d0222bbb",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "HomePage hides the composer for ranks without course.create under the client mirror and renders the library expanded with the existing grid recipe. AccountZone shows Sign in and Create account for signed-out visitors. The capsule hides the Pro toggle. New i18n keys pass 12-locale parity.",
+      "gates": [
+        {
+          "id": "g1",
+          "type": "integration",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/minimal-mode/minimal-layout.test.ts && echo LAYOUT_OK",
+          "expect": "LAYOUT_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pending"
+        },
+        {
+          "id": "g2",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/minimal-mode/client-import-graph.test.ts && echo GRAPH_OK",
+          "expect": "GRAPH_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pending"
+        },
+        {
+          "id": "g3",
+          "type": "smoke",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm check:i18n-keys && echo I18N_OK",
+          "expect": "I18N_OK",
+          "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+          "evidence": "pending"
+        }
+      ]
+    }
+  ],
+  "audit": [
+    {
+      "seq": 1,
+      "id": "01cd184d-8b3d-4ad1-91d9-66ed6a0db7ca",
+      "at": "2026-09-05T03:26:40.615Z",
+      "actor": "orchestrator",
+      "command": "init",
+      "transition": "spec-approved:docs/specs/016-minimal-mode-gating.md",
+      "slice": null,
+      "hash": "5b24f73e945821fb2d428c6fca3b5cf5eac21754fb8f02868f4365db45f9312c"
+    },
+    {
+      "seq": 2,
+      "id": "44d472e0-63d3-4835-bb88-3dfb6974875d",
+      "at": "2026-09-05T03:26:40.615Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect",
+      "slice": "S1",
+      "hash": "6d760dac3e9648ace785cd4cb17074e4e6f539b430960723c8e2387531d7d3e0",
+      "expectationHash": "83606b4c0f64be47c6db0568cfd909945f8649f39be6c9301bcf640acd6bf664"
+    },
+    {
+      "seq": 3,
+      "id": "df4783e2-d0ec-44c8-95d6-f7349aa8efdd",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/config/feature-flags.ts::isMinimalModeEnabled",
+      "slice": "S1",
+      "hash": "8e8a8d1fd3dae451e9f844f5816321274e5641756646e999b529a4b5a7ea72f0",
+      "expectationHash": "69082e98a4aa0f4392d012fa6d417cbcc336ad6f9e9ddfbd7e569e7990addb24"
+    },
+    {
+      "seq": 4,
+      "id": "405d0d63-b911-41f6-ae49-6284d4e9a228",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/config/feature-flags.ts::isMinimalModeClientEnabled",
+      "slice": "S1",
+      "hash": "f59b65cf0a576e1e1b8fdaab066c151a669aa5f6b5e3112bf83536b5ff672e59",
+      "expectationHash": "be825f958d6294b5231702f385b280f1e294e24c18ade1affa34f7a187da4196"
+    },
+    {
+      "seq": 5,
+      "id": "cf804188-2719-4eed-b06b-90b480906845",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/server/config-validation.ts::validateMinimalMode",
+      "slice": "S1",
+      "hash": "566e701c315635e9c202e3a59e004ff591ac6266eef0ca389b165a1f9cd0b3a3",
+      "expectationHash": "64e912313841ce579bceaccc08201f3fe220f593bff14e994da4427bfe2191bc"
+    },
+    {
+      "seq": 6,
+      "id": "2d91df60-4d3c-4ced-a240-e81c1ab71838",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/server/config-validation.ts::validateServerConfig",
+      "slice": "S1",
+      "hash": "3e14c79768bcb3f0b25ced3b59e893fddfff7cd3c19faa5907fc86d0f5bb6d4e",
+      "expectationHash": "f58ce58f0c5650361587eb64ca316cf6c383f6174ea5aaaaa84b8bf6796bad84"
+    },
+    {
+      "seq": 7,
+      "id": "fd119c05-b908-4d20-95ea-dd122e4e0e80",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect",
+      "slice": "S2",
+      "hash": "0b247dc1019546cd9ebd77986ec6cdb1a95d11264da375aea5459f67573d443d",
+      "expectationHash": "ecc9bf17187a3e661a644cbc2674680e95b9bcf7729b4378f056b3f0768eb2e6"
+    },
+    {
+      "seq": 8,
+      "id": "33542ba9-bb59-4395-ae6c-4d114c4d931e",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/auth/permissions-server.ts::requirePermissionIfMinimalMode",
+      "slice": "S2",
+      "hash": "c6ce525f2fdf96df3396519410c978735da335a2f984de97b88bd9011f47389d",
+      "expectationHash": "b3b222afb27ad7aef845680984ed0eb06603c64447b6f0ab38b22171e2e8cdf9"
+    },
+    {
+      "seq": 9,
+      "id": "76e01eaf-2aff-431c-8ebb-c35d7180b46d",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/auth/index.ts::requirePermissionIfMinimalMode",
+      "slice": "S2",
+      "hash": "38f4945495719e94c0e99cd0447f0b94c58f09c037ed0080c1c77a11221e5063",
+      "expectationHash": "716a4236770b55c6aa90bfc19f35e1540f85768ebf422891c4b3777232c98735"
+    },
+    {
+      "seq": 10,
+      "id": "8f3bfc3e-0f23-4ec0-8d0c-e8199a8a3e53",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/chat/route.ts::POST",
+      "slice": "S2",
+      "hash": "4a8860cc0ec7d256a792cc43655f8a532595ad9d89bdc06aba9742abb3dd0a56",
+      "expectationHash": "ac3a7e572b79beb9734c5e3717d341a4409a29f036de819b78adb5de65ea45d2"
+    },
+    {
+      "seq": 11,
+      "id": "3a83d099-80d9-4af0-bb79-cb4546eb4ae2",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/chat/pi/route.ts::POST",
+      "slice": "S2",
+      "hash": "93d5849393f45289024a4e61e300081cb456c1ec1a0ff59560fa78974718d7d6",
+      "expectationHash": "ac3a7e572b79beb9734c5e3717d341a4409a29f036de819b78adb5de65ea45d2"
+    },
+    {
+      "seq": 12,
+      "id": "1aa31b19-7cc0-4b5a-8099-70ea8d8a2b3f",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/generate/scene-content/route.ts::POST",
+      "slice": "S2",
+      "hash": "a91557c895884dad25ab89cf4484e15820c458315c2a5717376d3890460805ea",
+      "expectationHash": "f5bfb7b35eefc3062ebaa6c8147cb7528623ca577fc16124ec1136d5a4795e94"
+    },
+    {
+      "seq": 13,
+      "id": "4576fe67-71b9-46de-9a0a-5e054e5ed0be",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/generate/scene-actions/route.ts::POST",
+      "slice": "S2",
+      "hash": "1f734a23c72db00ac4134c397dae4308920b584bc7348216d1682889762eac4a",
+      "expectationHash": "f5bfb7b35eefc3062ebaa6c8147cb7528623ca577fc16124ec1136d5a4795e94"
+    },
+    {
+      "seq": 14,
+      "id": "fb0da567-8830-4fd4-b0b5-6076aabcf998",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/generate/scene-outlines-stream/route.ts::POST",
+      "slice": "S2",
+      "hash": "717d5cb0839a92dea5e7e1fa05ab872d646cda03e90295ed843d56c75af0dc44",
+      "expectationHash": "f5bfb7b35eefc3062ebaa6c8147cb7528623ca577fc16124ec1136d5a4795e94"
+    },
+    {
+      "seq": 15,
+      "id": "df05a334-42e6-44ad-8a91-81bc85e696fc",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/generate/agent-profiles/route.ts::POST",
+      "slice": "S2",
+      "hash": "d9487be6a836c36dd2bea0ae27b0f52b3982d87d9176651689c77082150ed451",
+      "expectationHash": "f5bfb7b35eefc3062ebaa6c8147cb7528623ca577fc16124ec1136d5a4795e94"
+    },
+    {
+      "seq": 16,
+      "id": "0c5c60b1-a64b-4220-8211-8187caf51ca2",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/generate-classroom/route.ts::POST",
+      "slice": "S2",
+      "hash": "74f329c57f6611636dad3f849befc6233676d6ef2e528c7c5dc9aebb0374fc75",
+      "expectationHash": "f5bfb7b35eefc3062ebaa6c8147cb7528623ca577fc16124ec1136d5a4795e94"
+    },
+    {
+      "seq": 17,
+      "id": "122d2eb8-350d-49be-a660-c467ce6cc8e9",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/generate/tts/route.ts::POST",
+      "slice": "S2",
+      "hash": "213de917b90fcf91e92efb56d191edc39a2ef1589dffb47085e5a8f3a7b15c1e",
+      "expectationHash": "bb9eab3f7e1fd21f9976689eaaace339aa46c41908e27ac9e725b1ea4cbcac94"
+    },
+    {
+      "seq": 18,
+      "id": "be895452-effc-4510-8366-2a6c9a39cc1f",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/generate/image/route.ts::POST",
+      "slice": "S2",
+      "hash": "2a0dea365f04d68238a80f3a84a4c72be9d564c035672a22856e0577561dbb36",
+      "expectationHash": "f5bfb7b35eefc3062ebaa6c8147cb7528623ca577fc16124ec1136d5a4795e94"
+    },
+    {
+      "seq": 19,
+      "id": "dee09a7e-539a-41a7-b1b7-7c10b9f66d4f",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/generate/video/route.ts::POST",
+      "slice": "S2",
+      "hash": "eb318e9bfe7cbda14f6a2397dc51352071f2280dadb5830b68be3380f298319e",
+      "expectationHash": "f5bfb7b35eefc3062ebaa6c8147cb7528623ca577fc16124ec1136d5a4795e94"
+    },
+    {
+      "seq": 20,
+      "id": "5de671c8-2908-434a-9f5f-4a326679a4e1",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/generate/voice/route.ts::POST",
+      "slice": "S2",
+      "hash": "dbe53b6af0ab9067a8476c5369cac6604beac49a8594d6f0e6dfc735a4658729",
+      "expectationHash": "bb9eab3f7e1fd21f9976689eaaace339aa46c41908e27ac9e725b1ea4cbcac94"
+    },
+    {
+      "seq": 21,
+      "id": "22d3566e-a9cc-4aea-8312-b7ab7d8ac078",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/transcription/route.ts::POST",
+      "slice": "S2",
+      "hash": "4453509436ff59ee948ac1dcab4be2dc85fc752fa50e257b914ad63069dcb52c",
+      "expectationHash": "6343f10bf0fae7d0addfbe6027c8e19a5e92e88bbfa41be2207f1988f08c78e1"
+    },
+    {
+      "seq": 22,
+      "id": "a0984f9d-6c9f-47e8-b23f-0406c5b768b6",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/web-search/route.ts::POST",
+      "slice": "S2",
+      "hash": "4a1314bfa4a8c6d0d94ed496655c4d11d4ade3fd273faf158f4fcd3732e5ea2a",
+      "expectationHash": "f5bfb7b35eefc3062ebaa6c8147cb7528623ca577fc16124ec1136d5a4795e94"
+    },
+    {
+      "seq": 23,
+      "id": "e4fdc193-2052-497b-bd0a-022c797524be",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/extract-document/route.ts::POST",
+      "slice": "S2",
+      "hash": "c7cf8aed2ad1481b612c2c885f5803e1949f51ca6e3d7083a92bbacd523970b7",
+      "expectationHash": "f5bfb7b35eefc3062ebaa6c8147cb7528623ca577fc16124ec1136d5a4795e94"
+    },
+    {
+      "seq": 24,
+      "id": "8c1b47cf-85f9-49e1-a3f7-33d33eda2622",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/parse-pdf/route.ts::POST",
+      "slice": "S2",
+      "hash": "e6e7c236c0446943fd8e65d8394f6b183ef91155eacac1058f61e01a66e0ccdd",
+      "expectationHash": "f5bfb7b35eefc3062ebaa6c8147cb7528623ca577fc16124ec1136d5a4795e94"
+    },
+    {
+      "seq": 25,
+      "id": "d2132b1d-c684-48e7-9d11-3b38f1f9501c",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/pbl/v2/instructor/route.ts::POST",
+      "slice": "S2",
+      "hash": "d4a4efd2b4160b12a7208b68ca0da78a489d135580d368934404ad86ab789885",
+      "expectationHash": "ac3a7e572b79beb9734c5e3717d341a4409a29f036de819b78adb5de65ea45d2"
+    },
+    {
+      "seq": 26,
+      "id": "82623b7b-fdce-470c-98b6-81df942a945b",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/pbl/v2/open-task/route.ts::POST",
+      "slice": "S2",
+      "hash": "4492a00b98581c04c7ad6c198831fc72034c75898bc6bba07f4f9a1728e943e4",
+      "expectationHash": "ac3a7e572b79beb9734c5e3717d341a4409a29f036de819b78adb5de65ea45d2"
+    },
+    {
+      "seq": 27,
+      "id": "5020ad69-da5e-44af-9042-6b6b9767644a",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/pbl/v2/evaluate/route.ts::POST",
+      "slice": "S2",
+      "hash": "eef93861f6ce834eac0ac79dd13c7f912337982c8e44f7e1c59d7a63098b8648",
+      "expectationHash": "ac3a7e572b79beb9734c5e3717d341a4409a29f036de819b78adb5de65ea45d2"
+    },
+    {
+      "seq": 28,
+      "id": "ecf7a62f-6c75-46cb-848e-cad903b3726c",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/pbl/v2/simulator/route.ts::POST",
+      "slice": "S2",
+      "hash": "473d6634f8d89ff62b394711f3b0c00f572b5f80cc11f94841debe3386d3173f",
+      "expectationHash": "ac3a7e572b79beb9734c5e3717d341a4409a29f036de819b78adb5de65ea45d2"
+    },
+    {
+      "seq": 29,
+      "id": "4d43075c-4787-45c9-be41-de7ef751df38",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/verify-model/route.ts::POST",
+      "slice": "S2",
+      "hash": "489cd90b8071946cf0132ee1a9667cba037e44653a94f126bbbeda4e95de66c5",
+      "expectationHash": "1de06b5b5c01df228e1e53e788c0b17207383f347137d34b48490eaa9074ac92"
+    },
+    {
+      "seq": 30,
+      "id": "4ae66ba8-d062-4c8b-9a99-a592c780737d",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/verify-image-provider/route.ts::POST",
+      "slice": "S2",
+      "hash": "0f3c51331e97dcd174e479dcc8d0d416fe04f73c99e32e96ff221eead4bdf1e2",
+      "expectationHash": "1de06b5b5c01df228e1e53e788c0b17207383f347137d34b48490eaa9074ac92"
+    },
+    {
+      "seq": 31,
+      "id": "88a4749b-67e8-4598-bd53-46cbffce14cc",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/verify-video-provider/route.ts::POST",
+      "slice": "S2",
+      "hash": "8131157888f912b5395d1b4ab4aa0c1c45e9a6f98c0ba0cc31e5dd1f76dab1ca",
+      "expectationHash": "1de06b5b5c01df228e1e53e788c0b17207383f347137d34b48490eaa9074ac92"
+    },
+    {
+      "seq": 32,
+      "id": "93d086b6-7cf1-45af-84ab-bf9dcf10250c",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/verify-pdf-provider/route.ts::POST",
+      "slice": "S2",
+      "hash": "0af6fb0db1e5ff09ebafbc15305a32c45d40a8748fa4894fa5beff88320d1516",
+      "expectationHash": "1de06b5b5c01df228e1e53e788c0b17207383f347137d34b48490eaa9074ac92"
+    },
+    {
+      "seq": 33,
+      "id": "20c1aa9d-d054-4e00-a7d1-f7fb93442788",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect",
+      "slice": "S3",
+      "hash": "f05536eb1502556cd2c6642f40faaf04f8d1f1eada0c5cfe1ac524b6ae33629d",
+      "expectationHash": "cfb8b51d3911ad3ece866e2bea5880ad659ee64f0559b65bd904629bc6ae96b1"
+    },
+    {
+      "seq": 34,
+      "id": "6f1f26d3-4196-44cc-ba34-b89b4dd14de2",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:lib/auth/permissions-server.ts::requirePermissionIfMinimalMode",
+      "slice": "S3",
+      "hash": "3ff9a2455b22ecd603232c58fbdec1838c2ff39ec66f56c9fd3f9ab319a7f007",
+      "expectationHash": "7119dffd48935b7b10082e2d7582e99bbb684e41c68146e2d4ddd60443b2c072"
+    },
+    {
+      "seq": 35,
+      "id": "d88352da-53a2-4ea9-bb36-99c03dcf9d31",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect",
+      "slice": "S4",
+      "hash": "ecb07605b8acdfe39bfe8b90c61bca2f781ed29f5c514caa43ffed4fd74a9588",
+      "expectationHash": "99f61ab0cfd554d634220cc46a7a315bdbd1ab939c4f3fd80533440fcb56c4e4"
+    },
+    {
+      "seq": 36,
+      "id": "0242acc3-b884-49bd-a3de-f0db3447dbef",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect-symbol:lib/auth/schema.ts::ensureAuthSchema",
+      "slice": "S4",
+      "hash": "33b6dd2fe1ff828b6c807fd692e544bf1d9d09462395996d9d4f3a72f9222996",
+      "expectationHash": "f1b9282142ffa5489eb2d6291728781cc1cc2aa33c8bb26147534a7a33c270b2"
+    },
+    {
+      "seq": 37,
+      "id": "5ce5d797-d40b-49d4-a0e7-e02259c6b04f",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect-symbol:lib/auth/quiz-quota.ts::consumeQuizGradeQuota",
+      "slice": "S4",
+      "hash": "2b0b714e6cebefed860857f0563a3c4758debf3e42c8789b8a6b339dc9d9f40c",
+      "expectationHash": "40d9a30f9d9557b8a7bc620f9eabe41fa6ad22e437e152e353d4a1f64cd4ee4d"
+    },
+    {
+      "seq": 38,
+      "id": "7d898241-dc7a-46e8-825b-a85f34357842",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect-symbol:app/api/quiz-grade/route.ts::POST",
+      "slice": "S4",
+      "hash": "3eabb07eac1d615a17637f4e1efb920b06ff21e4c58b803edd43ab64d678cae6",
+      "expectationHash": "bab9ebc64a22ba50356cb23ab90de354162a81db84a04e5183893aa8870cbb57"
+    },
+    {
+      "seq": 39,
+      "id": "ab4facaa-5590-49d5-a663-cd5e24d03e85",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S5:expect",
+      "slice": "S5",
+      "hash": "7d930548393c0d8311ed1f90e4c17befac8ad8aed5562e98ee1b3870f2c74252",
+      "expectationHash": "fef107909051c3bddf2dac46563b6aae9b40b1216787ed1e2928da8ca2ede017"
+    },
+    {
+      "seq": 40,
+      "id": "3d75ec10-8d59-45ee-ab8b-203bd06962f5",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S5:expect-symbol:app/page.tsx::HomePage",
+      "slice": "S5",
+      "hash": "5578322497560daaa7d3bcf6a275cdcb2a7cf3ce9690f69330f571f042b20745",
+      "expectationHash": "a347b8596b7c867ad21029f8c8f6f21f1caa4f88d800fa4357f64e1c4f7b19f2"
+    },
+    {
+      "seq": 41,
+      "id": "9e99e0c1-cd9f-4b98-a7d3-b251b1800fa9",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S5:expect-symbol:components/account-zone.tsx::AccountZone",
+      "slice": "S5",
+      "hash": "adcbbcbea83acc250ff01ca64e612512decc9b335bc5e79e18c7fdcf11a39456",
+      "expectationHash": "1c3ac4d6114a6c2270e68a8690ce8a257f9a8791a174afae2e4ba54ee9c8df95"
+    },
+    {
+      "seq": 42,
+      "id": "1ccfb89a-2951-46b3-8745-2ffbd3df060e",
+      "at": "2026-09-05T03:26:40.616Z",
+      "actor": "orchestrator",
+      "command": "init_batch",
+      "transition": "batch-init:S1,S2,S3,S4,S5",
+      "slice": null,
+      "hash": "8edf955259cf972683ada2f14300bf79de4c114e4597479c25f91a1c85f92df8"
+    },
+    {
+      "seq": 43,
+      "id": "a965e280-5ce3-467c-86f6-80fbe6b88862",
+      "at": "2026-09-05T03:26:50.034Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S1:capture",
+      "slice": "S1",
+      "hash": "4c53c907882adddf1736d3fe02fef10eec376d14bb9fcc39d55019afb1f580e3",
+      "fileHash": "97feddf795ec3b04ed21fcd191d9bd6185e4ea54cf5272e0d5b7eae31303d269"
+    },
+    {
+      "seq": 44,
+      "id": "fdccaff2-60a7-4992-8fd5-3de94b9d51ae",
+      "at": "2026-09-05T03:26:50.154Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S2:capture",
+      "slice": "S2",
+      "hash": "cc4833737fa2faab1a82a63fe6768c59a1368ec24da8efece35ab937450a965e",
+      "fileHash": "39c89eed53e6bdee263b4b7d80931f7e030121e75cf0fa5d88f9e46e1c354efd"
+    },
+    {
+      "seq": 45,
+      "id": "6615338d-b7fd-4e4e-bfc5-285976e01887",
+      "at": "2026-09-05T03:26:50.221Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S3:capture",
+      "slice": "S3",
+      "hash": "26fde5e55f22f4c2df768be4e3d3d4db77910d6309f1094d2954db5d1c8757c9",
+      "fileHash": "3e673e935b004b75fd98b3636685d5c417955098c4d5beced8c8689b4f9122b3"
+    },
+    {
+      "seq": 46,
+      "id": "15bd106a-9f3b-4be5-8e51-1001e4c01a12",
+      "at": "2026-09-05T03:26:50.275Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S4:capture",
+      "slice": "S4",
+      "hash": "8496b1b07c271ffca91efb73fc81a342cf82a4b5a8964f193da6fd635aef8d7a",
+      "fileHash": "404bb9d0af407382247135f6afac50d22a1fc7a6193ff4cd64ac3a2662cb90b3"
+    },
+    {
+      "seq": 47,
+      "id": "7bd237eb-bfda-4a5c-873c-470aff91b460",
+      "at": "2026-09-05T03:26:50.357Z",
+      "actor": "researcher",
+      "command": "capture",
+      "transition": "slice:S5:capture",
+      "slice": "S5",
+      "hash": "203b2726b7c7060b35c17ab34625bccde871ac01c04fce68898c04b5c78169dd",
+      "fileHash": "bd9d683deb492bc16b3c29d4a5f633b336003fe2587dbd2752ae699e1be73037"
+    },
+    {
+      "seq": 48,
+      "id": "1e25ce4b-9bde-463e-9861-acc0dc05845e",
+      "at": "2026-09-05T03:27:43.444Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/config/feature-flags.ts::isMinimalModeEnabled",
+      "slice": "S1",
+      "hash": "6b96e5823a9b16dce6fa61ca6f6c32d748d5cf44282eb88a0fff0681cb7c78d4",
+      "fileHash": "c856bccbd3d3684e53b4be4ff280fc0c079e7fc9d8906d642e09baddb382e3e6"
+    },
+    {
+      "seq": 49,
+      "id": "8c437186-d096-4332-8784-18b6cf44f423",
+      "at": "2026-09-05T03:27:43.536Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/config/feature-flags.ts::isMinimalModeClientEnabled",
+      "slice": "S1",
+      "hash": "25acc62d9dda577d7d9cd28aaa8273c69b2ce5e84072cfac7b9e07a62e3395f2",
+      "fileHash": "e97455e85152a1c1b1f8f97d44ddf95618417bed541a54855bd5f203c9f8ba94"
+    },
+    {
+      "seq": 50,
+      "id": "a6390ae4-ed34-4929-89fa-4e9fe9fdea1b",
+      "at": "2026-09-05T03:27:43.612Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/server/config-validation.ts::validateMinimalMode",
+      "slice": "S1",
+      "hash": "0675d11e994b697af529a464e6773320d2ad206374866b29bf218a7e3be698be",
+      "fileHash": "ce2f423ab5d6f9c43e6cefb7c33aff8ac8ff12ecd2483a1781f8d5a4768d878c"
+    },
+    {
+      "seq": 51,
+      "id": "e32bfcab-2926-4d20-b8a2-cb01818c8f22",
+      "at": "2026-09-05T03:27:43.693Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/server/config-validation.ts::validateServerConfig",
+      "slice": "S1",
+      "hash": "ab402c73369c32511d988575645c48bba5dea0301318dc95cf9b5e4e581d1134",
+      "fileHash": "541be6e36c1ede07cce8c6a3f1e28291d5722c2167f5a238b5d1d4af8d11ce03"
+    },
+    {
+      "seq": 52,
+      "id": "b0fdbc92-98e9-4c14-b5bd-d4ea4f6eda74",
+      "at": "2026-09-05T03:27:43.766Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/auth/permissions-server.ts::requirePermissionIfMinimalMode",
+      "slice": "S2",
+      "hash": "15db2a1142e972758e479152938db172337dfdfd4e4934fc97ffa37c62ad2e6a",
+      "fileHash": "3025a13fbe810dce5771725d5b4a4f855ac4bde89903102b64a8dcc07928269a"
+    },
+    {
+      "seq": 53,
+      "id": "f9241e87-646c-46a7-ac72-c6170a138cbd",
+      "at": "2026-09-05T03:27:43.844Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/auth/index.ts::requirePermissionIfMinimalMode",
+      "slice": "S2",
+      "hash": "8955e9b72af984507d416317eab6a20fc8d64e0d9559a08087054984f642a54f",
+      "fileHash": "46b3a257ead2565a1817a8b352fd9cb181d3dab218432853f334eb4f9b74314b"
+    },
+    {
+      "seq": 54,
+      "id": "8839ad69-dd41-417a-a111-2f469f42615b",
+      "at": "2026-09-05T03:27:43.924Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/chat/route.ts::POST",
+      "slice": "S2",
+      "hash": "3879363f2c5a947995fbc04fe2aee9bd6a7b7a4310ec2349e0ec84e1ec43e5b8",
+      "fileHash": "d83f37e1c2a7b6772395b9a924186f1b1ba458a42aacbab796ec53857d373631"
+    },
+    {
+      "seq": 55,
+      "id": "71b7139c-dadb-42e8-b54f-3813bf59516d",
+      "at": "2026-09-05T03:27:44.013Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/chat/pi/route.ts::POST",
+      "slice": "S2",
+      "hash": "81ca0466b2418209b1a6911297f3d7f1c167bcb481f258356f6df36fc5809832",
+      "fileHash": "7eac8b5c683362d43e156b46debc0d35f3307d398acbb643b12dd2a8a16f57fb"
+    },
+    {
+      "seq": 56,
+      "id": "13788bb9-ea2a-4598-b417-d4549695ab71",
+      "at": "2026-09-05T03:27:44.087Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/generate/scene-content/route.ts::POST",
+      "slice": "S2",
+      "hash": "d52bcd0ace8c09cc2f8a3a15df72de8917bf861097755aca8c5759c1bdc602d2",
+      "fileHash": "ebff8c3fbbf5509538e697f87d8cc9d1f5aa81f4e0c9eab916f930c59033f8f6"
+    },
+    {
+      "seq": 57,
+      "id": "b0798d71-0ae7-4389-92b7-f91f8c6cedf4",
+      "at": "2026-09-05T03:27:44.169Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/generate/scene-actions/route.ts::POST",
+      "slice": "S2",
+      "hash": "cb522f4e58c4ccbe6ac8331c692692dc6a341a5e1f44309b01557d56f8e3a2f5",
+      "fileHash": "4fd6ccc32d64ecd6ddd8c41ca117a57b886e7e8c0cd9312dddb164f7fbb9a29b"
+    },
+    {
+      "seq": 58,
+      "id": "25b7daea-7228-4472-93d4-f88a51af4689",
+      "at": "2026-09-05T03:27:44.245Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/generate/scene-outlines-stream/route.ts::POST",
+      "slice": "S2",
+      "hash": "57d0d80a4ce7f62c9775c44c98e957bfd4ebc6b2c28ea3660eef850e2462010b",
+      "fileHash": "d02c0dcba72353244eb9155581860064db4b82d47258641ac558a6a878c6d941"
+    },
+    {
+      "seq": 59,
+      "id": "d1ce2a2e-883e-4814-bdfa-9ee4a6e387b1",
+      "at": "2026-09-05T03:27:44.326Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/generate/agent-profiles/route.ts::POST",
+      "slice": "S2",
+      "hash": "02e4f4cc9fea06488c8ec3f9a9b5ee3b3107c47d172fabb124753edfb9e407b9",
+      "fileHash": "16125f6db9c1ee186e0ce15a4efc93c69924cddaa2aa12f57bcbe157458bfddf"
+    },
+    {
+      "seq": 60,
+      "id": "69c42654-89c4-453b-8591-0fbdad469edf",
+      "at": "2026-09-05T03:27:44.399Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/generate-classroom/route.ts::POST",
+      "slice": "S2",
+      "hash": "f8a03fadbbab97b02597af9e8dd0ba67dfd41c1a9046b082f37da712dde05d51",
+      "fileHash": "840888baafc9ff950dd271f66d3c7dd2527d9721e8a3959f5a5d42f296026ca3"
+    },
+    {
+      "seq": 61,
+      "id": "eff25ef1-6950-4dcc-a5b1-127de7112b0c",
+      "at": "2026-09-05T03:27:44.485Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/generate/tts/route.ts::POST",
+      "slice": "S2",
+      "hash": "fe58dcb6b459bc819a5bd7de656c847dcf6f1b1093ba40b45cb46c2ed90dba02",
+      "fileHash": "d1c982a91e6f9d93f7b1b0cfc1bf2d13d40dca635abfef5aee437e15b226b4a4"
+    },
+    {
+      "seq": 62,
+      "id": "618b0329-3d16-410c-9fbb-1031e5263cb1",
+      "at": "2026-09-05T03:27:44.562Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/generate/image/route.ts::POST",
+      "slice": "S2",
+      "hash": "1c44031628bbe8701a5c9f448e7549615e1d037e8b1e5f11b6dadd790aefe82a",
+      "fileHash": "ca8d943432a1b7a959e03de45d29ef6572e403410732f8cca227132ad10d94f7"
+    },
+    {
+      "seq": 63,
+      "id": "86d03fc1-1cb5-4c9e-a5db-b93c610d4112",
+      "at": "2026-09-05T03:27:44.647Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/generate/video/route.ts::POST",
+      "slice": "S2",
+      "hash": "94c189dd57e29cd582a486079d0fee27504657ea9630c4aef0670768bf709d09",
+      "fileHash": "88730a1f65205b0360e72587f6d80f449f1594603ea5ab7481962227a45e074e"
+    },
+    {
+      "seq": 64,
+      "id": "76b7b33d-61fa-49d3-88d3-c36c5cbbb70b",
+      "at": "2026-09-05T03:27:44.733Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/generate/voice/route.ts::POST",
+      "slice": "S2",
+      "hash": "bb5a909d270fc628fbb6364da6ecc3314b747d22832baf96d37b34100a5c4edd",
+      "fileHash": "95898d99e67945f60f36137077d9f3aeae2665e57105b1d6e1eb97ab2a3eb228"
+    },
+    {
+      "seq": 65,
+      "id": "7f23244d-45bf-41ef-843a-2137a38456ea",
+      "at": "2026-09-05T03:27:44.815Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/transcription/route.ts::POST",
+      "slice": "S2",
+      "hash": "101ad5c6da92c58cba15524558c80bdb349496081d3dd0396e76472a9b181caf",
+      "fileHash": "a27801d572175537270504e9e5e2e8ad899b864655b57e6fcbee0f5d4f3c7ae1"
+    },
+    {
+      "seq": 66,
+      "id": "468c1464-88ae-451d-92a8-0b7f8b834f7d",
+      "at": "2026-09-05T03:27:44.882Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/web-search/route.ts::POST",
+      "slice": "S2",
+      "hash": "7239b52054b09b9dad61977f7e3d0edf9d89a77afd57b6997f218a65b2218774",
+      "fileHash": "97ad3bd4333f5e723391d3fb3839c3c8544cef35d1e472315e77cc3a589004ac"
+    },
+    {
+      "seq": 67,
+      "id": "522d4281-88bc-4275-926a-3c6f4af50c90",
+      "at": "2026-09-05T03:27:44.996Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/extract-document/route.ts::POST",
+      "slice": "S2",
+      "hash": "c29cdc18923b8e7b7c4032789c85a84be012e63adc3b39043caba64ad7825541",
+      "fileHash": "7a6e789c15316c34c90d4b23ddc7702201303c7696fe53d8ec6fdabd1803bf75"
+    },
+    {
+      "seq": 68,
+      "id": "56a65411-4eda-4a34-acc1-a4d21c118171",
+      "at": "2026-09-05T03:27:45.062Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/parse-pdf/route.ts::POST",
+      "slice": "S2",
+      "hash": "55e1fd2c7336c560472c733d6ef199a1a9dca48f9ef2796036ee379aeae8ba45",
+      "fileHash": "706df9571739abdd17f9b1a67bb957b73c6fd250942b03f6ff5ca3b488b0c50a"
+    },
+    {
+      "seq": 69,
+      "id": "900921a3-38d4-4e23-97e8-38bc645c6a0c",
+      "at": "2026-09-05T03:27:45.137Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/pbl/v2/instructor/route.ts::POST",
+      "slice": "S2",
+      "hash": "5ebc7706b7d9e65d247bdb240e3af4c2330ee442a6e714b34b256c1c5eab36a4",
+      "fileHash": "2c1f7fe2d5e648b8161b574e14b2e6bf17a81149c7328199be8bb29de6da352b"
+    },
+    {
+      "seq": 70,
+      "id": "1e557c6b-8c03-4085-9b22-464afabbaa34",
+      "at": "2026-09-05T03:27:45.204Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/pbl/v2/open-task/route.ts::POST",
+      "slice": "S2",
+      "hash": "05b47b613a06421a834b2bc4571332f85f478d09bd29d4828415fd24d27ed86c",
+      "fileHash": "7de5033801092325b57db936197345888d74e36498a343f2e552174d119e1cd7"
+    },
+    {
+      "seq": 71,
+      "id": "1bc8a480-2d4b-4764-8cf2-dcb74b318545",
+      "at": "2026-09-05T03:27:45.279Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/pbl/v2/evaluate/route.ts::POST",
+      "slice": "S2",
+      "hash": "f5e94a74c4913c352d463e9ed88c3fa2b80ab6ea770c204b1a928fd5373c5464",
+      "fileHash": "c73aa2d5ef155028a1f8596916fef11dc19c005ab228826aa9e9e9bd95e56cdc"
+    },
+    {
+      "seq": 72,
+      "id": "8c5fc0a9-35d0-4ce5-af1a-51d4886a3b28",
+      "at": "2026-09-05T03:27:45.345Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/pbl/v2/simulator/route.ts::POST",
+      "slice": "S2",
+      "hash": "2908a42eb6179ca667d426604b54c052d9dc76697623de6ddeba2e8b63800cda",
+      "fileHash": "2dc262ef8c898959c97f6c59dfbe5c0ffbb299d280fdbdaccf93a2dc55a7bf7b"
+    },
+    {
+      "seq": 73,
+      "id": "f3c244cc-6006-4ac1-9621-940e96268c53",
+      "at": "2026-09-05T03:27:45.425Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/verify-model/route.ts::POST",
+      "slice": "S2",
+      "hash": "49d06b64505defaa2ec45e91458e4fa1aac61a7113dba91f28d4bea38024ea91",
+      "fileHash": "ff21561290a3227aa358039a38a4cc48ec49ca5a131f3413624be4cce7e6d91c"
+    },
+    {
+      "seq": 74,
+      "id": "b8d015ca-14f0-4fde-99b7-b72737265b04",
+      "at": "2026-09-05T03:27:45.509Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/verify-image-provider/route.ts::POST",
+      "slice": "S2",
+      "hash": "dff3c546813fca10a7a2fa83f11d2db4f9158e95e774ac3698a05eae64ecb1c8",
+      "fileHash": "b25046bfb5aa5607d8a1e61d16fa12632d20854b18ff95928e29d5c6869c4ebb"
+    },
+    {
+      "seq": 75,
+      "id": "2fbcae10-131d-4449-891c-d515cd4e3d5c",
+      "at": "2026-09-05T03:27:45.592Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/verify-video-provider/route.ts::POST",
+      "slice": "S2",
+      "hash": "b15bfe3e0194919dcfb0db62f744db2a70d15ad1e15b795fd8cc40a68bb528cd",
+      "fileHash": "be9f2da3e13430bf000479fe8defab62448096091d44c646f6b8d377dc698c1b"
+    },
+    {
+      "seq": 76,
+      "id": "5e93f883-cdb5-4563-afc7-414666774ddd",
+      "at": "2026-09-05T03:27:45.666Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/verify-pdf-provider/route.ts::POST",
+      "slice": "S2",
+      "hash": "34c42ca4a2f2c87d64cc54b9e91032a421ffdbe57c1302681d925251159f2acf",
+      "fileHash": "2fe831a58230b9ab61555b0220ae25f034f51f4a6f8507131a87ca0458df217c"
+    },
+    {
+      "seq": 77,
+      "id": "398dd224-be50-45c9-95cd-4b3a1d0b9306",
+      "at": "2026-09-05T03:27:45.753Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:lib/auth/permissions-server.ts::requirePermissionIfMinimalMode",
+      "slice": "S3",
+      "hash": "cbcb60101a85ef4f8bdc0b103c0e423857d0b59a50f24a2c1934105e03acc45a",
+      "fileHash": "8d2c4cef71c47fcabd677523de61fb2f8afede1e57d7ab2a8af04826b6bd2ade"
+    },
+    {
+      "seq": 78,
+      "id": "0e40a619-fdbb-4758-9d01-a8ace847f4d6",
+      "at": "2026-09-05T03:27:45.826Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S4:postcondition:lib/auth/schema.ts::ensureAuthSchema",
+      "slice": "S4",
+      "hash": "b33d58f34413dac8529435dc5bdf5d29bf7305022a3d94d1651515669690e75d",
+      "fileHash": "d30816bc1ef618a9a708721551d9e5c6e032732e9b1b72a527975368625c05e8"
+    },
+    {
+      "seq": 79,
+      "id": "af157354-59ef-4a62-b298-9cd8850dc8ad",
+      "at": "2026-09-05T03:27:45.904Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S4:postcondition:lib/auth/quiz-quota.ts::consumeQuizGradeQuota",
+      "slice": "S4",
+      "hash": "288d690cf5cecd8aef0a546757a20bb7ad2577936def3def569376f7e2b2bd89",
+      "fileHash": "f422cb839dc4c75ed52f42ac874b3ebbfb6538e8608a3db4ee32e8ce9d35297d"
+    },
+    {
+      "seq": 80,
+      "id": "9ea56d66-d4aa-44c1-a506-7092d4557524",
+      "at": "2026-09-05T03:27:45.981Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S4:postcondition:app/api/quiz-grade/route.ts::POST",
+      "slice": "S4",
+      "hash": "171ca3ee3b3e3fe45a7f3c87769f582f3c1b0ffc076caa0ae7a404ffded18b11",
+      "fileHash": "09a36abdee48a0f9ca3f38db69d550f3d2596732a6da9dc78ba81f14a6db4fd9"
+    },
+    {
+      "seq": 81,
+      "id": "19d97b51-0d79-41ce-b3b7-ca11b6169249",
+      "at": "2026-09-05T03:27:46.068Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S5:postcondition:app/page.tsx::HomePage",
+      "slice": "S5",
+      "hash": "09f38942bfa6290bdc6ceef685bfcd31d3c81b426c70b270844b3862aaabe568",
+      "fileHash": "445b4eb2d2c934dfe1c00eb7a314485b3ffa388fd4f219fc3714561406877767"
+    },
+    {
+      "seq": 82,
+      "id": "ef6a8412-6d4d-4d88-a2c0-bfa872a853f8",
+      "at": "2026-09-05T03:27:46.132Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S5:postcondition:components/account-zone.tsx::AccountZone",
+      "slice": "S5",
+      "hash": "f431bdd71265537a97a4fb062e5bdeb451c1d27ec85ecab846666a033b824063",
+      "fileHash": "95efdccddf857540b33e8bee37fb7620d404d73340ab79a076cdcc7bbec795ea"
+    },
+    {
+      "seq": 83,
+      "id": "24b3e411-44d6-42db-844f-acbc3b13cbe8",
+      "at": "2026-09-05T03:28:11.026Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:clarification:Human approval via Plannotator 2026-09-05, no feedback; marker draft -> research",
+      "slice": null,
+      "hash": "aa186ffbfe1c0fe3e9c95165cbc9905bde137e900c3c6bf3c089b5ac640d7571",
+      "fileHash": "ea8c15249b9f5ab3e173818accfc02951ef55885a0d5f6c708532072cd468e0c"
+    },
+    {
+      "seq": 84,
+      "id": "5125b331-5f5c-4d77-82bd-e94ace4e66a6",
+      "at": "2026-09-05T03:28:21.180Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "e9bfbb5063c63d529c38ba35625336466d119ef19405f2f845bd7cdf4102c5fd",
+      "fileHash": "d7e5c8c72c6824c5a447b05b1d46576e2ed767a4816800d2f214c762eef24ed0"
+    }
+  ],
+  "fileHash": "b2976ef35149c0662ac99e71555ad1fb9dfaedd119dd0637a564bdcddacd5d74"
+}

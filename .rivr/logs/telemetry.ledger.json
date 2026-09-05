@@ -7474,6 +7474,1100 @@
       "duration_ms": 0,
       "outcome": "ok",
       "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:07:47.522Z",
+      "command": "help",
+      "flags": [
+        "version"
+      ],
+      "exit": 0,
+      "duration_ms": 1,
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:07:47.572Z",
+      "command": "help",
+      "flags": [
+        "help"
+      ],
+      "exit": 0,
+      "duration_ms": 0,
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:07:53.582Z",
+      "command": "report",
+      "flags": [],
+      "exit": 0,
+      "duration_ms": 2,
+      "stage": "research",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:08:15.016Z",
+      "command": "report",
+      "flags": [],
+      "exit": 0,
+      "duration_ms": 2,
+      "stage": "closed",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:22:17.963Z",
+      "command": "report",
+      "flags": [
+        "verbose"
+      ],
+      "exit": 0,
+      "duration_ms": 4,
+      "stage": "closed",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:22:48.460Z",
+      "command": "report",
+      "flags": [
+        "verbose"
+      ],
+      "exit": 0,
+      "duration_ms": 3,
+      "stage": "research",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:23:00.637Z",
+      "command": "spec.check",
+      "flags": [],
+      "exit": 2,
+      "duration_ms": 5,
+      "stage": "research",
+      "outcome": "permission",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:26:32.539Z",
+      "command": "ledger.init-batch",
+      "flags": [
+        "actor",
+        "slices-file"
+      ],
+      "exit": 4,
+      "duration_ms": 8,
+      "actor": "orchestrator",
+      "outcome": "schema",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:26:40.617Z",
+      "command": "ledger.init-batch",
+      "flags": [
+        "actor",
+        "slices-file"
+      ],
+      "exit": 0,
+      "duration_ms": 3,
+      "actor": "orchestrator",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:26:44.414Z",
+      "command": "report",
+      "flags": [],
+      "exit": 0,
+      "duration_ms": 2,
+      "stage": "research",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:26:50.037Z",
+      "command": "capture",
+      "flags": [
+        "actor",
+        "slice"
+      ],
+      "exit": 0,
+      "duration_ms": 10,
+      "stage": "research",
+      "actor": "researcher",
+      "slice": "S1",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:26:50.156Z",
+      "command": "capture",
+      "flags": [
+        "actor",
+        "slice"
+      ],
+      "exit": 0,
+      "duration_ms": 56,
+      "stage": "research",
+      "actor": "researcher",
+      "slice": "S2",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:26:50.222Z",
+      "command": "capture",
+      "flags": [
+        "actor",
+        "slice"
+      ],
+      "exit": 0,
+      "duration_ms": 8,
+      "stage": "research",
+      "actor": "researcher",
+      "slice": "S3",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:26:50.278Z",
+      "command": "capture",
+      "flags": [
+        "actor",
+        "slice"
+      ],
+      "exit": 0,
+      "duration_ms": 12,
+      "stage": "research",
+      "actor": "researcher",
+      "slice": "S4",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:26:50.359Z",
+      "command": "capture",
+      "flags": [
+        "actor",
+        "slice"
+      ],
+      "exit": 0,
+      "duration_ms": 31,
+      "stage": "research",
+      "actor": "researcher",
+      "slice": "S5",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:43.448Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 8,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S1",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:43.537Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 4,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S1",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:43.614Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 5,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S1",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:43.694Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 3,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S1",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:43.768Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 6,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S2",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:43.845Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 4,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S2",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:43.926Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 5,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S2",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:44.016Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 5,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S2",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:44.089Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 4,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S2",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:44.170Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 6,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S2",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:44.247Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 3,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S2",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:44.328Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 4,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S2",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:44.401Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 4,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S2",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:44.487Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 5,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S2",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:44.563Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 3,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S2",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:44.649Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 4,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S2",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:44.735Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 5,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S2",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:44.817Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 5,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S2",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:44.884Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 4,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S2",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:44.997Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 4,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S2",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:45.064Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 3,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S2",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:45.138Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 4,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S2",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:45.206Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 4,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S2",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:45.281Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 3,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S2",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:45.347Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 3,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S2",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:45.427Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 8,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S2",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:45.511Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 4,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S2",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:45.595Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 9,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S2",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:45.668Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 4,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S2",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:45.754Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 4,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S3",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:45.827Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 3,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S4",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:45.907Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 5,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S4",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:45.982Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 4,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S4",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:46.069Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 6,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S5",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:46.134Z",
+      "command": "slice.postcondition",
+      "flags": [
+        "actor",
+        "after-exists",
+        "after-kind",
+        "after-signature",
+        "file",
+        "quality",
+        "slice",
+        "symbol"
+      ],
+      "exit": 0,
+      "duration_ms": 3,
+      "stage": "research",
+      "actor": "orchestrator",
+      "slice": "S5",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:27:50.348Z",
+      "command": "report",
+      "flags": [
+        "verbose"
+      ],
+      "exit": 0,
+      "duration_ms": 2,
+      "stage": "research",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:28:11.028Z",
+      "command": "spec.amend",
+      "flags": [
+        "action",
+        "actor",
+        "reason"
+      ],
+      "exit": 0,
+      "duration_ms": 4,
+      "stage": "research",
+      "actor": "orchestrator",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:28:11.090Z",
+      "command": "spec.check",
+      "flags": [],
+      "exit": 0,
+      "duration_ms": 2,
+      "stage": "research",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:28:11.160Z",
+      "command": "audit.verify",
+      "flags": [],
+      "exit": 0,
+      "duration_ms": 3,
+      "stage": "research",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:28:11.210Z",
+      "command": "ledger.validate",
+      "flags": [
+        "actor"
+      ],
+      "exit": 0,
+      "duration_ms": 4,
+      "stage": "research",
+      "actor": "researcher",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:28:17.719Z",
+      "command": "metaspec",
+      "flags": [
+        "action",
+        "actor",
+        "link",
+        "reason"
+      ],
+      "exit": 0,
+      "duration_ms": 4,
+      "stage": "research",
+      "actor": "orchestrator",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:28:21.182Z",
+      "command": "stage.advance",
+      "flags": [
+        "actor",
+        "to"
+      ],
+      "exit": 0,
+      "duration_ms": 4,
+      "stage": "implementation",
+      "actor": "orchestrator",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:28:26.115Z",
+      "command": "metaspec",
+      "flags": [
+        "action",
+        "actor",
+        "link",
+        "reason"
+      ],
+      "exit": 0,
+      "duration_ms": 4,
+      "stage": "research",
+      "actor": "orchestrator",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:28:26.176Z",
+      "command": "metaspec",
+      "flags": [
+        "actor"
+      ],
+      "exit": 0,
+      "duration_ms": 5,
+      "stage": "research",
+      "actor": "orchestrator",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:28:26.844Z",
+      "command": "audit.verify",
+      "flags": [],
+      "exit": 0,
+      "duration_ms": 2,
+      "stage": "implementation",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:28:26.896Z",
+      "command": "ledger.validate",
+      "flags": [
+        "actor"
+      ],
+      "exit": 0,
+      "duration_ms": 3,
+      "stage": "implementation",
+      "actor": "researcher",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:28:35.509Z",
+      "command": "list",
+      "flags": [],
+      "exit": 0,
+      "duration_ms": 1,
+      "stage": "implementation",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:28:35.577Z",
+      "command": "report",
+      "flags": [],
+      "exit": 0,
+      "duration_ms": 2,
+      "stage": "implementation",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T03:28:42.310Z",
+      "command": "audit.verify",
+      "flags": [],
+      "exit": 0,
+      "duration_ms": 2,
+      "stage": "implementation",
+      "outcome": "ok",
+      "extra": {}
     }
   ],
   "audit": [
@@ -12832,7 +13926,711 @@
       "slice": null,
       "hash": "81d5982e8271b0f974b63f3a33604ef16c9149fbf8f71887b69b9db5e33ea9ea",
       "fileHash": "bca5433a2229ac68361f572245903f4f5e9d8c8147bfa30546a0e59efe968231"
+    },
+    {
+      "seq": 488,
+      "id": "1c544600-624e-4ba1-940d-3d19173a9aa9",
+      "at": "2026-09-05T03:07:47.522Z",
+      "actor": "anonymous",
+      "command": "telemetry",
+      "transition": "command:help:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "8baef726275f88666548de3dec96aaa433fb1c86d8288452f5a8c5e964978d89",
+      "fileHash": "0c08f8317094b71c96c23aa43971bf149e27ded3ed6574946cf1762d3c99d79f"
+    },
+    {
+      "seq": 489,
+      "id": "7d2e47d5-ee39-427c-be03-7e2a76d9e194",
+      "at": "2026-09-05T03:07:47.572Z",
+      "actor": "anonymous",
+      "command": "telemetry",
+      "transition": "command:help:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "0d7d0af398192a1642524f7a994387e509310a86ae0efc04f0628b80a78bc56b",
+      "fileHash": "5481d1b35973300e6f25ec052375a9ba8fc7b3a22b8bb4acc7468fee91497978"
+    },
+    {
+      "seq": 490,
+      "id": "6032b2e4-1b36-4133-b7f0-15905d93ab8b",
+      "at": "2026-09-05T03:07:53.582Z",
+      "actor": "anonymous",
+      "command": "telemetry",
+      "transition": "command:report:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "73303e745074e373edcbc3d8c3879ae8c37806cb10f03d4a81fb7beacee07db3",
+      "fileHash": "d17944f91bf079ef531e24db8d4ab4a244f4f55415aac47825b626289fb1900f"
+    },
+    {
+      "seq": 491,
+      "id": "153e817a-5118-4619-be29-1180d96c024f",
+      "at": "2026-09-05T03:08:15.016Z",
+      "actor": "anonymous",
+      "command": "telemetry",
+      "transition": "command:report:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "a20ea113c73034f88415d8523d79f8354ba9eccc084d2615d409cafc0b4ebe77",
+      "fileHash": "33cdb18765afebb09e3088e070231c5eaf76f1931ef7f405ae24a595ce8723e7"
+    },
+    {
+      "seq": 492,
+      "id": "25207727-53be-40bc-9249-74a49fc15915",
+      "at": "2026-09-05T03:22:17.963Z",
+      "actor": "anonymous",
+      "command": "telemetry",
+      "transition": "command:report:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "1ef0f739312b35453a585023726aae67d827a7da438763efd5946c11bbf50f38",
+      "fileHash": "e1c28d4a60e2c622fcbe175523aa1b7c919ed137201e43161068b7c8454b28d9"
+    },
+    {
+      "seq": 493,
+      "id": "4e461337-91a7-4d0d-95db-924433a238da",
+      "at": "2026-09-05T03:22:48.460Z",
+      "actor": "anonymous",
+      "command": "telemetry",
+      "transition": "command:report:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "a90034b80ff9e4962f8e9ca8a6933c898a3bc461094725bdf2eee94061098a36",
+      "fileHash": "3caab9821c96bad61380f844c5c548d4be2b09eabc6f9203f40e731045b00252"
+    },
+    {
+      "seq": 494,
+      "id": "2529dcca-30eb-4191-b701-1617e917dbc1",
+      "at": "2026-09-05T03:23:00.637Z",
+      "actor": "anonymous",
+      "command": "telemetry",
+      "transition": "command:spec.check:exit:2:outcome:permission",
+      "slice": null,
+      "hash": "c9919cfaf7df887e179427cc9380e9e90f9d9517d718e771c6b5541fa24274c9",
+      "fileHash": "4d88b9ec554fff1fba19de887ade04b044c460259171532445087fdc9e57be58"
+    },
+    {
+      "seq": 495,
+      "id": "4d6ff5de-bc28-4bb9-9798-d2c0fc902f2b",
+      "at": "2026-09-05T03:26:32.539Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:ledger.init-batch:exit:4:outcome:schema",
+      "slice": null,
+      "hash": "10efc021da37b2de0187d8b227f2deb1e392fba1aaf974f4d53762635956ad78",
+      "fileHash": "463bc2c83c413a4792d26ec25b5ec949e15f6dd77bd1437c007e907fc2a80597"
+    },
+    {
+      "seq": 496,
+      "id": "32e2c500-4291-4d55-9a27-a0d2003430b4",
+      "at": "2026-09-05T03:26:40.617Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:ledger.init-batch:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "2efd84ae6e02074d2a24434697eb17a7c3ad19e407e64b431628b921e5434427",
+      "fileHash": "9a380f4b7db564e038298e1178ac9e2e72bcf6c01b59ecc6506ec735400b6965"
+    },
+    {
+      "seq": 497,
+      "id": "877b7c8f-50b8-4f80-b4f6-dd372b480401",
+      "at": "2026-09-05T03:26:44.414Z",
+      "actor": "anonymous",
+      "command": "telemetry",
+      "transition": "command:report:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "2c519586240a7656a9562782fab1f8ed0de0c2d4e9c42a353c940d86441bde22",
+      "fileHash": "a7b14f8561dd8e1488128ccef5eb82b38c1ffc68a7b7e92c53c386a6a54c4c72"
+    },
+    {
+      "seq": 498,
+      "id": "3850ee53-dc5d-4802-90a3-1340cace6d15",
+      "at": "2026-09-05T03:26:50.037Z",
+      "actor": "researcher",
+      "command": "telemetry",
+      "transition": "command:capture:exit:0:outcome:ok",
+      "slice": "S1",
+      "hash": "50d1471ada14df3723d535252cde3c85ffebb0a858cde3ed46a7bf85d6e9788c",
+      "fileHash": "486831c3c4c8a710e12b52f65ec45074e42ba02f8bb44a030f30b759fb22ce93"
+    },
+    {
+      "seq": 499,
+      "id": "410a4bfa-9c9e-4be5-ac06-9c4324d291aa",
+      "at": "2026-09-05T03:26:50.156Z",
+      "actor": "researcher",
+      "command": "telemetry",
+      "transition": "command:capture:exit:0:outcome:ok",
+      "slice": "S2",
+      "hash": "04142d851235aa117f203a2dcbd032781f40fd2eba7cc34cd52f81546847e2c4",
+      "fileHash": "ccd457fc0842fa0009c8de90132640ab5591278cd1fbf44280022baf631048a7"
+    },
+    {
+      "seq": 500,
+      "id": "cc1d5a34-6582-4c4d-8c91-4c73f9c04ed9",
+      "at": "2026-09-05T03:26:50.222Z",
+      "actor": "researcher",
+      "command": "telemetry",
+      "transition": "command:capture:exit:0:outcome:ok",
+      "slice": "S3",
+      "hash": "d010acb35071bb5551f3cfca6532fc264f89331ec768b7ea0f5502c302172a0f",
+      "fileHash": "89d9c8dcafd197e42131e18dc48be65f5ef7dba5ccd137c5337b12d6d6a483f8"
+    },
+    {
+      "seq": 501,
+      "id": "2797ae2c-15ab-42e8-8d0a-b69e70e39c16",
+      "at": "2026-09-05T03:26:50.278Z",
+      "actor": "researcher",
+      "command": "telemetry",
+      "transition": "command:capture:exit:0:outcome:ok",
+      "slice": "S4",
+      "hash": "3b92c8bfe0232b80dfb72f2dd670ace264dc6da26fdd3f64a6274eadd4d3358a",
+      "fileHash": "4a90365fe0afaac8178a348e96967a136e89de313bd4432168ffa122f26d0f02"
+    },
+    {
+      "seq": 502,
+      "id": "12deb418-1296-40c2-8173-f6611afe19d9",
+      "at": "2026-09-05T03:26:50.359Z",
+      "actor": "researcher",
+      "command": "telemetry",
+      "transition": "command:capture:exit:0:outcome:ok",
+      "slice": "S5",
+      "hash": "be860e578e1176f973a3ae17466bc78d9dc58ebf9815da04a294ae09d5b0da60",
+      "fileHash": "e9efb0dc49f7dec78e6e22683d66da5f831ab7abab76ecf390ef4f59076a644b"
+    },
+    {
+      "seq": 503,
+      "id": "f231a1cc-57cf-4d78-a71a-d063c1f17df7",
+      "at": "2026-09-05T03:27:43.448Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S1",
+      "hash": "e8bd0ddd768cf2101cd8534d9baa8bb6cfefbc254a28c66437c3347cfb8d00e1",
+      "fileHash": "9c6d2dd78a1bb4c99569a73fe8aa84ebe4427cf2a945f9a8c6568063669777c6"
+    },
+    {
+      "seq": 504,
+      "id": "5c969c32-27b7-434d-9ef2-9ac1f2880740",
+      "at": "2026-09-05T03:27:43.537Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S1",
+      "hash": "b7e7037ddc12956a121a410713e6de4fcf27804c7eabb7886862c234396252fb",
+      "fileHash": "1bde7f97f4df6c728e387d008da9ea279142347fe24fbdda23cfa93722b73d5c"
+    },
+    {
+      "seq": 505,
+      "id": "4366a32e-583c-46a6-9240-45559880de30",
+      "at": "2026-09-05T03:27:43.614Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S1",
+      "hash": "b6a685ae55dcc283642dd9c2436f73e9950b10b33294aaeb3926b5ad316033af",
+      "fileHash": "03f06f06c5f579b0d9ce3117e72f27f44eafd6b0bc61a00928a53dedc70a2bce"
+    },
+    {
+      "seq": 506,
+      "id": "acd8f54f-1cd0-4ea3-99a3-395b0c80f3de",
+      "at": "2026-09-05T03:27:43.694Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S1",
+      "hash": "181cc041b507e5529ea94274676baaff2ffddb0d0f0a38b620f7e3df45ca023a",
+      "fileHash": "1f32ca805a7f349f50b4c0fb01f1046c572d7ba362dd08efd9e9cc11b6af7a83"
+    },
+    {
+      "seq": 507,
+      "id": "3a3b4ce7-8c9b-4df3-988d-50ee849aad4b",
+      "at": "2026-09-05T03:27:43.768Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S2",
+      "hash": "942a8bb7ec1c90729ce2dfa299fbd4bc42f812e00000192d2fe895e87c36d214",
+      "fileHash": "7cf8f91275c4e0277c0d2f658bab0e39084b660d4560e12db7e6056da7eed6e0"
+    },
+    {
+      "seq": 508,
+      "id": "3c97ded3-7640-4df8-bec5-52cf36ffe788",
+      "at": "2026-09-05T03:27:43.845Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S2",
+      "hash": "16a405bc04bdb946a2327c8524959383231f70b436ec055e17baab74e852c179",
+      "fileHash": "b6ff4e7b48b0d0f98ab588d27e082c78ca15ab8f20c32291dd786484e7a6bbd1"
+    },
+    {
+      "seq": 509,
+      "id": "b4bae05b-68f2-4a1b-ab47-95cfdeffa9ca",
+      "at": "2026-09-05T03:27:43.926Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S2",
+      "hash": "251a00d1b3fb08cf084e0212778b94da3ddb7fd19b6d7ba63558767e38c6bf34",
+      "fileHash": "468bab9cdb82f7b839fcf30bafcf362d0cec3f9fdfa761abed8bd4727ee8c0e5"
+    },
+    {
+      "seq": 510,
+      "id": "6d24f007-3619-4b05-8296-2391f350deff",
+      "at": "2026-09-05T03:27:44.016Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S2",
+      "hash": "607413892082038176d93bae282f61c386dd0f19f2a36ad8ad6a3931f28603fc",
+      "fileHash": "127098ee98b5c794b7849cd9c808655f4d17f4719c78e093415cf3ab92ad317d"
+    },
+    {
+      "seq": 511,
+      "id": "f74fe0ca-0b9f-4429-8b8e-b5aaa5b8b345",
+      "at": "2026-09-05T03:27:44.089Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S2",
+      "hash": "f0aec8cb972695bb0e651acd260956fd4c2bcf21514b4c645330b18c0994e5cd",
+      "fileHash": "5d8c70a425d646cb4f99531af8635c7e2a203d16149968e40c031f9a65aabc76"
+    },
+    {
+      "seq": 512,
+      "id": "367fd504-23e8-435b-a5cd-a73735002e53",
+      "at": "2026-09-05T03:27:44.170Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S2",
+      "hash": "3e9742d24784e918bc31268e7e694b79f0d181d7a45784f2f20745ead8e78e2a",
+      "fileHash": "31c5eb4e9464731812058a9e48165263c8f540b029c69490a2f299a4c44106a0"
+    },
+    {
+      "seq": 513,
+      "id": "a5ff0d17-f134-4f7f-a7ce-32f86b99070d",
+      "at": "2026-09-05T03:27:44.247Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S2",
+      "hash": "10892a8da100091be2c5896709435fc7bd4bde9c35599b9c4c12556cb4b8f335",
+      "fileHash": "2cdb6a18c728673401e35a5880f44ce31c75300cdbd5c3fe4226d89fff523751"
+    },
+    {
+      "seq": 514,
+      "id": "fc333357-cffe-46d3-9c75-898b3d34a158",
+      "at": "2026-09-05T03:27:44.328Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S2",
+      "hash": "dd4c760d27adfd41981ff75047cd958f8f1dadcc4f792f716b53ba0b3f4ab370",
+      "fileHash": "a228942acca090d6181550d722c5440850d62c9a6478a9d72416a9dcd74aa5e3"
+    },
+    {
+      "seq": 515,
+      "id": "a3227c4f-7151-4dbf-8ef5-8c72e8480f90",
+      "at": "2026-09-05T03:27:44.401Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S2",
+      "hash": "a98f39e9c74069989595032c24954760abeecd7548fc82c54db780532ae488c4",
+      "fileHash": "98603fddccc7d809b2cbefb596e056ef12975e03bb14ae47cb58a373da1e1edf"
+    },
+    {
+      "seq": 516,
+      "id": "266ae84e-c3fe-4e49-802c-bd3da288081c",
+      "at": "2026-09-05T03:27:44.487Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S2",
+      "hash": "732c6cccb6cae8eec81935234cc4a7d88ed6f324d0c8c2318d314d77b0cd9b35",
+      "fileHash": "65f05e80ef3ed54aeb2b3a369089a156703d3092a109fbabc77ab3dc4063144d"
+    },
+    {
+      "seq": 517,
+      "id": "6b917f5a-085f-4a8c-8d79-24d981e5d051",
+      "at": "2026-09-05T03:27:44.563Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S2",
+      "hash": "c2cb1fd06dc1c6c93ba46c01c51517548a48f44e8aeba25881a60894c29774c3",
+      "fileHash": "12d665d9f10ed39b636e7391ee6fc7edccc2659a217a75d5e1ed30ddf0a71b99"
+    },
+    {
+      "seq": 518,
+      "id": "9027dd7e-2573-4fcb-83cb-2038f981ce86",
+      "at": "2026-09-05T03:27:44.649Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S2",
+      "hash": "17413e91bee1d006b43f38d991d66f9fa5b4a0f5ee3df6ecc4e0a9dd9c3d220d",
+      "fileHash": "3cb69c2331d4793ff7bb60a60918b5e47cd8f3dd509bd4e66395bf6199ce02d1"
+    },
+    {
+      "seq": 519,
+      "id": "64f48010-cdcd-48ff-979e-531127409213",
+      "at": "2026-09-05T03:27:44.735Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S2",
+      "hash": "2333a7a3f76cce1d8717d2e6bd55c072aa5c3a036998c8257d7f007ab48608e3",
+      "fileHash": "9d8624cf7e3432720f57e2ecbe3dccb61bfd22137682ed4ccc9819b172992a7c"
+    },
+    {
+      "seq": 520,
+      "id": "54f938f3-f643-4ebf-9fdc-062120898b0c",
+      "at": "2026-09-05T03:27:44.817Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S2",
+      "hash": "91e34e48cad53053c7202a27c0d5daa5c10ea197ec6a4cb0a9e1eef7102b8fe6",
+      "fileHash": "dbc03f880861f4a82c75ad11c01912cd522a2ff614d9d04fc0950885f4860f56"
+    },
+    {
+      "seq": 521,
+      "id": "09ae0cd6-c2da-4c88-b9d5-4b43a786bc72",
+      "at": "2026-09-05T03:27:44.884Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S2",
+      "hash": "70741e150b4471813b3d0825b4af613cba6c01d99b237c3185ce5b36fcd5b7fd",
+      "fileHash": "45996f492a6fb302a189420777e270d4420a27698e14ab73fbb9e33694a9afc7"
+    },
+    {
+      "seq": 522,
+      "id": "623309b2-01e6-4eae-98c3-ac0029308c08",
+      "at": "2026-09-05T03:27:44.997Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S2",
+      "hash": "bd958e5a9e95f1c2351cda0ccdfcb0ebf2a024dd49e190f237ec9f15fa5676ae",
+      "fileHash": "ce1aa2aafe131947efdb06cb4711b24e1cb261fb4c84fb1396b8a2b073cd4cca"
+    },
+    {
+      "seq": 523,
+      "id": "011e04d2-8d88-49ef-8c33-87bc9761a6d4",
+      "at": "2026-09-05T03:27:45.064Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S2",
+      "hash": "3560ba1b66224588de78d40a2ab1d046421e8335ce8f62a25513e41e69fb31d6",
+      "fileHash": "34177f0074c10e97f270bc97f82d6d81f1ab83a18bec476f81cd3678d7884a4d"
+    },
+    {
+      "seq": 524,
+      "id": "2a4900e0-50da-49a1-ac82-4076d24fa307",
+      "at": "2026-09-05T03:27:45.138Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S2",
+      "hash": "b00424cb00c3ce67cd3b3464b9ecb79b2a959e89110199344e3cb1305e887702",
+      "fileHash": "0e81901a2c1efec23cf05a3d2a1516c41adef442fd06adb1076327722bafc779"
+    },
+    {
+      "seq": 525,
+      "id": "2bbb6c46-2e93-40cb-b2c1-5fa2dcd4145d",
+      "at": "2026-09-05T03:27:45.206Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S2",
+      "hash": "849b107f6a896ada49023ef73110c2f022c29b522e5754cbf1a063740c66a665",
+      "fileHash": "7371a6d39f3b28c5a791806b14d7e70dda220c8405eb0ccff1c08ff232c50d73"
+    },
+    {
+      "seq": 526,
+      "id": "d7072e17-aada-42d7-8399-c2306646300a",
+      "at": "2026-09-05T03:27:45.281Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S2",
+      "hash": "ea5cfedc86a08170ba228c4b627cba0e313de060fad67f714c44026724c6767f",
+      "fileHash": "7ecd71b59fc67636870bf9dad2c9a99b4a7c612b61e62a3f9d42d2f56a54a1a3"
+    },
+    {
+      "seq": 527,
+      "id": "996b87be-d3b3-4735-ab7a-2feef4af0389",
+      "at": "2026-09-05T03:27:45.347Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S2",
+      "hash": "920ecba8e2970ccd54cdeb3eb279cf24efe27a7c79d886595463c7ae2cdaf037",
+      "fileHash": "7f673f930cf1ce0c229ce23583c178d7a3b2ce37693622fa1967f603c952b178"
+    },
+    {
+      "seq": 528,
+      "id": "3ca7f0a0-6b18-4639-8513-1447b1d32dc2",
+      "at": "2026-09-05T03:27:45.427Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S2",
+      "hash": "1ed61c60b0ef797b4b26183168572f0809102c61e3d2e15769c9582cf1ed4877",
+      "fileHash": "a4024feb59d38e8ed6f8d04b01d97a91cd40a515148f167b1ea8efde8dc5451b"
+    },
+    {
+      "seq": 529,
+      "id": "7a9f320e-692e-40ee-882e-0cf3f3b3c052",
+      "at": "2026-09-05T03:27:45.511Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S2",
+      "hash": "99ec4d93e25dad00648302d72bb72b33112f5ca1c892fa716153f25169be5c66",
+      "fileHash": "e104e79d3f733f942beff287e3455b4f26e39b6c62c7cb227e45910791cc8f66"
+    },
+    {
+      "seq": 530,
+      "id": "5dfd1e0e-c787-4cda-973c-8abb253c0992",
+      "at": "2026-09-05T03:27:45.595Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S2",
+      "hash": "39d64a85fd70f6658df26e1a216407a7eb6758c926d474311135498a6c8b237d",
+      "fileHash": "dadf3e3d37f6d689708925ed83e40eb88e212fe84a77b9cbf0eacc3242a26f82"
+    },
+    {
+      "seq": 531,
+      "id": "9f620f07-4fdf-41ef-baae-4e7db2f45a3e",
+      "at": "2026-09-05T03:27:45.668Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S2",
+      "hash": "2b48c754bc5b4fe208618ef56aba119f52b2e159e875a8ba090f7de52a0f6869",
+      "fileHash": "0d34fee0b49a846a1f2b9d4853c2eb2bbecd55db990c7e4fa35c6d0357ca0278"
+    },
+    {
+      "seq": 532,
+      "id": "37a76a3c-1948-42b8-bb99-4f6913637157",
+      "at": "2026-09-05T03:27:45.754Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S3",
+      "hash": "c479d55cbfa341e729040860a608adc26b1c8a558e2cbee91fa172067eb94caf",
+      "fileHash": "49a55d8f79a3ab43bb13e1f0f55995db627e243b8c34445f8c7e8ed577db924e"
+    },
+    {
+      "seq": 533,
+      "id": "8de3d9c8-298a-4478-8dac-71a2b6c3e0c3",
+      "at": "2026-09-05T03:27:45.827Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S4",
+      "hash": "ad1821160fed260c6ce7a3032dd129a4dc02f12b65c1b00de3f86b5891ba89f4",
+      "fileHash": "a3d1126922646af01a8fe850e7ab62419432178d3146d7a4a3b4e2a79fd38ac6"
+    },
+    {
+      "seq": 534,
+      "id": "295c7ff6-61a0-4755-aeff-a313f0d03c37",
+      "at": "2026-09-05T03:27:45.907Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S4",
+      "hash": "467c4d366166fb91a50705197527ffa7b8d2060baeba069004ff614cf7079452",
+      "fileHash": "2633a67dc0ef50aebf8af0bbcecaabec9b7a5b27ae85e0a1e60ceffc9792f013"
+    },
+    {
+      "seq": 535,
+      "id": "0b2d3f5c-53fa-4d40-af61-7f5ca8ef6797",
+      "at": "2026-09-05T03:27:45.982Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S4",
+      "hash": "34a573a01ddc6d6257774308db5dfce48d3f4aad82b7ac7be5c515e6847e6ec3",
+      "fileHash": "81f511cbfc3b669b439e3920256d50ba1bb4d58f53ad0cfb941c95853956717a"
+    },
+    {
+      "seq": 536,
+      "id": "42cf74b6-68b7-437a-81d1-a7a48a9ee620",
+      "at": "2026-09-05T03:27:46.069Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S5",
+      "hash": "061d549803977e80a10534db1c0c9d9b0b477021a49a91a699458c955954a473",
+      "fileHash": "dfcbcea9a87c1be8d3ce444fbec7463aac9204598522d1a92f018567275fd195"
+    },
+    {
+      "seq": 537,
+      "id": "b38fd995-e475-42dc-b820-464d11f4c189",
+      "at": "2026-09-05T03:27:46.134Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:slice.postcondition:exit:0:outcome:ok",
+      "slice": "S5",
+      "hash": "20a8d859e66d5256327f0c1f78a97f55240d92e342955226439a95d65c61595f",
+      "fileHash": "0fc8c6ac160298c04a2f4a8998e0551611bf5d1b3a637bd2ff2562eebf0f1a94"
+    },
+    {
+      "seq": 538,
+      "id": "ffa7072b-eb13-4112-ba26-c6871c70e5d6",
+      "at": "2026-09-05T03:27:50.348Z",
+      "actor": "anonymous",
+      "command": "telemetry",
+      "transition": "command:report:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "3ac824eba44e7c8798dad850c0a0ad754daefa62f7f465cd543bd694e6d0943f",
+      "fileHash": "b91db2b0318aadc4da862e33621dcb536939789cc085a931722f99cd422124f4"
+    },
+    {
+      "seq": 539,
+      "id": "eb61ce36-0ca6-4752-a094-48900f0dfbd4",
+      "at": "2026-09-05T03:28:11.028Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:spec.amend:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "498e1bae8bc47bab9380903182feca90bf20892581759d927072e3a49775b112",
+      "fileHash": "0192ea25e41434a92fa5af4bb7355e7ef2c870a4aef5365704f3e27bb4f4214e"
+    },
+    {
+      "seq": 540,
+      "id": "2d21172c-9214-4226-9c45-25f9cac613fb",
+      "at": "2026-09-05T03:28:11.090Z",
+      "actor": "anonymous",
+      "command": "telemetry",
+      "transition": "command:spec.check:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "1230681b499714d0f6fd22b8c7a53cbcf029a82828465c4593674cef80f8e1eb",
+      "fileHash": "d7203a4e3ff5f5f4f2bf04b44b569f8d9e1207cd1dd4f4d360c40b0c6084754e"
+    },
+    {
+      "seq": 541,
+      "id": "21977a23-1c79-430a-a58d-ca8fa615e0c4",
+      "at": "2026-09-05T03:28:11.160Z",
+      "actor": "anonymous",
+      "command": "telemetry",
+      "transition": "command:audit.verify:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "00f00f4895de801e6d5734ca82ba4f8f621f269ade6ca5683a3268adc667506d",
+      "fileHash": "df6486f868e08fe7592e05472ed90dbf895f18389ec105d26bd8e37a2bf9cd06"
+    },
+    {
+      "seq": 542,
+      "id": "994b6164-4e5b-45d9-846a-d54ba71c237f",
+      "at": "2026-09-05T03:28:11.210Z",
+      "actor": "researcher",
+      "command": "telemetry",
+      "transition": "command:ledger.validate:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "c8248dbfa7afe73419531c738bbb91dc2a0bdcfe4afafbe7f50c18d7058cb7ef",
+      "fileHash": "81f2a8f85ab7deb67f5e4b6cfeec66b9337e496a78d6067167044c18e2e42b02"
+    },
+    {
+      "seq": 543,
+      "id": "f477cd75-90be-423c-85aa-f2e11998fefa",
+      "at": "2026-09-05T03:28:17.719Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:metaspec:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "ff2ee6f16f350db70b148d701b9d9c55138df85f8dae0d22a09ceeec5bf37d38",
+      "fileHash": "fd531911af2c95e65f26aae46a8950923481047ae6f9e0ee37f0ac2949637ffa"
+    },
+    {
+      "seq": 544,
+      "id": "c7434193-d20b-427a-8ae7-17d0ceaee26e",
+      "at": "2026-09-05T03:28:21.182Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:stage.advance:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "d353e0fa98e80fe94651ee632234b3f2753c0d4c3808800fbd0915bd8552b570",
+      "fileHash": "e32323413b9aff403696c84b557df659b6c137921e92f0d944309f4de96e59d7"
+    },
+    {
+      "seq": 545,
+      "id": "eb509c84-27d3-4d10-b4c0-caca01410aac",
+      "at": "2026-09-05T03:28:26.115Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:metaspec:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "2b6cc22b8dee01f5d5f7161c5ac2946e1d2dbb1eb9246215b1f8a86910f1d57e",
+      "fileHash": "14e2178ee5c8994a8b08a1707542c8a72efd7c5f3d133a1b2a15fa0b8a2b4751"
+    },
+    {
+      "seq": 546,
+      "id": "b6ac466d-bc88-4c10-9c40-ac2c058f4077",
+      "at": "2026-09-05T03:28:26.176Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:metaspec:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "4ebe73512fea4e5ffb43056bee756e4cb9e0381a257f4940c822c7a136dc5b32",
+      "fileHash": "24f2853759d91006d15fc064e35eed51292b0757e727ae8c858fba9d4a1c9bcf"
+    },
+    {
+      "seq": 547,
+      "id": "4ccbedb1-631c-4d80-b956-487b065ea0e2",
+      "at": "2026-09-05T03:28:26.844Z",
+      "actor": "anonymous",
+      "command": "telemetry",
+      "transition": "command:audit.verify:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "1d55cd66422d647354694155757eec0ae67624bbfd230d983389294a60141ddd",
+      "fileHash": "0d3115cb9f63e87adca8448ae73133a1fc6d6bf3a5eb916df1df5de3b1316453"
+    },
+    {
+      "seq": 548,
+      "id": "19539f88-2ed8-408a-add0-76fb728b788c",
+      "at": "2026-09-05T03:28:26.896Z",
+      "actor": "researcher",
+      "command": "telemetry",
+      "transition": "command:ledger.validate:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "a1fb777d61d9b8563236ee35606cd41a820120e93d7ece794e27acc81217ba28",
+      "fileHash": "c37fd03f726c7877b3ad27906548463f8f6890c8c4e2a514f2e7d1791f97a1f6"
+    },
+    {
+      "seq": 549,
+      "id": "c5af9a2b-11ea-41d7-b8bb-ece2c1660dd5",
+      "at": "2026-09-05T03:28:35.509Z",
+      "actor": "anonymous",
+      "command": "telemetry",
+      "transition": "command:list:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "c219a1c9d58e9b7152f514f349fdf8e09cc8f4d1e75b3b6f57569051620e7c34",
+      "fileHash": "20f2df3b83f193faaea16bf3eb9a708a72402f3a01050602f93876bb073db9b3"
+    },
+    {
+      "seq": 550,
+      "id": "7ca9b2ad-74aa-4280-b62b-a99ed7dcf3ce",
+      "at": "2026-09-05T03:28:35.577Z",
+      "actor": "anonymous",
+      "command": "telemetry",
+      "transition": "command:report:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "c3870af21269328de54a762c9955e10e153dd472191586be15f1f99148b7a157",
+      "fileHash": "024521917675676b47996821ca426e4e0d262130314a810592d9a2bbe0dc1479"
+    },
+    {
+      "seq": 551,
+      "id": "ce646e7c-a031-47de-9ba8-68cfc8f03ea1",
+      "at": "2026-09-05T03:28:42.310Z",
+      "actor": "anonymous",
+      "command": "telemetry",
+      "transition": "command:audit.verify:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "0b45febc946f269ae0a5bb71164bb2b4f99d74cb6265d5f7a2c835831881580b",
+      "fileHash": "9ecd7c8a25b9bf021e92a059deb44a0d18619ff1d402859cb071630221a1b103"
     }
   ],
-  "fileHash": "0c08f8317094b71c96c23aa43971bf149e27ded3ed6574946cf1762d3c99d79f"
+  "fileHash": "f67646abf60fd32ee6f9dc2432a996e9ecfbe86e3a69253b242c8a7391cfbf7b"
 }
