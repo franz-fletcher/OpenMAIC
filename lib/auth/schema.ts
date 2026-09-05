@@ -84,10 +84,19 @@ CREATE TABLE IF NOT EXISTS user_roles (
 );
 
 CREATE INDEX IF NOT EXISTS user_roles_role_id_idx ON user_roles (role_id);
+
+-- Role permission overrides
+
+CREATE TABLE IF NOT EXISTS role_permissions (
+  role_name TEXT NOT NULL,
+  permission TEXT NOT NULL,
+  granted BOOLEAN NOT NULL DEFAULT true,
+  PRIMARY KEY (role_name, permission)
+);
 `;
 
 /**
- * Creates the six auth tables idempotently. Runs as part of the lazy
+ * Creates the seven auth tables idempotently. Runs as part of the lazy
  * ensure-chain in createServerPersistenceProvider. Safe to call on every
  * boot. No-ops when tables already exist.
  */

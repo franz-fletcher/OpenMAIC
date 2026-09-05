@@ -6,6 +6,8 @@ import type { Queryable } from '@openmaic/storage/document/pg';
 import { getServerPersistenceProvider } from '@/lib/persistence/server-provider';
 import { createAuthServer, type AuthServer } from '@/lib/auth/server';
 import { listRoles as _listRoles, type Role } from '@/lib/auth/roles';
+import { requirePermission as _requirePermission } from '@/lib/auth/permissions-server';
+import type { Permission } from '@/lib/auth/permissions';
 
 export type { Role } from '@/lib/auth/roles';
 
@@ -83,4 +85,17 @@ export async function requireSession(headers: Headers): Promise<Session> {
  */
 export async function listRoles(queryable: Queryable): Promise<Role[]> {
   return _listRoles(queryable);
+}
+
+/**
+ * Returns the session or throws a typed 403 refusal.
+ *
+ * Delegates to requirePermission in permissions-server.ts. Explicit
+ * forwarding keeps the symbol visible to tree-sitter outlines.
+ */
+export async function requirePermission(
+  headers: Headers,
+  permission: Permission,
+): Promise<Session> {
+  return _requirePermission(headers, permission);
 }

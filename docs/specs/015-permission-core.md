@@ -1,6 +1,6 @@
 # Batch 015 spec: permission-core
 
-Spec status: implementation
+Spec status: verification
 
 ## Problem Statement
 
@@ -173,10 +173,10 @@ Ledger bindings:
 
 | file::symbol | kind | after-signature or shape (planned) | behavior |
 | --- | --- | --- | --- |
-| `app/api/auth/permissions/route.ts::GET` | function | `(req: NextRequest): Promise<Response>` | returns the resolved permission list for the session. Defaults-deny for anonymous |
+| `app/api/auth/permissions/route.ts::GET` | function | `(_req: NextRequest): Promise<NextResponse>` | returns the resolved permission list for the session. Defaults-deny for anonymous |
 | `lib/hooks/use-permissions.ts::usePermissions` | function | `(): PermissionState` | fetches the permission list, defaults to empty, pure import graph |
-| `components/permission-gate.tsx::PermissionGate` | component | `({ permission, fallback, children }: PermissionGateProps)` | render-prop hiding: shows children when allowed, fallback otherwise |
-| `components/account-zone.tsx::AccountZone` | function | `(): JSX.Element` | modified: Settings entry gated by `settings.manage`, Admin entry gated by `users.manage` |
+| `components/permission-gate.tsx::PermissionGate` | component | `({ permission, fallback = null, children }: PermissionGateProps)` | render-prop hiding: shows children when allowed, fallback otherwise |
+| `components/account-zone.tsx::AccountZone` | function | `({ onSignOut }: AccountZoneProps)` | modified: Settings entry gated by `settings.manage`, Admin entry gated by `users.manage` |
 
 Before-state capture notes: `app/api/auth/permissions/route.ts` does not
 exist. The catch-all `app/api/auth/[...path]/route.ts` currently owns every
@@ -315,3 +315,7 @@ for the hook, exactly as the batch G and batch A lessons require.
   `lib/auth/roles.ts:112`.
 - No new operator-facing env vars ship in batch B, so `.env.example` is
   unchanged.
+
+## Amendment 2026-09-05 (S4 pin re-anchor)
+
+A pre-verification diff-risk check found three prose pins deviating from outline truth. The rows were re-anchored per the pin-from-outline rule. Gates are untouched.

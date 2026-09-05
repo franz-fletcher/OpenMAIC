@@ -4,14 +4,14 @@
   "spec": {
     "reference": "docs/specs/015-permission-core.md",
     "title": "Batch 015 spec: permission-core",
-    "hash": "22473e44750a6d2f4c4994894a6642ba5f05e8cb860c0f713a1b4e052ab2905c"
+    "hash": "9682833b1040b5a2f3582693963c8a5d1884cf6ea108df09b0489a395f529198"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "implementation",
+  "stage": "verification",
   "retry": {
-    "count": 0,
+    "count": 1,
     "max": 5,
     "consecutive_same_cause": 0,
     "escalate_at": 3
@@ -74,8 +74,10 @@
       "riskTier": 2,
       "uuid": "d2d32007-a9fb-4bd0-a0ee-106ae479552e",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "feccbe1df61c4a39a9157ec941fed9e0fc5d58602518b2d3b3d3d3bb9a5e01bb",
+        "actor": "implementer",
+        "at": "2026-09-05T00:21:09.238Z"
       },
       "verification": {
         "status": "pending",
@@ -160,8 +162,10 @@
       "riskTier": 3,
       "uuid": "952535d1-5185-444e-a7c6-b29421d34386",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "53da58d64e837053f29e1e8057c180af7aed98850e545500f5389a433c33ea52",
+        "actor": "implementer",
+        "at": "2026-09-05T00:27:32.651Z"
       },
       "verification": {
         "status": "pending",
@@ -264,8 +268,10 @@
       "riskTier": 3,
       "uuid": "17ab24e7-269a-4ef7-a84c-2aa017357192",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "98f9ff792954698bb551f44cfd23e769a559733d32e4858c3e610d9c67f36bbd",
+        "actor": "implementer",
+        "at": "2026-09-05T00:37:11.581Z"
       },
       "verification": {
         "status": "pending",
@@ -320,7 +326,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(req: NextRequest): Promise<Response>"
+                "signature": "(_req: NextRequest): Promise<NextResponse>"
               },
               "postcondition_quality": "VERIFIED",
               "expectation": "Returns the resolved permission list for the session. Defaults-deny for anonymous."
@@ -356,7 +362,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "({ permission, fallback, children }: PermissionGateProps)"
+                "signature": "({ permission, fallback = null, children }: PermissionGateProps)"
               },
               "postcondition_quality": "VERIFIED",
               "expectation": "Render-prop hiding: shows children when allowed, fallback otherwise."
@@ -376,7 +382,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(): JSX.Element"
+                "signature": "({ onSignOut }: AccountZoneProps)"
               },
               "postcondition_quality": "VERIFIED",
               "expectation": "Modified: Settings entry gated by settings.manage, Admin entry gated by users.manage."
@@ -387,8 +393,10 @@
       "riskTier": 3,
       "uuid": "cde0fb09-4bbd-42c4-b8c6-39132372dcd8",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "6b97de1bac5cea66c96ab32a52165a87ffd141f0ce1f09fa3da918998a7f3613",
+        "actor": "implementer",
+        "at": "2026-09-05T00:52:45.479Z"
       },
       "verification": {
         "status": "pending",
@@ -1101,7 +1109,117 @@
       "slice": null,
       "hash": "170c09801a23a1136694bf1ec083e93a08b8cf24ce379fdd51e5df2395a62926",
       "fileHash": "bdd518d9ede9867d6734ce487a120be4d3b7fd3d4dfa7872824d574cde575a34"
+    },
+    {
+      "seq": 61,
+      "id": "66505e08-539c-4540-b771-768a268abf5e",
+      "at": "2026-09-05T00:21:09.238Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S1:impl:pending->ready_for_verification",
+      "slice": "S1",
+      "hash": "d43075bb68f7ef817ac8cd3c62ef7e2d3d684e4b5f9bfa2ebe166c5819087231",
+      "fileHash": "c61a28f182337e309fc19d454141ecc903ebc6f49bc506660a9b0d25fb302691"
+    },
+    {
+      "seq": 62,
+      "id": "a43228cd-d91d-4207-b54d-9e47318e3c17",
+      "at": "2026-09-05T00:27:32.651Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S2:impl:pending->ready_for_verification",
+      "slice": "S2",
+      "hash": "a2bce37f6307ca9690b925359ec13a74fc73a5b679223467c4328d11622dabcc",
+      "fileHash": "8fe6e77faad79a2617957eec1b88b9efb2cbeb664477ff0a895c3c23e1e793b9"
+    },
+    {
+      "seq": 63,
+      "id": "78608e09-d59f-43c4-b765-41488053b665",
+      "at": "2026-09-05T00:37:11.581Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S3:impl:pending->ready_for_verification",
+      "slice": "S3",
+      "hash": "ad3b47318d05d32b18029c8d86fb3d70758912a50cc2a3d1d6746c25ea252ed1",
+      "fileHash": "ec2963c98d34190dd5f0331c2c1cdb3be91baebeea146352b7a5041219e5404b"
+    },
+    {
+      "seq": 64,
+      "id": "48c67a49-9a1f-4137-8ecb-b350faba020e",
+      "at": "2026-09-05T00:52:45.479Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S4:impl:pending->ready_for_verification",
+      "slice": "S4",
+      "hash": "cfd9f11b62dfa692baba8d082cb516b4944b175c1644e7f5e34c618c415307a7",
+      "fileHash": "a6fdef21cb0d8ab1ba993d296127bf883c7320462d5ab3da65e8132e8b666938"
+    },
+    {
+      "seq": 65,
+      "id": "af3f3245-8080-4a43-8e3b-5651a0b513ea",
+      "at": "2026-09-05T00:55:37.585Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:correction:S4 prose pins re-anchored to outline truth (GET NextResponse, PermissionGate default, AccountZone props) per pin-from-outline rule",
+      "slice": null,
+      "hash": "ebd855e8d1ec5bf30b61fddac37a1f49e03750f38dbbdf5e6c695c5232bcd88c",
+      "fileHash": "3d93d358ae47467fc0028e8d657690738ed0ea821dbe9e066717f07dd4b28421"
+    },
+    {
+      "seq": 66,
+      "id": "381dcb20-5e8c-4794-aa0f-4091dc7388ec",
+      "at": "2026-09-05T00:56:46.550Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S4:postcondition:app/api/auth/permissions/route.ts::GET",
+      "slice": "S4",
+      "hash": "ad9ae734ef69aa3979e6f234d17a44a2322cad54e2a12c33fd73a4a42bdfcc8e",
+      "fileHash": "cb1d6afac7797df63a9e88dbd33cbff0e5218ee8e1bee50c9f26e37ef8b93131"
+    },
+    {
+      "seq": 67,
+      "id": "2cf88b5b-906a-4838-b2b3-1ef83a462ffe",
+      "at": "2026-09-05T00:56:46.604Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S4:postcondition:components/permission-gate.tsx::PermissionGate",
+      "slice": "S4",
+      "hash": "ddf8d0a796a4f29db5b183879948cbd83532bef25aa7a4aa9f507a91e981d315",
+      "fileHash": "fc0b7f63bbf7e80a66469117b2fbffa459797691b507f76dd6a3d359581f4b1b"
+    },
+    {
+      "seq": 68,
+      "id": "ba25d42d-6f2e-45b7-98b7-105b73dabe12",
+      "at": "2026-09-05T00:56:46.652Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S4:postcondition:components/account-zone.tsx::AccountZone",
+      "slice": "S4",
+      "hash": "822e17fe2844507703cf2ae0c7821adbd6ba8fd2d4b936ad296236138a407fd7",
+      "fileHash": "97a40f7bffdb95f1ae93e2d76730a746e89c9c7a59de54468ce1984851819089"
+    },
+    {
+      "seq": 69,
+      "id": "25d28052-74e1-430b-ae57-d701b5b0d175",
+      "at": "2026-09-05T00:56:52.805Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "a7404725d358baf9eb1d3657ea87a960e4ed7c9a3d0539be383fd1c6faef9fde",
+      "fileHash": "b37bce9ff5581d824fbd15612e7614291e26759ad1b6420b3c8e5067eb015f61"
+    },
+    {
+      "seq": 70,
+      "id": "3f48e68b-7e2a-4559-b011-9b4986fe9ce8",
+      "at": "2026-09-05T00:57:54.824Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "5409485b9285e4bb132d1e32cd50b199dca2782daecb54a3363295e8baaee103",
+      "fileHash": "461bbfac676e73cd3a8bb6df6dbe04c8ef380c63b7595c06ce186f55666a0d68"
     }
   ],
-  "fileHash": "c61a28f182337e309fc19d454141ecc903ebc6f49bc506660a9b0d25fb302691"
+  "fileHash": "0a194a2e93d51063ea002ddea2e32c580c401879a7705277b217cd39b1930b4d"
 }

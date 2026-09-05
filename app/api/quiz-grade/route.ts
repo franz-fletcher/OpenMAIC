@@ -10,6 +10,7 @@ import { callLLM } from '@/lib/ai/llm';
 import { createLogger } from '@/lib/logger';
 import { apiError, apiSuccess } from '@/lib/server/api-response';
 import { resolveModelFromRequest } from '@/lib/server/resolve-model';
+import { requirePermission } from '@/lib/auth';
 const log = createLogger('Quiz Grade');
 
 interface GradeRequest {
@@ -25,10 +26,18 @@ interface GradeResponse {
   comment: string;
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest): Promise<Response> {
   let questionSnippet: string | undefined;
   let resolvedPoints: number | undefined;
   try {
+    // Permission guard: quiz.grade required before any LLM call.
+    try {
+      await requirePermission(req.headers, 'quiz.grade');
+    } catch (err) {
+      if (err instanceof Response) return err;
+      throw err;
+    }
+
     const body = (await req.json()) as GradeRequest;
     const { question, userAnswer, points, commentPrompt, language } = body;
     questionSnippet = question?.substring(0, 60);

@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useI18n } from '@/lib/hooks/use-i18n';
 import { createAuthClient } from '@/lib/auth/client';
+import { usePermissions } from '@/lib/hooks/use-permissions';
 
 const auth = createAuthClient({});
 
@@ -20,6 +21,65 @@ interface AccountZoneProps {
 interface SessionData {
   user: { id: string; email: string; name?: string };
   session: { token: string };
+}
+
+/**
+ * Menu items for the account dropdown. Settings gated by settings.manage.
+ * Admin entry gated by users.manage. Account and Sign out always visible.
+ */
+function AccountMenuItems({
+  t,
+  setMenuOpen,
+  handleSignOut,
+}: {
+  t: (key: string) => string;
+  setMenuOpen: (open: boolean) => void;
+  handleSignOut: () => void;
+}) {
+  const { can } = usePermissions();
+
+  return (
+    <div className="py-1">
+      <button
+        onClick={() => setMenuOpen(false)}
+        className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+      >
+        {t('auth.account.title')}
+      </button>
+      {can('settings.manage') ? (
+        <button
+          onClick={() => setMenuOpen(false)}
+          className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+        >
+          {t('auth.account.settings')}
+        </button>
+      ) : (
+        <button
+          onClick={() => setMenuOpen(false)}
+          className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 flex items-center gap-2"
+        >
+          {t('auth.account.settings')}
+          <span className="text-[9px] bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded font-medium text-gray-400">
+            {t('auth.common.soon')}
+          </span>
+        </button>
+      )}
+      {can('users.manage') && (
+        <button
+          onClick={() => setMenuOpen(false)}
+          className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+        >
+          {t('auth.account.admin')}
+        </button>
+      )}
+      <button
+        onClick={handleSignOut}
+        className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
+      >
+        {t('auth.account.signOut')}
+      </button>
+    </div>
+  );
 }
 
 export function AccountZone({ onSignOut }: AccountZoneProps) {
@@ -90,33 +150,7 @@ export function AccountZone({ onSignOut }: AccountZoneProps) {
                 {session.user.email}
               </p>
             </div>
-            <div className="py-1">
-              <button
-                onClick={() => {
-                  setMenuOpen(false);
-                }}
-                className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
-              >
-                {t('auth.account.title')}
-              </button>
-              <button
-                onClick={() => {
-                  setMenuOpen(false);
-                }}
-                className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 flex items-center gap-2"
-              >
-                {t('auth.account.settings')}
-                <span className="text-[9px] bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded font-medium text-gray-400">
-                  {t('auth.common.soon')}
-                </span>
-              </button>
-              <button
-                onClick={handleSignOut}
-                className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
-              >
-                {t('auth.account.signOut')}
-              </button>
-            </div>
+            <AccountMenuItems t={t} setMenuOpen={setMenuOpen} handleSignOut={handleSignOut} />
           </div>
         </>
       )}
