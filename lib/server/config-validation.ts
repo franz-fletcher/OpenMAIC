@@ -23,7 +23,7 @@
  */
 
 import { getProvider, warnBareModelIdDeprecation } from '@/lib/ai/providers';
-import { isAgentRuntimeEnabled } from '@/lib/config/feature-flags';
+import { isAgentRuntimeEnabled, isMinimalModeEnabled } from '@/lib/config/feature-flags';
 import { LLM_STAGES } from '@/lib/server/model-routes';
 import {
   isServerConfiguredProvider,
@@ -169,6 +169,21 @@ function validateAgentRuntime(): void {
 }
 
 /**
+ * MINIMAL_MODE and ACCESS_CODE are redundant: minimal mode already forces
+ * every visitor through authentication. Running both means the access code
+ * gate fires first and the RBAC matrix is unreachable. One boot-time note
+ * saves the operator a silent misconfiguration.
+ */
+export function validateMinimalMode(): void {
+  if (!isMinimalModeEnabled()) return;
+  if (process.env.ACCESS_CODE) {
+    warn(
+      'Both MINIMAL_MODE and ACCESS_CODE are set — MINIMAL_MODE already requires authentication through the RBAC matrix, so the ACCESS_CODE gate is redundant. Consider removing ACCESS_CODE.',
+    );
+  }
+}
+
+/**
  * Validate server model-routing config at boot. Warn-only, cheap, and
  * non-throwing: a broken config never prevents the server from starting.
  */
@@ -178,6 +193,7 @@ export function validateServerConfig(): void {
     validateDefaultModel();
     validateModelsEnvPins();
     validateAgentRuntime();
+    validateMinimalMode();
   } catch (err) {
     // Boot-time validation must never take the server down.
     const detail = err instanceof Error ? err.message : String(err);

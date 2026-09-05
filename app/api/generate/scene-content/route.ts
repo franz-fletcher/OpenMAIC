@@ -23,6 +23,7 @@ import type {
 } from '@/lib/types/generation';
 import { createLogger } from '@/lib/logger';
 import { apiError, apiSuccess } from '@/lib/server/api-response';
+import { requirePermissionIfMinimalMode } from '@/lib/auth';
 import { llmApiError } from '@/lib/server/llm-error-response';
 import { resolveModelFromRequest } from '@/lib/server/resolve-model';
 import { resolveVocationalActive } from '@/lib/config/feature-flags';
@@ -57,6 +58,13 @@ const VISION_RESOLUTION_BUDGET_MS = 15_000;
 const MAX_CONSECUTIVE_UNRESOLVABLE_VISION_IMAGES = 3;
 
 export async function POST(req: NextRequest) {
+  try {
+    await requirePermissionIfMinimalMode(req.headers, 'course.create');
+  } catch (err) {
+    if (err instanceof Response) return err;
+    throw err;
+  }
+
   let outlineTitle: string | undefined;
   let resolvedModelString: string | undefined;
   try {

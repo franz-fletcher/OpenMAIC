@@ -6,7 +6,10 @@ import type { Queryable } from '@openmaic/storage/document/pg';
 import { getServerPersistenceProvider } from '@/lib/persistence/server-provider';
 import { createAuthServer, type AuthServer } from '@/lib/auth/server';
 import { listRoles as _listRoles, type Role } from '@/lib/auth/roles';
-import { requirePermission as _requirePermission } from '@/lib/auth/permissions-server';
+import {
+  requirePermission as _requirePermission,
+  requirePermissionIfMinimalMode as _requirePermissionIfMinimalMode,
+} from '@/lib/auth/permissions-server';
 import type { Permission } from '@/lib/auth/permissions';
 
 export type { Role } from '@/lib/auth/roles';
@@ -98,4 +101,16 @@ export async function requirePermission(
   permission: Permission,
 ): Promise<Session> {
   return _requirePermission(headers, permission);
+}
+
+/**
+ * Flag-gated guard wrapper. Returns immediately when MINIMAL_MODE is off.
+ * When set, delegates to requirePermission which throws the typed 403
+ * for anonymous and denied ranks.
+ */
+export async function requirePermissionIfMinimalMode(
+  headers: Headers,
+  permission: Permission,
+): Promise<void> {
+  return _requirePermissionIfMinimalMode(headers, permission);
 }

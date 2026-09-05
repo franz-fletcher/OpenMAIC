@@ -17,6 +17,7 @@ import { statelessGenerate } from '@/lib/orchestration/stateless-generate';
 import { isProviderKeyRequired } from '@/lib/ai/providers';
 import type { StatelessChatRequest, StatelessEvent } from '@/lib/types/chat';
 import { apiError } from '@/lib/server/api-response';
+import { requirePermissionIfMinimalMode } from '@/lib/auth';
 import { createLogger } from '@/lib/logger';
 import { resolveModel } from '@/lib/server/resolve-model';
 import type { ThinkingConfig } from '@/lib/types/provider';
@@ -42,6 +43,13 @@ export const maxDuration = 60;
  * Response: SSE stream of StatelessEvent
  */
 export async function POST(req: NextRequest) {
+  try {
+    await requirePermissionIfMinimalMode(req.headers, 'classroom.chat');
+  } catch (err) {
+    if (err instanceof Response) return err;
+    throw err;
+  }
+
   const encoder = new TextEncoder();
   let chatModel: string | undefined;
   let chatMessageCount: number | undefined;

@@ -27,6 +27,7 @@ import type { PBLContent } from '@/lib/types/stage';
 import { createLogger } from '@/lib/logger';
 import { normalizeLegacyPBLContent } from '@/lib/pbl/legacy/read';
 import { apiError, apiSuccess } from '@/lib/server/api-response';
+import { requirePermissionIfMinimalMode } from '@/lib/auth';
 import { llmApiError } from '@/lib/server/llm-error-response';
 import { resolveModelFromRequest } from '@/lib/server/resolve-model';
 
@@ -35,6 +36,13 @@ const log = createLogger('Scene Actions API');
 export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
+  try {
+    await requirePermissionIfMinimalMode(req.headers, 'course.create');
+  } catch (err) {
+    if (err instanceof Response) return err;
+    throw err;
+  }
+
   let outlineTitle: string | undefined;
   let resolvedModelString: string | undefined;
   try {

@@ -17,6 +17,7 @@ import {
 } from '@/lib/server/provider-config';
 import { createLogger } from '@/lib/logger';
 import { apiError, apiSuccess } from '@/lib/server/api-response';
+import { requirePermissionIfMinimalMode } from '@/lib/auth';
 import {
   buildSearchQuery,
   SEARCH_QUERY_REWRITE_EXCERPT_LENGTH,
@@ -30,6 +31,13 @@ import { resolveWebSearchRouteBaseUrl } from '@/lib/server/web-search-config';
 const log = createLogger('WebSearch');
 
 export async function POST(req: NextRequest) {
+  try {
+    await requirePermissionIfMinimalMode(req.headers, 'course.create');
+  } catch (err) {
+    if (err instanceof Response) return err;
+    throw err;
+  }
+
   let query: string | undefined;
   try {
     const body = await req.json();

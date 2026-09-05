@@ -10,6 +10,7 @@ import { nanoid } from 'nanoid';
 import { callLLM } from '@/lib/ai/llm';
 import { createLogger } from '@/lib/logger';
 import { apiError, apiSuccess } from '@/lib/server/api-response';
+import { requirePermissionIfMinimalMode } from '@/lib/auth';
 import { resolveModelFromRequest } from '@/lib/server/resolve-model';
 import { AGENT_COLOR_PALETTE } from '@/lib/constants/agent-defaults';
 import { normalizeVoiceDesign } from '@/lib/audio/voice-design';
@@ -128,6 +129,13 @@ function stripCodeFences(text: string): string {
 }
 
 export async function POST(req: NextRequest) {
+  try {
+    await requirePermissionIfMinimalMode(req.headers, 'course.create');
+  } catch (err) {
+    if (err instanceof Response) return err;
+    throw err;
+  }
+
   let stageName: string | undefined;
   let modelString: string | undefined;
   try {

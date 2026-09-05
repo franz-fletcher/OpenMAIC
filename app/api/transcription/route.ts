@@ -12,12 +12,20 @@ import {
 import type { ASRProviderId } from '@/lib/audio/types';
 import { createLogger } from '@/lib/logger';
 import { apiError, apiSuccess } from '@/lib/server/api-response';
+import { requirePermissionIfMinimalMode } from '@/lib/auth';
 import { validateUrlForSSRF } from '@/lib/server/ssrf-guard';
 const log = createLogger('Transcription');
 
 export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
+  try {
+    await requirePermissionIfMinimalMode(req.headers, 'asr.use');
+  } catch (err) {
+    if (err instanceof Response) return err;
+    throw err;
+  }
+
   let resolvedProviderId: string | undefined;
   let resolvedModelId: string | undefined;
   try {

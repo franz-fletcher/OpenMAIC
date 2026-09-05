@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { createLogger } from '@/lib/logger';
 import { apiError, apiSuccess } from '@/lib/server/api-response';
+import { requirePermissionIfMinimalMode } from '@/lib/auth';
 import {
   isServerConfiguredProvider,
   resolveManagedAliDocMindCredentials,
@@ -13,6 +14,13 @@ import { MINERU_CLOUD_DEFAULT_BASE } from '@/lib/pdf/constants';
 const log = createLogger('Verify PDF Provider');
 
 export async function POST(req: NextRequest) {
+  try {
+    await requirePermissionIfMinimalMode(req.headers, 'settings.manage');
+  } catch (err) {
+    if (err instanceof Response) return err;
+    throw err;
+  }
+
   let providerId: string | undefined;
   try {
     const body = await req.json();

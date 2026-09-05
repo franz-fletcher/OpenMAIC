@@ -25,6 +25,7 @@ import {
 } from '@/lib/server/provider-config';
 import { createLogger } from '@/lib/logger';
 import { apiError, apiSuccess } from '@/lib/server/api-response';
+import { requirePermissionIfMinimalMode } from '@/lib/auth';
 import { validateUrlForSSRF } from '@/lib/server/ssrf-guard';
 import { normalizeVoiceDesign } from '@/lib/audio/voice-design';
 import {
@@ -62,6 +63,13 @@ function childSignal(
 }
 
 export async function POST(req: NextRequest) {
+  try {
+    await requirePermissionIfMinimalMode(req.headers, 'tts.use');
+  } catch (err) {
+    if (err instanceof Response) return err;
+    throw err;
+  }
+
   let providerId: string | undefined;
   let voiceId: string | undefined;
   const deadline = new AbortController();

@@ -30,6 +30,7 @@ import type { NextRequest } from 'next/server';
 
 import { createLogger } from '@/lib/logger';
 import { apiError } from '@/lib/server/api-response';
+import { requirePermissionIfMinimalMode } from '@/lib/auth';
 import { resolveModelFromRequest } from '@/lib/server/resolve-model';
 
 import { createSSEResponse } from '@/lib/pbl/v2/api/sse';
@@ -55,6 +56,13 @@ interface EvaluateRequest {
 }
 
 export async function POST(req: NextRequest) {
+  try {
+    await requirePermissionIfMinimalMode(req.headers, 'classroom.chat');
+  } catch (err) {
+    if (err instanceof Response) return err;
+    throw err;
+  }
+
   let body: EvaluateRequest;
   try {
     body = (await req.json()) as EvaluateRequest;

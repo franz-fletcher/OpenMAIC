@@ -35,6 +35,7 @@ import type {
   ImageMapping,
 } from '@/lib/types/generation';
 import { apiError } from '@/lib/server/api-response';
+import { requirePermissionIfMinimalMode } from '@/lib/auth';
 import { createLogger } from '@/lib/logger';
 import { resolveModelFromRequest } from '@/lib/server/resolve-model';
 import { sortDocumentImagesForVision } from '@/lib/document/bundle';
@@ -285,6 +286,13 @@ function ensureUniqueOutlineId(outline: SceneOutline, usedIds: Set<string>): Sce
 }
 
 export async function POST(req: NextRequest) {
+  try {
+    await requirePermissionIfMinimalMode(req.headers, 'course.create');
+  } catch (err) {
+    if (err instanceof Response) return err;
+    throw err;
+  }
+
   let requirementSnippet: string | undefined;
   let resolvedModelString: string | undefined;
   try {

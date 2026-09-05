@@ -9,10 +9,18 @@ import type { ParsedPdfContent } from '@/lib/types/pdf';
 import { documentArtifactToParsedPdfContent, extractDocument } from '@/lib/document';
 import { createLogger } from '@/lib/logger';
 import { apiError, apiSuccess } from '@/lib/server/api-response';
+import { requirePermissionIfMinimalMode } from '@/lib/auth';
 import { validateUrlForSSRF } from '@/lib/server/ssrf-guard';
 const log = createLogger('Parse PDF');
 
 export async function POST(req: NextRequest) {
+  try {
+    await requirePermissionIfMinimalMode(req.headers, 'course.create');
+  } catch (err) {
+    if (err instanceof Response) return err;
+    throw err;
+  }
+
   let pdfFileName: string | undefined;
   let resolvedProviderId: string | undefined;
   try {

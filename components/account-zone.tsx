@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { useI18n } from '@/lib/hooks/use-i18n';
 import { createAuthClient } from '@/lib/auth/client';
 import { usePermissions } from '@/lib/hooks/use-permissions';
+import { isMinimalModeClientEnabled } from '@/lib/config/feature-flags';
 
 const auth = createAuthClient({});
 
@@ -102,8 +103,30 @@ export function AccountZone({ onSignOut }: AccountZoneProps) {
 
   if (loading) return null;
 
-  // Signed out: show "Sign in" pill.
+  // Signed out: show "Sign in" pill. Under minimal mode, also show
+  // "Create account" so the first step into the product is one click.
   if (!session) {
+    const minimalMode = isMinimalModeClientEnabled();
+    if (minimalMode) {
+      return (
+        <div className="flex items-center gap-1.5">
+          <a
+            href="/login"
+            data-testid="capsule-sign-in"
+            className="px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 bg-white/60 dark:bg-gray-700/60 rounded-full hover:bg-white dark:hover:bg-gray-700 transition-colors"
+          >
+            {t('auth.nav.signIn')}
+          </a>
+          <a
+            href="/signup"
+            data-testid="capsule-create-account"
+            className="px-3 py-1.5 text-xs font-medium text-white bg-purple-600 dark:bg-purple-500 rounded-full hover:bg-purple-700 dark:hover:bg-purple-600 transition-colors"
+          >
+            {t('auth.nav.createAccount')}
+          </a>
+        </div>
+      );
+    }
     return (
       <a
         href="/login"

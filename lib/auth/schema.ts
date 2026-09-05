@@ -1,9 +1,9 @@
 /**
- * Auth schema bootstrap. Creates the six auth tables idempotently on the
+ * Auth schema bootstrap. Creates the eight auth tables idempotently on the
  * existing app-side pg.Pool through the lazy ensure-chain pattern.
  *
  * Tables: user, session, account, verification (better-auth canonical),
- * plus roles and user_roles (app-owned).
+ * roles, user_roles (app-owned), and quiz_grade_quota (guest quota).
  */
 import type { Queryable } from '@openmaic/storage/document/pg';
 
@@ -93,10 +93,19 @@ CREATE TABLE IF NOT EXISTS role_permissions (
   granted BOOLEAN NOT NULL DEFAULT true,
   PRIMARY KEY (role_name, permission)
 );
+
+-- Quiz grading quota (per-UTC-day cap for rank-1 guests)
+
+CREATE TABLE IF NOT EXISTS quiz_grade_quota (
+  user_id TEXT NOT NULL,
+  day DATE NOT NULL,
+  count INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (user_id, day)
+);
 `;
 
 /**
- * Creates the seven auth tables idempotently. Runs as part of the lazy
+ * Creates the eight auth tables idempotently. Runs as part of the lazy
  * ensure-chain in createServerPersistenceProvider. Safe to call on every
  * boot. No-ops when tables already exist.
  */

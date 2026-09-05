@@ -58,6 +58,19 @@ export async function requirePermission(
 }
 
 /**
+ * Flag-gated guard wrapper. Returns immediately when MINIMAL_MODE is off.
+ * When set, delegates to requirePermission which throws the typed 403
+ * for anonymous and denied ranks.
+ */
+export async function requirePermissionIfMinimalMode(
+  headers: Headers,
+  permission: Permission,
+): Promise<void> {
+  if (process.env.MINIMAL_MODE !== 'true' && process.env.MINIMAL_MODE !== '1') return;
+  await requirePermission(headers, permission);
+}
+
+/**
  * Resolves the effective permission set for a role by merging rank defaults
  * with any database overrides from the role_permissions table.
  *

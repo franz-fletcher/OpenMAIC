@@ -22,6 +22,7 @@ import { runPiDirectorLoop } from '@/lib/chat/pi/director-loop';
 import type { SendEvent } from '@/lib/chat/pi/types';
 import { resolveModel } from '@/lib/server/resolve-model';
 import { apiError } from '@/lib/server/api-response';
+import { requirePermissionIfMinimalMode } from '@/lib/auth';
 import type { ThinkingConfig } from '@/lib/types/provider';
 import type { StatelessChatRequest } from '@/lib/types/chat';
 import { resolveClassroomWebSearchConfig } from '@/lib/server/web-search-config';
@@ -40,6 +41,13 @@ const log = createLogger('Pi Chat API');
 export const maxDuration = 300;
 
 export async function POST(req: NextRequest) {
+  try {
+    await requirePermissionIfMinimalMode(req.headers, 'classroom.chat');
+  } catch (err) {
+    if (err instanceof Response) return err;
+    throw err;
+  }
+
   if (!isPiChatEnabled()) {
     return apiError('INVALID_REQUEST', 404, 'Pi chat runtime is disabled');
   }

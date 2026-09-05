@@ -126,3 +126,20 @@ export function isVideoExportEnabled(): boolean {
 export function isPptxImportEnabled(): boolean {
   return readBoolean(process.env.NEXT_PUBLIC_ENABLE_PPTX_IMPORT);
 }
+/**
+ * Minimal-mode kill-switch. Server-only source of truth. When set, the guard
+ * wrapper enforces the RBAC capability matrix on every model-spending route.
+ * When unset the app behaves byte-for-byte as today.
+ */
+export function isMinimalModeEnabled(): boolean {
+  return readBoolean(process.env.MINIMAL_MODE);
+}
+
+/**
+ * Build-inlined client mirror of the minimal-mode flag. UI affordances gate on
+ * this so the home layout and capsule can react without a server round-trip.
+ * Changing the value requires a rebuild.
+ */
+export function isMinimalModeClientEnabled(): boolean {
+  return readBoolean(process.env.NEXT_PUBLIC_MINIMAL_MODE);
+}

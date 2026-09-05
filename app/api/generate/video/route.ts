@@ -34,6 +34,7 @@ import {
 import type { VideoProviderId, VideoGenerationOptions } from '@/lib/media/types';
 import { createLogger } from '@/lib/logger';
 import { apiError, apiSuccess } from '@/lib/server/api-response';
+import { requirePermissionIfMinimalMode } from '@/lib/auth';
 import { validateUrlForSSRF } from '@/lib/server/ssrf-guard';
 
 const log = createLogger('VideoGeneration API');
@@ -41,6 +42,13 @@ const log = createLogger('VideoGeneration API');
 export const maxDuration = 300;
 
 export async function POST(request: NextRequest) {
+  try {
+    await requirePermissionIfMinimalMode(request.headers, 'course.create');
+  } catch (err) {
+    if (err instanceof Response) return err;
+    throw err;
+  }
+
   try {
     const body = (await request.json()) as VideoGenerationOptions;
 

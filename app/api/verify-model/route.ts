@@ -1,11 +1,19 @@
 import { NextRequest } from 'next/server';
 import { createLogger } from '@/lib/logger';
 import { apiError, apiSuccess } from '@/lib/server/api-response';
+import { requirePermissionIfMinimalMode } from '@/lib/auth';
 import { resolveModel } from '@/lib/server/resolve-model';
 import { callLLM } from '@/lib/ai/llm';
 const log = createLogger('Verify Model');
 
 export async function POST(req: NextRequest) {
+  try {
+    await requirePermissionIfMinimalMode(req.headers, 'settings.manage');
+  } catch (err) {
+    if (err instanceof Response) return err;
+    throw err;
+  }
+
   let model: string | undefined;
   try {
     const body = await req.json();

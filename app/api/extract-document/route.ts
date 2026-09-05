@@ -23,6 +23,7 @@ import {
   type ServerAssetResolution,
 } from '@/lib/persistence/resolve-server-asset';
 import { apiError, apiSuccess } from '@/lib/server/api-response';
+import { requirePermissionIfMinimalMode } from '@/lib/auth';
 import { validateUrlForSSRF } from '@/lib/server/ssrf-guard';
 import { MAX_EXTRACT_DOCUMENT_FILE_SIZE_BYTES } from '@/lib/constants/generation';
 
@@ -438,6 +439,13 @@ async function runExtraction(
 }
 
 export async function POST(req: NextRequest) {
+  try {
+    await requirePermissionIfMinimalMode(req.headers, 'course.create');
+  } catch (err) {
+    if (err instanceof Response) return err;
+    throw err;
+  }
+
   const logState: ExtractLogState = {};
   // Whether this request took the asset-id (JSON) form. The multipart byte
   // form's observable behavior is frozen; a few JSON-path-only responses use

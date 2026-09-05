@@ -11,6 +11,8 @@ import { createLogger } from '@/lib/logger';
 import { apiError, apiSuccess } from '@/lib/server/api-response';
 import { resolveModelFromRequest } from '@/lib/server/resolve-model';
 import { requirePermission } from '@/lib/auth';
+import { consumeQuizGradeQuota } from '@/lib/auth/quiz-quota';
+import { getServerPersistenceProvider } from '@/lib/persistence/server-provider';
 const log = createLogger('Quiz Grade');
 
 interface GradeRequest {
@@ -31,8 +33,13 @@ export async function POST(req: NextRequest): Promise<Response> {
   let resolvedPoints: number | undefined;
   try {
     // Permission guard: quiz.grade required before any LLM call.
+    // Quota consumer stacks inside the same Response-rethrow catch so
+    // the 429 rides the err instanceof Response passthrough.
+    let session;
     try {
-      await requirePermission(req.headers, 'quiz.grade');
+      session = await requirePermission(req.headers, 'quiz.grade');
+      const { pool } = await getServerPersistenceProvider(process.env.DATABASE_URL ?? '');
+      await consumeQuizGradeQuota(pool, session.userId);
     } catch (err) {
       if (err instanceof Response) return err;
       throw err;

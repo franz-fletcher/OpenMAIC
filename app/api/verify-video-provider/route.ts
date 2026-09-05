@@ -26,12 +26,20 @@ import {
 } from '@/lib/server/provider-config';
 import type { VideoProviderId } from '@/lib/media/types';
 import { apiError, apiSuccess } from '@/lib/server/api-response';
+import { requirePermissionIfMinimalMode } from '@/lib/auth';
 import { createLogger } from '@/lib/logger';
 import { validateUrlForSSRF } from '@/lib/server/ssrf-guard';
 
 const log = createLogger('VerifyVideoProvider');
 
 export async function POST(request: NextRequest) {
+  try {
+    await requirePermissionIfMinimalMode(request.headers, 'settings.manage');
+  } catch (err) {
+    if (err instanceof Response) return err;
+    throw err;
+  }
+
   try {
     const providerId = (request.headers.get('x-video-provider')?.trim() ||
       resolveServerVideoProviderId()) as VideoProviderId;
