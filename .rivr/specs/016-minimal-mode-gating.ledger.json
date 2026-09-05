@@ -4,12 +4,12 @@
   "spec": {
     "reference": "docs/specs/016-minimal-mode-gating.md",
     "title": "Batch 016 spec: minimal-mode-gating",
-    "hash": "97aa092cac5f927274fd90c307b13c3389070dc50895e520d68263a5e5afd0a2"
+    "hash": "a9310f762e7c837965b3462b4bd42ec8b2d4b992c1d947483d849df5105d5e8d"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "verification",
+  "stage": "research_update",
   "retry": {
     "count": 3,
     "max": 5,
@@ -988,13 +988,57 @@
         "at": "2026-09-05T08:06:23.704Z"
       },
       "verification": {
-        "status": "rejected",
-        "hash": "205971ff1dd537f393f1240b77b2ac53e1c9aedaae331d3fd32d41398c72e39d",
+        "status": "verified",
+        "hash": "500962970959d9145a40d84c1dea7ef92f3fd15b8a1b7ce91be8e4ecf983e978",
         "actor": "verifier",
-        "at": "2026-09-05T07:59:10.046Z",
+        "at": "2026-09-05T09:39:03.277Z",
         "deficiencies": [
           "Flag bake persists in the quota consumer on the live wire. lib/auth/quiz-quota.ts:33 kill-switch still reads process.env.MINIMAL_MODE directly and was NOT migrated in fix 33fc7232 (which converted only lib/config/feature-flags.ts and lib/auth/permissions-server.ts to globalThis.process). The compiled dev bundle chunk root-of-the-server__341fc9c2 shows consumeQuizGradeQuota compiled to an unconditional return: if (TURBOPACK compile-time truthy, 1) return; TURBOPACK unreachable, with the whole body dead-code-eliminated. Live wire proof on flag-ON dev server (MINIMAL_MODE=true): verified guest chain (signup 200, JWT verify 200, signin 200, session cookie) then 6x POST /api/quiz-grade, grades 1-5 = 200, grade 6 = 200 NOT 429 quota_exhausted; quiz_grade_quota holds ZERO rows after six grades (expected 5). The QUOTA_OK, QUOTA_PG_OK, QUOTA_RACE_OK, LIVE_OK gates all pass because vitest reads process.env at runtime and cannot see the Turbopack bake; the postcondition rank-1 performs one atomic per-UTC-day upsert and throws 429 past five is unmet on the wire. Fix: route the consumer kill-switch through the same dynamic read (isMinimalModeEnabled via globalThis.process) used by the wrapper."
-        ]
+        ],
+        "evidence": {
+          "gates": [
+            {
+              "id": "g1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/minimal-mode/quiz-quota.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/minimal-mode/quiz-quota.test.ts \u001b[2m(\u001b[22m\u001b[2m9 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 9\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m9 passed\u001b[39m\u001b[22m\u001b[90m (9)\u001b[39m\n\u001b[2m   Start at \u001b[22m 21:38:59\n\u001b[2m   Duration \u001b[22m 95ms\u001b[2m (transform 20ms, setup 13ms, import 13ms, tests 9ms, environment 0ms)\u001b[22m\n\nQUOTA_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/minimal-mode/quiz-quota.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/minimal-mode/quiz-quota.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m2 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 108\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m2 passed\u001b[39m\u001b[22m\u001b[90m (2)\u001b[39m\n\u001b[2m   Start at \u001b[22m 21:39:00\n\u001b[2m   Duration \u001b[22m 193ms\u001b[2m (transform 18ms, setup 9ms, import 24ms, tests 108ms, environment 0ms)\u001b[22m\n\nQUOTA_PG_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/minimal-mode/live-wire.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/minimal-mode/live-wire.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mlive-wire: MINIMAL_MODE guard on real routes\n\u001b[22m\u001b[39m[mailer] Verification link for live-wire-guest-1788601141424@test.example: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImxpdmUtd2lyZS1ndWVzdC0xNzg4NjAxMTQxNDI0QHRlc3QuZXhhbXBsZSIsImlhdCI6MTc4ODYwMTE0MSwiZXhwIjoxNzg4NjA0NzQxfQ.2Sgl0C3mKZeh4_w43Er_CjN5n62LKNB6bhrjrasUGSw&callbackURL=%2F\n\n\u001b[90mstdout\u001b[2m | tests/minimal-mode/live-wire.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mlive-wire: MINIMAL_MODE guard on real routes\u001b[2m > \u001b[22m\u001b[2mguest grades 5 quizzes, 6th returns 429 quota_exhausted\n\u001b[22m\u001b[39m[2026-09-05T09:39:02.370Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 4 LLM, 1 TTS, 1 ASR, 1 PDF, 1 Image, 1 Video, 2 WebSearch providers\n\n \u001b[32m✓\u001b[39m tests/minimal-mode/live-wire.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m2 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 1645\u001b[2mms\u001b[22m\u001b[39m\n     \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m anonymous caller receives 403 on chat route when MINIMAL_MODE=true \u001b[33m 736\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m2 passed\u001b[39m\u001b[22m\u001b[90m (2)\u001b[39m\n\u001b[2m   Start at \u001b[22m 21:39:00\n\u001b[2m   Duration \u001b[22m 1.72s\u001b[2m (transform 349ms, setup 9ms, import 19ms, tests 1.64s, environment 0ms)\u001b[22m\n\nLIVE_OK\n\u001b[90mstderr\u001b[2m | tests/minimal-mode/live-wire.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mlive-wire: MINIMAL_MODE guard on real routes\n\u001b[22m\u001b[39m2026-09-05T09:39:01.431Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\n\n\u001b[90mstderr\u001b[2m | tests/minimal-mode/live-wire.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mlive-wire: MINIMAL_MODE guard on real routes\u001b[2m > \u001b[22m\u001b[2manonymous caller receives 403 on chat route when MINIMAL_MODE=true\n\u001b[22m\u001b[39m2026-09-05T09:39:02.355Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\n\n",
+              "passed": true
+            },
+            {
+              "id": "g4",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/minimal-mode/quiz-quota-concurrency.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/minimal-mode/quiz-quota-concurrency.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m1 test\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 115\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m   Start at \u001b[22m 21:39:03\n\u001b[2m   Duration \u001b[22m 188ms\u001b[2m (transform 18ms, setup 9ms, import 13ms, tests 115ms, environment 0ms)\u001b[22m\n\nQUOTA_RACE_OK\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "ensureAuthSchema composes quiz_grade_quota into the chain. consumeQuizGradeQuota allows five grades per UTC day for rank 1 and throws 429 with quota_exhausted past the cap. Learners and above never write. The quiz-grade route stacks quota after the guard.",
       "gates": [
@@ -1004,7 +1048,7 @@
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/minimal-mode/quiz-quota.test.ts && echo QUOTA_OK",
           "expect": "QUOTA_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/minimal-mode/quiz-quota.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/minimal-mode/quiz-quota.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m9 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 9\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m9 passed\\u001b[39m\\u001b[22m\\u001b[90m (9)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 21:38:59\\n\\u001b[2m   Duration \\u001b[22m 95ms\\u001b[2m (transform 20ms, setup 13ms, import 13ms, tests 9ms, environment 0ms)\\u001b[22m\\n\\nQUOTA_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g2",
@@ -1012,7 +1056,7 @@
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/minimal-mode/quiz-quota.pg.test.ts && echo QUOTA_PG_OK",
           "expect": "QUOTA_PG_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/minimal-mode/quiz-quota.pg.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/minimal-mode/quiz-quota.pg.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m2 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 108\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m2 passed\\u001b[39m\\u001b[22m\\u001b[90m (2)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 21:39:00\\n\\u001b[2m   Duration \\u001b[22m 193ms\\u001b[2m (transform 18ms, setup 9ms, import 24ms, tests 108ms, environment 0ms)\\u001b[22m\\n\\nQUOTA_PG_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g3",
@@ -1020,7 +1064,7 @@
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; MINIMAL_MODE=true pnpm test tests/minimal-mode/live-wire.pg.test.ts && echo LIVE_OK",
           "expect": "LIVE_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/minimal-mode/live-wire.pg.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/minimal-mode/live-wire.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mlive-wire: MINIMAL_MODE guard on real routes\\n\\u001b[22m\\u001b[39m[mailer] Verification link for live-wire-guest-1788601141424@test.example: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImxpdmUtd2lyZS1ndWVzdC0xNzg4NjAxMTQxNDI0QHRlc3QuZXhhbXBsZSIsImlhdCI6MTc4ODYwMTE0MSwiZXhwIjoxNzg4NjA0NzQxfQ.2Sgl0C3mKZeh4_w43Er_CjN5n62LKNB6bhrjrasUGSw&callbackURL=%2F\\n\\n\\u001b[90mstdout\\u001b[2m | tests/minimal-mode/live-wire.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mlive-wire: MINIMAL_MODE guard on real routes\\u001b[2m > \\u001b[22m\\u001b[2mguest grades 5 quizzes, 6th returns 429 quota_exhausted\\n\\u001b[22m\\u001b[39m[2026-09-05T09:39:02.370Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 4 LLM, 1 TTS, 1 ASR, 1 PDF, 1 Image, 1 Video, 2 WebSearch providers\\n\\n \\u001b[32m✓\\u001b[39m tests/minimal-mode/live-wire.pg.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m2 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[33m 1645\\u001b[2mms\\u001b[22m\\u001b[39m\\n     \\u001b[33m\\u001b[2m✓\\u001b[22m\\u001b[39m anonymous caller receives 403 on chat route when MINIMAL_MODE=true \\u001b[33m 736\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m2 passed\\u001b[39m\\u001b[22m\\u001b[90m (2)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 21:39:00\\n\\u001b[2m   Duration \\u001b[22m 1.72s\\u001b[2m (transform 349ms, setup 9ms, import 19ms, tests 1.64s, environment 0ms)\\u001b[22m\\n\\nLIVE_OK\\n\\u001b[90mstderr\\u001b[2m | tests/minimal-mode/live-wire.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mlive-wire: MINIMAL_MODE guard on real routes\\n\\u001b[22m\\u001b[39m2026-09-05T09:39:01.431Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\\n\\n\\u001b[90mstderr\\u001b[2m | tests/minimal-mode/live-wire.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mlive-wire: MINIMAL_MODE guard on real routes\\u001b[2m > \\u001b[22m\\u001b[2manonymous caller receives 403 on chat route when MINIMAL_MODE=true\\n\\u001b[22m\\u001b[39m2026-09-05T09:39:02.355Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\\n\\n\",\"passed\":true}"
         },
         {
           "id": "g4",
@@ -1028,7 +1072,7 @@
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/minimal-mode/quiz-quota-concurrency.pg.test.ts && echo QUOTA_RACE_OK",
           "expect": "QUOTA_RACE_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g4\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/minimal-mode/quiz-quota-concurrency.pg.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/minimal-mode/quiz-quota-concurrency.pg.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m1 test\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 115\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 21:39:03\\n\\u001b[2m   Duration \\u001b[22m 188ms\\u001b[2m (transform 18ms, setup 9ms, import 13ms, tests 115ms, environment 0ms)\\u001b[22m\\n\\nQUOTA_RACE_OK\\n\",\"passed\":true}"
         }
       ],
       "findings": [
@@ -2669,7 +2713,44 @@
       "slice": null,
       "hash": "f60f81257ad85280034a4344e61fb001edd2bccca54341d4d4b69767bf25b082",
       "fileHash": "c2ab698f68cbd6ee391eef567c932ebab7fb6b8c45063a87ccdc0a32c8dee18a"
+    },
+    {
+      "seq": 133,
+      "id": "fff31ad2-cc48-46c8-92d5-cc28abc6a053",
+      "at": "2026-09-05T08:12:25.243Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S4:verification:pending->verified",
+      "slice": "S4",
+      "hash": "83e92fe8da24ed9b696485574f86b6af7e55e98e825c2d9cbd242f1b3f70ffd6",
+      "oracle": "2d390133cb811bdad9be18544747b8b72cb960ecf4b67783291fdd66a08cb940",
+      "evidence": "bdd9fb008f43c8729e2df0cb4abda7a9af5f9712322a9b9621f8375cf85030ae",
+      "fileHash": "f3d09bf0c5abb7ef6f1c805c123ac80a900aeb157cfad2b7a98e59050929efcf"
+    },
+    {
+      "seq": 134,
+      "id": "7c6999c4-fd48-4ebe-8037-e6cb68e7edf4",
+      "at": "2026-09-05T09:39:03.277Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S4:verification:pending->verified",
+      "slice": "S4",
+      "hash": "6769edc20ec9ce36c9db6d273da4e747c9e3479fa731b568056dbf5fb233be02",
+      "oracle": "8dc960e43aa0cfe5a1b7441a97eb2d25fbd2a555b0a79e541476713672ddbe38",
+      "evidence": "b0bfea3177809b87da0ce5d4e76a14d62f24b57a018dfc90f6ada0fc4fae4aaf",
+      "fileHash": "7e858d23d63528647014d99b0e887033a60ed50e956ea5790ae9336bc6559681"
+    },
+    {
+      "seq": 135,
+      "id": "4d96b7e5-d87a-4398-bbbb-cd02551fd71d",
+      "at": "2026-09-05T09:45:04.724Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:verification->research_update",
+      "slice": null,
+      "hash": "3ff67d0d8b5f4b683a577ca24feeef1502eb8782c0f1b656774c9a158e6734b8",
+      "fileHash": "ca423441b28fbf44e051afebb2248bb0f2705809404cbb4762b1fa49e4351a9e"
     }
   ],
-  "fileHash": "f3d09bf0c5abb7ef6f1c805c123ac80a900aeb157cfad2b7a98e59050929efcf"
+  "fileHash": "17a906a81d0706d19b603367707388311cda4854cb967f4f70689c7544a9febb"
 }
