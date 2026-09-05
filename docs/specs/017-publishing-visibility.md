@@ -1,6 +1,6 @@
 # Batch 017 spec: publishing-visibility
 
-Spec status: draft
+Spec status: approved
 
 ## Problem Statement
 
