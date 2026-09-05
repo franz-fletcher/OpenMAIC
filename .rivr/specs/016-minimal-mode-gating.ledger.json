@@ -4,12 +4,12 @@
   "spec": {
     "reference": "docs/specs/016-minimal-mode-gating.md",
     "title": "Batch 016 spec: minimal-mode-gating",
-    "hash": "21e201d1fbab2f1c50ae7548f2036dd74da8315dc40ebced8686aa7e15007686"
+    "hash": "f0de7eeabe685e90883da8169a59e01ac561c9f6a6a44ebfce82261356f965e4"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "implementation",
+  "stage": "verification",
   "retry": {
     "count": 0,
     "max": 5,
@@ -1970,7 +1970,18 @@
       "slice": "S5",
       "hash": "21df803fccb0a984db3fcaadc81ea86b0e9b01060259d9d96de636d1ee2f9640",
       "fileHash": "b6f400a1e1aba8491dc67d9a7dc5b5d8c2fc1e15f9b8c5d0e761b35cf9a8642b"
+    },
+    {
+      "seq": 90,
+      "id": "e4b23bbe-ce56-47ee-8eed-e92bd0693113",
+      "at": "2026-09-05T05:29:53.917Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "220792a3b998c6af485c0e47bd07d14040fb60f8545ab379d9ab26c1b90e9408",
+      "fileHash": "87af3ec10bc759a6757a8db8c1cc8f579db05d06ead34833866c7188eadc8674"
     }
   ],
-  "fileHash": "87af3ec10bc759a6757a8db8c1cc8f579db05d06ead34833866c7188eadc8674"
+  "fileHash": "8dc8338286653382d208ecdbcb09d602169f425e330fe18c498e1472d749d193"
 }
