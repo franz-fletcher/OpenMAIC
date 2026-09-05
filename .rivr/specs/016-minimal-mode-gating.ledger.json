@@ -4,14 +4,14 @@
   "spec": {
     "reference": "docs/specs/016-minimal-mode-gating.md",
     "title": "Batch 016 spec: minimal-mode-gating",
-    "hash": "f0de7eeabe685e90883da8169a59e01ac561c9f6a6a44ebfce82261356f965e4"
+    "hash": "97aa092cac5f927274fd90c307b13c3389070dc50895e520d68263a5e5afd0a2"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "implementation",
+  "stage": "verification",
   "retry": {
-    "count": 1,
+    "count": 2,
     "max": 5,
     "consecutive_same_cause": 1,
     "escalate_at": 3,
@@ -236,7 +236,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(req: NextRequest): Promise<Response>"
+                "signature": "(req: NextRequest)"
               },
               "postcondition_quality": "VERIFIED"
             }
@@ -257,7 +257,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(req: NextRequest): Promise<NextResponse>"
+                "signature": "(req: NextRequest)"
               },
               "postcondition_quality": "VERIFIED"
             }
@@ -278,7 +278,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(req: NextRequest): Promise<NextResponse>"
+                "signature": "(req: NextRequest)"
               },
               "postcondition_quality": "VERIFIED"
             }
@@ -299,7 +299,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(req: NextRequest): Promise<NextResponse>"
+                "signature": "(req: NextRequest)"
               },
               "postcondition_quality": "VERIFIED"
             }
@@ -320,7 +320,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(req: NextRequest): Promise<NextResponse>"
+                "signature": "(req: NextRequest)"
               },
               "postcondition_quality": "VERIFIED"
             }
@@ -341,7 +341,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(req: NextRequest): Promise<NextResponse>"
+                "signature": "(req: NextRequest)"
               },
               "postcondition_quality": "VERIFIED"
             }
@@ -362,7 +362,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(req: NextRequest): Promise<Response>"
+                "signature": "(req: NextRequest)"
               },
               "postcondition_quality": "VERIFIED"
             }
@@ -383,7 +383,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(req: NextRequest): Promise<NextResponse>"
+                "signature": "(req: NextRequest)"
               },
               "postcondition_quality": "VERIFIED"
             }
@@ -404,7 +404,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(request: NextRequest): Promise<NextResponse>"
+                "signature": "(request: NextRequest)"
               },
               "postcondition_quality": "VERIFIED"
             }
@@ -425,7 +425,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(request: NextRequest): Promise<NextResponse>"
+                "signature": "(request: NextRequest)"
               },
               "postcondition_quality": "VERIFIED"
             }
@@ -446,7 +446,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(req: NextRequest): Promise<NextResponse>"
+                "signature": "(req: NextRequest)"
               },
               "postcondition_quality": "VERIFIED"
             }
@@ -467,7 +467,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(req: NextRequest): Promise<NextResponse>"
+                "signature": "(req: NextRequest)"
               },
               "postcondition_quality": "VERIFIED"
             }
@@ -488,7 +488,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(req: NextRequest): Promise<NextResponse>"
+                "signature": "(req: NextRequest)"
               },
               "postcondition_quality": "VERIFIED"
             }
@@ -509,7 +509,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(req: NextRequest): Promise<NextResponse>"
+                "signature": "(req: NextRequest)"
               },
               "postcondition_quality": "VERIFIED"
             }
@@ -530,7 +530,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(req: NextRequest): Promise<NextResponse>"
+                "signature": "(req: NextRequest)"
               },
               "postcondition_quality": "VERIFIED"
             }
@@ -551,7 +551,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(req: NextRequest): Promise<Response>"
+                "signature": "(req: NextRequest)"
               },
               "postcondition_quality": "VERIFIED"
             }
@@ -572,7 +572,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(req: NextRequest): Promise<NextResponse>"
+                "signature": "(req: NextRequest)"
               },
               "postcondition_quality": "VERIFIED"
             }
@@ -593,7 +593,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(req: NextRequest): Promise<NextResponse>"
+                "signature": "(req: NextRequest)"
               },
               "postcondition_quality": "VERIFIED"
             }
@@ -614,7 +614,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(req: NextRequest): Promise<NextResponse>"
+                "signature": "(req: NextRequest)"
               },
               "postcondition_quality": "VERIFIED"
             }
@@ -635,7 +635,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(req: NextRequest): Promise<NextResponse>"
+                "signature": "(req: NextRequest)"
               },
               "postcondition_quality": "VERIFIED"
             }
@@ -656,7 +656,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(request: NextRequest): Promise<NextResponse>"
+                "signature": "(request: NextRequest)"
               },
               "postcondition_quality": "VERIFIED"
             }
@@ -677,7 +677,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(request: NextRequest): Promise<NextResponse>"
+                "signature": "(request: NextRequest)"
               },
               "postcondition_quality": "VERIFIED"
             }
@@ -698,7 +698,7 @@
               "postcondition": {
                 "exists": true,
                 "kind": "function",
-                "signature": "(req: NextRequest): Promise<NextResponse>"
+                "signature": "(req: NextRequest)"
               },
               "postcondition_quality": "VERIFIED"
             }
@@ -2242,7 +2242,304 @@
       "slice": "S5",
       "hash": "ea3749de35074b1c9d16ad07990107fe0057da465d6430275c313a8ea8d4a491",
       "fileHash": "02e7c3a0619689b83aa2aa0432b25797f4e05816029238c30e3e400655904cf6"
+    },
+    {
+      "seq": 99,
+      "id": "4b35de35-0657-4c4a-a3f1-90c2377b09b7",
+      "at": "2026-09-05T07:20:30.496Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "edfeedb7c6150e120dd9c32c1bda3e15b4351004265c45b6aefc4ba63294ee86",
+      "fileHash": "6cab0aabe12b53c62f36020a2e326d97183980b8f3ef127415eae43c3b8882f2"
+    },
+    {
+      "seq": 100,
+      "id": "5d560eed-1a82-4666-a61d-a05dd5c5321d",
+      "at": "2026-09-05T07:25:11.357Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:correction:23 route POST pins re-anchored to live outline truth (no return annotations) per round-1 verification",
+      "slice": null,
+      "hash": "397529020c96be06879667e0fb4061c992b4e6a627943b78da6ab218df486977",
+      "fileHash": "8a61bd094c6afd20159f0afd78be9c5e0469cad2d137e09eb1461038dd7b6652"
+    },
+    {
+      "seq": 101,
+      "id": "64db191b-4e49-4a84-8937-1035388a70e0",
+      "at": "2026-09-05T07:29:12.626Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/chat/route.ts::POST",
+      "slice": "S2",
+      "hash": "e668cd60db10538bd5ab95dc6ee787b817ed16da52a33e7d806fd6e1a1a1db40",
+      "fileHash": "037f8c4f358cbacdb09ecdd961e4cfce824aca7dedf7ef5763523fd381364604"
+    },
+    {
+      "seq": 102,
+      "id": "e2866f23-3bbb-4ef6-be79-07926bad0941",
+      "at": "2026-09-05T07:29:12.670Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/chat/pi/route.ts::POST",
+      "slice": "S2",
+      "hash": "372a30efd768bc345eb0fc5ae342a2ff1e6fdb0036eb77613f9ea95870cc987f",
+      "fileHash": "44af00afdcd124077c02c49e3ab9fe13fb4403ed58bca279a4fc0191523623e1"
+    },
+    {
+      "seq": 103,
+      "id": "876e108f-15cb-4a03-a877-53f748fc9a4d",
+      "at": "2026-09-05T07:29:12.713Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/generate/scene-content/route.ts::POST",
+      "slice": "S2",
+      "hash": "592dac0b1515f3d2134cc6786e093114562bdce49741beae55aec03dca8bc541",
+      "fileHash": "1b5368e726e1cc6921028e3b8196f425974258b21089f3b1d5a459ce6214e995"
+    },
+    {
+      "seq": 104,
+      "id": "4dd2e8be-94c8-4c2b-89df-18b085db2ebc",
+      "at": "2026-09-05T07:29:12.753Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/generate/scene-actions/route.ts::POST",
+      "slice": "S2",
+      "hash": "f26930724fd747ccf99edea8866b4afa6ff781aaf75703f33d960e1941b7f4e5",
+      "fileHash": "1a74556228d9f6e7b522ad63fe9db850f8740a633eef6c89af9d52d371aa77e7"
+    },
+    {
+      "seq": 105,
+      "id": "76063645-fb4b-4f2b-8aac-6d3937dbfb91",
+      "at": "2026-09-05T07:29:12.791Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/generate/scene-outlines-stream/route.ts::POST",
+      "slice": "S2",
+      "hash": "7570c3932c291d525e83717c9c00c6ae572b4985a7b357f4165e2ace76676142",
+      "fileHash": "309ddcf018f56bc515d4c1a8632e61cd1e1bc3cf0ed05cc5bbd39a643daf3a57"
+    },
+    {
+      "seq": 106,
+      "id": "c633625b-1e82-48a3-bc3b-033c0225901a",
+      "at": "2026-09-05T07:29:12.829Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/generate/agent-profiles/route.ts::POST",
+      "slice": "S2",
+      "hash": "26981180704a6ce0bcb6ef7c836ba5f25da7adc8b69702f0e1d683a713570bb6",
+      "fileHash": "bfdcc73d02b42a571396410ce789ca1af77548f8caea229343976f77dc154225"
+    },
+    {
+      "seq": 107,
+      "id": "57b7a4ce-9eb7-439d-83f1-71c727e2e40d",
+      "at": "2026-09-05T07:29:12.867Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/generate-classroom/route.ts::POST",
+      "slice": "S2",
+      "hash": "34b211bfa8620a2278160328b88377b0d2fb8682496465d51b5d0f2b5a17574f",
+      "fileHash": "64fbb476bd25c9d3f754e576b31db56b9745273d0ba62e367e7ab1574a963a28"
+    },
+    {
+      "seq": 108,
+      "id": "b2f93382-abf3-4529-9dc9-8684df1fd2e0",
+      "at": "2026-09-05T07:29:12.905Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/generate/tts/route.ts::POST",
+      "slice": "S2",
+      "hash": "d8f3819ebb2e05ffcbb6286b899e934c93bab0ccae8eae28c87605c935cb1d62",
+      "fileHash": "c7c2cabcdb682ee12393cdfa5dcb17366e86f47927e55876832c12abbff80303"
+    },
+    {
+      "seq": 109,
+      "id": "3015465d-a3d2-42c7-bec5-af1919f93c1d",
+      "at": "2026-09-05T07:29:12.943Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/generate/image/route.ts::POST",
+      "slice": "S2",
+      "hash": "c6006d58c3e92ac5fcd7961f6b9ce5f952d22416a4b2c7dced772c7b45632874",
+      "fileHash": "b96174b7d0d87b369818c202346158a1ec821ad1897d40e7dde49debd8a16786"
+    },
+    {
+      "seq": 110,
+      "id": "3efed381-bcf6-47f5-a8fc-432cd1e2d75c",
+      "at": "2026-09-05T07:29:12.980Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/generate/video/route.ts::POST",
+      "slice": "S2",
+      "hash": "544826dc7a9ebdb507917ebb172d132ae803fbe6255d8158915f08b2a65a90c4",
+      "fileHash": "54dea4915d25989bd4db6eec4f76bd2fe33af20be89534f32503215f8bcb83b8"
+    },
+    {
+      "seq": 111,
+      "id": "58d8c131-81ca-4c13-802a-a3905440b531",
+      "at": "2026-09-05T07:29:13.017Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/generate/voice/route.ts::POST",
+      "slice": "S2",
+      "hash": "0a901b9fa25c9cca37b89424972d38ba01b204b3edca8ffb6916038c85d90407",
+      "fileHash": "ed08c6e87307c72b9e4e9ef89fe14678b4322e424f3015711fe533780caad594"
+    },
+    {
+      "seq": 112,
+      "id": "03c118ae-e6d5-4833-bbcb-c83fda4eb85e",
+      "at": "2026-09-05T07:29:13.054Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/transcription/route.ts::POST",
+      "slice": "S2",
+      "hash": "03781ca372c8afb9e62e4acea81301b91d3c4af700afaeb9c43890c3e13179c4",
+      "fileHash": "424a47ff9ac2340be10afc73e55b4f78c1367582045f9ed3784658b708274c6a"
+    },
+    {
+      "seq": 113,
+      "id": "500f4621-cddc-4bf1-8352-48477a8a1428",
+      "at": "2026-09-05T07:29:13.092Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/web-search/route.ts::POST",
+      "slice": "S2",
+      "hash": "18bc4f41f4795858c3b820f98d2daf8818cb39db24331d83e8bb58bd71757a44",
+      "fileHash": "0d2f06348682d7c8a6bee6681209e1ebd3698f1a14a63c932042bc4aed655682"
+    },
+    {
+      "seq": 114,
+      "id": "b73bd8c7-0fe5-4870-96c4-a6e90a57e8b2",
+      "at": "2026-09-05T07:29:13.129Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/extract-document/route.ts::POST",
+      "slice": "S2",
+      "hash": "d6a0a246341c74d003ad7b3ca1bced85fad9c70346596a1c1295a016b1ef5a33",
+      "fileHash": "24b420251cab58b0731d3a516898c10b83de389f5166c52a79c822a435b4ab29"
+    },
+    {
+      "seq": 115,
+      "id": "8f9fa3b5-dec4-49e8-af6b-de5ae3f090b1",
+      "at": "2026-09-05T07:29:13.168Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/parse-pdf/route.ts::POST",
+      "slice": "S2",
+      "hash": "1bd1272e44748c956a3ac644b599a19399ebbd98bb2739cf1325c28917f092b5",
+      "fileHash": "d8507a5bcca69050b9e6831c4c12b1fd74fdc2cb95e73a455f728c5091547c3d"
+    },
+    {
+      "seq": 116,
+      "id": "344e0671-92d7-4e02-b0e6-ef94355e55d6",
+      "at": "2026-09-05T07:29:13.205Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/pbl/v2/instructor/route.ts::POST",
+      "slice": "S2",
+      "hash": "9e40fec1d0df17d00d8decc6c59d3be10930e1f71cdf155d2b23d964de51804a",
+      "fileHash": "7bd385bca9792f793bcafe0e0e1f16d605f21308c9f455cb85b71ecf100d5c1d"
+    },
+    {
+      "seq": 117,
+      "id": "2a5eedc5-cd68-4a09-8ef3-fcb604f87c08",
+      "at": "2026-09-05T07:29:13.242Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/pbl/v2/open-task/route.ts::POST",
+      "slice": "S2",
+      "hash": "9f3cbd2b07d49cf9ec5639d5f49219a1688a3951f96385d2a8c5459deaa37867",
+      "fileHash": "28f305d751da7217060d817dcea83cd78ba9a0698513b6e090aff1e50d79f6c9"
+    },
+    {
+      "seq": 118,
+      "id": "1ca2a197-fa12-43f3-9df8-d8b1117c2af5",
+      "at": "2026-09-05T07:29:13.280Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/pbl/v2/evaluate/route.ts::POST",
+      "slice": "S2",
+      "hash": "215a5666d5f8265748fa54ace6e748632357c5b1231e720c52b50b7000259f6e",
+      "fileHash": "d37a6117a661f2531d8403f29c6296caf924429f3698687eca4b9491a1c3471d"
+    },
+    {
+      "seq": 119,
+      "id": "011b126b-85b2-41b3-ad9f-54510f4a5ce7",
+      "at": "2026-09-05T07:29:13.318Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/pbl/v2/simulator/route.ts::POST",
+      "slice": "S2",
+      "hash": "9c64e83ec04259a10dbacb0546ac3a241cf21696c56ca39f7383d18c6bb65768",
+      "fileHash": "5261cba6649f931d1f9ad66aea300966e5e68e87b8aa148ae33b9e267e83be69"
+    },
+    {
+      "seq": 120,
+      "id": "33a9126c-6941-4113-b177-49ff6db78803",
+      "at": "2026-09-05T07:29:13.355Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/verify-model/route.ts::POST",
+      "slice": "S2",
+      "hash": "5d8881e663a9cbcde3df951bcb729c28fa86cfb26c8ee2fe750dc98956fd34ad",
+      "fileHash": "45f5e30c9a9387ceacd33858c65bc67d65868019bad59ba30ae109fd511b4c53"
+    },
+    {
+      "seq": 121,
+      "id": "25e5379e-3e0c-4132-9862-5c48810ef811",
+      "at": "2026-09-05T07:29:13.392Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/verify-image-provider/route.ts::POST",
+      "slice": "S2",
+      "hash": "52c1b64193e81b23d64395335b0caf39e3a31c955f7ae3157b5278429e4be929",
+      "fileHash": "529fea89ab002e918b97311913351e275d1418af002670469f6ed004ce380e67"
+    },
+    {
+      "seq": 122,
+      "id": "2f15377f-d15d-4dc9-84d9-b6efee433f90",
+      "at": "2026-09-05T07:29:13.431Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/verify-video-provider/route.ts::POST",
+      "slice": "S2",
+      "hash": "bfcfb13ce0c7afa1546cea9ae7ede2d31f2e542dea6b73af8e85d14cde07fd66",
+      "fileHash": "0f27ff890f78810f5e76551bb5cab3ef90a1d1b5bbed8062737035d6a72a97d8"
+    },
+    {
+      "seq": 123,
+      "id": "dd77636d-85ba-438c-8b33-17fdb0f11e66",
+      "at": "2026-09-05T07:29:13.468Z",
+      "actor": "researcher",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/verify-pdf-provider/route.ts::POST",
+      "slice": "S2",
+      "hash": "55432d06120db64d46ec95eaf1367585aec1959adb7e02cd05bf542348f984cb",
+      "fileHash": "bf41079def9b683655f4235ab0bada46621cd6b0ce2275adc34a2aba0494da31"
+    },
+    {
+      "seq": 124,
+      "id": "13d6aa47-cecc-4b6b-bcde-9b0ea7e04245",
+      "at": "2026-09-05T07:29:29.060Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "0f82e5237930314ee331bcaf84f408c6b3b18f7f98f0e6e42f3f3b71c02c72a7",
+      "fileHash": "0f3bf8a9eb03c3b4a1f1fc9b3c87861d2179a47ad2d3694cfb7bfce2dac13b6b"
+    },
+    {
+      "seq": 125,
+      "id": "1c47d216-5457-4c9d-a84f-4dd1e4aba102",
+      "at": "2026-09-05T07:31:06.626Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "90cf5524bef84ac4aa61fd041063293f6b037f10ec3dde0905485bba6f483d8b",
+      "fileHash": "1c3916865d12b580d6304f7880ea0c3fe4d4d20f2f2f6ab20f7054b22f4d1657"
     }
   ],
-  "fileHash": "6cab0aabe12b53c62f36020a2e326d97183980b8f3ef127415eae43c3b8882f2"
+  "fileHash": "34b85762a9b57f0833c4cc36c5ede35d3955909b6e13378fe0d86cfa3b4acad7"
 }

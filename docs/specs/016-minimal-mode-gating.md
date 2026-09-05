@@ -1,6 +1,6 @@
 # Batch 016 spec: minimal-mode-gating
 
-Spec status: implementation
+Spec status: verification
 
 ## Problem Statement
 
@@ -157,29 +157,29 @@ The adoption rows follow one shape. Each handler becomes:
 
 | file::symbol | kind | after-signature or shape (planned) | behavior |
 | --- | --- | --- | --- |
-| `app/api/chat/route.ts::POST` | function | `(req: NextRequest): Promise<Response>` | modified: adopts the wrapper with `classroom.chat` as the first statement |
-| `app/api/chat/pi/route.ts::POST` | function | `(req: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `classroom.chat` as the first statement |
-| `app/api/generate/scene-content/route.ts::POST` | function | `(req: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `course.create` as the first statement |
-| `app/api/generate/scene-actions/route.ts::POST` | function | `(req: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `course.create` as the first statement |
-| `app/api/generate/scene-outlines-stream/route.ts::POST` | function | `(req: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `course.create` as the first statement |
-| `app/api/generate/agent-profiles/route.ts::POST` | function | `(req: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `course.create` as the first statement |
-| `app/api/generate-classroom/route.ts::POST` | function | `(req: NextRequest): Promise<Response>` | modified: adopts the wrapper with `course.create` as the first statement |
-| `app/api/generate/tts/route.ts::POST` | function | `(req: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `tts.use` as the first statement |
-| `app/api/generate/image/route.ts::POST` | function | `(request: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `course.create` as the first statement |
-| `app/api/generate/video/route.ts::POST` | function | `(request: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `course.create` as the first statement |
-| `app/api/generate/voice/route.ts::POST` | function | `(req: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `tts.use` as the first statement |
-| `app/api/transcription/route.ts::POST` | function | `(req: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `asr.use` as the first statement |
-| `app/api/web-search/route.ts::POST` | function | `(req: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `course.create` as the first statement |
-| `app/api/extract-document/route.ts::POST` | function | `(req: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `course.create` as the first statement |
-| `app/api/parse-pdf/route.ts::POST` | function | `(req: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `course.create` as the first statement |
-| `app/api/pbl/v2/instructor/route.ts::POST` | function | `(req: NextRequest): Promise<Response>` | modified: adopts the wrapper with `classroom.chat` as the first statement |
-| `app/api/pbl/v2/open-task/route.ts::POST` | function | `(req: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `classroom.chat` as the first statement |
-| `app/api/pbl/v2/evaluate/route.ts::POST` | function | `(req: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `classroom.chat` as the first statement |
-| `app/api/pbl/v2/simulator/route.ts::POST` | function | `(req: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `classroom.chat` as the first statement |
-| `app/api/verify-model/route.ts::POST` | function | `(req: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `settings.manage` as the first statement |
-| `app/api/verify-image-provider/route.ts::POST` | function | `(request: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `settings.manage` as the first statement |
-| `app/api/verify-video-provider/route.ts::POST` | function | `(request: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `settings.manage` as the first statement |
-| `app/api/verify-pdf-provider/route.ts::POST` | function | `(req: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `settings.manage` as the first statement |
+| `app/api/chat/route.ts::POST` | function | `(req: NextRequest)` | modified: adopts the wrapper with `classroom.chat` as the first statement |
+| `app/api/chat/pi/route.ts::POST` | function | `(req: NextRequest)` | modified: adopts the wrapper with `classroom.chat` as the first statement |
+| `app/api/generate/scene-content/route.ts::POST` | function | `(req: NextRequest)` | modified: adopts the wrapper with `course.create` as the first statement |
+| `app/api/generate/scene-actions/route.ts::POST` | function | `(req: NextRequest)` | modified: adopts the wrapper with `course.create` as the first statement |
+| `app/api/generate/scene-outlines-stream/route.ts::POST` | function | `(req: NextRequest)` | modified: adopts the wrapper with `course.create` as the first statement |
+| `app/api/generate/agent-profiles/route.ts::POST` | function | `(req: NextRequest)` | modified: adopts the wrapper with `course.create` as the first statement |
+| `app/api/generate-classroom/route.ts::POST` | function | `(req: NextRequest)` | modified: adopts the wrapper with `course.create` as the first statement |
+| `app/api/generate/tts/route.ts::POST` | function | `(req: NextRequest)` | modified: adopts the wrapper with `tts.use` as the first statement |
+| `app/api/generate/image/route.ts::POST` | function | `(request: NextRequest)` | modified: adopts the wrapper with `course.create` as the first statement |
+| `app/api/generate/video/route.ts::POST` | function | `(request: NextRequest)` | modified: adopts the wrapper with `course.create` as the first statement |
+| `app/api/generate/voice/route.ts::POST` | function | `(req: NextRequest)` | modified: adopts the wrapper with `tts.use` as the first statement |
+| `app/api/transcription/route.ts::POST` | function | `(req: NextRequest)` | modified: adopts the wrapper with `asr.use` as the first statement |
+| `app/api/web-search/route.ts::POST` | function | `(req: NextRequest)` | modified: adopts the wrapper with `course.create` as the first statement |
+| `app/api/extract-document/route.ts::POST` | function | `(req: NextRequest)` | modified: adopts the wrapper with `course.create` as the first statement |
+| `app/api/parse-pdf/route.ts::POST` | function | `(req: NextRequest)` | modified: adopts the wrapper with `course.create` as the first statement |
+| `app/api/pbl/v2/instructor/route.ts::POST` | function | `(req: NextRequest)` | modified: adopts the wrapper with `classroom.chat` as the first statement |
+| `app/api/pbl/v2/open-task/route.ts::POST` | function | `(req: NextRequest)` | modified: adopts the wrapper with `classroom.chat` as the first statement |
+| `app/api/pbl/v2/evaluate/route.ts::POST` | function | `(req: NextRequest)` | modified: adopts the wrapper with `classroom.chat` as the first statement |
+| `app/api/pbl/v2/simulator/route.ts::POST` | function | `(req: NextRequest)` | modified: adopts the wrapper with `classroom.chat` as the first statement |
+| `app/api/verify-model/route.ts::POST` | function | `(req: NextRequest)` | modified: adopts the wrapper with `settings.manage` as the first statement |
+| `app/api/verify-image-provider/route.ts::POST` | function | `(request: NextRequest)` | modified: adopts the wrapper with `settings.manage` as the first statement |
+| `app/api/verify-video-provider/route.ts::POST` | function | `(request: NextRequest)` | modified: adopts the wrapper with `settings.manage` as the first statement |
+| `app/api/verify-pdf-provider/route.ts::POST` | function | `(req: NextRequest)` | modified: adopts the wrapper with `settings.manage` as the first statement |
 
 Before-state capture notes: none of the listed handlers imports
 `requirePermission` or the wrapper. `app/api/chat/route.ts:44` starts its
@@ -530,4 +530,4 @@ affordance surface.
 
 ## Amendment log
 
-None yet.
+Round-1 verification re-anchored 23 route POST pins to live outline truth (no return annotations).
