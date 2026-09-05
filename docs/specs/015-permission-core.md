@@ -76,7 +76,21 @@ Ledger bindings:
 | --- | --- | --- | --- |
 | `lib/auth/permissions.ts::PERMISSION_CATALOG` | constant | shape: 11 string literals, listed in Implementation Decisions | the fixed, exhaustive permission vocabulary |
 | `lib/auth/permissions.ts::defaultPermissionsForRank` | function | `(rank: number): Permission[]` | the rank-derived default statement set per the matrix |
-| `lib/auth/permissions.ts::can` | function | `(principal: Principal | null, permission: Permission, overrides?: ReadonlyMap<Permission, boolean>): boolean` | pure: rank defaults plus override booleans, no I/O |
+
+The `can` signature is multi-line in source and stores verbatim, so its
+binding uses the code-block pattern:
+
+- `lib/auth/permissions.ts::can` (kind function, after-signature):
+
+  ```
+  (
+    principal: Principal | null,
+    permission: Permission,
+    overrides?: ReadonlyMap<Permission, boolean>,
+  ): boolean
+  ```
+
+  Behavior: pure: rank defaults plus override booleans, no I/O
 
 Before-state capture notes: `lib/auth/permissions.ts` does not exist. No
 `can` symbol exists anywhere. `ROLE_RANKS` and `SYSTEM_ROLES` live at
@@ -106,7 +120,21 @@ Ledger bindings:
 | file::symbol | kind | after-signature or shape (planned) | behavior |
 | --- | --- | --- | --- |
 | `lib/auth/schema.ts::ensureAuthSchema` | function | `(queryable: Queryable): Promise<void>` | modified: composes `role_permissions` into the ensure chain beside the six tables |
-| `lib/auth/permissions-server.ts::resolvePermissionSet` | function | `(queryable: Queryable, role: Role): Promise<PermissionSet>` | merges rank defaults with `role_permissions` rows. Granted true adds, granted false removes. Caches per request |
+
+The `resolvePermissionSet` signature is multi-line in source and stores
+verbatim, so its binding uses the code-block pattern:
+
+- `lib/auth/permissions-server.ts::resolvePermissionSet` (kind
+  function, after-signature):
+
+  ```
+  (
+    queryable: Queryable,
+    role: Role,
+  ): Promise<PermissionSet>
+  ```
+
+  Behavior: merges rank defaults with `role_permissions` rows. Granted true adds, granted false removes. Caches per request
 
 Before-state capture notes: the ensure chain in `lib/auth/schema.ts` ends at
 line 86 with the `user_roles_role_id_idx` index. No `role_permissions` table
@@ -141,9 +169,34 @@ Ledger bindings:
 
 | file::symbol | kind | after-signature or shape (planned) | behavior |
 | --- | --- | --- | --- |
-| `lib/auth/permissions-server.ts::requirePermission` | function | `(headers: Headers, permission: Permission): Promise<Session>` | returns the session or throws the typed 403 refusal with shape `{ message, code }` |
-| `lib/auth/index.ts::requirePermission` | function | exists | modified: re-exports the guard through the public surface |
 | `app/api/quiz-grade/route.ts::POST` | function | `(req: NextRequest): Promise<Response>` | modified: adopts the guard as the single batch B route, preserving the existing `callLLM` flow |
+
+Both guard rows carry multi-line signatures the outline reports verbatim.
+Their exact parameter text pins them:
+
+- `lib/auth/permissions-server.ts::requirePermission` (kind
+  function, after-signature):
+
+  ```
+  (
+    headers: Headers,
+    permission: Permission,
+  ): Promise<Session>
+  ```
+
+  Behavior: returns the session or throws the typed 403 refusal with shape `{ message, code }`
+
+- `lib/auth/index.ts::requirePermission` (kind
+  function, after-signature):
+
+  ```
+  (
+    headers: Headers,
+    permission: Permission,
+  ): Promise<Session>
+  ```
+
+  Behavior: modified: re-exports the guard through the public surface
 
 Before-state capture notes: `app/api/quiz-grade/route.ts` has no auth gate
 and calls `callLLM` from `@/lib/ai/llm` (import at the route head). The
@@ -319,4 +372,41 @@ for the hook, exactly as the batch G and batch A lessons require.
 
 ## Amendment 2026-09-05 (S4 pin re-anchor)
 
-A pre-verification diff-risk check found three prose pins deviating from outline truth. The rows were re-anchored per the pin-from-outline rule. Gates are untouched.
+A pre-verification diff-risk check found three prose pins deviating from outline truth. The rows were re-anchored per the pin-from-outline rule. Gates are untouched. Round-2 re-verification found prettier line-wrap drift on four pins; re-anchored to verbatim multi-line outline text.## Research update (2026-09-05)
+
+Batch B shipped in `cf1fd4be` and the fix round in `2802459e`. This section records what shipped, what deviated from the plan, and what batch C inherits.
+
+### What shipped
+
+- `lib/auth/permissions.ts`: the 11-key catalog at :43, rank defaults at :67, and pure `can()` at :104.
+- `lib/auth/permissions-server.ts`: `resolvePermissionSet` at :70 merges `role_permissions` rows at :90 over rank defaults. The WeakMap cache at :19 is per request, never global. `requirePermission` at :28 returns the session or throws the typed 403.
+- `lib/auth/index.ts`: `requirePermission` forwards at :96.
+- `app/api/auth/permissions/route.ts`: GET at :14 returns the resolved list and defaults-deny for anonymous.
+- `lib/hooks/use-permissions.ts`: `usePermissions` at :25 fetches the list and stays empty on any error.
+- `components/permission-gate.tsx`: `PermissionGate` at :24 hides children without the permission.
+- `components/account-zone.tsx`: Settings gated by `settings.manage` at :49, Admin by `users.manage` at :60.
+- `app/api/quiz-grade/route.ts`: POST at :29 adopts the guard at :35. It is the single batch B reference. The LLM call at :80 never runs before the guard.
+
+### Deviations and lessons
+
+(a) The headline finding. Round-1 gates all passed while the live seam was broken. `apiCall` built a relative-URL Request and Node's undici threw. `getSession` swallowed the throw to null at `lib/auth/index.ts:43-64`. Every signed-in user then hit the typed 403. The gate suites hid the break because they mock the seam: `tests/permissions/require-permission.test.ts:10-11`, `tests/permissions/permissions-route.test.ts:20-21`, and `tests/permissions/quiz-grade-gate.test.ts:20-22`. Commit `2802459e` fixed it with an absolute-URL `apiCall` in `lib/auth/server.ts` and honest error handling. The fix-round live probe returned guest exactly `[quiz.grade]`, creator 8 keys, and admin 11, matching the rank defaults at `lib/auth/permissions.ts:67-89`. Lesson: a gate suite that mocks the seam under test proves nothing about that seam. Live-wire proof is mandatory for guard and session code.
+
+(b) Spec sentence inversion. The review-C3 fix stated non-holders keep the soon badge. The approved matrix says holders keep it. Ledger seq 76 corrected the sentence and the fix round live-proved it. The badge now sits inside the holder branch at `components/account-zone.tsx:49-59`. Safari proves non-holders see no Settings or Admin entry.
+
+(c) Pin drift twice. First the prose pins for GET NextResponse, the PermissionGate default, and the AccountZone props (ledger seq 65). Then prettier line-wrap drift on four multi-line pins (ledger seq 82). Both fixed with the code-block dedent and byte-verify pattern. The final diff classifies 12 of 12 targets as matches.
+
+(d) better-auth 1.7.2 email verification. It validates an HS256 JWT signed with the effective secret, not verification-table rows. The earlier "missing verification row" scare was a false alarm. The verified-guest recipe is documented at `docs/research/015-verification-report.md:94`.
+
+(e) Retry accounting. The ledger reached 3 of 5 (count 3, max 5). That is one rejection-free stage return for the fix round (seq 75) plus two correction amendments (seq 65, seq 82). Consecutive same-cause is zero. No escalation fired. Forward edges are unaffected.
+
+### Test results
+
+All 13 gates passed green twice fresh: round 1 at ledger seq 71-74, round 2 at seq 78-81. The ledger records 13 gate runs, all exit 0. The pg contract gate provisioned its own scratch database and fails closed without `PG_CONTRACT_URL`. The unit and integration suites total 79 tests across 8 files. Full suite: 7613 passed, 1 failed. The failure is `runner-skills-registration`, the documented pre-existing family (`docs/research/013-implementation-diagnosis.md:22`). `npx tsc --noEmit` and the prettier check are clean. Safari shots: 15 of 16 console-clean, with screenshot 16 capturing the fixed guest state.
+
+### What batch C inherits
+
+- `requirePermission` is THE route guard. Batch C adopts it per route in its gating slices.
+- The permissions route, the hook, and `PermissionGate` hide affordances client-side.
+- The `role_permissions` override table is ready in the ensure chain at `lib/auth/schema.ts:90` for batches E and F.
+- The live-wire-proof rule applies to every batch C gate.
+- The JWT verification recipe at `docs/research/015-verification-report.md:94` feeds the batch C test probes.

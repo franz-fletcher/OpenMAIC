@@ -33,7 +33,7 @@
     {
       "batch": "015-permission-core",
       "ledger": ".rivr/specs/015-permission-core.ledger.json",
-      "stage": "implementation"
+      "stage": "verification"
     }
   ],
   "audit": [
@@ -222,7 +222,29 @@
       "slice": null,
       "hash": "9fbf70ff503505661f3067f7d97c212c8df87869c5af74b34616046ac4548afa",
       "fileHash": "aef13ab9f5b9470b426efc8aff025adc45139e65cc71ff3d22cb3ba9c366843c"
+    },
+    {
+      "seq": 18,
+      "id": "6f38672d-4ac6-4256-a927-6c7ca325b8d6",
+      "at": "2026-09-05T02:23:24.031Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:clarification:child 015 closed and accepted",
+      "slice": null,
+      "hash": "abed436096027dad9db9d0a335f02bacb35d1ea2286ff500b0d109aee07c5a40",
+      "fileHash": "c2b0b52766b7fb29654fe3dda1046cdcd4c40afa6c2dad9fabc59de0f52e73b3"
+    },
+    {
+      "seq": 19,
+      "id": "a46c46fa-aa68-42c3-9b95-d138104c274b",
+      "at": "2026-09-05T02:23:24.031Z",
+      "actor": "orchestrator",
+      "command": "metaspec_child_link",
+      "transition": "child-link:015-permission-core:.rivr/specs/015-permission-core.ledger.json:verification",
+      "slice": null,
+      "hash": "8832218d666e3bf5143c0c43d57d1a1f28964eedb009ddf7db7ffc1a82500ef1",
+      "fileHash": "c2b0b52766b7fb29654fe3dda1046cdcd4c40afa6c2dad9fabc59de0f52e73b3"
     }
   ],
-  "fileHash": "c2b0b52766b7fb29654fe3dda1046cdcd4c40afa6c2dad9fabc59de0f52e73b3"
+  "fileHash": "605ae3cf43058ee825f5e3646b9858b363452ac39200746e60034a9b5ba70b27"
 }
