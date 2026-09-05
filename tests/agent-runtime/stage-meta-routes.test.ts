@@ -89,6 +89,8 @@ describe('GET /api/stage-meta/[stageId]', () => {
     mocks.accessRow = {
       meta_owner_id: null,
       meta_is_public: false,
+      meta_status: 'draft',
+      meta_audience: 3,
       meta_published_at: null,
       meta_generation_complete: false,
       meta_deleted_at: null,
@@ -115,6 +117,8 @@ describe('GET /api/stage-meta/[stageId]', () => {
 describe('GET /api/stages/[id]/status', () => {
   it('returns the public state without auth', async () => {
     mocks.accessRow!.meta_is_public = true;
+    mocks.accessRow!.meta_status = 'published';
+    mocks.accessRow!.meta_audience = 0;
     mocks.accessRow!.meta_published_at = 1_700_000_000_000;
     const response = await getStatus(
       new NextRequest(`http://localhost/api/stages/${STAGE_ID}/status`),
@@ -131,6 +135,8 @@ describe('GET /api/stages/[id]/status', () => {
     mocks.accessRow = {
       meta_owner_id: null,
       meta_is_public: false,
+      meta_status: 'draft',
+      meta_audience: 3,
       meta_published_at: null,
       meta_generation_complete: false,
       meta_deleted_at: null,
@@ -183,6 +189,8 @@ describe('POST /api/stages/[id]/publish and unpublish', () => {
 
   it('unpublishes and clears the timestamp', async () => {
     mocks.accessRow!.meta_is_public = true;
+    mocks.accessRow!.meta_status = 'published';
+    mocks.accessRow!.meta_audience = 0;
     mocks.accessRow!.meta_published_at = 1_700_000_000_000;
     const response = await postUnpublish(
       new NextRequest(`http://localhost/api/stages/${STAGE_ID}/unpublish`, { method: 'POST' }),

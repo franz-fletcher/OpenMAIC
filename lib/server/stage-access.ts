@@ -24,6 +24,10 @@ export interface StageAccess {
   ownerId: string;
   name: string;
   isPublic: boolean;
+  /** 'draft' or 'published'. Derived from the status column. */
+  status: 'draft' | 'published';
+  /** Audience tier: 0 = everyone, 1 = guests, 2 = learners, 3 = creators. */
+  audience: number;
   publishedAt: number | null;
   generationComplete: boolean;
   source: 'document';
@@ -33,6 +37,8 @@ export interface StageAccess {
 interface RawAccessRow extends Record<string, unknown> {
   meta_owner_id: string | null;
   meta_is_public: boolean | null;
+  meta_status: string | null;
+  meta_audience: number | null;
   meta_published_at: string | number | null;
   meta_generation_complete: boolean | null;
   meta_deleted_at: Date | string | null;
@@ -42,6 +48,8 @@ interface RawAccessRow extends Record<string, unknown> {
 const ACCESS_SQL = `
   SELECT m.owner_id            AS meta_owner_id,
          m.is_public           AS meta_is_public,
+         m.status              AS meta_status,
+         m.audience            AS meta_audience,
          m.published_at        AS meta_published_at,
          m.generation_complete AS meta_generation_complete,
          m.deleted_at          AS meta_deleted_at,
@@ -103,11 +111,15 @@ export async function readStageAccessIncludingDeleted(
   const row = result.rows[0];
   if (!row || row.meta_owner_id === null || row.document_name === null) return null;
 
+  const rawStatus = row.meta_status;
+  const isPublic = rawStatus === 'published';
   return {
     stageId,
     ownerId: row.meta_owner_id,
     name: row.document_name,
-    isPublic: row.meta_is_public === true,
+    isPublic,
+    status: (rawStatus === 'published' ? 'published' : 'draft') as 'draft' | 'published',
+    audience: row.meta_audience ?? 3,
     publishedAt: toEpochMillis(row.meta_published_at),
     generationComplete: row.meta_generation_complete === true,
     source: 'document',
