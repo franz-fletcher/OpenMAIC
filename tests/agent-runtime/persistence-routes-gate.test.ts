@@ -48,6 +48,12 @@ const mocks = vi.hoisted(() => ({
 vi.mock('@/lib/server/agent-runtime/owner', () => ({
   resolveRequestOwnerId: mocks.resolveRequestOwnerId,
 }));
+// Mock requirePermission so the success path (flag on, DATABASE_URL present)
+// does not throw 403 for anonymous callers — the spec Testing Decisions
+// states these unit suites mock getSession for their fixtures.
+vi.mock('@/lib/auth', () => ({
+  requirePermission: vi.fn(async () => undefined),
+}));
 vi.mock('@/lib/persistence/server-provider', () => ({
   getServerPersistenceProvider: async () => ({
     documentStore: mocks.fakeStore!.store,
@@ -301,7 +307,11 @@ const ROUTES: RouteCase[] = [
     name: 'POST /api/stages/[id]/publish',
     call: () =>
       postPublish(
-        new NextRequest(`http://localhost/api/stages/${STAGE_ID}/publish`, { method: 'POST' }),
+        new NextRequest(`http://localhost/api/stages/${STAGE_ID}/publish`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({}),
+        }),
         params(STAGE_ID),
       ),
     happyStatus: 200,
@@ -310,7 +320,11 @@ const ROUTES: RouteCase[] = [
     name: 'POST /api/stages/[id]/unpublish',
     call: () =>
       postUnpublish(
-        new NextRequest(`http://localhost/api/stages/${STAGE_ID}/unpublish`, { method: 'POST' }),
+        new NextRequest(`http://localhost/api/stages/${STAGE_ID}/unpublish`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({}),
+        }),
         params(STAGE_ID),
       ),
     happyStatus: 200,
@@ -425,6 +439,8 @@ for (const state of STATES) {
             {
               meta_owner_id: 'owner-1',
               meta_is_public: false,
+              meta_status: 'draft',
+              meta_audience: 3,
               meta_published_at: null,
               meta_generation_complete: false,
               meta_deleted_at: null,

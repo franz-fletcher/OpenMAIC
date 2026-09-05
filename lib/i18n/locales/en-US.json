@@ -2130,5 +2130,20 @@
         "loginResend": "resend from the sign-in page"
       }
     }
+  },
+  "publishing": {
+    "title": "Publish course",
+    "publish": "Publish",
+    "unpublish": "Unpublish",
+    "publishedBadge": "Published",
+    "draftBadge": "Draft",
+    "audience": "Audience",
+    "audienceEveryone": "Everyone",
+    "audienceGuests": "Guests only",
+    "audienceLearners": "Learners only",
+    "audienceHint": "Choose who can view this course",
+    "publishFailed": "Publishing failed. Please try again.",
+    "unpublishFailed": "Unpublishing failed. Please try again.",
+    "unpublishConfirm": "Unpublish this course?"
   }
 }

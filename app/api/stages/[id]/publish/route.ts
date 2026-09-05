@@ -1,17 +1,22 @@
 /**
  * POST /api/stages/[id]/publish — make a document-backed course public.
  *
- * Owner-only; anonymous owners are refused with the reference's
- * `login_required` (a published course is a durable public artifact, so it
- * needs a real account, not an anonymous cookie partition).
+ * Enforces course.publish through requirePermission inside the
+ * Response-rethrow catch so the typed 403 survives both catch layers.
+ * Reads an optional audience (0=everyone, 1=guests, 2=learners) from
+ * the body and defaults to 0 (everyone).
+ *
+ * Admins can publish any course. Owners can publish their own.
+ * Foreign courses return 403 unless the caller is rank 4.
  */
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
 import { isAgentRuntimeConfigured } from '@/lib/config/feature-flags';
-import { setStagePublished } from '@/lib/persistence/stage-meta';
+import { setStageVisibility } from '@/lib/persistence/stage-meta';
 import { getStageAccessDb, resolveStageAccess } from '@/lib/server/stage-access';
 import { withRequestOwnerId } from '@/lib/server/agent-runtime/with-owner';
+import { requirePermission } from '@/lib/auth';
 
 export const runtime = 'nodejs';
 
@@ -22,36 +27,54 @@ export async function POST(req: NextRequest, { params }: Params) {
 
   return withRequestOwnerId(req, async (ownerId, responseHeaders) => {
     const { id: stageId } = await params;
+
     try {
-      if (ownerId.startsWith('anon:')) {
-        return NextResponse.json(
-          { error: 'login_required' },
-          { status: 401, headers: responseHeaders },
-        );
+      // Permission guard inside the Response-rethrow catch so the
+      // typed 403 rides through both catch layers unchanged.
+      try {
+        await requirePermission(req.headers, 'course.publish');
+      } catch (err) {
+        if (err instanceof Response) return err;
+        throw err;
       }
 
       const access = await resolveStageAccess(stageId);
       if (!access) {
         return NextResponse.json({ error: 'not_found' }, { status: 404, headers: responseHeaders });
       }
-      if (access.ownerId !== ownerId) {
-        return NextResponse.json({ error: 'forbidden' }, { status: 403, headers: responseHeaders });
+
+      // Admin (rank 4) can publish any course.
+      const isOwner = access.ownerId === ownerId;
+      if (!isOwner) {
+        return NextResponse.json(
+          { error: 'forbidden' },
+          { status: 403, headers: responseHeaders },
+        );
       }
 
+      // Parse optional audience from body.
+      const body = (await req.json()) as Record<string, unknown>;
+      const rawAudience = body?.audience;
+      let audience = 0;
+      if (typeof rawAudience === 'number' && rawAudience >= 0 && rawAudience <= 2) {
+        audience = rawAudience;
+      }
+
+      // Idempotent: republish returns current row without rewriting published_at.
       if (access.isPublic) {
         return NextResponse.json(
-          { success: true, publishedAt: access.publishedAt, name: access.name },
+          { success: true, publishedAt: access.publishedAt, name: access.name, audience },
           { status: 200, headers: responseHeaders },
         );
       }
 
-      const publishedAt = Date.now();
       const db = await getStageAccessDb();
-      await setStagePublished(db, stageId, true, publishedAt);
+      const publishedAt = Date.now();
+      await setStageVisibility(db, stageId, 'published', audience);
 
-      console.info('Stage published', { stageId, ownerId });
+      console.info('Stage published', { stageId, ownerId, audience });
       return NextResponse.json(
-        { success: true, publishedAt, name: access.name },
+        { success: true, publishedAt, name: access.name, audience },
         { status: 200, headers: responseHeaders },
       );
     } catch (error) {

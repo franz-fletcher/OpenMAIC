@@ -72,6 +72,7 @@ import { FolderCard } from '@/components/discovery/folder-card';
 import { NewFolderDialog } from '@/components/discovery/folder-dialogs';
 import { MoveToFolderMenu } from '@/components/discovery/move-to-folder-menu';
 import { SlideThumbnail } from '@/components/slide-renderer/SlideThumbnail';
+import { PublishDialog } from '@/components/publishing/publish-dialog';
 import type { Slide } from '@openmaic/dsl';
 import { useMediaGenerationStore } from '@/lib/store/media-generation';
 import { toast } from 'sonner';
@@ -243,6 +244,15 @@ function HomePage() {
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Publish dialog state.
+  const [publishOpen, setPublishOpen] = useState(false);
+  const [publishStageId, setPublishStageId] = useState<string | null>(null);
+
+  const openPublishDialog = (stageId: string) => {
+    setPublishStageId(stageId);
+    setPublishOpen(true);
+  };
 
   // Course folders — device-local grouping. `currentFolderId === undefined`
   // is the root view (folders + unfiled courses); a folder id navigates into
@@ -1202,6 +1212,7 @@ function HomePage() {
                               formatDate={formatDate}
                               onDelete={handleDelete}
                               onRename={handleRename}
+                              onPublish={() => openPublishDialog(classroom.id)}
                               confirmingDelete={pendingDeleteId === classroom.id}
                               onConfirmDelete={() => confirmDelete(classroom.id)}
                               onCancelDelete={() => setPendingDeleteId(null)}
@@ -1246,6 +1257,17 @@ function HomePage() {
         }}
         folders={folders}
         onCreate={handleCreateFolder}
+      />
+
+      {/* Publish dialog — mounted at the top level so it is reachable from
+          any course card. */}
+      <PublishDialog
+        open={publishOpen}
+        stageId={publishStageId ?? ''}
+        onOpenChange={(open) => {
+          setPublishOpen(open);
+          if (!open) setPublishStageId(null);
+        }}
       />
 
       {/* Footer — flows with content, at the very end */}
@@ -1549,6 +1571,7 @@ function ClassroomCard({
   overlay,
   onDelete,
   onRename,
+  onPublish,
   confirmingDelete,
   onConfirmDelete,
   onCancelDelete,
@@ -1561,6 +1584,7 @@ function ClassroomCard({
   overlay?: React.ReactNode;
   onDelete: (id: string, e: React.MouseEvent) => void;
   onRename: (id: string, newName: string) => void;
+  onPublish?: () => void;
   confirmingDelete: boolean;
   onConfirmDelete: () => void;
   onCancelDelete: () => void;
@@ -1696,10 +1720,26 @@ function ClassroomCard({
                 size="icon"
                 variant="ghost"
                 className="absolute top-2 right-11 size-7 opacity-0 group-hover:opacity-100 transition-opacity bg-black/30 hover:bg-black/50 text-white hover:text-white backdrop-blur-sm rounded-full"
-                onClick={startRename}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  startRename(e);
+                }}
               >
                 <Pencil className="size-3.5" />
               </Button>
+              {onPublish ? (
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="absolute top-2 right-20 size-7 opacity-0 group-hover:opacity-100 transition-opacity bg-black/30 hover:bg-black/50 text-white hover:text-white backdrop-blur-sm rounded-full"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onPublish();
+                  }}
+                >
+                  <Upload className="size-3.5" />
+                </Button>
+              ) : null}
               {overlay}
             </motion.div>
           )}

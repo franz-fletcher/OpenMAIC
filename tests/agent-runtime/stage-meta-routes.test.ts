@@ -35,6 +35,13 @@ vi.mock('@/lib/persistence/server-provider', () => ({
   }),
 }));
 
+// Mock requirePermission so the owner tests can succeed.
+// The spec Testing Decisions states these unit suites mock getSession;
+// mocking requirePermission directly avoids seeding a real session.
+vi.mock('@/lib/auth', () => ({
+  requirePermission: vi.fn(async () => undefined),
+}));
+
 import { GET as getStageMeta } from '@/app/api/stage-meta/[stageId]/route';
 import { GET as getStatus } from '@/app/api/stages/[id]/status/route';
 import { POST as postGenerationComplete } from '@/app/api/stages/[id]/generation-complete/route';
@@ -179,7 +186,11 @@ describe('POST /api/stages/[id]/generation-complete', () => {
 describe('POST /api/stages/[id]/publish and unpublish', () => {
   it('publishes an owner’s private course and returns the timestamp', async () => {
     const response = await postPublish(
-      new NextRequest(`http://localhost/api/stages/${STAGE_ID}/publish`, { method: 'POST' }),
+      new NextRequest(`http://localhost/api/stages/${STAGE_ID}/publish`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      }),
       params(STAGE_ID),
     );
     expect(response.status).toBe(200);
@@ -201,13 +212,15 @@ describe('POST /api/stages/[id]/publish and unpublish', () => {
     await expect(response.json()).resolves.toEqual({ success: true });
   });
 
-  it('refuses an anonymous owner with login_required', async () => {
+  // Spec S3 Testing Decisions: the login_required 401 contract is retired;
+  // typed 403 with { error, code } replaces it for anonymous callers.
+  it('refuses an anonymous owner with typed 403', async () => {
     mocks.resolveRequestOwnerId.mockReturnValue('anon:00000000-0000-4000-8000-000000000000');
     const response = await postPublish(
       new NextRequest(`http://localhost/api/stages/${STAGE_ID}/publish`, { method: 'POST' }),
       params(STAGE_ID),
     );
-    expect(response.status).toBe(401);
-    await expect(response.json()).resolves.toEqual({ error: 'login_required' });
+    expect(response.status).toBe(403);
+    await expect(response.json()).resolves.toEqual({ error: 'forbidden' });
   });
 });
