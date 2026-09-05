@@ -4,12 +4,12 @@
   "spec": {
     "reference": "docs/specs/015-permission-core.md",
     "title": "Batch 015 spec: permission-core",
-    "hash": "ed84d7cf8e238507f4b08a04970f03402ab250b884471b8aad01f650f20898e8"
+    "hash": "0465c235d5d8820b766c06f023004ab4d31fd54a81976aaaf19c0a02af7cb92d"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "verification",
+  "stage": "closed",
   "retry": {
     "count": 3,
     "max": 5,
@@ -1587,7 +1587,52 @@
       "slice": null,
       "hash": "7295768bff8fa16d0c1cd2710a68a668c66ad90b3e2f1278d8dd51fe3c0696d5",
       "fileHash": "649a041c715db56b7f5982b50d45baa5dfdb96d8e3267f431716518c7dcf30de"
+    },
+    {
+      "seq": 89,
+      "id": "98acc165-b12d-404d-842f-33556c12799b",
+      "at": "2026-09-05T02:26:09.120Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:clarification:Rebind stage-4 research append (ordering correction: advance blocked by drift, respecify needs research_update stage)",
+      "slice": null,
+      "hash": "ef63a01e8cfab9f4dd2519d40ac88174fd62b443810cc259356aaaf06d7f3a64",
+      "fileHash": "bcda59334e70b92859d380c90f0b5ea5c5e61551b733c289151ca7b05a5c8ea7"
+    },
+    {
+      "seq": 90,
+      "id": "1efddcc8-fe8d-464e-a756-34b3deaff96a",
+      "at": "2026-09-05T02:26:09.177Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:verification->research_update",
+      "slice": null,
+      "hash": "6fa075be82f0c6770f8003d0d5e47d08edb7a2581f0706b10948ce56285f5531",
+      "fileHash": "2d83019068c826cf1dbc1dc685b11c88ff410306dd54bfb17e101b48ded8fea4"
+    },
+    {
+      "seq": 91,
+      "id": "aed339cd-5cd2-4a17-a22b-cdd5f927c895",
+      "at": "2026-09-05T02:26:09.229Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research_update->closed",
+      "slice": null,
+      "hash": "811112462f68ce17f7c44ba9873879bf7f142f6adaf61fdeed4adab3a90d1b58",
+      "fileHash": "9d1b15538cdcbd839390d6f413350aaf4bb4ab19ea66eda78450621de7a8aad3"
+    },
+    {
+      "seq": 92,
+      "id": "fbf7c9ce-5d0a-48b2-8724-549221c55c86",
+      "at": "2026-09-05T02:26:09.278Z",
+      "actor": "verifier",
+      "command": "certify",
+      "transition": "certify:66b0a9616ca73c4490aae480e30cf9ccc00db3f44478d50cd458ae40ca7f6532",
+      "slice": null,
+      "hash": "715055f93937e29cd9e3ee86319a9e3f7132b9a36ba09389dc342f4e6c257366",
+      "oracle": "66b0a9616ca73c4490aae480e30cf9ccc00db3f44478d50cd458ae40ca7f6532",
+      "fileHash": "41e15ebdb900242ba9839c8e00edaeccd2b4b89507a09354db3cce8b96a86b2a"
     }
   ],
-  "fileHash": "bcda59334e70b92859d380c90f0b5ea5c5e61551b733c289151ca7b05a5c8ea7"
+  "fileHash": "6e109c84bae14379b8d331dab4cfcbb87f91b3636fa5e00cc8a5c0287778eaa9"
 }

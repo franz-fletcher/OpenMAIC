@@ -33,7 +33,7 @@
     {
       "batch": "015-permission-core",
       "ledger": ".rivr/specs/015-permission-core.ledger.json",
-      "stage": "verification"
+      "stage": "closed"
     }
   ],
   "audit": [
@@ -244,7 +244,29 @@
       "slice": null,
       "hash": "8832218d666e3bf5143c0c43d57d1a1f28964eedb009ddf7db7ffc1a82500ef1",
       "fileHash": "c2b0b52766b7fb29654fe3dda1046cdcd4c40afa6c2dad9fabc59de0f52e73b3"
+    },
+    {
+      "seq": 20,
+      "id": "d60717fe-2cd0-43e0-b4f6-00f8c26ae141",
+      "at": "2026-09-05T02:26:57.900Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:clarification:refresh child stage record to closed after certification",
+      "slice": null,
+      "hash": "c12a8bd2d165490a73f6cd76edd6708521bad2147241c182fc5bfdd72583f0a3",
+      "fileHash": "605ae3cf43058ee825f5e3646b9858b363452ac39200746e60034a9b5ba70b27"
+    },
+    {
+      "seq": 21,
+      "id": "e93df2c6-4752-461a-b454-45bef0fb052f",
+      "at": "2026-09-05T02:26:57.901Z",
+      "actor": "orchestrator",
+      "command": "metaspec_child_link",
+      "transition": "child-link:015-permission-core:.rivr/specs/015-permission-core.ledger.json:closed",
+      "slice": null,
+      "hash": "0b6f5de56bdd08a1ede2f4d5d7c931fb08686f13d662d2b04d28309f1d49b868",
+      "fileHash": "605ae3cf43058ee825f5e3646b9858b363452ac39200746e60034a9b5ba70b27"
     }
   ],
-  "fileHash": "605ae3cf43058ee825f5e3646b9858b363452ac39200746e60034a9b5ba70b27"
+  "fileHash": "0c7e2d20a5b171b4925c7926d0d5c84264d25e3174b3371faf0676de3df2bb24"
 }
