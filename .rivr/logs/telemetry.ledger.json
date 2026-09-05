@@ -11373,6 +11373,148 @@
       "actor": "orchestrator",
       "outcome": "ok",
       "extra": {}
+    },
+    {
+      "ts": "2026-09-05T10:41:57.066Z",
+      "command": "spec.amend",
+      "flags": [
+        "action",
+        "actor"
+      ],
+      "exit": 1,
+      "duration_ms": 2,
+      "stage": "research_update",
+      "actor": "orchestrator",
+      "outcome": "error",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T10:41:57.116Z",
+      "command": "report",
+      "flags": [],
+      "exit": 0,
+      "duration_ms": 2,
+      "stage": "research_update",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T10:43:18.077Z",
+      "command": "spec.amend",
+      "flags": [
+        "action",
+        "actor",
+        "reason"
+      ],
+      "exit": 0,
+      "duration_ms": 4,
+      "stage": "research_update",
+      "actor": "orchestrator",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T10:43:18.120Z",
+      "command": "ledger.accept",
+      "flags": [],
+      "exit": 3,
+      "duration_ms": 1,
+      "stage": "research_update",
+      "outcome": "invariant",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T10:44:04.818Z",
+      "command": "ledger.accept",
+      "flags": [
+        "certifier"
+      ],
+      "exit": 2,
+      "duration_ms": 2,
+      "stage": "research_update",
+      "actor": "human",
+      "outcome": "permission",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T10:44:20.889Z",
+      "command": "ledger.accept",
+      "flags": [
+        "certifier"
+      ],
+      "exit": 0,
+      "duration_ms": 5,
+      "stage": "closed",
+      "actor": "verifier",
+      "outcome": "ok",
+      "extra": {
+        "gatePass": 15,
+        "gateFail": 0
+      }
+    },
+    {
+      "ts": "2026-09-05T10:44:20.929Z",
+      "command": "metaspec",
+      "flags": [
+        "action",
+        "actor",
+        "reason"
+      ],
+      "exit": 1,
+      "duration_ms": 1,
+      "actor": "orchestrator",
+      "outcome": "error",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T10:44:35.633Z",
+      "command": "metaspec",
+      "flags": [
+        "help"
+      ],
+      "exit": 0,
+      "duration_ms": 0,
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T10:45:02.592Z",
+      "command": "metaspec",
+      "flags": [
+        "action",
+        "actor",
+        "reason"
+      ],
+      "exit": 1,
+      "duration_ms": 1,
+      "actor": "orchestrator",
+      "outcome": "error",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T10:45:54.724Z",
+      "command": "metaspec",
+      "flags": [
+        "action",
+        "actor",
+        "reason"
+      ],
+      "exit": 0,
+      "duration_ms": 2,
+      "stage": "research",
+      "actor": "orchestrator",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-05T10:45:54.764Z",
+      "command": "metaspec",
+      "flags": [],
+      "exit": 1,
+      "duration_ms": 1,
+      "stage": "research",
+      "outcome": "error",
+      "extra": {}
     }
   ],
   "audit": [
@@ -19459,7 +19601,128 @@
       "slice": null,
       "hash": "f46ecfa543848bd2a6f2524e8bb9684c004e7987d9af466836daa3c8dc0bfe82",
       "fileHash": "b4c484acc6dec0255df291a13d6baa6564f76038968320203ebaf531a5cf3616"
+    },
+    {
+      "seq": 736,
+      "id": "4396e7ec-e78c-4aca-b1bf-45ed423665d0",
+      "at": "2026-09-05T10:41:57.066Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:spec.amend:exit:1:outcome:error",
+      "slice": null,
+      "hash": "ef4944cb70eb6eca803d1f3579efd34e3ae4f32dcec718ec80ea96b4267bd165",
+      "fileHash": "063744f35d8e3cd994a5f7d3a6df2051ee5b6ece48aec371e3579bb32f08f5d3"
+    },
+    {
+      "seq": 737,
+      "id": "d42fcce7-cb21-46cf-8a00-fa919bbfb6d9",
+      "at": "2026-09-05T10:41:57.116Z",
+      "actor": "anonymous",
+      "command": "telemetry",
+      "transition": "command:report:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "33caba5b03ee183db8cc4f135b50dd92810006800930bdb89a2bfcc546450b78",
+      "fileHash": "0b856f8ed8f9667a31ab2b546992ea3b95152bfbf18823e6e8152fabcee35cec"
+    },
+    {
+      "seq": 738,
+      "id": "501d2211-3905-41fb-bab9-3d615b7dded8",
+      "at": "2026-09-05T10:43:18.077Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:spec.amend:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "09bd0953906ed473b051a1fd919abed83a3ec448a0b2b96b389b3d39a0c8abe6",
+      "fileHash": "45d56834a4a890f386d37fbcfa64d8a8795654b43c486c8e484665399fc41bfb"
+    },
+    {
+      "seq": 739,
+      "id": "5a3f98fc-13b1-4f73-9848-397634966ae9",
+      "at": "2026-09-05T10:43:18.120Z",
+      "actor": "anonymous",
+      "command": "telemetry",
+      "transition": "command:ledger.accept:exit:3:outcome:invariant",
+      "slice": null,
+      "hash": "fdba168a445e7f6aa577eec5d22d143cd4e2695848e6ccbc9a536815ea2fa682",
+      "fileHash": "b4027a4ef21632d578b0456fba608ccfc34effc6ddc39b0fb31cafa88b8905aa"
+    },
+    {
+      "seq": 740,
+      "id": "4335ab42-d73b-46e1-a169-bec43f78ed67",
+      "at": "2026-09-05T10:44:04.818Z",
+      "actor": "human",
+      "command": "telemetry",
+      "transition": "command:ledger.accept:exit:2:outcome:permission",
+      "slice": null,
+      "hash": "fc4ec87927290f89bb3e1309e7846b38e17cac2a17eabb06f43c787630054a19",
+      "fileHash": "4c0811d56aea0af5d2ce6ade8c2eebda69ac10d8909f49386809f5342b32daee"
+    },
+    {
+      "seq": 741,
+      "id": "ff467aae-a1eb-4f74-815c-c866ff432693",
+      "at": "2026-09-05T10:44:20.889Z",
+      "actor": "verifier",
+      "command": "telemetry",
+      "transition": "command:ledger.accept:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "d63dc7d8ae61703b2585d2c572e9aa8f7f9c7a72ee3a53673062ab517ad323b6",
+      "fileHash": "906368732728554553b2398f0c2254f33eb936a09aa3bc2a8e2a8e03e2e6bdbc"
+    },
+    {
+      "seq": 742,
+      "id": "596d2abd-76db-4c73-a13e-a9e0a7592a4d",
+      "at": "2026-09-05T10:44:20.929Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:metaspec:exit:1:outcome:error",
+      "slice": null,
+      "hash": "ede6b1daad138cda2c1884082003c7522739e5692e0b267e041718e79fe1565b",
+      "fileHash": "ac8614d2fefc84849816a2ccb7b77e7203761daca5d6286a9504227e531d1294"
+    },
+    {
+      "seq": 743,
+      "id": "2279be88-737f-4be2-b0ea-20761a174944",
+      "at": "2026-09-05T10:44:35.633Z",
+      "actor": "anonymous",
+      "command": "telemetry",
+      "transition": "command:metaspec:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "824543b718cbec6948932546b8442908f2d372f0ab1bdf28fa9a99dec23d001d",
+      "fileHash": "478ca7e3a4b5011236c2819f18f2cdc94a6074904522ddcbe1fb318cc2a721c2"
+    },
+    {
+      "seq": 744,
+      "id": "969c3993-c752-4aae-a475-e74e5b1c8348",
+      "at": "2026-09-05T10:45:02.592Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:metaspec:exit:1:outcome:error",
+      "slice": null,
+      "hash": "4f212917826835a63d255248066e25d4c791e994555d6629942024ca97b5f755",
+      "fileHash": "af46620573c0d6c77b7822afcb48b58f4318fe5cb23df6d018046e81054e890d"
+    },
+    {
+      "seq": 745,
+      "id": "ec6dead0-4ea0-4086-9b40-1c75044194b3",
+      "at": "2026-09-05T10:45:54.724Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:metaspec:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "8247d8b6fd6f45f1396fe3b36560fee5fe6ea7efc50ed66db45cb0d1abab9052",
+      "fileHash": "d91cbfd7048b03f2e2e15e6902a8a05f3526174d10806b6bfd7a3f7cdba78a2f"
+    },
+    {
+      "seq": 746,
+      "id": "d2f03aac-3def-457b-8f89-09fad329222c",
+      "at": "2026-09-05T10:45:54.764Z",
+      "actor": "anonymous",
+      "command": "telemetry",
+      "transition": "command:metaspec:exit:1:outcome:error",
+      "slice": null,
+      "hash": "8da076e47d7bd134d65104089dae89ee1d89fd54c08aa1d1e8d6732a80094171",
+      "fileHash": "f818dca3cd8002fc55e0badce8ccc4c767e3f3ee7aa71cc5eace01ee41f7ee40"
     }
   ],
-  "fileHash": "063744f35d8e3cd994a5f7d3a6df2051ee5b6ece48aec371e3579bb32f08f5d3"
+  "fileHash": "78f698b4f4814358037ebb104db6bd7e355a345411a5f6ac45d53019676b1631"
 }

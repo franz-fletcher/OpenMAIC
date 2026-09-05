@@ -4,12 +4,12 @@
   "spec": {
     "reference": "docs/specs/016-minimal-mode-gating.md",
     "title": "Batch 016 spec: minimal-mode-gating",
-    "hash": "a9310f762e7c837965b3462b4bd42ec8b2d4b992c1d947483d849df5105d5e8d"
+    "hash": "99fee587053fdabed2d769ee54b5683726d2380338948d807da46e5ec3a7e00d"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "research_update",
+  "stage": "closed",
   "retry": {
     "count": 3,
     "max": 5,
@@ -2750,7 +2750,30 @@
       "slice": null,
       "hash": "3ff67d0d8b5f4b683a577ca24feeef1502eb8782c0f1b656774c9a158e6734b8",
       "fileHash": "ca423441b28fbf44e051afebb2248bb0f2705809404cbb4762b1fa49e4351a9e"
+    },
+    {
+      "seq": 136,
+      "id": "02ae751c-4e1d-4c14-af36-dbdc4f300963",
+      "at": "2026-09-05T10:43:18.076Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:respecify:research update recorded after round-3 verification; client quota scope completed in 989f6f19",
+      "slice": null,
+      "hash": "b58c81c03705112757df2d6504217a1218fa7f9a79f7c82d47388050135b8fb0",
+      "fileHash": "17a906a81d0706d19b603367707388311cda4854cb967f4f70689c7544a9febb"
+    },
+    {
+      "seq": 137,
+      "id": "0c02f59d-4d4e-464d-ba32-999212e38f19",
+      "at": "2026-09-05T10:44:20.887Z",
+      "actor": "verifier",
+      "command": "certify",
+      "transition": "certify:78c83497a2ec22ec8f2245ba50e14166ef2fccbd6e2a83e9a1eea8567398239a",
+      "slice": null,
+      "hash": "566523588d55317d8be10adb7fdd3ec1f3e1a6e432c4902819124a351197db4b",
+      "oracle": "78c83497a2ec22ec8f2245ba50e14166ef2fccbd6e2a83e9a1eea8567398239a",
+      "fileHash": "4b088146daba8578dbd75b774709ef28ebc66fdb1314ab6acdd32690da440e9a"
     }
   ],
-  "fileHash": "17a906a81d0706d19b603367707388311cda4854cb967f4f70689c7544a9febb"
+  "fileHash": "524e037b1771db9ab1d74c928dda7fcfc6b25d48cf86840f246cafbd6fefb462"
 }
