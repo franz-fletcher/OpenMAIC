@@ -187,9 +187,10 @@ hook and no `permission-gate` component exist.
 Postcondition: the more specific route wins over the catch-all. Anonymous
 clients receive an empty permission list. The hook never imports a server
 module. The account zone hides Settings without `settings.manage` and shows
-an Admin entry only with `users.manage`. The `auth.common.soon` badge stays
-for users without `settings.manage`, while holders navigate to the normal
-settings modal with no soon badge until batch E replaces the destination.
+an Admin entry only with `users.manage`. Users without `settings.manage`
+see no Settings entry at all. Holders see the entry with the
+`auth.common.soon` badge, because the destination is a stub until batch E
+replaces it.
 
 Gates:
 

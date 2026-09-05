@@ -110,7 +110,29 @@ export function createAuthServer(options: AuthServerOptions): AuthServer {
   return {
     handler: auth.handler,
     fetch: auth.fetch,
-    apiCall: (path: string, init?: RequestInit) =>
-      auth.handler(new Request(`${basePath}${path}`, init)),
+    apiCall: (path: string, init?: RequestInit) => {
+      // Build an absolute URL. Node's undici Request rejects relative URLs.
+      // Derive the origin from the request Host header, the configured
+      // baseURL, or a localhost fallback for server-to-server calls.
+      const host = extractHost(init?.headers);
+      const origin = options.baseURL ?? (host ? `http://${host}` : 'http://localhost:3000');
+      return auth.handler(new Request(`${origin}${basePath}${path}`, init));
+    },
   };
+}
+
+/**
+ * Extracts the Host header from a Headers object or a plain-object header
+ * map. Returns null when the header is absent or unparseable.
+ */
+function extractHost(headers: RequestInit['headers']): string | null {
+  if (!headers) return null;
+  if (headers instanceof Headers) {
+    return headers.get('host');
+  }
+  if (typeof headers === 'object') {
+    const record = headers as Record<string, string>;
+    return record['host'] ?? record['Host'] ?? null;
+  }
+  return null;
 }

@@ -4,14 +4,14 @@
   "spec": {
     "reference": "docs/specs/015-permission-core.md",
     "title": "Batch 015 spec: permission-core",
-    "hash": "9682833b1040b5a2f3582693963c8a5d1884cf6ea108df09b0489a395f529198"
+    "hash": "7a51a6ea026a60c8bd2d7585426d9ebb88b2162bee7b6f0b694d24de4aaabd95"
   },
   "tracker": {
     "mode": "none"
   },
   "stage": "verification",
   "retry": {
-    "count": 1,
+    "count": 2,
     "max": 5,
     "consecutive_same_cause": 0,
     "escalate_at": 3
@@ -80,8 +80,44 @@
         "at": "2026-09-05T00:21:09.238Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "verified",
+        "hash": "1b25838f7971af6208a99d5690063bfc4285500c0b984e0924b2c9dc0a48c644",
+        "actor": "verifier",
+        "at": "2026-09-05T01:01:22.335Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "g1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/permissions/permissions-core.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/permissions/permissions-core.test.ts \u001b[2m(\u001b[22m\u001b[2m37 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 3\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m37 passed\u001b[39m\u001b[22m\u001b[90m (37)\u001b[39m\n\u001b[2m   Start at \u001b[22m 13:01:16\n\u001b[2m   Duration \u001b[22m 95ms\u001b[2m (transform 20ms, setup 13ms, import 15ms, tests 3ms, environment 0ms)\u001b[22m\n\nPERM_CORE_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/providers/provider-neutrality-guard.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/providers/provider-neutrality-guard.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 33\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m3 passed\u001b[39m\u001b[22m\u001b[90m (3)\u001b[39m\n\u001b[2m   Start at \u001b[22m 13:01:21\n\u001b[2m   Duration \u001b[22m 347ms\u001b[2m (transform 81ms, setup 10ms, import 249ms, tests 33ms, environment 0ms)\u001b[22m\n\nNEUTRAL_OK\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "The catalog is exhaustive and fixed. Rank defaults match the capability matrix. can() returns false for anonymous, true for matrix cells, and honors override booleans without touching the database.",
       "gates": [
@@ -89,7 +125,7 @@
           "id": "g1",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/permissions/permissions-core.test.ts && echo PERM_CORE_OK",
           "expect": "PERM_CORE_OK",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/permissions/permissions-core.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/permissions/permissions-core.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m37 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 3\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m37 passed\\u001b[39m\\u001b[22m\\u001b[90m (37)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 13:01:16\\n\\u001b[2m   Duration \\u001b[22m 95ms\\u001b[2m (transform 20ms, setup 13ms, import 15ms, tests 3ms, environment 0ms)\\u001b[22m\\n\\nPERM_CORE_OK\\n\",\"passed\":true}",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
           "type": "unit"
         },
@@ -97,7 +133,7 @@
           "id": "g2",
           "check": "npx tsc --noEmit && echo TSC_OK",
           "expect": "TSC_OK",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"g2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
           "type": "smoke"
         },
@@ -105,7 +141,7 @@
           "id": "g3",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/providers/provider-neutrality-guard.test.ts && echo NEUTRAL_OK",
           "expect": "NEUTRAL_OK",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"g3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/providers/provider-neutrality-guard.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/providers/provider-neutrality-guard.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m3 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 33\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m3 passed\\u001b[39m\\u001b[22m\\u001b[90m (3)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 13:01:21\\n\\u001b[2m   Duration \\u001b[22m 347ms\\u001b[2m (transform 81ms, setup 10ms, import 249ms, tests 33ms, environment 0ms)\\u001b[22m\\n\\nNEUTRAL_OK\\n\",\"passed\":true}",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
           "type": "smoke"
         }
@@ -168,8 +204,44 @@
         "at": "2026-09-05T00:27:32.651Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "verified",
+        "hash": "f2ba8b7b897454036d2f286a210e449cc27486b50fe1e59be85ef4e2815e2739",
+        "actor": "verifier",
+        "at": "2026-09-05T01:01:35.544Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "g1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/permissions/role-permissions.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/permissions/role-permissions.test.ts \u001b[2m(\u001b[22m\u001b[2m9 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 3\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m9 passed\u001b[39m\u001b[22m\u001b[90m (9)\u001b[39m\n\u001b[2m   Start at \u001b[22m 13:01:30\n\u001b[2m   Duration \u001b[22m 307ms\u001b[2m (transform 37ms, setup 15ms, import 234ms, tests 3ms, environment 0ms)\u001b[22m\n\nROLE_PERM_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/permissions/role-permissions.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/permissions/role-permissions.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m7 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 252\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m7 passed\u001b[39m\u001b[22m\u001b[90m (7)\u001b[39m\n\u001b[2m   Start at \u001b[22m 13:01:31\n\u001b[2m   Duration \u001b[22m 660ms\u001b[2m (transform 179ms, setup 13ms, import 338ms, tests 252ms, environment 0ms)\u001b[22m\n\nROLE_PERM_PG_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "The override table exists app-side. A denied row removes the permission from the default set, and a granted row adds it. The resolver resolves once per request. Custom roles resolve through their rank without new schema.",
       "gates": [
@@ -177,7 +249,7 @@
           "id": "g1",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/permissions/role-permissions.test.ts && echo ROLE_PERM_OK",
           "expect": "ROLE_PERM_OK",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/permissions/role-permissions.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/permissions/role-permissions.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m9 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 3\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m9 passed\\u001b[39m\\u001b[22m\\u001b[90m (9)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 13:01:30\\n\\u001b[2m   Duration \\u001b[22m 307ms\\u001b[2m (transform 37ms, setup 15ms, import 234ms, tests 3ms, environment 0ms)\\u001b[22m\\n\\nROLE_PERM_OK\\n\",\"passed\":true}",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
           "type": "unit"
         },
@@ -185,7 +257,7 @@
           "id": "g2",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/permissions/role-permissions.pg.test.ts && echo ROLE_PERM_PG_OK",
           "expect": "ROLE_PERM_PG_OK",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"g2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/permissions/role-permissions.pg.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/permissions/role-permissions.pg.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m7 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 252\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m7 passed\\u001b[39m\\u001b[22m\\u001b[90m (7)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 13:01:31\\n\\u001b[2m   Duration \\u001b[22m 660ms\\u001b[2m (transform 179ms, setup 13ms, import 338ms, tests 252ms, environment 0ms)\\u001b[22m\\n\\nROLE_PERM_PG_OK\\n\",\"passed\":true}",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
           "type": "integration"
         },
@@ -193,7 +265,7 @@
           "id": "g3",
           "check": "npx tsc --noEmit && echo TSC_OK",
           "expect": "TSC_OK",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"g3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
           "type": "smoke"
         }
@@ -274,8 +346,44 @@
         "at": "2026-09-05T00:37:11.581Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "verified",
+        "hash": "2a2eeb503445ad93f6ebd39a8db7e328c2f07211395d40bc8d4251a131fb75bb",
+        "actor": "verifier",
+        "at": "2026-09-05T01:01:46.045Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "g1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/permissions/require-permission.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/permissions/require-permission.test.ts \u001b[2m(\u001b[22m\u001b[2m7 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 10\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m7 passed\u001b[39m\u001b[22m\u001b[90m (7)\u001b[39m\n\u001b[2m   Start at \u001b[22m 13:01:42\n\u001b[2m   Duration \u001b[22m 95ms\u001b[2m (transform 22ms, setup 12ms, import 19ms, tests 10ms, environment 0ms)\u001b[22m\n\nREQPERM_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/permissions/quiz-grade-gate.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/permissions/quiz-grade-gate.test.ts \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 5\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m6 passed\u001b[39m\u001b[22m\u001b[90m (6)\u001b[39m\n\u001b[2m   Start at \u001b[22m 13:01:42\n\u001b[2m   Duration \u001b[22m 126ms\u001b[2m (transform 28ms, setup 14ms, import 51ms, tests 5ms, environment 0ms)\u001b[22m\n\nQUIZ_GATE_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "An anonymous quiz-grade request returns the typed 403. A guest holds quiz.grade and passes the guard. The LLM call never runs before the guard resolves.",
       "gates": [
@@ -283,7 +391,7 @@
           "id": "g1",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/permissions/require-permission.test.ts && echo REQPERM_OK",
           "expect": "REQPERM_OK",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/permissions/require-permission.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/permissions/require-permission.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m7 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 10\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m7 passed\\u001b[39m\\u001b[22m\\u001b[90m (7)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 13:01:42\\n\\u001b[2m   Duration \\u001b[22m 95ms\\u001b[2m (transform 22ms, setup 12ms, import 19ms, tests 10ms, environment 0ms)\\u001b[22m\\n\\nREQPERM_OK\\n\",\"passed\":true}",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
           "type": "unit"
         },
@@ -291,7 +399,7 @@
           "id": "g2",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/permissions/quiz-grade-gate.test.ts && echo QUIZ_GATE_OK",
           "expect": "QUIZ_GATE_OK",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"g2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/permissions/quiz-grade-gate.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/permissions/quiz-grade-gate.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m6 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 5\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m6 passed\\u001b[39m\\u001b[22m\\u001b[90m (6)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 13:01:42\\n\\u001b[2m   Duration \\u001b[22m 126ms\\u001b[2m (transform 28ms, setup 14ms, import 51ms, tests 5ms, environment 0ms)\\u001b[22m\\n\\nQUIZ_GATE_OK\\n\",\"passed\":true}",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
           "type": "integration"
         },
@@ -299,7 +407,7 @@
           "id": "g3",
           "check": "npx tsc --noEmit && echo TSC_OK",
           "expect": "TSC_OK",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"g3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
           "type": "smoke"
         }
@@ -399,8 +507,54 @@
         "at": "2026-09-05T00:52:45.479Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "verified",
+        "hash": "0f333cb57bb1e9693701c5f8f65491e561728e141645471f6f286a9b6af84208",
+        "actor": "verifier",
+        "at": "2026-09-05T01:01:52.652Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "g1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/permissions/use-permissions.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/permissions/use-permissions.test.ts \u001b[2m(\u001b[22m\u001b[2m7 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 19\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m7 passed\u001b[39m\u001b[22m\u001b[90m (7)\u001b[39m\n\u001b[2m   Start at \u001b[22m 13:01:51\n\u001b[2m   Duration \u001b[22m 100ms\u001b[2m (transform 20ms, setup 11ms, import 13ms, tests 19ms, environment 0ms)\u001b[22m\n\nPERMS_CLI_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/permissions/permissions-route.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/permissions/permissions-route.test.ts \u001b[2m(\u001b[22m\u001b[2m5 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 9\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m5 passed\u001b[39m\u001b[22m\u001b[90m (5)\u001b[39m\n\u001b[2m   Start at \u001b[22m 13:01:51\n\u001b[2m   Duration \u001b[22m 106ms\u001b[2m (transform 22ms, setup 11ms, import 30ms, tests 9ms, environment 0ms)\u001b[22m\n\nPERMS_ROUTE_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/permissions/client-import-graph.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/permissions/client-import-graph.test.ts \u001b[2m(\u001b[22m\u001b[2m1 test\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 2\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m   Start at \u001b[22m 13:01:52\n\u001b[2m   Duration \u001b[22m 75ms\u001b[2m (transform 13ms, setup 12ms, import 6ms, tests 2ms, environment 0ms)\u001b[22m\n\nPERMS_GRAPH_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g4",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> node scripts/check-i18n-keys.mjs\n\ni18n key alignment check passed (12 locale files, source: en-US.json).\nI18N_OK\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "The more specific route wins over the catch-all. Anonymous clients receive an empty permission list. The hook never imports a server module. The account zone hides Settings without settings.manage and shows an Admin entry only with users.manage.",
       "gates": [
@@ -408,7 +562,7 @@
           "id": "g1",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/permissions/use-permissions.test.ts && echo PERMS_CLI_OK",
           "expect": "PERMS_CLI_OK",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/permissions/use-permissions.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/permissions/use-permissions.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m7 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 19\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m7 passed\\u001b[39m\\u001b[22m\\u001b[90m (7)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 13:01:51\\n\\u001b[2m   Duration \\u001b[22m 100ms\\u001b[2m (transform 20ms, setup 11ms, import 13ms, tests 19ms, environment 0ms)\\u001b[22m\\n\\nPERMS_CLI_OK\\n\",\"passed\":true}",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
           "type": "unit"
         },
@@ -416,7 +570,7 @@
           "id": "g2",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/permissions/permissions-route.test.ts && echo PERMS_ROUTE_OK",
           "expect": "PERMS_ROUTE_OK",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"g2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/permissions/permissions-route.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/permissions/permissions-route.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m5 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 9\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m5 passed\\u001b[39m\\u001b[22m\\u001b[90m (5)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 13:01:51\\n\\u001b[2m   Duration \\u001b[22m 106ms\\u001b[2m (transform 22ms, setup 11ms, import 30ms, tests 9ms, environment 0ms)\\u001b[22m\\n\\nPERMS_ROUTE_OK\\n\",\"passed\":true}",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
           "type": "integration"
         },
@@ -424,7 +578,7 @@
           "id": "g3",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED; pnpm test tests/permissions/client-import-graph.test.ts && echo PERMS_GRAPH_OK",
           "expect": "PERMS_GRAPH_OK",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"g3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/permissions/client-import-graph.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/permissions/client-import-graph.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m1 test\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 2\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 13:01:52\\n\\u001b[2m   Duration \\u001b[22m 75ms\\u001b[2m (transform 13ms, setup 12ms, import 6ms, tests 2ms, environment 0ms)\\u001b[22m\\n\\nPERMS_GRAPH_OK\\n\",\"passed\":true}",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
           "type": "unit"
         },
@@ -432,7 +586,7 @@
           "id": "g4",
           "check": "pnpm check:i18n-keys && echo I18N_OK",
           "expect": "I18N_OK",
-          "evidence": "pending",
+          "evidence": "{\"id\":\"g4\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> node scripts/check-i18n-keys.mjs\\n\\ni18n key alignment check passed (12 locale files, source: en-US.json).\\nI18N_OK\\n\",\"passed\":true}",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
           "type": "smoke"
         }
@@ -1219,7 +1373,92 @@
       "slice": null,
       "hash": "5409485b9285e4bb132d1e32cd50b199dca2782daecb54a3363295e8baaee103",
       "fileHash": "461bbfac676e73cd3a8bb6df6dbe04c8ef380c63b7595c06ce186f55666a0d68"
+    },
+    {
+      "seq": 71,
+      "id": "6bd58664-0972-4a16-a0f8-333237502dd6",
+      "at": "2026-09-05T01:01:22.335Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S1:verification:pending->verified",
+      "slice": "S1",
+      "hash": "9c20ff0f2dd33c2004561637361a27706aba476a9203ded8556fd835ecafee02",
+      "oracle": "779371b96928caed8b408e6540000695083e15b130b697e095113a22ef835405",
+      "evidence": "2132b19875dfb875a8c2701d9b53795610cd643e2b51d856bc8025af555c8e32",
+      "fileHash": "0a194a2e93d51063ea002ddea2e32c580c401879a7705277b217cd39b1930b4d"
+    },
+    {
+      "seq": 72,
+      "id": "41f7aee7-ef08-44ae-965a-19adcadea489",
+      "at": "2026-09-05T01:01:35.544Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S2:verification:pending->verified",
+      "slice": "S2",
+      "hash": "570e4ddc35949f0826e5f07096f6a01fe1a787354f1e2d86a33299ceb281243d",
+      "oracle": "13207a8de047cec0c89a6a8ebb90b78d94c2d997e00e6c44666daf449143bc36",
+      "evidence": "a61c5d89cf1e671b99d683538029c7d73f4835634b9ad2169643b2e0569e70aa",
+      "fileHash": "48750e1930c81fe058bcbf5404e2c149fe5ed4a1c7fe4b726ac8e018cc643cf9"
+    },
+    {
+      "seq": 73,
+      "id": "36125521-9a7f-4aae-a315-b341691cc6c0",
+      "at": "2026-09-05T01:01:46.045Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S3:verification:pending->verified",
+      "slice": "S3",
+      "hash": "2954fe5308a32413e952328cc15c1d71810c41431b70ac789d5c472894b3da24",
+      "oracle": "874feea927e0aa57c5145b648c903112b8c98e2f40b5ee36fab268444a2b829a",
+      "evidence": "636c4b080a11653cc8e50760d03c532515ac8b71ccba76efa323729f56af5721",
+      "fileHash": "55e3f5f55f94d4228671acde44838ade35273563197fc24f53b62be0bdfb807d"
+    },
+    {
+      "seq": 74,
+      "id": "bcba9b83-fc1f-4cb8-8feb-f113b292aed0",
+      "at": "2026-09-05T01:01:52.652Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S4:verification:pending->verified",
+      "slice": "S4",
+      "hash": "e506868695e7e73395d28b0a7b1b6c0b54bdf0d6d742c90f09ff008edbd7b94b",
+      "oracle": "0072ed6f437bd698d0ff3f3bfdb5118c298b60e4486518e48b5e4149213c181d",
+      "evidence": "75167df4d5a465a73eff9e2b7518d29d9a5b908cb16747833073162a78e7e1cd",
+      "fileHash": "4efc4daf61f4fb2389e85e2a221a3f13b55972bb12afde94e26a05a5d50caf28"
+    },
+    {
+      "seq": 75,
+      "id": "59ac3046-896f-4606-aa8c-12cc5955ca6e",
+      "at": "2026-09-05T01:35:18.611Z",
+      "actor": "orchestrator",
+      "command": "stage_return",
+      "transition": "stage:verification->implementation",
+      "slice": null,
+      "hash": "f9bdadb2508b44e0e4f80ffde9a7b54481b7434f3f5cab28304ac65350f8e1e1",
+      "fileHash": "1ee758290790391b988aaefe958d7534c78abe41793218a1817f756c687732d6"
+    },
+    {
+      "seq": 76,
+      "id": "9f98d6eb-c34e-45af-910c-78566399325c",
+      "at": "2026-09-05T01:53:24.108Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:clarification:S4 gating sentence corrected to non-holders-see-nothing semantics; fix round live-proven",
+      "slice": null,
+      "hash": "d5ccb90409452e9284a95f01460bcc6d6ed0d396fb475358990dcd3a087d0fc8",
+      "fileHash": "1d8ba2b9d4ec14c234cfb71fc37c2b21ccb9169b41e1f70f7e95913a324f7514"
+    },
+    {
+      "seq": 77,
+      "id": "4afd9e57-8a20-4e00-b348-ae5ebdae5b22",
+      "at": "2026-09-05T01:53:24.162Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "3f69cd8c69c162e50226e9793c28d77ed0641dd91716f830a6bd01eca3ce7f3b",
+      "fileHash": "f997e151aa8e6196e53bdf0d983258cc42a220fdd0ad8131a9452f4e887c98e4"
     }
   ],
-  "fileHash": "0a194a2e93d51063ea002ddea2e32c580c401879a7705277b217cd39b1930b4d"
+  "fileHash": "34087ec37433dba460771d7ee06dce0b7846a994ad9a135640d580eaec7fdcae"
 }

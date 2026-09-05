@@ -49,13 +49,6 @@ function AccountMenuItems({
       {can('settings.manage') ? (
         <button
           onClick={() => setMenuOpen(false)}
-          className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
-        >
-          {t('auth.account.settings')}
-        </button>
-      ) : (
-        <button
-          onClick={() => setMenuOpen(false)}
           className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 flex items-center gap-2"
         >
           {t('auth.account.settings')}
@@ -63,7 +56,7 @@ function AccountMenuItems({
             {t('auth.common.soon')}
           </span>
         </button>
-      )}
+      ) : null}
       {can('users.manage') && (
         <button
           onClick={() => setMenuOpen(false)}

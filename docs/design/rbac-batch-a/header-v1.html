@@ -1,225 +1,651 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Header V1 (home seat) — OpenMAIC Batch A preview</title>
-<link rel="icon" href="assets/logo-horizontal.png">
-<link rel="stylesheet" href="styles.css">
-</head>
-<body>
-<div class="theme-toolbar">
-  <div class="brand">OpenMAIC — Batch A UI preview<small>docs/design/rbac-batch-a · static mockups · no app code</small></div>
-  <div class="controls">
-    <div class="seg" id="themeSeg"><button data-mode="light" class="active">Light</button><button data-mode="dark">Dark</button></div>
-    <a class="btn btn-ghost btn-sm" href="index.html">Index</a>
-  </div>
-</div>
-
-<!-- ═══ H1-01 GUEST (BEFORE) — V1 placement ═══ -->
-<section class="artboard" id="v1-guest">
-  <div class="artboard-cap">
-    <span class="dot"></span><h2>V1 · Home hero — signed out (guest, before)</h2><span class="tag">H1-01</span>
-    <code>auth.nav.signIn · auth.nav.createAccount</code>
-  </div>
-  <div class="artboard-stage">
-    <div class="page">
-      <div class="blob blob-blue"></div><div class="blob blob-purple"></div>
-      <div class="auth-hero" style="max-width:800px;margin-top:6vh">
-        <img class="auth-logo" src="assets/logo-horizontal.png" alt="OpenMAIC">
-        <p class="auth-sub" style="margin-bottom:24px">Design seats the two guest actions in the vacant GreetingBar pill — same footprint, same hover, one pill.</p>
-        <div class="composer">
-          <div class="relative" style="display:flex;align-items:flex-start;justify-content:space-between;padding:14px 0 0;position:relative">
-            <div class="greet-pill" style="margin-left:16px" role="group" aria-label="Account actions">
-              <a class="pill-action pill-action-ghost" href="login.html">Sign in</a>
-              <a class="pill-action pill-action-primary" href="signup.html">Create account</a>
-            </div>
-            <div style="padding-right:12px;padding-top:14px;display:flex;gap:6px;align-items:center">
-              <span class="pill-action pill-action-outline" style="font-size:11px;padding:4px 10px;cursor:default">Teacher</span>
-              <span class="pill-action pill-action-outline" style="font-size:11px;padding:4px 10px;cursor:default">Assist</span>
-              <span class="pill-action pill-action-outline" style="font-size:11px;padding:4px 10px;cursor:default">Student</span>
-            </div>
-          </div>
-          <textarea class="input" rows="2" readonly style="border:0;box-shadow:none;height:auto;resize:none;background:transparent;font-size:13px;padding:8px 16px 0;color:color-mix(in oklch,var(--muted-foreground) 45%, transparent)" placeholder="Upload a PDF or describe the classroom you want to generate…"></textarea>
-          <div style="padding:10px 14px;display:flex;align-items:center;gap:8px">
-            <span class="soon-pill" style="font-size:9px;text-transform:none;letter-spacing:0">Attach</span>
-            <span class="soon-pill" style="font-size:9px;text-transform:none;letter-spacing:0">Web search</span>
-            <span style="margin-left:auto" class="pill-action pill-action-primary" style="font-size:11px">Enter classroom ↵</span>
-          </div>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Header V1 (home seat) — OpenMAIC Batch A preview</title>
+    <link rel="icon" href="assets/logo-horizontal.png" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="theme-toolbar">
+      <div class="brand">
+        OpenMAIC — Batch A UI preview<small
+          >docs/design/rbac-batch-a · static mockups · no app code</small
+        >
+      </div>
+      <div class="controls">
+        <div class="seg" id="themeSeg">
+          <button data-mode="light" class="active">Light</button
+          ><button data-mode="dark">Dark</button>
         </div>
-        <p class="field-hint" style="margin-top:14px;text-align:center;max-width:520px">
-          Guest "before" composite — the seat the local-only profile pill (avatar + nickname) currently occupies on the home hero. Signed out, the seat becomes Sign in / Create account. The guest never sees the local profile editor.
-        </p>
+        <a class="btn btn-ghost btn-sm" href="index.html">Index</a>
       </div>
     </div>
-  </div>
-</section>
 
-<!-- ═══ H1-02 LEARNER SIGNED-IN, DROPDOWN OPEN ═══ -->
-<section class="artboard" id="v1-learner">
-  <div class="artboard-cap">
-    <span class="dot"></span><h2>V1 · Home hero — signed in (learner), dropdown open</h2><span class="tag">H1-02</span>
-    <code>auth.account.* · auth.roles.learner</code>
-  </div>
-  <div class="artboard-stage">
-    <div class="page">
-      <div class="blob blob-blue"></div><div class="blob blob-purple"></div>
-      <div class="auth-hero" style="max-width:800px;margin-top:6vh">
-        <img class="auth-logo" src="assets/logo-horizontal.png" alt="OpenMAIC">
-        <p class="auth-sub" style="margin-bottom:24px">Signed-in pill: initials + display name + role badge. Non-admins see Account, Language, Sign out.</p>
-        <div class="composer">
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;position:relative;padding:10px 0 0">
-            <div style="position:relative;margin-left:16px;z-index:30">
-              <button class="greet-pill" style="cursor:pointer;background:color-mix(in oklch,var(--muted) 60%, transparent);color:var(--foreground);border-color:color-mix(in oklch,var(--primary) 30%, transparent)" aria-haspopup="menu" aria-expanded="true">
-                <span class="avatar">AC</span>
-                <span style="display:flex;flex-direction:column;gap:3px;align-items:flex-start">
-                  <span class="greet-name">Hi, Alex</span>
-                  <span class="role-badge">Learner</span>
-                </span>
-                <svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted-foreground);transform:rotate(180deg)"><path d="m6 9 6 6 6-6"/></svg>
-              </button>
-              <div class="dropdown" role="menu" style="position:absolute;left:0;top:calc(100% + 8px);width:240px;padding:6px;border-radius:10px;background:var(--popover);box-shadow:0 8px 24px rgb(0 0 0 / .12), 0 0 0 1px color-mix(in oklch, var(--foreground) 8%, transparent);backdrop-filter:blur(16px)">
-                <div class="dd-header">
-                  <span class="avatar">AC</span>
-                  <div style="min-width:0">
-                    <p class="dd-name">Alex Chen</p>
-                    <p class="dd-email">alex@example.com</p>
-                  </div>
-                  <span class="role-badge" style="margin-left:auto">Learner</span>
+    <!-- ═══ H1-01 GUEST (BEFORE) — V1 placement ═══ -->
+    <section class="artboard" id="v1-guest">
+      <div class="artboard-cap">
+        <span class="dot"></span>
+        <h2>V1 · Home hero — signed out (guest, before)</h2>
+        <span class="tag">H1-01</span>
+        <code>auth.nav.signIn · auth.nav.createAccount</code>
+      </div>
+      <div class="artboard-stage">
+        <div class="page">
+          <div class="blob blob-blue"></div>
+          <div class="blob blob-purple"></div>
+          <div class="auth-hero" style="max-width: 800px; margin-top: 6vh">
+            <img class="auth-logo" src="assets/logo-horizontal.png" alt="OpenMAIC" />
+            <p class="auth-sub" style="margin-bottom: 24px">
+              Design seats the two guest actions in the vacant GreetingBar pill — same footprint,
+              same hover, one pill.
+            </p>
+            <div class="composer">
+              <div
+                class="relative"
+                style="
+                  display: flex;
+                  align-items: flex-start;
+                  justify-content: space-between;
+                  padding: 14px 0 0;
+                  position: relative;
+                "
+              >
+                <div
+                  class="greet-pill"
+                  style="margin-left: 16px"
+                  role="group"
+                  aria-label="Account actions"
+                >
+                  <a class="pill-action pill-action-ghost" href="login.html">Sign in</a>
+                  <a class="pill-action pill-action-primary" href="signup.html">Create account</a>
                 </div>
-                <button class="dropdown-item" role="menuitem">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                  Account
-                </button>
-                <button class="dropdown-item" role="menuitem">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>
-                  Language
-                  <span class="dropdown-shortcut">EN</span>
-                </button>
-                <div class="dropdown-sep"></div>
-                <button class="dropdown-item" role="menuitem" style="color:var(--destructive)">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                  Sign out
-                </button>
+                <div
+                  style="
+                    padding-right: 12px;
+                    padding-top: 14px;
+                    display: flex;
+                    gap: 6px;
+                    align-items: center;
+                  "
+                >
+                  <span
+                    class="pill-action pill-action-outline"
+                    style="font-size: 11px; padding: 4px 10px; cursor: default"
+                    >Teacher</span
+                  >
+                  <span
+                    class="pill-action pill-action-outline"
+                    style="font-size: 11px; padding: 4px 10px; cursor: default"
+                    >Assist</span
+                  >
+                  <span
+                    class="pill-action pill-action-outline"
+                    style="font-size: 11px; padding: 4px 10px; cursor: default"
+                    >Student</span
+                  >
+                </div>
+              </div>
+              <textarea
+                class="input"
+                rows="2"
+                readonly
+                style="
+                  border: 0;
+                  box-shadow: none;
+                  height: auto;
+                  resize: none;
+                  background: transparent;
+                  font-size: 13px;
+                  padding: 8px 16px 0;
+                  color: color-mix(in oklch, var(--muted-foreground) 45%, transparent);
+                "
+                placeholder="Upload a PDF or describe the classroom you want to generate…"
+              ></textarea>
+              <div style="padding: 10px 14px; display: flex; align-items: center; gap: 8px">
+                <span
+                  class="soon-pill"
+                  style="font-size: 9px; text-transform: none; letter-spacing: 0"
+                  >Attach</span
+                >
+                <span
+                  class="soon-pill"
+                  style="font-size: 9px; text-transform: none; letter-spacing: 0"
+                  >Web search</span
+                >
+                <span
+                  style="margin-left: auto"
+                  class="pill-action pill-action-primary"
+                  style="font-size: 11px"
+                  >Enter classroom ↵</span
+                >
               </div>
             </div>
-            <div style="padding-right:12px;padding-top:14px;display:flex;gap:6px;align-items:center">
-              <span class="pill-action pill-action-outline" style="font-size:11px;padding:4px 10px;cursor:default">Teacher</span>
-              <span class="pill-action pill-action-outline" style="font-size:11px;padding:4px 10px;cursor:default">Assist</span>
-              <span class="pill-action pill-action-outline" style="font-size:11px;padding:4px 10px;cursor:default">Student</span>
-            </div>
-          </div>
-          <textarea class="input" rows="2" readonly style="border:0;box-shadow:none;height:auto;resize:none;background:transparent;font-size:13px;padding:10px 16px 0;color:color-mix(in oklch,var(--muted-foreground) 45%, transparent)" placeholder="Upload a PDF or describe the classroom you want to generate…"></textarea>
-          <div style="padding:10px 14px;display:flex;align-items:center;gap:8px">
-            <span class="soon-pill" style="font-size:9px;text-transform:none;letter-spacing:0">Attach</span>
-            <span class="soon-pill" style="font-size:9px;text-transform:none;letter-spacing:0">Web search</span>
-            <span style="margin-left:auto" class="pill-action pill-action-primary" style="font-size:11px">Enter classroom ↵</span>
+            <p class="field-hint" style="margin-top: 14px; text-align: center; max-width: 520px">
+              Guest "before" composite — the seat the local-only profile pill (avatar + nickname)
+              currently occupies on the home hero. Signed out, the seat becomes Sign in / Create
+              account. The guest never sees the local profile editor.
+            </p>
           </div>
         </div>
-        <p class="field-hint" style="margin-top:14px;text-align:center;max-width:520px">
-          "After" composite (role: learner). Dropdown extends the shadcn menu with a non-interactive identity header; Language appears here because the home hero has no language switcher anywhere else.
-        </p>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<!-- ═══ H1-03 ADMIN SIGNED-IN, DROPDOWN OPEN ═══ -->
-<section class="artboard" id="v1-admin">
-  <div class="artboard-cap">
-    <span class="dot"></span><h2>V1 · Home hero — signed in (admin), dropdown open</h2><span class="tag">H1-03</span>
-    <code>auth.account.settings · auth.account.admin — stubbed for batch E</code>
-  </div>
-  <div class="artboard-stage">
-    <div class="page">
-      <div class="blob blob-blue"></div><div class="blob blob-purple"></div>
-      <div class="auth-hero" style="max-width:800px;margin-top:6vh">
-        <img class="auth-logo" src="assets/logo-horizontal.png" alt="OpenMAIC">
-        <p class="auth-sub" style="margin-bottom:24px">Admins additionally see Settings and Admin. Both destinations are batch E — present but clearly stubbed ("Soon", disabled).</p>
-        <div class="composer">
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;position:relative;padding:10px 0 0">
-            <div style="position:relative;margin-left:16px;z-index:30">
-              <button class="greet-pill" style="cursor:pointer;background:color-mix(in oklch,var(--muted) 60%, transparent);color:var(--foreground);border-color:color-mix(in oklch,var(--destructive) 30%, transparent)" aria-haspopup="menu" aria-expanded="true">
-                <span class="avatar">MT</span>
-                <span style="display:flex;flex-direction:column;gap:3px;align-items:flex-start">
-                  <span class="greet-name">Hi, Maya</span>
-                  <span class="role-badge role-badge-admin">Admin</span>
-                </span>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted-foreground);transform:rotate(180deg)"><path d="m6 9 6 6 6-6"/></svg>
-              </button>
-              <div class="dropdown" role="menu" style="position:absolute;left:0;top:calc(100% + 8px);width:240px;padding:6px;border-radius:10px;background:var(--popover);box-shadow:0 8px 24px rgb(0 0 0 / .12), 0 0 0 1px color-mix(in oklch, var(--foreground) 8%, transparent);backdrop-filter:blur(16px)">
-                <div class="dd-header">
-                  <span class="avatar">MT</span>
-                  <div style="min-width:0">
-                    <p class="dd-name">Maya Torres</p>
-                    <p class="dd-email">maya@openmaic.dev</p>
+    <!-- ═══ H1-02 LEARNER SIGNED-IN, DROPDOWN OPEN ═══ -->
+    <section class="artboard" id="v1-learner">
+      <div class="artboard-cap">
+        <span class="dot"></span>
+        <h2>V1 · Home hero — signed in (learner), dropdown open</h2>
+        <span class="tag">H1-02</span>
+        <code>auth.account.* · auth.roles.learner</code>
+      </div>
+      <div class="artboard-stage">
+        <div class="page">
+          <div class="blob blob-blue"></div>
+          <div class="blob blob-purple"></div>
+          <div class="auth-hero" style="max-width: 800px; margin-top: 6vh">
+            <img class="auth-logo" src="assets/logo-horizontal.png" alt="OpenMAIC" />
+            <p class="auth-sub" style="margin-bottom: 24px">
+              Signed-in pill: initials + display name + role badge. Non-admins see Account,
+              Language, Sign out.
+            </p>
+            <div class="composer">
+              <div
+                style="
+                  display: flex;
+                  align-items: flex-start;
+                  justify-content: space-between;
+                  position: relative;
+                  padding: 10px 0 0;
+                "
+              >
+                <div style="position: relative; margin-left: 16px; z-index: 30">
+                  <button
+                    class="greet-pill"
+                    style="
+                      cursor: pointer;
+                      background: color-mix(in oklch, var(--muted) 60%, transparent);
+                      color: var(--foreground);
+                      border-color: color-mix(in oklch, var(--primary) 30%, transparent);
+                    "
+                    aria-haspopup="menu"
+                    aria-expanded="true"
+                  >
+                    <span class="avatar">AC</span>
+                    <span
+                      style="
+                        display: flex;
+                        flex-direction: column;
+                        gap: 3px;
+                        align-items: flex-start;
+                      "
+                    >
+                      <span class="greet-name">Hi, Alex</span>
+                      <span class="role-badge">Learner</span>
+                    </span>
+                    <svg
+                      class="chev"
+                      width="12"
+                      height="12"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      style="color: var(--muted-foreground); transform: rotate(180deg)"
+                    >
+                      <path d="m6 9 6 6 6-6" />
+                    </svg>
+                  </button>
+                  <div
+                    class="dropdown"
+                    role="menu"
+                    style="
+                      position: absolute;
+                      left: 0;
+                      top: calc(100% + 8px);
+                      width: 240px;
+                      padding: 6px;
+                      border-radius: 10px;
+                      background: var(--popover);
+                      box-shadow:
+                        0 8px 24px rgb(0 0 0 / 0.12),
+                        0 0 0 1px color-mix(in oklch, var(--foreground) 8%, transparent);
+                      backdrop-filter: blur(16px);
+                    "
+                  >
+                    <div class="dd-header">
+                      <span class="avatar">AC</span>
+                      <div style="min-width: 0">
+                        <p class="dd-name">Alex Chen</p>
+                        <p class="dd-email">alex@example.com</p>
+                      </div>
+                      <span class="role-badge" style="margin-left: auto">Learner</span>
+                    </div>
+                    <button class="dropdown-item" role="menuitem">
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                      </svg>
+                      Account
+                    </button>
+                    <button class="dropdown-item" role="menuitem">
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="m5 8 6 6" />
+                        <path d="m4 14 6-6 2-3" />
+                        <path d="M2 5h12" />
+                        <path d="M7 2h1" />
+                        <path d="m22 22-5-10-5 10" />
+                        <path d="M14 18h6" />
+                      </svg>
+                      Language
+                      <span class="dropdown-shortcut">EN</span>
+                    </button>
+                    <div class="dropdown-sep"></div>
+                    <button class="dropdown-item" role="menuitem" style="color: var(--destructive)">
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        <polyline points="16 17 21 12 16 7" />
+                        <line x1="21" y1="12" x2="9" y2="12" />
+                      </svg>
+                      Sign out
+                    </button>
                   </div>
-                  <span class="role-badge role-badge-admin" style="margin-left:auto">Admin</span>
                 </div>
-                <button class="dropdown-item" role="menuitem">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                  Account
-                </button>
-                <button class="dropdown-item" role="menuitem">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>
-                  Language
-                  <span class="dropdown-shortcut">EN</span>
-                </button>
-                <div class="dropdown-sep"></div>
-                <button class="dropdown-item is-disabled" role="menuitem" aria-disabled="true" title="Admin settings arrive in a later release (batch E)">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-                  Settings
-                  <span class="soon-pill">Soon</span>
-                </button>
-                <button class="dropdown-item is-disabled" role="menuitem" aria-disabled="true" title="Admin dashboard arrives in a later release (batch E)">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1 1 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>
-                  Admin
-                  <span class="soon-pill">Soon</span>
-                </button>
-                <button class="dropdown-item is-disabled" role="menuitem" aria-disabled="true" title="Language of this preview is English">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>
-                  Language
-                  <span class="dropdown-shortcut">EN</span>
-                </button>
-                <div class="dropdown-sep"></div>
-                <button class="dropdown-item" role="menuitem" style="color:var(--destructive)">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                  Sign out
-                </button>
+                <div
+                  style="
+                    padding-right: 12px;
+                    padding-top: 14px;
+                    display: flex;
+                    gap: 6px;
+                    align-items: center;
+                  "
+                >
+                  <span
+                    class="pill-action pill-action-outline"
+                    style="font-size: 11px; padding: 4px 10px; cursor: default"
+                    >Teacher</span
+                  >
+                  <span
+                    class="pill-action pill-action-outline"
+                    style="font-size: 11px; padding: 4px 10px; cursor: default"
+                    >Assist</span
+                  >
+                  <span
+                    class="pill-action pill-action-outline"
+                    style="font-size: 11px; padding: 4px 10px; cursor: default"
+                    >Student</span
+                  >
+                </div>
+              </div>
+              <textarea
+                class="input"
+                rows="2"
+                readonly
+                style="
+                  border: 0;
+                  box-shadow: none;
+                  height: auto;
+                  resize: none;
+                  background: transparent;
+                  font-size: 13px;
+                  padding: 10px 16px 0;
+                  color: color-mix(in oklch, var(--muted-foreground) 45%, transparent);
+                "
+                placeholder="Upload a PDF or describe the classroom you want to generate…"
+              ></textarea>
+              <div style="padding: 10px 14px; display: flex; align-items: center; gap: 8px">
+                <span
+                  class="soon-pill"
+                  style="font-size: 9px; text-transform: none; letter-spacing: 0"
+                  >Attach</span
+                >
+                <span
+                  class="soon-pill"
+                  style="font-size: 9px; text-transform: none; letter-spacing: 0"
+                  >Web search</span
+                >
+                <span
+                  style="margin-left: auto"
+                  class="pill-action pill-action-primary"
+                  style="font-size: 11px"
+                  >Enter classroom ↵</span
+                >
               </div>
             </div>
-            <div style="padding-right:12px;padding-top:14px;display:flex;gap:6px;align-items:center">
-              <span class="pill-action pill-action-outline" style="font-size:11px;padding:4px 10px;cursor:default">Teacher</span>
-              <span class="pill-action pill-action-outline" style="font-size:11px;padding:4px 10px;cursor:default">Assist</span>
-              <span class="pill-action pill-action-outline" style="font-size:11px;padding:4px 10px;cursor:default">Student</span>
-            </div>
-          </div>
-          <textarea class="input" rows="2" readonly style="border:0;box-shadow:none;height:auto;resize:none;background:transparent;font-size:13px;padding:10px 16px 0;color:color-mix(in oklch,var(--muted-foreground) 45%, transparent)" placeholder="Upload a PDF or describe the classroom you want to generate…"></textarea>
-          <div style="padding:10px 14px;display:flex;align-items:center;gap:8px">
-            <span class="soon-pill" style="font-size:9px;text-transform:none;letter-spacing:0">Attach</span>
-            <span class="soon-pill" style="font-size:9px;text-transform:none;letter-spacing:0">Web search</span>
-            <span style="margin-left:auto" class="pill-action pill-action-primary" style="font-size:11px">Enter classroom ↵</span>
+            <p class="field-hint" style="margin-top: 14px; text-align: center; max-width: 520px">
+              "After" composite (role: learner). Dropdown extends the shadcn menu with a
+              non-interactive identity header; Language appears here because the home hero has no
+              language switcher anywhere else.
+            </p>
           </div>
         </div>
-        <p class="field-hint" style="margin-top:14px;text-align:center;max-width:520px">
-          Admin variant — Settings and Admin render only for rank 4, disabled with a "Soon" pill (batch E destinations, honest stub per menu spec).
-        </p>
       </div>
+    </section>
+
+    <!-- ═══ H1-03 ADMIN SIGNED-IN, DROPDOWN OPEN ═══ -->
+    <section class="artboard" id="v1-admin">
+      <div class="artboard-cap">
+        <span class="dot"></span>
+        <h2>V1 · Home hero — signed in (admin), dropdown open</h2>
+        <span class="tag">H1-03</span>
+        <code>auth.account.settings · auth.account.admin — stubbed for batch E</code>
+      </div>
+      <div class="artboard-stage">
+        <div class="page">
+          <div class="blob blob-blue"></div>
+          <div class="blob blob-purple"></div>
+          <div class="auth-hero" style="max-width: 800px; margin-top: 6vh">
+            <img class="auth-logo" src="assets/logo-horizontal.png" alt="OpenMAIC" />
+            <p class="auth-sub" style="margin-bottom: 24px">
+              Admins additionally see Settings and Admin. Both destinations are batch E — present
+              but clearly stubbed ("Soon", disabled).
+            </p>
+            <div class="composer">
+              <div
+                style="
+                  display: flex;
+                  align-items: flex-start;
+                  justify-content: space-between;
+                  position: relative;
+                  padding: 10px 0 0;
+                "
+              >
+                <div style="position: relative; margin-left: 16px; z-index: 30">
+                  <button
+                    class="greet-pill"
+                    style="
+                      cursor: pointer;
+                      background: color-mix(in oklch, var(--muted) 60%, transparent);
+                      color: var(--foreground);
+                      border-color: color-mix(in oklch, var(--destructive) 30%, transparent);
+                    "
+                    aria-haspopup="menu"
+                    aria-expanded="true"
+                  >
+                    <span class="avatar">MT</span>
+                    <span
+                      style="
+                        display: flex;
+                        flex-direction: column;
+                        gap: 3px;
+                        align-items: flex-start;
+                      "
+                    >
+                      <span class="greet-name">Hi, Maya</span>
+                      <span class="role-badge role-badge-admin">Admin</span>
+                    </span>
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      style="color: var(--muted-foreground); transform: rotate(180deg)"
+                    >
+                      <path d="m6 9 6 6 6-6" />
+                    </svg>
+                  </button>
+                  <div
+                    class="dropdown"
+                    role="menu"
+                    style="
+                      position: absolute;
+                      left: 0;
+                      top: calc(100% + 8px);
+                      width: 240px;
+                      padding: 6px;
+                      border-radius: 10px;
+                      background: var(--popover);
+                      box-shadow:
+                        0 8px 24px rgb(0 0 0 / 0.12),
+                        0 0 0 1px color-mix(in oklch, var(--foreground) 8%, transparent);
+                      backdrop-filter: blur(16px);
+                    "
+                  >
+                    <div class="dd-header">
+                      <span class="avatar">MT</span>
+                      <div style="min-width: 0">
+                        <p class="dd-name">Maya Torres</p>
+                        <p class="dd-email">maya@openmaic.dev</p>
+                      </div>
+                      <span class="role-badge role-badge-admin" style="margin-left: auto"
+                        >Admin</span
+                      >
+                    </div>
+                    <button class="dropdown-item" role="menuitem">
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                      </svg>
+                      Account
+                    </button>
+                    <button class="dropdown-item" role="menuitem">
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="m5 8 6 6" />
+                        <path d="m4 14 6-6 2-3" />
+                        <path d="M2 5h12" />
+                        <path d="M7 2h1" />
+                        <path d="m22 22-5-10-5 10" />
+                        <path d="M14 18h6" />
+                      </svg>
+                      Language
+                      <span class="dropdown-shortcut">EN</span>
+                    </button>
+                    <div class="dropdown-sep"></div>
+                    <button
+                      class="dropdown-item is-disabled"
+                      role="menuitem"
+                      aria-disabled="true"
+                      title="Admin settings arrive in a later release (batch E)"
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path
+                          d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
+                        />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                      Settings
+                      <span class="soon-pill">Soon</span>
+                    </button>
+                    <button
+                      class="dropdown-item is-disabled"
+                      role="menuitem"
+                      aria-disabled="true"
+                      title="Admin dashboard arrives in a later release (batch E)"
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path
+                          d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1 1 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"
+                        />
+                      </svg>
+                      Admin
+                      <span class="soon-pill">Soon</span>
+                    </button>
+                    <button
+                      class="dropdown-item is-disabled"
+                      role="menuitem"
+                      aria-disabled="true"
+                      title="Language of this preview is English"
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="m5 8 6 6" />
+                        <path d="m4 14 6-6 2-3" />
+                        <path d="M2 5h12" />
+                        <path d="M7 2h1" />
+                        <path d="m22 22-5-10-5 10" />
+                        <path d="M14 18h6" />
+                      </svg>
+                      Language
+                      <span class="dropdown-shortcut">EN</span>
+                    </button>
+                    <div class="dropdown-sep"></div>
+                    <button class="dropdown-item" role="menuitem" style="color: var(--destructive)">
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        <polyline points="16 17 21 12 16 7" />
+                        <line x1="21" y1="12" x2="9" y2="12" />
+                      </svg>
+                      Sign out
+                    </button>
+                  </div>
+                </div>
+                <div
+                  style="
+                    padding-right: 12px;
+                    padding-top: 14px;
+                    display: flex;
+                    gap: 6px;
+                    align-items: center;
+                  "
+                >
+                  <span
+                    class="pill-action pill-action-outline"
+                    style="font-size: 11px; padding: 4px 10px; cursor: default"
+                    >Teacher</span
+                  >
+                  <span
+                    class="pill-action pill-action-outline"
+                    style="font-size: 11px; padding: 4px 10px; cursor: default"
+                    >Assist</span
+                  >
+                  <span
+                    class="pill-action pill-action-outline"
+                    style="font-size: 11px; padding: 4px 10px; cursor: default"
+                    >Student</span
+                  >
+                </div>
+              </div>
+              <textarea
+                class="input"
+                rows="2"
+                readonly
+                style="
+                  border: 0;
+                  box-shadow: none;
+                  height: auto;
+                  resize: none;
+                  background: transparent;
+                  font-size: 13px;
+                  padding: 10px 16px 0;
+                  color: color-mix(in oklch, var(--muted-foreground) 45%, transparent);
+                "
+                placeholder="Upload a PDF or describe the classroom you want to generate…"
+              ></textarea>
+              <div style="padding: 10px 14px; display: flex; align-items: center; gap: 8px">
+                <span
+                  class="soon-pill"
+                  style="font-size: 9px; text-transform: none; letter-spacing: 0"
+                  >Attach</span
+                >
+                <span
+                  class="soon-pill"
+                  style="font-size: 9px; text-transform: none; letter-spacing: 0"
+                  >Web search</span
+                >
+                <span
+                  style="margin-left: auto"
+                  class="pill-action pill-action-primary"
+                  style="font-size: 11px"
+                  >Enter classroom ↵</span
+                >
+              </div>
+            </div>
+            <p class="field-hint" style="margin-top: 14px; text-align: center; max-width: 520px">
+              Admin variant — Settings and Admin render only for rank 4, disabled with a "Soon" pill
+              (batch E destinations, honest stub per menu spec).
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="page-footer">
+      V1 = account zone in the home GreetingBar seat · compare with
+      <a href="header-v2.html">V2 (stage capsule)</a> · proposed keys under <code>auth.*</code> —
+      see <a href="README.md">README.md</a>.
     </div>
-  </div>
-</section>
 
-<div class="page-footer">
-  V1 = account zone in the home GreetingBar seat · compare with <a href="header-v2.html">V2 (stage capsule)</a> · proposed keys under <code>auth.*</code> — see <a href="README.md">README.md</a>.
-</div>
-
-<script>
-  const seg = document.getElementById('themeSeg');
-  const setMode = (m) => {
-    document.documentElement.classList.toggle('dark', m === 'dark');
-    seg.querySelectorAll('button').forEach((b) => b.classList.toggle('active', b.dataset.mode === m));
-  };
-  seg.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) setMode(b.dataset.mode); });
-</script>
-</body>
+    <script>
+      const seg = document.getElementById('themeSeg');
+      const setMode = (m) => {
+        document.documentElement.classList.toggle('dark', m === 'dark');
+        seg
+          .querySelectorAll('button')
+          .forEach((b) => b.classList.toggle('active', b.dataset.mode === m));
+      };
+      seg.addEventListener('click', (e) => {
+        const b = e.target.closest('button');
+        if (b) setMode(b.dataset.mode);
+      });
+    </script>
+  </body>
 </html>
