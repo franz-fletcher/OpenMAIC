@@ -707,6 +707,7 @@
     "aiGrading": "AI 正在批改中...",
     "aiGradingWait": "请稍候，正在分析你的答案",
     "quizReport": "答题报告",
+    "quotaExhausted": "你已达到今日 AI 评分上限。请明天再试，或使用会员账号登录。",
     "retry": "重新答题"
   },
   "roundtable": {

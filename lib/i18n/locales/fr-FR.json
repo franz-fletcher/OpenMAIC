@@ -707,6 +707,7 @@
     "aiGrading": "Correction par l’IA…",
     "aiGradingWait": "Veuillez patienter, analyse de vos réponses en cours",
     "quizReport": "Bilan du quiz",
+    "quotaExhausted": "Vous avez atteint la limite quotidienne de correction par IA. Essayez demain ou connectez-vous avec un compte membre.",
     "retry": "Recommencer"
   },
   "roundtable": {

@@ -707,6 +707,7 @@
     "aiGrading": "AI đang chấm…",
     "aiGradingWait": "Vui lòng đợi, đang phân tích câu trả lời của bạn",
     "quizReport": "Báo cáo kết quả",
+    "quotaExhausted": "Bạn đã đạt giới hạn chấm điểm AI hàng ngày. Hãy thử lại vào ngày mai hoặc đăng nhập bằng tài khoản thành viên.",
     "retry": "Làm lại"
   },
   "roundtable": {

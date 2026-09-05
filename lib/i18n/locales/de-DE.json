@@ -707,6 +707,7 @@
     "aiGrading": "Die KI wertet aus...",
     "aiGradingWait": "Bitte warten, deine Antworten werden ausgewertet",
     "quizReport": "Quizbericht",
+    "quotaExhausted": "Du hast das tägliche KI-Bewertungslimit erreicht. Versuch es morgen erneut oder melde dich mit einem Mitgliederkonto an.",
     "retry": "Erneut versuchen"
   },
   "roundtable": {

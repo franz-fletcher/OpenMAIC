@@ -90,7 +90,7 @@ const QuizMathText = memo(function QuizMathText({
 });
 
 /** Call /api/quiz-grade for a single short-answer question. */
-async function gradeShortAnswerQuestion(
+export async function gradeShortAnswerQuestion(
   q: QuizQuestion,
   userAnswer: string,
   language: string,
@@ -118,7 +118,27 @@ async function gradeShortAnswerQuestion(
       }),
     });
 
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (!res.ok) {
+      // 429 with quota_exhausted: show quota message, no half credit.
+      if (res.status === 429) {
+        try {
+          const body = (await res.json()) as { code?: string };
+          if (body.code === 'quota_exhausted') {
+            return {
+              questionId: q.id,
+              correct: null,
+              status: 'incorrect',
+              earned: 0,
+              quotaExhausted: true,
+            };
+          }
+        } catch {
+          // JSON parse failed; fall through to generic error.
+        }
+      }
+      throw new Error(`HTTP ${res.status}`);
+    }
+
     const data = (await res.json()) as { score: number; comment: string };
     const earned = Math.max(0, Math.min(pts, data.score));
     return {
@@ -705,6 +725,7 @@ export function QuizView({ questions, sceneId, stageId }: QuizViewProps) {
   const [runtimeGate, setRuntimeGate] = useState<QuizRuntimeGate>({ status: 'loading' });
   const [hydrationVersion, setHydrationVersion] = useState(0);
   const [retrying, setRetrying] = useState(false);
+  const [showQuotaMessage, setShowQuotaMessage] = useState(false);
   const viewLifetimeRef = useRef<QuizViewLifetime | null>(null);
   viewLifetimeRef.current ??= createQuizViewLifetime();
   const viewLifetime = viewLifetimeRef.current;
@@ -819,6 +840,9 @@ export function QuizView({ questions, sceneId, stageId }: QuizViewProps) {
       }
       const ordered = questions.map((q) => allResultsMap.get(q.id)!).filter(Boolean);
 
+      // Check for quota exhaustion across all results.
+      const quotaExhausted = ordered.some((r) => r.quotaExhausted);
+
       if (!attemptId) {
         setRuntimeGate({ status: 'error' });
         return;
@@ -834,6 +858,7 @@ export function QuizView({ questions, sceneId, stageId }: QuizViewProps) {
         return;
       }
       if (cancelled) return;
+      setShowQuotaMessage(quotaExhausted);
       setResults(ordered);
       setPhase('reviewing');
     })();
@@ -855,6 +880,7 @@ export function QuizView({ questions, sceneId, stageId }: QuizViewProps) {
         setAnswers({});
         setResults([]);
         setRetrying(false);
+        setShowQuotaMessage(false);
       },
       (error) => {
         log.warn('Failed to persist quiz retry:', error);
@@ -1066,6 +1092,14 @@ export function QuizView({ questions, sceneId, stageId }: QuizViewProps) {
             {/* Results */}
             <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
               <ScoreBanner score={earnedScore} total={totalPoints} results={results} />
+
+              {showQuotaMessage && (
+                <div className="rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/30 px-4 py-3">
+                  <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                    {t('quiz.quotaExhausted')}
+                  </p>
+                </div>
+              )}
 
               {questions.map((q, i) => {
                 const r = resultMap[q.id];

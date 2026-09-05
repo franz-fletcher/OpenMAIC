@@ -707,6 +707,7 @@
     "aiGrading": "AI is grading...",
     "aiGradingWait": "Please wait, analyzing your answers",
     "quizReport": "Quiz Report",
+    "quotaExhausted": "You reached the daily limit for AI grading. Try again tomorrow or sign in with a member account.",
     "retry": "Retry"
   },
   "roundtable": {

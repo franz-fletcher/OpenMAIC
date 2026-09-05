@@ -707,6 +707,7 @@
     "aiGrading": "AIが採点中...",
     "aiGradingWait": "回答を分析しています。お待ちください",
     "quizReport": "クイズレポート",
+    "quotaExhausted": "AI採点の1日上限に達しました。明日改めてお試しください、またはメンバーアカウントにサインインしてください。",
     "retry": "やり直す"
   },
   "roundtable": {

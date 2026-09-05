@@ -1,6 +1,6 @@
 # Batch 016 spec: minimal-mode-gating
 
-Spec status: verification
+Spec status: research_update
 
 ## Problem Statement
 
@@ -530,4 +530,107 @@ affordance surface.
 
 ## Amendment log
 
-Round-1 verification re-anchored 23 route POST pins to live outline truth (no return annotations).
+Round-1 verification re-anchored 23 route POST pins to live outline truth (no return annotations).## Research Update (2026-09-05)
+
+Batch C shipped in `c9177339`. The fix rounds landed in `33fc7232`, `aee0e4ff`,
+and `83fdb999`. Round 3 verified all five slices at `d716e153`. This section
+records what shipped, what deviated from the plan, and what the next batches
+inherit.
+
+### What shipped
+
+- The flag pair lives in `lib/config/feature-flags.ts`. `isMinimalModeEnabled`
+  at :147 reads `MINIMAL_MODE` through `globalThis.process`, so Turbopack
+  cannot bake the read to a constant. `isMinimalModeClientEnabled` at :134
+  reads the build-inlined `NEXT_PUBLIC_MINIMAL_MODE` mirror.
+- The wrapper `requirePermissionIfMinimalMode` sits at
+  `lib/auth/permissions-server.ts:65`. It returns when the flag is off and
+  delegates to `requirePermission` when it is on. `lib/auth/index.ts:111`
+  re-exports it.
+- 24 model-spending routes are gated. 23 handlers adopt the wrapper as the
+  first awaited call. `app/api/quiz-grade/route.ts:40` keeps the batch B guard
+  and stacks the quota consumer at :42 inside the same nested
+  Response-rethrow catch, so the 429 rides the passthrough at :44.
+- `tests/minimal-mode/route-guard-matrix.test.ts` enumerates the 23 wrapper
+  routes to permission keys and asserts each guard runs first.
+  `tests/minimal-mode/flag-off-parity.test.ts` proves the wrapper returns
+  without session or database access when the flag is unset.
+- The guest quota caps rank 1 at 5 grades per UTC day.
+  `lib/auth/quiz-quota.ts:29` resolves the rank and runs one atomic
+  check-and-increment. The single-statement upsert at :105 and the
+  `SELECT FOR UPDATE` transaction at :53 serialize concurrent grants.
+  `lib/auth/schema.ts:99` owns the `quiz_grade_quota` table.
+- The minimal layout hides the hero without `course.create` at
+  `app/page.tsx:136-138` and forces the library expanded at :189. The grid
+  recipe at :1167 is unchanged. `components/account-zone.tsx:108-138` shows
+  Sign in and Create account under the mirror. `components/header-capsule.tsx:40`
+  gates the Pro toggle.
+- `app/verify/page.tsx:154` wraps the verify page in Suspense.
+  `lib/persistence/server-provider.ts:100` adds `resetServerPersistenceProvider`,
+  which live-wire teardown calls at `tests/minimal-mode/live-wire.pg.test.ts:115-116`
+  before dropping the scratch database.
+
+### Deviations and surprises
+
+(a) Turbopack bakes server-only env reads. Two gate-green rounds passed while
+the compiled wire would hold a baked constant, because vitest reads
+`process.env` live and the bundle does not. A compiled-artifact grep found it.
+The fix is the `globalThis.process` read at `lib/config/feature-flags.ts:147-151`
+and `lib/auth/permissions-server.ts:69-73`. Three sites migrated: the flag,
+the wrapper, and `lib/auth/quiz-quota.ts:34`.
+
+(b) The LIVE_OK teardown needed a pool-reset seam. Terminated
+scratch-database sockets crashed the gate until the app-side pool closed
+first. The seam is `lib/persistence/server-provider.ts:100`.
+
+(c) 23 route pins carried return annotations the code never had. The planned
+pins added `Promise<Response>` where the handlers declare none. Round 1
+flagged the drift and `aee0e4ff` re-anchored every pin from outline truth.
+
+(d) LAYOUT_OK initially re-implemented the gating arithmetic instead of
+rendering the capsule. The fix round added real component coverage.
+`tests/minimal-mode/minimal-layout.test.ts:135` renders AccountZone and :207
+renders HeaderCapsule through the flag and permission stack.
+
+(e) The adversarial gate caught a real lost update. The first quota design
+granted only 4 of 5 concurrent slots. The shipped consumer increments
+atomically, once per grant. `tests/minimal-mode/quiz-quota-concurrency.pg.test.ts:97-118`
+fires 12 concurrent calls and asserts exactly 5 succeed with a final count of
+5.
+
+(f) Verifier round 2 caught the quiz-quota bake that two implementer rounds
+missed. `lib/auth/quiz-quota.ts:34` still read `process.env.MINIMAL_MODE`
+directly. `83fdb999` routed it through `isMinimalModeEnabled` and the live
+wire proved the 429. The ledger retry records `last_cause: live-wire-gate-fail`.
+
+(g) The client quota message did not ship. The spec planned the key
+`quiz.quotaExhausted` and a no-half-credit fallback in
+`components/scene-renderers/quiz-view.tsx`. The server 429 ships with
+`code: 'quota_exhausted'`. The client still throws on any non-OK status at
+`components/scene-renderers/quiz-view.tsx:121` and the catch at :132 still
+grants half credit. `quiz.quotaExhausted`, `classroom.emptyTitle`, and
+`classroom.emptyGuestBody` are absent from `lib/i18n/locales/en-US.json`. The
+parity gate passes because no new keys landed.
+
+### Test results
+
+All 15 gates passed green at round 3. The final table is 15 of 15: S1 2, S2
+3, S3 3, S4 4, S5 3. The telemetry records S4 verified twice at pass 4 of 4.
+Full suite: 7727 passed, 1 failed. The failure is
+`tests/agent-runtime/runner-skills-registration.test.ts:255`, the documented
+pre-existing family at `docs/research/013-implementation-diagnosis.md:22`.
+The production build exits 0. Safari shots 17-20 are console-clean. The live
+wire proof drives 5 grades to 200 and the sixth to 429 with
+`code: 'quota_exhausted'` at `tests/minimal-mode/live-wire.pg.test.ts:178-188`,
+and the anonymous chat 403 at :134-152.
+
+### Follow-on notes
+
+- The ACCESS_CODE plus MINIMAL_MODE boot warning shipped. `validateMinimalMode`
+  at `lib/server/config-validation.ts:178` logs the coexistence note, and
+  `validateServerConfig` calls it at :197. `.env.example` documents both
+  variables at :352 and :357.
+- The quota counts quiz-grade only. No other role or route carries a quota,
+  per the spec.
+- The `/verify` Suspense fix at `app/verify/page.tsx:154` also unblocks future
+  `pnpm build` gates. The static-rendering error is gone.

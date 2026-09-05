@@ -6,6 +6,7 @@ export interface QuestionResult {
   status: 'correct' | 'incorrect';
   earned: number;
   aiComment?: string;
+  quotaExhausted?: boolean;
 }
 
 export function arraysEqual(a: string[], b: string[]): boolean {
