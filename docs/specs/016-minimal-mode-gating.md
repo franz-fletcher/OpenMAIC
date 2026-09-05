@@ -104,7 +104,7 @@ Ledger bindings:
 
 Before-state capture notes: `lib/config/feature-flags.ts` has no minimal-mode
 symbols. `validateServerConfig` at `lib/server/config-validation.ts:175`
-runs four validators from `instrumentation.ts:28`. `.env.example` has no
+runs four validators from `instrumentation.ts:29`. `.env.example` has no
 minimal-mode section.
 
 Postcondition: `isMinimalModeEnabled` returns true only for `true` or `1`.
@@ -165,8 +165,8 @@ The adoption rows follow one shape. Each handler becomes:
 | `app/api/generate/agent-profiles/route.ts::POST` | function | `(req: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `course.create` as the first statement |
 | `app/api/generate-classroom/route.ts::POST` | function | `(req: NextRequest): Promise<Response>` | modified: adopts the wrapper with `course.create` as the first statement |
 | `app/api/generate/tts/route.ts::POST` | function | `(req: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `tts.use` as the first statement |
-| `app/api/generate/image/route.ts::POST` | function | `(req: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `course.create` as the first statement |
-| `app/api/generate/video/route.ts::POST` | function | `(req: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `course.create` as the first statement |
+| `app/api/generate/image/route.ts::POST` | function | `(request: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `course.create` as the first statement |
+| `app/api/generate/video/route.ts::POST` | function | `(request: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `course.create` as the first statement |
 | `app/api/generate/voice/route.ts::POST` | function | `(req: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `tts.use` as the first statement |
 | `app/api/transcription/route.ts::POST` | function | `(req: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `asr.use` as the first statement |
 | `app/api/web-search/route.ts::POST` | function | `(req: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `course.create` as the first statement |
@@ -177,13 +177,13 @@ The adoption rows follow one shape. Each handler becomes:
 | `app/api/pbl/v2/evaluate/route.ts::POST` | function | `(req: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `classroom.chat` as the first statement |
 | `app/api/pbl/v2/simulator/route.ts::POST` | function | `(req: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `classroom.chat` as the first statement |
 | `app/api/verify-model/route.ts::POST` | function | `(req: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `settings.manage` as the first statement |
-| `app/api/verify-image-provider/route.ts::POST` | function | `(req: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `settings.manage` as the first statement |
-| `app/api/verify-video-provider/route.ts::POST` | function | `(req: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `settings.manage` as the first statement |
+| `app/api/verify-image-provider/route.ts::POST` | function | `(request: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `settings.manage` as the first statement |
+| `app/api/verify-video-provider/route.ts::POST` | function | `(request: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `settings.manage` as the first statement |
 | `app/api/verify-pdf-provider/route.ts::POST` | function | `(req: NextRequest): Promise<NextResponse>` | modified: adopts the wrapper with `settings.manage` as the first statement |
 
 Before-state capture notes: none of the listed handlers imports
-`requirePermission` or the wrapper. `app/api/chat/route.ts:28` starts its
-POST body with `req.json()` and heartbeat wiring. The pbl/v2 routes resolve
+`requirePermission` or the wrapper. `app/api/chat/route.ts:44` starts its
+POST body with heartbeat wiring and `req.json()` at `:50`. The pbl/v2 routes resolve
 models through `resolveModelFromRequest` before any model call
 (`app/api/pbl/v2/instructor/route.ts:61`). The verify probes call providers
 (`app/api/verify-model/route.ts:39`).
@@ -242,13 +242,8 @@ existing permission guard.
 
 Ledger bindings:
 
-- `lib/auth/schema.ts::ensureAuthSchema` (kind function, after-signature)
-
-  ```
-  (
-    queryable: Queryable,
-  ): Promise<void>
-  ```
+- `lib/auth/schema.ts::ensureAuthSchema` (kind function, after-signature
+  `(queryable: Queryable): Promise<void>`)
 
   Behavior: modified: composes `quiz_grade_quota` into the ensure chain
 
@@ -264,15 +259,16 @@ Ledger bindings:
 
   Behavior: flag-gated. Resolves the user rank. Rank 1 performs one atomic upsert keyed by UTC day and throws the 429 Response when the count would exceed 5. Learner and above and flag-off return without writing
 
-- `app/api/quiz-grade/route.ts::POST` (kind function, after-signature):
+- `app/api/quiz-grade/route.ts::POST` (kind function, after-signature
+  `(req: NextRequest): Promise<Response>`)
 
-  ```
-  (
-    req: NextRequest,
-  ): Promise<Response>
-  ```
-
-  Behavior: modified: stacks the quota consumer after the `quiz.grade` guard and before `resolveModelFromRequest`, preserving the existing catch pattern
+  Behavior: modified: stacks the quota consumer after the `quiz.grade` guard
+  and before `resolveModelFromRequest`, inside the same nested
+  Response-rethrow catch as the guard (`app/api/quiz-grade/route.ts:34-39`),
+  so the 429 rides the `err instanceof Response` passthrough and never the
+  outer catch at `:115-121` that flattens to 500. The route captures the
+  `Session` returned by `requirePermission` and passes `session.userId` to
+  `consumeQuizGradeQuota`
 
 Before-state capture notes: `lib/auth/schema.ts` ends its schema text at the
 `role_permissions` table (`:90-95`). The quota table does not exist. The
@@ -310,7 +306,7 @@ Ledger bindings:
 
 | file::symbol | kind | after-signature or shape (planned) | behavior |
 | --- | --- | --- | --- |
-| `app/page.tsx::HomePage` | function | `(): ReactElement` | modified: hides the hero block when the client mirror is on and the user lacks `course.create`, and forces the library section expanded |
+| `app/page.tsx::HomePage` | function | `()` | modified: hides the hero block when the client mirror is on and the user lacks `course.create`, and forces the library section expanded |
 | `components/account-zone.tsx::AccountZone` | function | `({ onSignOut }: AccountZoneProps)` | modified: signed-out branch renders Sign in and Create account when the client mirror is on, else today's single Sign in pill |
 
 Before-state capture notes: `app/page.tsx::HomePage` at `:126` renders the
@@ -330,12 +326,14 @@ the capsule. The new strings pass the 12-locale parity check.
 
 Gates:
 
-- unit: `unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/minimal-mode/minimal-layout.test.ts && echo LAYOUT_OK` expects `LAYOUT_OK`
+- integration: `unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/minimal-mode/minimal-layout.test.ts && echo LAYOUT_OK` expects `LAYOUT_OK`
 - unit: `unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/minimal-mode/client-import-graph.test.ts && echo GRAPH_OK` expects `GRAPH_OK`
 - smoke: `unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm check:i18n-keys && echo I18N_OK` expects `I18N_OK`
 
-Risk tier: 3. The layout gate uses the `renderToStaticMarkup` precedent from
-`tests/branding/header-capsule.test.ts`. The import graph gate mirrors
+Risk tier: 3. The LAYOUT_OK gate renders the real home layout via
+`renderToStaticMarkup` through the flag and permission stack, which is
+integration per the 014 header-capsule precedent, so it now carries the
+integration tag and tier 3 holds. The import graph gate mirrors
 `tests/permissions/client-import-graph.test.ts` and guards the whole client
 affordance surface.
 
@@ -350,7 +348,7 @@ affordance surface.
   there today). A new `lib/config/minimal-mode.ts` would duplicate the
   helper and fragment the flag surface, so it is rejected.
 - The boot warning hooks `validateMinimalMode` into the existing warn-first
-  `validateServerConfig` path, which `instrumentation.ts:28` already calls.
+  `validateServerConfig` path, which `instrumentation.ts:29` already calls.
   No new boot site is introduced.
 - The guard wrapper is `requirePermissionIfMinimalMode`. It returns without
   session or database access when `MINIMAL_MODE` is unset, then delegates to
@@ -396,7 +394,7 @@ affordance surface.
   | `app/api/generate-classroom/[jobId]/route.ts::GET` | job status read, no spend |
   | `app/api/pbl/v2/task/update/route.ts::POST` | pure state mutation, no LLM involvement, documented in the route header |
   | `app/api/chat/pi/whiteboard-visibility/route.ts` | flag read for the Pi chat affordance |
-  | `app/api/server-providers/route.ts`, `app/api/azure-voices/route.ts`, `app/api/provider/probe-models/route.ts`, `app/api/usage/route.ts` | read-only settings surfaces. The settings spend point is the `verify-*` probe family, which is gated |
+  | `app/api/server-providers/route.ts`, `app/api/azure-voices/route.ts`, `app/api/provider/probe-models/route.ts`, `app/api/usage/route.ts` | settings surfaces owned by batch E. `probe-models` makes a live provider network call (`fetchModels` at `:38`) but spends no LLM tokens, so the deferral rests on settings ownership, not on read-only status. The settings spend point is the `verify-*` probe family, which is gated |
   | `app/api/export-video/**` | video composition under the existing feature flag, no model spend |
   | remaining persistence, material, folder, skill, agent, stage, and proxy routes | storage and byte serving, no model spend |
 
@@ -424,12 +422,15 @@ affordance surface.
   five increments win under race.
 - The quota refusal is a thrown `Response` with status 429 and body
   `{ message: "quiz grading quota exhausted", code: "quota_exhausted" }`,
-  matching the `requirePermission` typed-refusal idiom so the route catch
-  returns it unchanged.
+  mirroring the `requirePermission` typed-refusal idiom. The quota call must
+  ride the same nested Response-rethrow catch as the guard
+  (`app/api/quiz-grade/route.ts:34-39`), never the outer catch at `:115-121`
+  which flattens every error to a 500.
 - The quota consumer, `consumeQuizGradeQuota`, resolves the user rank with a
   join on `user_roles` and `roles`. Learner and above return without
   writing. Anonymous never reaches it because the permission guard denies
-  quiz.grade first.
+  quiz.grade first. The route captures the `Session` returned by
+  `requirePermission` and passes `session.userId` as the `userId`.
 - The minimal layout gates on the client mirror and `course.create`. Ranks
   without `course.create`, meaning anonymous, guest, and learner, hide the
   hero block that contains the headline, composer, and generation toolbar.
