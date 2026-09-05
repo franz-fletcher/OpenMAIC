@@ -10,6 +10,7 @@
  */
 
 import type { Queryable } from '@openmaic/storage/document/pg';
+import { isMinimalModeEnabled } from '@/lib/config/feature-flags';
 
 const DAILY_LIMIT = 5;
 
@@ -30,7 +31,7 @@ export async function consumeQuizGradeQuota(
   userId: string,
 ): Promise<void> {
   // Kill-switch: no-op when MINIMAL_MODE is off.
-  if (process.env.MINIMAL_MODE !== 'true' && process.env.MINIMAL_MODE !== '1') return;
+  if (!isMinimalModeEnabled()) return;
 
   // Resolve the user's role rank. Rank-1 is guest; rank-2+ bypass.
   const rankResult = await queryable.query<{ rank: number }>(
