@@ -4,12 +4,12 @@
   "spec": {
     "reference": "docs/specs/018-admin-suite.md",
     "title": "Batch 018 spec: admin-suite",
-    "hash": "7811e8f776c2b4b680038e8577124e88077ad6901980dceea206d75cf0c233b4"
+    "hash": "0630a3e93e53315c30652c62e30e95b17d56946e586ddc16f2f371b9dfe13433"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "research_update",
+  "stage": "closed",
   "retry": {
     "count": 2,
     "max": 5,
@@ -2959,7 +2959,30 @@
       "slice": null,
       "hash": "91aa2551ead74fff9ddc0d0c84f6af331d394f4f1d5e499b83d9a799f4296d14",
       "fileHash": "261776d43405c01e99f1005498a2c6466dc1fef4868962d3eaddbc91623f88da"
+    },
+    {
+      "seq": 128,
+      "id": "6e16f361-6060-465b-ac7c-28835cf79ac7",
+      "at": "2026-09-06T14:40:31.407Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:respecify:research update recorded after round-3 verification of all six slices",
+      "slice": null,
+      "hash": "7468f1b690c662d122228182021085c533fcebac590f3d8f7195cd034faf20e7",
+      "fileHash": "8e549c161d88646a120549481e943b9e7184a80e45946cf77f99f4d8218f7b27"
+    },
+    {
+      "seq": 129,
+      "id": "234e3f8b-c7aa-4ea6-93ba-c314fdfc70e2",
+      "at": "2026-09-06T14:40:31.455Z",
+      "actor": "verifier",
+      "command": "certify",
+      "transition": "certify:157eee91a5ba8d94b90f8de9138b246cad9e043c421bd26a4b9b0bcfe134d953",
+      "slice": null,
+      "hash": "2e73a9f002c73e99a4006ae8d08d1ed1920f9b87b5eee62887cea2a046f4d736",
+      "oracle": "157eee91a5ba8d94b90f8de9138b246cad9e043c421bd26a4b9b0bcfe134d953",
+      "fileHash": "a773a3592cd02ae676ee1841fa5238e78eb313fa17c59b28a89778e8a8a8e78c"
     }
   ],
-  "fileHash": "8e549c161d88646a120549481e943b9e7184a80e45946cf77f99f4d8218f7b27"
+  "fileHash": "e8319fb61fe6966a60c35dfc14c0c6e10b3ca388ca8130770d9c79c469a2b490"
 }
