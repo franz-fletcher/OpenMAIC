@@ -9,12 +9,13 @@
   "tracker": {
     "mode": "none"
   },
-  "stage": "verification",
+  "stage": "implementation",
   "retry": {
-    "count": 0,
+    "count": 1,
     "max": 5,
-    "consecutive_same_cause": 0,
-    "escalate_at": 3
+    "consecutive_same_cause": 1,
+    "escalate_at": 3,
+    "last_cause": "users-picker-id-highlight"
   },
   "slices": [
     {
@@ -151,8 +152,44 @@
         "at": "2026-09-06T16:38:25.200Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "verified",
+        "hash": "ab3aac393caa959bc4e384260abff91860f30ad861d5d8e391062b4a0b3aaf64",
+        "actor": "verifier",
+        "at": "2026-09-06T18:10:30.821Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "g1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/roles-persistence.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/roles-persistence.test.ts \u001b[2m(\u001b[22m\u001b[2m19 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 13\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m19 passed\u001b[39m\u001b[22m\u001b[90m (19)\u001b[39m\n\u001b[2m   Start at \u001b[22m 06:10:25\n\u001b[2m   Duration \u001b[22m 92ms\u001b[2m (transform 25ms, setup 10ms, import 15ms, tests 13ms, environment 0ms)\u001b[22m\n\nROLES_CORE_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/roles-persistence.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/roles-persistence.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m11 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 220\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m11 passed\u001b[39m\u001b[22m\u001b[90m (11)\u001b[39m\n\u001b[2m   Start at \u001b[22m 06:10:25\n\u001b[2m   Duration \u001b[22m 308ms\u001b[2m (transform 33ms, setup 13ms, import 21ms, tests 220ms, environment 0ms)\u001b[22m\n\nROLES_CORE_PG_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "the rank column loses its uniqueness constraint without any migration files, and a custom role may share rank 2 with learner. The introspection lists every role with its default set from `defaultPermissionsForRank` and its override map. `createRole` rejects system-reserved names. `updateRole` renames and re-ranks atomically and replaces the override set. `resetRoleOverrides` returns the role to pure rank defaults. `deleteRole` refuses system roles, roles with attached users, and roles that a pending invite references by name (unused, unrevoked, and unexpired), and cleans the override rows for the deleted role.",
       "gates": [
@@ -161,21 +198,21 @@
           "type": "unit",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/admin/roles-persistence.test.ts && echo ROLES_CORE_OK",
           "expect": "ROLES_CORE_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/roles-persistence.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/roles-persistence.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m19 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 13\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m19 passed\\u001b[39m\\u001b[22m\\u001b[90m (19)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 06:10:25\\n\\u001b[2m   Duration \\u001b[22m 92ms\\u001b[2m (transform 25ms, setup 10ms, import 15ms, tests 13ms, environment 0ms)\\u001b[22m\\n\\nROLES_CORE_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g2",
           "type": "integration",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/admin/roles-persistence.pg.test.ts && echo ROLES_CORE_PG_OK",
           "expect": "ROLES_CORE_PG_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/roles-persistence.pg.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/roles-persistence.pg.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m11 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 220\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m11 passed\\u001b[39m\\u001b[22m\\u001b[90m (11)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 06:10:25\\n\\u001b[2m   Duration \\u001b[22m 308ms\\u001b[2m (transform 33ms, setup 13ms, import 21ms, tests 220ms, environment 0ms)\\u001b[22m\\n\\nROLES_CORE_PG_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g3",
           "type": "smoke",
           "check": "npx tsc --noEmit && echo TSC_OK",
           "expect": "TSC_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}"
         }
       ]
     },
@@ -325,8 +362,54 @@
         "at": "2026-09-06T16:59:21.604Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "verified",
+        "hash": "62500317fbafc5eb7104309fb3a6a5cb8e2b2c744d8b91c8183969b93ae8d1d6",
+        "actor": "verifier",
+        "at": "2026-09-06T18:10:44.282Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "g1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/roles-admin.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/roles-admin.test.ts \u001b[2m(\u001b[22m\u001b[2m10 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 213\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m10 passed\u001b[39m\u001b[22m\u001b[90m (10)\u001b[39m\n\u001b[2m   Start at \u001b[22m 06:10:38\n\u001b[2m   Duration \u001b[22m 321ms\u001b[2m (transform 48ms, setup 12ms, import 43ms, tests 213ms, environment 0ms)\u001b[22m\n\nROLES_ADMIN_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/roles-lockout.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/admin/roles-lockout.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mROLES_LOCKOUT_OK: self-lockout guard (adversarial)\u001b[2m > \u001b[22m\u001b[2mAdmin A cannot PATCH their own active role (lockout guard)\n\u001b[22m\u001b[39m[mailer] Verification link for lockout-a-session@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImxvY2tvdXQtYS1zZXNzaW9uQHRlc3QuY29tIiwiaWF0IjoxNzg4NzE4MjM5LCJleHAiOjE3ODg3MjE4Mzl9.mYt9RP7x9tCOogRWTRfaqeLtfSnBkoNI1D9GHNPh9o8&callbackURL=%2F\n\n\u001b[90mstdout\u001b[2m | tests/admin/roles-lockout.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mROLES_LOCKOUT_OK: self-lockout guard (adversarial)\u001b[2m > \u001b[22m\u001b[2mAdmin A cannot DELETE their own active role (lockout guard)\n\u001b[22m\u001b[39m[mailer] Verification link for lockout-a-delete@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImxvY2tvdXQtYS1kZWxldGVAdGVzdC5jb20iLCJpYXQiOjE3ODg3MTgyNDAsImV4cCI6MTc4ODcyMTg0MH0.3-wWdgRG_TQVUNyxv6IBjtqS1SKR8MrOinMjj21Oa8I&callbackURL=%2F\n\n\u001b[90mstdout\u001b[2m | tests/admin/roles-lockout.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mROLES_LOCKOUT_OK: self-lockout guard (adversarial)\u001b[2m > \u001b[22m\u001b[2mAdmin A cannot strip roles.manage from their own role\n\u001b[22m\u001b[39m[mailer] Verification link for lockout-a-strip@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImxvY2tvdXQtYS1zdHJpcEB0ZXN0LmNvbSIsImlhdCI6MTc4ODcxODI0MCwiZXhwIjoxNzg4NzIxODQwfQ.ZNIQ1svo4JxEaP2B0g2ZcyGSd4BkjWs3WdKePWhR3vQ&callbackURL=%2F\n\n\u001b[90mstdout\u001b[2m | tests/admin/roles-lockout.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mROLES_LOCKOUT_OK: self-lockout guard (adversarial)\u001b[2m > \u001b[22m\u001b[2mAdmin B CAN edit admin A role (cross-admin recovery)\n\u001b[22m\u001b[39m[mailer] Verification link for lockout-b-cross@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImxvY2tvdXQtYi1jcm9zc0B0ZXN0LmNvbSIsImlhdCI6MTc4ODcxODI0MCwiZXhwIjoxNzg4NzIxODQwfQ.GLbkHrfKPxs7JNUH1Jfsvvl50UiT4VKPojpvNsopOQg&callbackURL=%2F\n\n\u001b[90mstdout\u001b[2m | tests/admin/roles-lockout.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mROLES_LOCKOUT_OK: self-lockout guard (adversarial)\u001b[2m > \u001b[22m\u001b[2msetUserRole refuses self-demotion (SELF_DEMOTE_REFUSED)\n\u001b[22m\u001b[39m[mailer] Verification link for lockout-a-selfdemote@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImxvY2tvdXQtYS1zZWxmZGVtb3RlQHRlc3QuY29tIiwiaWF0IjoxNzg4NzE4MjQwLCJleHAiOjE3ODg3MjE4NDB9.HRjco910X5Y_Ue9eO5-hjnYvhzLKy-o9fleHozuH6as&callbackURL=%2F\n\n\u001b[90mstdout\u001b[2m | tests/admin/roles-lockout.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mROLES_LOCKOUT_OK: self-lockout guard (adversarial)\u001b[2m > \u001b[22m\u001b[2mnon-admin gets typed 403 on every role route\n\u001b[22m\u001b[39m[mailer] Verification link for lockout-learner@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImxvY2tvdXQtbGVhcm5lckB0ZXN0LmNvbSIsImlhdCI6MTc4ODcxODI0MCwiZXhwIjoxNzg4NzIxODQwfQ.OxVcZzZgrmbeRftC4wsSrOOdFCoYElG0lfdKuZCGONE&callbackURL=%2F\n\n \u001b[32m✓\u001b[39m tests/admin/roles-lockout.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 1233\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m6 passed\u001b[39m\u001b[22m\u001b[90m (6)\u001b[39m\n\u001b[2m   Start at \u001b[22m 06:10:39\n\u001b[2m   Duration \u001b[22m 1.32s\u001b[2m (transform 203ms, setup 12ms, import 22ms, tests 1.23s, environment 0ms)\u001b[22m\n\nROLES_LOCKOUT_OK\n\u001b[90mstderr\u001b[2m | tests/admin/roles-lockout.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mROLES_LOCKOUT_OK: self-lockout guard (adversarial)\u001b[2m > \u001b[22m\u001b[2mAdmin A cannot PATCH their own active role (lockout guard)\n\u001b[22m\u001b[39m2026-09-06T18:10:39.883Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\n\n\u001b[90mstderr\u001b[2m | test",
+              "passed": true
+            },
+            {
+              "id": "g3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> node scripts/check-i18n-keys.mjs\n\ni18n key alignment check passed (12 locale files, source: en-US.json).\nI18N_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g4",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "a `roles.manage` holder lists roles, creates a custom role, patches it, and deletes it. A denied rank receives the typed 403 with shape `{ message, code }`. No route ever mutates the acting session's own role, and no user route changes the acting session's own assignment: the self-demote refusal converts to the typed `{ success: false, code, message }` response next to the self-ban block, asserted as status 400 with code `SELF_DEMOTE_REFUSED`, never a 500. The new copy passes the 12-locale parity check.",
       "gates": [
@@ -335,28 +418,50 @@
           "type": "unit",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/admin/roles-admin.test.ts && echo ROLES_ADMIN_OK",
           "expect": "ROLES_ADMIN_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/roles-admin.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/roles-admin.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m10 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 213\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m10 passed\\u001b[39m\\u001b[22m\\u001b[90m (10)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 06:10:38\\n\\u001b[2m   Duration \\u001b[22m 321ms\\u001b[2m (transform 48ms, setup 12ms, import 43ms, tests 213ms, environment 0ms)\\u001b[22m\\n\\nROLES_ADMIN_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g2",
           "type": "adversarial",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/admin/roles-lockout.pg.test.ts && echo ROLES_LOCKOUT_OK",
           "expect": "ROLES_LOCKOUT_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/roles-lockout.pg.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/admin/roles-lockout.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mROLES_LOCKOUT_OK: self-lockout guard (adversarial)\\u001b[2m > \\u001b[22m\\u001b[2mAdmin A cannot PATCH their own active role (lockout guard)\\n\\u001b[22m\\u001b[39m[mailer] Verification link for lockout-a-session@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImxvY2tvdXQtYS1zZXNzaW9uQHRlc3QuY29tIiwiaWF0IjoxNzg4NzE4MjM5LCJleHAiOjE3ODg3MjE4Mzl9.mYt9RP7x9tCOogRWTRfaqeLtfSnBkoNI1D9GHNPh9o8&callbackURL=%2F\\n\\n\\u001b[90mstdout\\u001b[2m | tests/admin/roles-lockout.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mROLES_LOCKOUT_OK: self-lockout guard (adversarial)\\u001b[2m > \\u001b[22m\\u001b[2mAdmin A cannot DELETE their own active role (lockout guard)\\n\\u001b[22m\\u001b[39m[mailer] Verification link for lockout-a-delete@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImxvY2tvdXQtYS1kZWxldGVAdGVzdC5jb20iLCJpYXQiOjE3ODg3MTgyNDAsImV4cCI6MTc4ODcyMTg0MH0.3-wWdgRG_TQVUNyxv6IBjtqS1SKR8MrOinMjj21Oa8I&callbackURL=%2F\\n\\n\\u001b[90mstdout\\u001b[2m | tests/admin/roles-lockout.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mROLES_LOCKOUT_OK: self-lockout guard (adversarial)\\u001b[2m > \\u001b[22m\\u001b[2mAdmin A cannot strip roles.manage from their own role\\n\\u001b[22m\\u001b[39m[mailer] Verification link for lockout-a-strip@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImxvY2tvdXQtYS1zdHJpcEB0ZXN0LmNvbSIsImlhdCI6MTc4ODcxODI0MCwiZXhwIjoxNzg4NzIxODQwfQ.ZNIQ1svo4JxEaP2B0g2ZcyGSd4BkjWs3WdKePWhR3vQ&callbackURL=%2F\\n\\n\\u001b[90mstdout\\u001b[2m | tests/admin/roles-lockout.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mROLES_LOCKOUT_OK: self-lockout guard (adversarial)\\u001b[2m > \\u001b[22m\\u001b[2mAdmin B CAN edit admin A role (cross-admin recovery)\\n\\u001b[22m\\u001b[39m[mailer] Verification link for lockout-b-cross@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImxvY2tvdXQtYi1jcm9zc0B0ZXN0LmNvbSIsImlhdCI6MTc4ODcxODI0MCwiZXhwIjoxNzg4NzIxODQwfQ.GLbkHrfKPxs7JNUH1Jfsvvl50UiT4VKPojpvNsopOQg&callbackURL=%2F\\n\\n\\u001b[90mstdout\\u001b[2m | tests/admin/roles-lockout.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mROLES_LOCKOUT_OK: self-lockout guard (adversarial)\\u001b[2m > \\u001b[22m\\u001b[2msetUserRole refuses self-demotion (SELF_DEMOTE_REFUSED)\\n\\u001b[22m\\u001b[39m[mailer] Verification link for lockout-a-selfdemote@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImxvY2tvdXQtYS1zZWxmZGVtb3RlQHRlc3QuY29tIiwiaWF0IjoxNzg4NzE4MjQwLCJleHAiOjE3ODg3MjE4NDB9.HRjco910X5Y_Ue9eO5-hjnYvhzLKy-o9fleHozuH6as&callbackURL=%2F\\n\\n\\u001b[90mstdout\\u001b[2m | tests/admin/roles-lockout.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mROLES_LOCKOUT_OK: self-lockout guard (adversarial)\\u001b[2m > \\u001b[22m\\u001b[2mnon-admin gets typed 403 on every role route\\n\\u001b[22m\\u001b[39m[mailer] Verification link for lockout-learner@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImxvY2tvdXQtbGVhcm5lckB0ZXN0LmNvbSIsImlhdCI6MTc4ODcxODI0MCwiZXhwIjoxNzg4NzIxODQwfQ.OxVcZzZgrmbeRftC4wsSrOOdFCoYElG0lfdKuZCGONE&callbackURL=%2F\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/roles-lockout.pg.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m6 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[33m 1233\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m6 passed\\u001b[39m\\u001b[22m\\u001b[90m (6)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 06:10:39\\n\\u001b[2m   Duration \\u001b[22m 1.32s\\u001b[2m (transform 203ms, setup 12ms, import 22ms, tests 1.23s, environment 0ms)\\u001b[22m\\n\\nROLES_LOCKOUT_OK\\n\\u001b[90mstderr\\u001b[2m | tests/admin/roles-lockout.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mROLES_LOCKOUT_OK: self-lockout guard (adversarial)\\u001b[2m > \\u001b[22m\\u001b[2mAdmin A cannot PATCH their own active role (lockout guard)\\n\\u001b[22m\\u001b[39m2026-09-06T18:10:39.883Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\\n\\n\\u001b[90mstderr\\u001b[2m | test\",\"passed\":true}",
+          "captures": [
+            {
+              "captureId": "ed3632f2-0d57-467b-864f-e58637215119",
+              "ts": "2026-09-06T18:11:39.009Z",
+              "actor": "verifier",
+              "stage": "verification",
+              "headSha": "65b68e47866a4ad14c3da65cf3a47dd4161dc784",
+              "round": 75,
+              "oracleSignature": "5209f912976ce07c0cd2a6d28dc4ad12f41d5d0ecf24ede1600880a70ea3798a",
+              "evidence": {
+                "id": "g2",
+                "shell": "/bin/sh",
+                "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+                "exit": 0,
+                "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+                "pathCount": 30,
+                "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/roles-lockout.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/admin/roles-lockout.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mROLES_LOCKOUT_OK: self-lockout guard (adversarial)\u001b[2m > \u001b[22m\u001b[2mAdmin A cannot PATCH their own active role (lockout guard)\n\u001b[22m\u001b[39m[mailer] Verification link for lockout-a-session@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImxvY2tvdXQtYS1zZXNzaW9uQHRlc3QuY29tIiwiaWF0IjoxNzg4NzE4Mjk4LCJleHAiOjE3ODg3MjE4OTh9.zbjr_USKpNds9h9bMz-ljtS-UYvrla9iRwsjNtFl1Ec&callbackURL=%2F\n\n\u001b[90mstdout\u001b[2m | tests/admin/roles-lockout.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mROLES_LOCKOUT_OK: self-lockout guard (adversarial)\u001b[2m > \u001b[22m\u001b[2mAdmin A cannot DELETE their own active role (lockout guard)\n\u001b[22m\u001b[39m[mailer] Verification link for lockout-a-delete@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImxvY2tvdXQtYS1kZWxldGVAdGVzdC5jb20iLCJpYXQiOjE3ODg3MTgyOTgsImV4cCI6MTc4ODcyMTg5OH0.avoQffVszyY7U5zBjDBlHFJQ5F3_oHhuNEjnvJGVsME&callbackURL=%2F\n\n\u001b[90mstdout\u001b[2m | tests/admin/roles-lockout.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mROLES_LOCKOUT_OK: self-lockout guard (adversarial)\u001b[2m > \u001b[22m\u001b[2mAdmin A cannot strip roles.manage from their own role\n\u001b[22m\u001b[39m[mailer] Verification link for lockout-a-strip@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImxvY2tvdXQtYS1zdHJpcEB0ZXN0LmNvbSIsImlhdCI6MTc4ODcxODI5OCwiZXhwIjoxNzg4NzIxODk4fQ.R4QF_pu4pD7B0vSISYBbHIGiJowS1-ZQxd5VhE3P_LQ&callbackURL=%2F\n\n\u001b[90mstdout\u001b[2m | tests/admin/roles-lockout.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mROLES_LOCKOUT_OK: self-lockout guard (adversarial)\u001b[2m > \u001b[22m\u001b[2mAdmin B CAN edit admin A role (cross-admin recovery)\n\u001b[22m\u001b[39m[mailer] Verification link for lockout-b-cross@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImxvY2tvdXQtYi1jcm9zc0B0ZXN0LmNvbSIsImlhdCI6MTc4ODcxODI5OCwiZXhwIjoxNzg4NzIxODk4fQ.wa2uWLYmpYvXad9n765pu3LfKnxOijWzjKRx-qJCwtA&callbackURL=%2F\n\n\u001b[90mstdout\u001b[2m | tests/admin/roles-lockout.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mROLES_LOCKOUT_OK: self-lockout guard (adversarial)\u001b[2m > \u001b[22m\u001b[2msetUserRole refuses self-demotion (SELF_DEMOTE_REFUSED)\n\u001b[22m\u001b[39m[mailer] Verification link for lockout-a-selfdemote@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImxvY2tvdXQtYS1zZWxmZGVtb3RlQHRlc3QuY29tIiwiaWF0IjoxNzg4NzE4Mjk4LCJleHAiOjE3ODg3MjE4OTh9.UsZ_UJxo_dZE1tCbyXFTlhaes-VYZySGbEesXYKHV0A&callbackURL=%2F\n\n\u001b[90mstdout\u001b[2m | tests/admin/roles-lockout.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mROLES_LOCKOUT_OK: self-lockout guard (adversarial)\u001b[2m > \u001b[22m\u001b[2mnon-admin gets typed 403 on every role route\n\u001b[22m\u001b[39m[mailer] Verification link for lockout-learner@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImxvY2tvdXQtbGVhcm5lckB0ZXN0LmNvbSIsImlhdCI6MTc4ODcxODI5OCwiZXhwIjoxNzg4NzIxODk4fQ.mz0J9kqqJubjnam80cJy-FsXakoGFawOQmB58Tni0Mg&callbackURL=%2F\n\n \u001b[32m✓\u001b[39m tests/admin/roles-lockout.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 1219\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m6 passed\u001b[39m\u001b[22m\u001b[90m (6)\u001b[39m\n\u001b[2m   Start at \u001b[22m 06:11:37\n\u001b[2m   Duration \u001b[22m 1.31s\u001b[2m (transform 200ms, setup 9ms, import 23ms, tests 1.22s, environment 0ms)\u001b[22m\n\nROLES_LOCKOUT_OK\n\u001b[90mstderr\u001b[2m | tests/admin/roles-lockout.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mROLES_LOCKOUT_OK: self-lockout guard (adversarial)\u001b[2m > \u001b[22m\u001b[2mAdmin A cannot PATCH their own active role (lockout guard)\n\u001b[22m\u001b[39m2026-09-06T18:11:38.267Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\n\n\u001b[90mstderr\u001b[2m | tests",
+                "passed": true
+              },
+              "consumed": false
+            }
+          ]
         },
         {
           "id": "g3",
           "type": "unit",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm check:i18n-keys && echo I18N_OK",
           "expect": "I18N_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> node scripts/check-i18n-keys.mjs\\n\\ni18n key alignment check passed (12 locale files, source: en-US.json).\\nI18N_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g4",
           "type": "smoke",
           "check": "npx tsc --noEmit && echo TSC_OK",
           "expect": "TSC_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g4\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}"
         }
       ]
     },
@@ -435,8 +540,54 @@
         "at": "2026-09-06T17:21:22.418Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "verified",
+        "hash": "6a0b59ac0b1c2304bfd8990f38962a2f61c8a4096129a0f2b10d0b2d656092a8",
+        "actor": "verifier",
+        "at": "2026-09-06T18:10:56.633Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "g1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/permissions/guard-override-wiring.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/permissions/guard-override-wiring.test.ts \u001b[2m(\u001b[22m\u001b[2m8 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 10\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m8 passed\u001b[39m\u001b[22m\u001b[90m (8)\u001b[39m\n\u001b[2m   Start at \u001b[22m 06:10:50\n\u001b[2m   Duration \u001b[22m 102ms\u001b[2m (transform 27ms, setup 13ms, import 23ms, tests 10ms, environment 0ms)\u001b[22m\n\nGUARD_WIRE_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/permissions/guard-override-wiring.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/permissions/guard-override-wiring.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mGUARD_WIRE_PG_OK: enforcement wiring PG contract\u001b[2m > \u001b[22m\u001b[2mrequirePermission passes with grant override\n\u001b[22m\u001b[39m[mailer] Verification link for wire-learner-session@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IndpcmUtbGVhcm5lci1zZXNzaW9uQHRlc3QuY29tIiwiaWF0IjoxNzg4NzE4MjUxLCJleHAiOjE3ODg3MjE4NTF9.Jnuoszr3EgzRbwkezje6paPgd6sbqeyQIJACg9HQuL4&callbackURL=%2F\n\n\u001b[90mstdout\u001b[2m | tests/permissions/guard-override-wiring.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mGUARD_WIRE_PG_OK: enforcement wiring PG contract\u001b[2m > \u001b[22m\u001b[2mrequirePermission denies with deny override\n\u001b[22m\u001b[39m[mailer] Verification link for wire-learner-deny@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IndpcmUtbGVhcm5lci1kZW55QHRlc3QuY29tIiwiaWF0IjoxNzg4NzE4MjUxLCJleHAiOjE3ODg3MjE4NTF9.lV-_Wx2G7wifL8nroZaDHzzVD-wTVmKy_NaOu6GSy44&callbackURL=%2F\n\n \u001b[32m✓\u001b[39m tests/permissions/guard-override-wiring.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 884\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m6 passed\u001b[39m\u001b[22m\u001b[90m (6)\u001b[39m\n\u001b[2m   Start at \u001b[22m 06:10:50\n\u001b[2m   Duration \u001b[22m 971ms\u001b[2m (transform 198ms, setup 12ms, import 21ms, tests 884ms, environment 0ms)\u001b[22m\n\nGUARD_WIRE_PG_OK\n\u001b[90mstderr\u001b[2m | tests/permissions/guard-override-wiring.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mGUARD_WIRE_PG_OK: enforcement wiring PG contract\u001b[2m > \u001b[22m\u001b[2mrequirePermission passes with grant override\n\u001b[22m\u001b[39m2026-09-06T18:10:51.484Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\n\n\u001b[90mstderr\u001b[2m | tests/permissions/guard-override-wiring.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mGUARD_WIRE_PG_OK: enforcement wiring PG contract\u001b[2m > \u001b[22m\u001b[2mrequirePermission passes with grant override\n\u001b[22m\u001b[39m2026-09-06T18:10:51.680Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\n\n\u001b[90mstderr\u001b[2m | tests/permissions/guard-override-wiring.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mGUARD_WIRE_PG_OK: enforcement wiring PG contract\u001b[2m > \u001b[22m\u001b[2mrequirePermission denies with deny override\n\u001b[22m\u001b[39m2026-09-06T18:10:51.703Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\n\n",
+              "passed": true
+            },
+            {
+              "id": "g3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/permissions/guard-live-route.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/permissions/guard-live-route.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mGUARD_LIVE_OK: enforcement wiring live-route (adversarial)\n\u001b[22m\u001b[39m[mailer] Verification link for guard-live-learner-9967@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Imd1YXJkLWxpdmUtbGVhcm5lci05OTY3QHRlc3QuY29tIiwiaWF0IjoxNzg4NzE4MjUyLCJleHAiOjE3ODg3MjE4NTJ9.sMnaEKzA9Dj_Pduwn4WRPhBaEgpCdtzI6prIdu0-DmU&callbackURL=%2F\n\n\u001b[90mstdout\u001b[2m | tests/permissions/guard-live-route.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mGUARD_LIVE_OK: enforcement wiring live-route (adversarial)\u001b[2m > \u001b[22m\u001b[2mgrant: upsert course.create override → POST returns 400 MISSING_PROVIDER\n\u001b[22m\u001b[39m[2026-09-06T18:10:53.156Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 3 LLM, 1 TTS, 1 ASR, 1 PDF, 0 Image, 1 Video, 2 WebSearch providers\n\n \u001b[32m✓\u001b[39m tests/permissions/guard-live-route.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m4 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 846\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m4 passed\u001b[39m\u001b[22m\u001b[90m (4)\u001b[39m\n\u001b[2m   Start at \u001b[22m 06:10:52\n\u001b[2m   Duration \u001b[22m 933ms\u001b[2m (transform 236ms, setup 13ms, import 19ms, tests 846ms, environment 0ms)\u001b[22m\n\nGUARD_LIVE_OK\n\u001b[90mstderr\u001b[2m | tests/permissions/guard-live-route.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mGUARD_LIVE_OK: enforcement wiring live-route (adversarial)\n\u001b[22m\u001b[39m2026-09-06T18:10:52.848Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\n\n\u001b[90mstderr\u001b[2m | tests/permissions/guard-live-route.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mGUARD_LIVE_OK: enforcement wiring live-route (adversarial)\u001b[2m > \u001b[22m\u001b[2mbaseline: learner POST returns 403 (no course.create default)\n\u001b[22m\u001b[39m2026-09-06T18:10:53.124Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\n\n",
+              "passed": true
+            },
+            {
+              "id": "g4",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "a `role_permissions` row that grants `course.create` to the learner role lets a learner pass the real image generate route guard under `MINIMAL_MODE` on the very next request. A denied row removes a default permission from an existing role and blocks the same route. Every guarded call resolves the full role row and requests a fresh merge: rank defaults plus one indexed SELECT on `role_permissions.role_name`, a bounded per-request cost. Staleness across requests is impossible by construction, and the next-request claim holds literally. Route text stays untouched; only the resolver changes.",
       "gates": [
@@ -445,28 +596,50 @@
           "type": "unit",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/permissions/guard-override-wiring.test.ts && echo GUARD_WIRE_OK",
           "expect": "GUARD_WIRE_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/permissions/guard-override-wiring.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/permissions/guard-override-wiring.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m8 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 10\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m8 passed\\u001b[39m\\u001b[22m\\u001b[90m (8)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 06:10:50\\n\\u001b[2m   Duration \\u001b[22m 102ms\\u001b[2m (transform 27ms, setup 13ms, import 23ms, tests 10ms, environment 0ms)\\u001b[22m\\n\\nGUARD_WIRE_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g2",
           "type": "integration",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/permissions/guard-override-wiring.pg.test.ts && echo GUARD_WIRE_PG_OK",
           "expect": "GUARD_WIRE_PG_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/permissions/guard-override-wiring.pg.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/permissions/guard-override-wiring.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mGUARD_WIRE_PG_OK: enforcement wiring PG contract\\u001b[2m > \\u001b[22m\\u001b[2mrequirePermission passes with grant override\\n\\u001b[22m\\u001b[39m[mailer] Verification link for wire-learner-session@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IndpcmUtbGVhcm5lci1zZXNzaW9uQHRlc3QuY29tIiwiaWF0IjoxNzg4NzE4MjUxLCJleHAiOjE3ODg3MjE4NTF9.Jnuoszr3EgzRbwkezje6paPgd6sbqeyQIJACg9HQuL4&callbackURL=%2F\\n\\n\\u001b[90mstdout\\u001b[2m | tests/permissions/guard-override-wiring.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mGUARD_WIRE_PG_OK: enforcement wiring PG contract\\u001b[2m > \\u001b[22m\\u001b[2mrequirePermission denies with deny override\\n\\u001b[22m\\u001b[39m[mailer] Verification link for wire-learner-deny@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IndpcmUtbGVhcm5lci1kZW55QHRlc3QuY29tIiwiaWF0IjoxNzg4NzE4MjUxLCJleHAiOjE3ODg3MjE4NTF9.lV-_Wx2G7wifL8nroZaDHzzVD-wTVmKy_NaOu6GSy44&callbackURL=%2F\\n\\n \\u001b[32m✓\\u001b[39m tests/permissions/guard-override-wiring.pg.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m6 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[33m 884\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m6 passed\\u001b[39m\\u001b[22m\\u001b[90m (6)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 06:10:50\\n\\u001b[2m   Duration \\u001b[22m 971ms\\u001b[2m (transform 198ms, setup 12ms, import 21ms, tests 884ms, environment 0ms)\\u001b[22m\\n\\nGUARD_WIRE_PG_OK\\n\\u001b[90mstderr\\u001b[2m | tests/permissions/guard-override-wiring.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mGUARD_WIRE_PG_OK: enforcement wiring PG contract\\u001b[2m > \\u001b[22m\\u001b[2mrequirePermission passes with grant override\\n\\u001b[22m\\u001b[39m2026-09-06T18:10:51.484Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\\n\\n\\u001b[90mstderr\\u001b[2m | tests/permissions/guard-override-wiring.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mGUARD_WIRE_PG_OK: enforcement wiring PG contract\\u001b[2m > \\u001b[22m\\u001b[2mrequirePermission passes with grant override\\n\\u001b[22m\\u001b[39m2026-09-06T18:10:51.680Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\\n\\n\\u001b[90mstderr\\u001b[2m | tests/permissions/guard-override-wiring.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mGUARD_WIRE_PG_OK: enforcement wiring PG contract\\u001b[2m > \\u001b[22m\\u001b[2mrequirePermission denies with deny override\\n\\u001b[22m\\u001b[39m2026-09-06T18:10:51.703Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\\n\\n\",\"passed\":true}"
         },
         {
           "id": "g3",
           "type": "adversarial",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && MINIMAL_MODE=true pnpm test tests/permissions/guard-live-route.pg.test.ts && echo GUARD_LIVE_OK",
           "expect": "GUARD_LIVE_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/permissions/guard-live-route.pg.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/permissions/guard-live-route.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mGUARD_LIVE_OK: enforcement wiring live-route (adversarial)\\n\\u001b[22m\\u001b[39m[mailer] Verification link for guard-live-learner-9967@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Imd1YXJkLWxpdmUtbGVhcm5lci05OTY3QHRlc3QuY29tIiwiaWF0IjoxNzg4NzE4MjUyLCJleHAiOjE3ODg3MjE4NTJ9.sMnaEKzA9Dj_Pduwn4WRPhBaEgpCdtzI6prIdu0-DmU&callbackURL=%2F\\n\\n\\u001b[90mstdout\\u001b[2m | tests/permissions/guard-live-route.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mGUARD_LIVE_OK: enforcement wiring live-route (adversarial)\\u001b[2m > \\u001b[22m\\u001b[2mgrant: upsert course.create override → POST returns 400 MISSING_PROVIDER\\n\\u001b[22m\\u001b[39m[2026-09-06T18:10:53.156Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 3 LLM, 1 TTS, 1 ASR, 1 PDF, 0 Image, 1 Video, 2 WebSearch providers\\n\\n \\u001b[32m✓\\u001b[39m tests/permissions/guard-live-route.pg.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m4 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[33m 846\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m4 passed\\u001b[39m\\u001b[22m\\u001b[90m (4)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 06:10:52\\n\\u001b[2m   Duration \\u001b[22m 933ms\\u001b[2m (transform 236ms, setup 13ms, import 19ms, tests 846ms, environment 0ms)\\u001b[22m\\n\\nGUARD_LIVE_OK\\n\\u001b[90mstderr\\u001b[2m | tests/permissions/guard-live-route.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mGUARD_LIVE_OK: enforcement wiring live-route (adversarial)\\n\\u001b[22m\\u001b[39m2026-09-06T18:10:52.848Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\\n\\n\\u001b[90mstderr\\u001b[2m | tests/permissions/guard-live-route.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mGUARD_LIVE_OK: enforcement wiring live-route (adversarial)\\u001b[2m > \\u001b[22m\\u001b[2mbaseline: learner POST returns 403 (no course.create default)\\n\\u001b[22m\\u001b[39m2026-09-06T18:10:53.124Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\\n\\n\",\"passed\":true}",
+          "captures": [
+            {
+              "captureId": "5d8d99d3-9b58-4be9-b0cd-aed149ef8812",
+              "ts": "2026-09-06T18:11:33.042Z",
+              "actor": "verifier",
+              "stage": "verification",
+              "headSha": "65b68e47866a4ad14c3da65cf3a47dd4161dc784",
+              "round": 75,
+              "oracleSignature": "516be5631bfc0d6755659c2d4153fac52ee4a2e77bea0bd62c059a392394ff2c",
+              "evidence": {
+                "id": "g3",
+                "shell": "/bin/sh",
+                "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+                "exit": 0,
+                "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+                "pathCount": 30,
+                "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/permissions/guard-live-route.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/permissions/guard-live-route.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mGUARD_LIVE_OK: enforcement wiring live-route (adversarial)\n\u001b[22m\u001b[39m[mailer] Verification link for guard-live-learner-11269@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Imd1YXJkLWxpdmUtbGVhcm5lci0xMTI2OUB0ZXN0LmNvbSIsImlhdCI6MTc4ODcxODI5MiwiZXhwIjoxNzg4NzIxODkyfQ.ApaZ9cNt8KaRb8R-6i85A6KxObARJKtrxUtpPH7_0lA&callbackURL=%2F\n\n\u001b[90mstdout\u001b[2m | tests/permissions/guard-live-route.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mGUARD_LIVE_OK: enforcement wiring live-route (adversarial)\u001b[2m > \u001b[22m\u001b[2mgrant: upsert course.create override → POST returns 400 MISSING_PROVIDER\n\u001b[22m\u001b[39m[2026-09-06T18:11:32.968Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 3 LLM, 1 TTS, 1 ASR, 1 PDF, 0 Image, 1 Video, 2 WebSearch providers\n\n \u001b[32m✓\u001b[39m tests/permissions/guard-live-route.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m4 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 905\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m4 passed\u001b[39m\u001b[22m\u001b[90m (4)\u001b[39m\n\u001b[2m   Start at \u001b[22m 06:11:32\n\u001b[2m   Duration \u001b[22m 987ms\u001b[2m (transform 230ms, setup 10ms, import 18ms, tests 905ms, environment 0ms)\u001b[22m\n\nGUARD_LIVE_OK\n\u001b[90mstderr\u001b[2m | tests/permissions/guard-live-route.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mGUARD_LIVE_OK: enforcement wiring live-route (adversarial)\n\u001b[22m\u001b[39m2026-09-06T18:11:32.664Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\n\n\u001b[90mstderr\u001b[2m | tests/permissions/guard-live-route.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mGUARD_LIVE_OK: enforcement wiring live-route (adversarial)\u001b[2m > \u001b[22m\u001b[2mbaseline: learner POST returns 403 (no course.create default)\n\u001b[22m\u001b[39m2026-09-06T18:11:32.942Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\n\n",
+                "passed": true
+              },
+              "consumed": false
+            }
+          ]
         },
         {
           "id": "g4",
           "type": "smoke",
           "check": "npx tsc --noEmit && echo TSC_OK",
           "expect": "TSC_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g4\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}"
         }
       ]
     },
@@ -581,14 +754,61 @@
       "riskTier": 3,
       "uuid": "256367fa-8d5d-4d8b-bc68-444b164af979",
       "impl": {
-        "status": "ready_for_verification",
-        "hash": "b7ed18f2e8840ca24268fd408b2108dca1b8f1fe797f23c7ed5eb8cbe49715d1",
-        "actor": "implementer",
-        "at": "2026-09-06T17:34:22.113Z"
-      },
-      "verification": {
         "status": "pending",
         "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "rejected",
+        "hash": "ad3ea43b86081be2947a69d8efd8c3c19db98779f5a222fff049f3bd1cbb774c",
+        "actor": "verifier",
+        "at": "2026-09-06T18:25:05.456Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "g1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/roles-section.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/roles-section.test.ts \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 21\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m6 passed\u001b[39m\u001b[22m\u001b[90m (6)\u001b[39m\n\u001b[2m   Start at \u001b[22m 06:11:03\n\u001b[2m   Duration \u001b[22m 100ms\u001b[2m (transform 30ms, setup 12ms, import 13ms, tests 21ms, environment 0ms)\u001b[22m\n\nROLES_UI_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/roles-rsc-probe.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/admin/roles-rsc-probe.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mROLES_RSC_OK: roles section RSC wire probes\u001b[2m > \u001b[22m\u001b[2mroles title renders for a roles.manage holder\n\u001b[22m\u001b[39m[mailer] Verification link for rsc-admin-1788718264564@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InJzYy1hZG1pbi0xNzg4NzE4MjY0NTY0QHRlc3QuY29tIiwiaWF0IjoxNzg4NzE4MjY0LCJleHAiOjE3ODg3MjE4NjR9.t9ec4pVlmvh-FMPXT98xI3fspa4jWUr6jLc3S7P5tTY&callbackURL=%2F\n\n\u001b[90mstdout\u001b[2m | tests/admin/roles-rsc-probe.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mROLES_RSC_OK: roles section RSC wire probes\u001b[2m > \u001b[22m\u001b[2mnon-holder gets not-authorized state\n\u001b[22m\u001b[39m[mailer] Verification link for rsc-guest-1788718264814@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InJzYy1ndWVzdC0xNzg4NzE4MjY0ODE0QHRlc3QuY29tIiwiaWF0IjoxNzg4NzE4MjY0LCJleHAiOjE3ODg3MjE4NjR9.q7AATtOaU0cRx7hkzyFuDsC7hxMqeFv9R4wMRKCzkDI&callbackURL=%2F\n\n \u001b[32m✓\u001b[39m tests/admin/roles-rsc-probe.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m2 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 915\u001b[2mms\u001b[22m\u001b[39m\n     \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m roles title renders for a roles.manage holder \u001b[33m 578\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m2 passed\u001b[39m\u001b[22m\u001b[90m (2)\u001b[39m\n\u001b[2m   Start at \u001b[22m 06:11:03\n\u001b[2m   Duration \u001b[22m 1.01s\u001b[2m (transform 218ms, setup 10ms, import 34ms, tests 915ms, environment 0ms)\u001b[22m\n\nROLES_RSC_OK\n\u001b[90mstderr\u001b[2m | tests/admin/roles-rsc-probe.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mROLES_RSC_OK: roles section RSC wire probes\u001b[2m > \u001b[22m\u001b[2mroles title renders for a roles.manage holder\n\u001b[22m\u001b[39m2026-09-06T18:11:04.567Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\n\n\u001b[90mstderr\u001b[2m | tests/admin/roles-rsc-probe.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mROLES_RSC_OK: roles section RSC wire probes\u001b[2m > \u001b[22m\u001b[2mroles title renders for a roles.manage holder\n\u001b[22m\u001b[39m2026-09-06T18:11:04.773Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\n\n\u001b[90mstderr\u001b[2m | tests/admin/roles-rsc-probe.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mROLES_RSC_OK: roles section RSC wire probes\u001b[2m > \u001b[22m\u001b[2mnon-holder gets not-authorized state\n\u001b[22m\u001b[39m2026-09-06T18:11:04.814Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\n\n\u001b[90mstderr\u001b[2m | tests/admin/roles-rsc-probe.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mROLES_RSC_OK: roles section RSC wire probes\u001b[2m > \u001b[22m\u001b[2mnon-holder gets not-authorized state\n\u001b[22m\u001b[39m2026-09-06T18:11:04.941Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\n\n",
+              "passed": true
+            },
+            {
+              "id": "g3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> node scripts/check-i18n-keys.mjs\n\ni18n key alignment check passed (12 locale files, source: en-US.json).\nI18N_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g4",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        },
+        "deficiencies": [
+          "components/admin/users-section.tsx:202: the role picker select value is user.role (the role NAME), while option values are role IDs (:207). A user holding a custom role (UUID id) never matches an option, so the select renders the first option (guest). Live wire: wire-learner assigned to custom role ta renders as guest in the users table. Contradicts the S4 expectation \"the users picker lists custom roles and highlights the current role by ID\"; operators cannot see which users are attached to a custom role before deleting it."
+        ]
       },
       "expectation": "a `roles.manage` holder sees the roles section with the role list, the create form, and the defaults-and-overrides table. The users picker lists custom roles and highlights the current role by ID, so an operator can reassign users off a role before deleting it. The page still answers the typed not-authorized state for ranks holding neither `users.manage` nor `roles.manage`, and the real-cookie probe proves the roles title renders for a real holder cookie and never for a denied rank. All new strings pass the 12-locale parity check. The section renders in Safari. The client section hides entirely without `roles.manage`; a `roles.manage`-only holder reaches the page and the roles section, and `users.manage` holders keep the users, invites, and courses sections.",
       "gates": [
@@ -597,28 +817,63 @@
           "type": "unit",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/admin/roles-section.test.ts && echo ROLES_UI_OK",
           "expect": "ROLES_UI_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/roles-section.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/roles-section.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m6 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 21\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m6 passed\\u001b[39m\\u001b[22m\\u001b[90m (6)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 06:11:03\\n\\u001b[2m   Duration \\u001b[22m 100ms\\u001b[2m (transform 30ms, setup 12ms, import 13ms, tests 21ms, environment 0ms)\\u001b[22m\\n\\nROLES_UI_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g2",
           "type": "integration",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/admin/roles-rsc-probe.pg.test.ts && echo ROLES_RSC_OK",
           "expect": "ROLES_RSC_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/roles-rsc-probe.pg.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/admin/roles-rsc-probe.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mROLES_RSC_OK: roles section RSC wire probes\\u001b[2m > \\u001b[22m\\u001b[2mroles title renders for a roles.manage holder\\n\\u001b[22m\\u001b[39m[mailer] Verification link for rsc-admin-1788718264564@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InJzYy1hZG1pbi0xNzg4NzE4MjY0NTY0QHRlc3QuY29tIiwiaWF0IjoxNzg4NzE4MjY0LCJleHAiOjE3ODg3MjE4NjR9.t9ec4pVlmvh-FMPXT98xI3fspa4jWUr6jLc3S7P5tTY&callbackURL=%2F\\n\\n\\u001b[90mstdout\\u001b[2m | tests/admin/roles-rsc-probe.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mROLES_RSC_OK: roles section RSC wire probes\\u001b[2m > \\u001b[22m\\u001b[2mnon-holder gets not-authorized state\\n\\u001b[22m\\u001b[39m[mailer] Verification link for rsc-guest-1788718264814@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InJzYy1ndWVzdC0xNzg4NzE4MjY0ODE0QHRlc3QuY29tIiwiaWF0IjoxNzg4NzE4MjY0LCJleHAiOjE3ODg3MjE4NjR9.q7AATtOaU0cRx7hkzyFuDsC7hxMqeFv9R4wMRKCzkDI&callbackURL=%2F\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/roles-rsc-probe.pg.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m2 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[33m 915\\u001b[2mms\\u001b[22m\\u001b[39m\\n     \\u001b[33m\\u001b[2m✓\\u001b[22m\\u001b[39m roles title renders for a roles.manage holder \\u001b[33m 578\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m2 passed\\u001b[39m\\u001b[22m\\u001b[90m (2)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 06:11:03\\n\\u001b[2m   Duration \\u001b[22m 1.01s\\u001b[2m (transform 218ms, setup 10ms, import 34ms, tests 915ms, environment 0ms)\\u001b[22m\\n\\nROLES_RSC_OK\\n\\u001b[90mstderr\\u001b[2m | tests/admin/roles-rsc-probe.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mROLES_RSC_OK: roles section RSC wire probes\\u001b[2m > \\u001b[22m\\u001b[2mroles title renders for a roles.manage holder\\n\\u001b[22m\\u001b[39m2026-09-06T18:11:04.567Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\\n\\n\\u001b[90mstderr\\u001b[2m | tests/admin/roles-rsc-probe.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mROLES_RSC_OK: roles section RSC wire probes\\u001b[2m > \\u001b[22m\\u001b[2mroles title renders for a roles.manage holder\\n\\u001b[22m\\u001b[39m2026-09-06T18:11:04.773Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\\n\\n\\u001b[90mstderr\\u001b[2m | tests/admin/roles-rsc-probe.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mROLES_RSC_OK: roles section RSC wire probes\\u001b[2m > \\u001b[22m\\u001b[2mnon-holder gets not-authorized state\\n\\u001b[22m\\u001b[39m2026-09-06T18:11:04.814Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\\n\\n\\u001b[90mstderr\\u001b[2m | tests/admin/roles-rsc-probe.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mROLES_RSC_OK: roles section RSC wire probes\\u001b[2m > \\u001b[22m\\u001b[2mnon-holder gets not-authorized state\\n\\u001b[22m\\u001b[39m2026-09-06T18:11:04.941Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\\n\\n\",\"passed\":true}",
+          "captures": [
+            {
+              "captureId": "647e5b10-49c5-4f3a-b653-eec13050c464",
+              "ts": "2026-09-06T18:11:47.923Z",
+              "actor": "verifier",
+              "stage": "verification",
+              "headSha": "65b68e47866a4ad14c3da65cf3a47dd4161dc784",
+              "round": 75,
+              "oracleSignature": "5c0c52f740fdcf87241fb43cc97a2019a794db435101f49e3c35f0f299c27fc4",
+              "evidence": {
+                "id": "g2",
+                "shell": "/bin/sh",
+                "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+                "exit": 0,
+                "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+                "pathCount": 30,
+                "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/roles-rsc-probe.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/admin/roles-rsc-probe.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mROLES_RSC_OK: roles section RSC wire probes\u001b[2m > \u001b[22m\u001b[2mroles title renders for a roles.manage holder\n\u001b[22m\u001b[39m[mailer] Verification link for rsc-admin-1788718307444@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InJzYy1hZG1pbi0xNzg4NzE4MzA3NDQ0QHRlc3QuY29tIiwiaWF0IjoxNzg4NzE4MzA3LCJleHAiOjE3ODg3MjE5MDd9.xFy6p-UzbptJF_0-QtTaMsUhRC4XdKz5UFuxAcamCsg&callbackURL=%2F\n\n\u001b[90mstdout\u001b[2m | tests/admin/roles-rsc-probe.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mROLES_RSC_OK: roles section RSC wire probes\u001b[2m > \u001b[22m\u001b[2mnon-holder gets not-authorized state\n\u001b[22m\u001b[39m[mailer] Verification link for rsc-guest-1788718307705@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InJzYy1ndWVzdC0xNzg4NzE4MzA3NzA1QHRlc3QuY29tIiwiaWF0IjoxNzg4NzE4MzA3LCJleHAiOjE3ODg3MjE5MDd9.O_lWg70--j4YYp4tyMDgie5t73hlsq97dYtTKyjWQ0k&callbackURL=%2F\n\n \u001b[32m✓\u001b[39m tests/admin/roles-rsc-probe.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m2 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 929\u001b[2mms\u001b[22m\u001b[39m\n     \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m roles title renders for a roles.manage holder \u001b[33m 583\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m2 passed\u001b[39m\u001b[22m\u001b[90m (2)\u001b[39m\n\u001b[2m   Start at \u001b[22m 06:11:46\n\u001b[2m   Duration \u001b[22m 1.03s\u001b[2m (transform 211ms, setup 10ms, import 34ms, tests 929ms, environment 0ms)\u001b[22m\n\nROLES_RSC_OK\n\u001b[90mstderr\u001b[2m | tests/admin/roles-rsc-probe.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mROLES_RSC_OK: roles section RSC wire probes\u001b[2m > \u001b[22m\u001b[2mroles title renders for a roles.manage holder\n\u001b[22m\u001b[39m2026-09-06T18:11:47.447Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\n\n\u001b[90mstderr\u001b[2m | tests/admin/roles-rsc-probe.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mROLES_RSC_OK: roles section RSC wire probes\u001b[2m > \u001b[22m\u001b[2mroles title renders for a roles.manage holder\n\u001b[22m\u001b[39m2026-09-06T18:11:47.663Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\n\n\u001b[90mstderr\u001b[2m | tests/admin/roles-rsc-probe.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mROLES_RSC_OK: roles section RSC wire probes\u001b[2m > \u001b[22m\u001b[2mnon-holder gets not-authorized state\n\u001b[22m\u001b[39m2026-09-06T18:11:47.705Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\n\n\u001b[90mstderr\u001b[2m | tests/admin/roles-rsc-probe.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mROLES_RSC_OK: roles section RSC wire probes\u001b[2m > \u001b[22m\u001b[2mnon-holder gets not-authorized state\n\u001b[22m\u001b[39m2026-09-06T18:11:47.835Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\n\n",
+                "passed": true
+              },
+              "consumed": false
+            }
+          ]
         },
         {
           "id": "g3",
           "type": "unit",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm check:i18n-keys && echo I18N_OK",
           "expect": "I18N_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> node scripts/check-i18n-keys.mjs\\n\\ni18n key alignment check passed (12 locale files, source: en-US.json).\\nI18N_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g4",
           "type": "smoke",
           "check": "npx tsc --noEmit && echo TSC_OK",
           "expect": "TSC_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g4\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}"
+        }
+      ],
+      "findings": [
+        {
+          "id": 1,
+          "correlation": "3da72c900d783f837c96288792556649ebddc07055f6e22d8fb1f99ff979327e",
+          "at": "2026-09-06T18:25:05.457Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "components/admin/users-section.tsx:202: the role picker select value is user.role (the role NAME), while option values are role IDs (:207). A user holding a custom role (UUID id) never matches an option, so the select renders the first option (guest). Live wire: wire-learner assigned to custom role ta renders as guest in the users table. Contradicts the S4 expectation \"the users picker lists custom roles and highlights the current role by ID\"; operators cannot see which users are attached to a custom role before deleting it.",
+          "evidence": "users-picker-id-highlight"
         }
       ]
     },
@@ -700,8 +955,54 @@
         "at": "2026-09-06T17:56:24.319Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "verified",
+        "hash": "ac403c788b0471df42f20a100d5b7777110ea30d640f166951a2d164a9f201ae",
+        "actor": "verifier",
+        "at": "2026-09-06T18:11:19.373Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "g1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/roles-audience.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/roles-audience.test.ts \u001b[2m(\u001b[22m\u001b[2m14 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 8\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m14 passed\u001b[39m\u001b[22m\u001b[90m (14)\u001b[39m\n\u001b[2m   Start at \u001b[22m 06:11:14\n\u001b[2m   Duration \u001b[22m 85ms\u001b[2m (transform 19ms, setup 10ms, import 12ms, tests 8ms, environment 0ms)\u001b[22m\n\nROLE_AUDIENCE_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/roles-audience.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/roles-audience.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 355\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m6 passed\u001b[39m\u001b[22m\u001b[90m (6)\u001b[39m\n\u001b[2m   Start at \u001b[22m 06:11:14\n\u001b[2m   Duration \u001b[22m 438ms\u001b[2m (transform 141ms, setup 10ms, import 18ms, tests 355ms, environment 0ms)\u001b[22m\n\nROLE_AUDIENCE_PG_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/include-deleted-strict.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/include-deleted-strict.test.ts \u001b[2m(\u001b[22m\u001b[2m8 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 14\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m8 passed\u001b[39m\u001b[22m\u001b[90m (8)\u001b[39m\n\u001b[2m   Start at \u001b[22m 06:11:15\n\u001b[2m   Duration \u001b[22m 97ms\u001b[2m (transform 22ms, setup 14ms, import 13ms, tests 14ms, environment 0ms)\u001b[22m\n\nINCLUDE_DELETED_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g4",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "the probe proves the custom rank-2 holder opens a learner-audience published course and still gets 404 on a guest-audience denial boundary case without special handling. The route maps `'1'` to true exactly like `'true'`, and `'0'` and missing stay false.",
       "gates": [
@@ -710,28 +1011,50 @@
           "type": "unit",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/admin/roles-audience.test.ts && echo ROLE_AUDIENCE_OK",
           "expect": "ROLE_AUDIENCE_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/roles-audience.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/roles-audience.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m14 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 8\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m14 passed\\u001b[39m\\u001b[22m\\u001b[90m (14)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 06:11:14\\n\\u001b[2m   Duration \\u001b[22m 85ms\\u001b[2m (transform 19ms, setup 10ms, import 12ms, tests 8ms, environment 0ms)\\u001b[22m\\n\\nROLE_AUDIENCE_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g2",
           "type": "integration",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/admin/roles-audience.pg.test.ts && echo ROLE_AUDIENCE_PG_OK",
           "expect": "ROLE_AUDIENCE_PG_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/roles-audience.pg.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/roles-audience.pg.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m6 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[33m 355\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m6 passed\\u001b[39m\\u001b[22m\\u001b[90m (6)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 06:11:14\\n\\u001b[2m   Duration \\u001b[22m 438ms\\u001b[2m (transform 141ms, setup 10ms, import 18ms, tests 355ms, environment 0ms)\\u001b[22m\\n\\nROLE_AUDIENCE_PG_OK\\n\",\"passed\":true}",
+          "captures": [
+            {
+              "captureId": "6245b2dc-ae23-491b-ad7a-213f29588f8b",
+              "ts": "2026-09-06T18:11:43.117Z",
+              "actor": "verifier",
+              "stage": "verification",
+              "headSha": "65b68e47866a4ad14c3da65cf3a47dd4161dc784",
+              "round": 75,
+              "oracleSignature": "920003136cda77e90d9966789f788087329ca8095342de2b3822d8754fd1f118",
+              "evidence": {
+                "id": "g2",
+                "shell": "/bin/sh",
+                "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+                "exit": 0,
+                "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+                "pathCount": 30,
+                "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/roles-audience.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/roles-audience.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 353\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m6 passed\u001b[39m\u001b[22m\u001b[90m (6)\u001b[39m\n\u001b[2m   Start at \u001b[22m 06:11:42\n\u001b[2m   Duration \u001b[22m 435ms\u001b[2m (transform 136ms, setup 10ms, import 17ms, tests 353ms, environment 0ms)\u001b[22m\n\nROLE_AUDIENCE_PG_OK\n",
+                "passed": true
+              },
+              "consumed": false
+            }
+          ]
         },
         {
           "id": "g3",
           "type": "unit",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/admin/include-deleted-strict.test.ts && echo INCLUDE_DELETED_OK",
           "expect": "INCLUDE_DELETED_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/include-deleted-strict.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/include-deleted-strict.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m8 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 14\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m8 passed\\u001b[39m\\u001b[22m\\u001b[90m (8)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 06:11:15\\n\\u001b[2m   Duration \\u001b[22m 97ms\\u001b[2m (transform 22ms, setup 14ms, import 13ms, tests 14ms, environment 0ms)\\u001b[22m\\n\\nINCLUDE_DELETED_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g4",
           "type": "smoke",
           "check": "npx tsc --noEmit && echo TSC_OK",
           "expect": "TSC_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g4\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}"
         }
       ]
     }
@@ -1504,7 +1827,135 @@
       "slice": null,
       "hash": "36c4bb1faa3e1d0c7d71b4d63fe40f45ba988ff8df32a7fadfe154dff030f530",
       "fileHash": "91c0f21ead52d470f52213e27029ee0ebee38c9f738784a6a0c452893539da7f"
+    },
+    {
+      "seq": 71,
+      "id": "c1efbdbe-bef7-40f5-8eac-4578675ee618",
+      "at": "2026-09-06T18:10:30.821Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S1:verification:pending->verified",
+      "slice": "S1",
+      "hash": "fb885f2ca25955f3f23cd3ac03d5099eb1e4bb3577b2623a5e5f3e4404caa5ee",
+      "oracle": "9b51e0592c1ef3ca55f1e64fc49243ed9106d94a4d8b1fbdca45095b427394a9",
+      "evidence": "e61bdf56ea4eb9df0e1e5e477e665a17a4d7d4b34c139da014bbb0a3165f1efd",
+      "fileHash": "f1dcd2e35870ce72c5d82542c863d6c6703765cce7f0f26835e1182f133a7ee7"
+    },
+    {
+      "seq": 72,
+      "id": "58f2228d-cd1b-49b3-b7cd-9118981c3341",
+      "at": "2026-09-06T18:10:44.282Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S2:verification:pending->verified",
+      "slice": "S2",
+      "hash": "e1538dd71a40accaa71971879fe4919e88529102a1ed458cdc043aa1447da8df",
+      "oracle": "b643679c155958e50ebfb020913b4146a4f623a0a7894daba96798f76d4fdee9",
+      "evidence": "7550b49e52cfd0b83e0231b9cce69884e6a8ae3baf34a731e14c354408a6dcd2",
+      "fileHash": "b6585c507513bb4e4f61a3ee6ac4471682977487a8140c588d4863dd9cbd1629"
+    },
+    {
+      "seq": 73,
+      "id": "52039cdb-7354-454b-bcd8-c222d8fc69fd",
+      "at": "2026-09-06T18:10:56.633Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S3:verification:pending->verified",
+      "slice": "S3",
+      "hash": "99900986f8e04785ee6e4a8d01478fbc92e2b3a885d000e276bf104c339d9a81",
+      "oracle": "f6c2d852ded8c6779f76bc03fa1b034a8bea76fa39ce3321aaf827c83b6747c7",
+      "evidence": "f9996f8aa1b28a88ffbeec5bb00cc5484bd69bbcdf02330bd35ad529adefd4da",
+      "fileHash": "f4b7574f89dbe879d9d0ab33c8fe18a797333e82570f30e9d93c586daef6c56f"
+    },
+    {
+      "seq": 74,
+      "id": "c00dd453-acce-4974-aed5-ec53b52a954c",
+      "at": "2026-09-06T18:11:08.716Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S4:verification:pending->verified",
+      "slice": "S4",
+      "hash": "94457b4700c568c6b1e0049a0854dd7b251f43e0212e533e7929775044f9ce1b",
+      "oracle": "b9c78c7da99d876ef8c0900c42aaed2aea19d74981639c299e0c79259fd98b94",
+      "evidence": "d1600ea2f792eb835706d6398bd1e582c079248351f4cb82d3503461f8b6697d",
+      "fileHash": "690f6aabc0422e84bdbdbe23afb97d1fa9682f2c494a370b57199a9dde9d5965"
+    },
+    {
+      "seq": 75,
+      "id": "946d031c-f97e-4fdf-b191-09fe44cd8f16",
+      "at": "2026-09-06T18:11:19.373Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S5:verification:pending->verified",
+      "slice": "S5",
+      "hash": "1344c1505983a5c9d3bd13f90a95c63642d9511985c8b2678a70eda8f07c9bc0",
+      "oracle": "879dd5eb03295bfa3499a4448c40c2b27d6146c99d57fc36cf858442235a2f2e",
+      "evidence": "fd04e861c97d3525d4dd60fda1115d206371513778a4ea10b46da0db5542964b",
+      "fileHash": "d4cd60f921f94ba6f4b1f5fa994fbc4eb4b7b9a0c5a98e321537f0e5715827f4"
+    },
+    {
+      "seq": 76,
+      "id": "a7b3c3f4-0bc3-431e-8b87-d191f1528995",
+      "at": "2026-09-06T18:11:33.042Z",
+      "actor": "verifier",
+      "command": "gate_run",
+      "transition": "slice:S3:gate-run:g3:5d8d99d3-9b58-4be9-b0cd-aed149ef8812",
+      "slice": "S3",
+      "hash": "d517aff869b6f9b6711be3ccb472a3ea0725a32993f03ff1ca43f8150ef3833a",
+      "oracle": "516be5631bfc0d6755659c2d4153fac52ee4a2e77bea0bd62c059a392394ff2c",
+      "evidence": "84d87644ec7e4f4d52065ae32b6a69a521cc4fb7ca06266aab17c53e2f7ba033",
+      "fileHash": "928ad782434b173340f2fde5d197b82d4169d1b45cb44283e16aa6993288cbf8"
+    },
+    {
+      "seq": 77,
+      "id": "393cf7c2-3b1f-4d7b-9597-ac71599b510d",
+      "at": "2026-09-06T18:11:39.009Z",
+      "actor": "verifier",
+      "command": "gate_run",
+      "transition": "slice:S2:gate-run:g2:ed3632f2-0d57-467b-864f-e58637215119",
+      "slice": "S2",
+      "hash": "05a3e1b55ac071a30e3499cd19f6707446c55fa10113f6e83cd6d078a18c974a",
+      "oracle": "5209f912976ce07c0cd2a6d28dc4ad12f41d5d0ecf24ede1600880a70ea3798a",
+      "evidence": "a3051810c6b00b8a0e53b444334b2e0ec8574cff0e7256b24e50793c4812ee09",
+      "fileHash": "87bb79040b73f735de747f1290439766976a0c872b944fb6d6a3ebafb29b1ef9"
+    },
+    {
+      "seq": 78,
+      "id": "26c11538-a2f6-42b5-8d72-c903f44ea431",
+      "at": "2026-09-06T18:11:43.117Z",
+      "actor": "verifier",
+      "command": "gate_run",
+      "transition": "slice:S5:gate-run:g2:6245b2dc-ae23-491b-ad7a-213f29588f8b",
+      "slice": "S5",
+      "hash": "116f7febab0f016a99025ceaf9822ab69d5f6e6dcb0b6f8d0ca69740832ce0f3",
+      "oracle": "920003136cda77e90d9966789f788087329ca8095342de2b3822d8754fd1f118",
+      "evidence": "56ad8ef1a858b3ecd762b51bca09c74ae005be962442ae5331668669dfa90ce1",
+      "fileHash": "69f23c1651ceb1a17b6804d0feb193bc01be24ca9d9635e700dcc79b69b100e1"
+    },
+    {
+      "seq": 79,
+      "id": "a53384bd-9e81-45b4-b312-9daa3e09be29",
+      "at": "2026-09-06T18:11:47.923Z",
+      "actor": "verifier",
+      "command": "gate_run",
+      "transition": "slice:S4:gate-run:g2:647e5b10-49c5-4f3a-b653-eec13050c464",
+      "slice": "S4",
+      "hash": "3710f030e1b70524156cfb9d3be73d1962e63eec53feb7832f56e710ff18ad7d",
+      "oracle": "5c0c52f740fdcf87241fb43cc97a2019a794db435101f49e3c35f0f299c27fc4",
+      "evidence": "5b4c09c79829500c74f1b226f311da1cb668ee1d46d540cc69a9ffd30d55f9fd",
+      "fileHash": "de909c49c57766562236c424c78b21c62f4cb30e036550faec1dba184d90069d"
+    },
+    {
+      "seq": 80,
+      "id": "2b05bc02-5678-425f-8813-9e51a9648915",
+      "at": "2026-09-06T18:25:05.457Z",
+      "actor": "verifier",
+      "command": "slice_reject_batch",
+      "transition": "reject-batch:S4",
+      "slice": null,
+      "hash": "dadd5ca8b66037ca08e03792a1714ecb78d4318bb6b5233a19a3c15413631235",
+      "fileHash": "cfb7638617bae9fd3b58b22768064a0662afb7e8837aa2d58f2f329ef7f471ff"
     }
   ],
-  "fileHash": "f1dcd2e35870ce72c5d82542c863d6c6703765cce7f0f26835e1182f133a7ee7"
+  "fileHash": "173a26ddb7451cb35f4383aef7b47efc7767079056a21a9d32f271af1069d3c9"
 }
