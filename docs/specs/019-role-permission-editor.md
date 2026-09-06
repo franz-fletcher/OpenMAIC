@@ -1,6 +1,6 @@
 # Batch 019 spec: role-permission-editor
 
-Spec status: implementation
+Spec status: research_update
 
 ## Problem Statement
 
@@ -386,9 +386,15 @@ drops. `includeDeleted` parses strictly at
 `docs/specs/018-admin-suite.md:784`.
 
 Postcondition: the probe proves the custom rank-2 holder opens a
-learner-audience published course and still gets 404 on a guest-audience
-denial boundary case without special handling. The route maps `'1'` to true
-exactly like `'true'`, and `'0'` and missing stay false.
+learner-audience published course and opens a guest-audience course too,
+because rank 2 is at or above audience 1 and the gate allows. The live
+STEP3 proof at `tests/admin/roles-audience.pg.test.ts:204-222` asserts
+`allow` for the audience-1 course, with the comment at `:220` reading
+rank 2 >= audience 1 => allow. The denial boundary cases sit above the
+holder's rank: the same holder receives `not-found` on the
+creator-audience course at audience 3
+(`tests/admin/roles-audience.pg.test.ts:166-183`). The route maps `'1'` to
+true exactly like `'true'`, and `'0'` and missing stay false.
 
 Gates:
 
@@ -627,4 +633,143 @@ the real `resolveViewerRank` and `decideDocumentAccess` stack.
   (`lib/persistence/audience.ts:55-58`) and the read gate
   (`lib/persistence/document-access.ts:78-81`). A rank edit re-resolves
   visibility live, per Q12 (`docs/meta-specs/rbac-minimal-mode.md:169`).
-- Commit convention for this batch: `feat(rbac): ...`.
+- Commit convention for this batch: `feat(rbac): ...`
+
+## Research Update (2026-09-06)
+
+Batch F shipped in six slice commits: `1e97f846` (S1), `7c9b30e8` (S2),
+`f7c45e56` (S3), `05cfb7bc` (S4), `a95c7c50` (S5), and `6543b106` (the S4
+fix). Round 1 verified S1, S2, S3, and S5 and sent S4 back at `89c80ba4`.
+Round 2 verified all five slices at `cc559681`, chain 83. This section
+records what shipped, what deviated from the plan, and what the next work
+inherits.
+
+### What shipped
+
+- The roles persistence core ships at `lib/persistence/admin-roles.ts`.
+  `listRolesWithPermissions` at `:51-115` lists every role with its rank,
+  system flag, the rank-derived default set, and the `role_permissions`
+  override map. `createRole` at `:117-159` inserts a custom role with its
+  initial overrides and refuses the reserved system names at `:49`.
+  `updateRole` at `:161-222` renames, re-ranks, and replaces the override
+  set in one transaction. `resetRoleOverrides` at `:224-230` deletes the
+  override rows. `deleteRole` at `:232-286` refuses system roles, roles
+  with attached users, and roles that an unrevoked, unexpired, unused
+  invite names, then cleans the override rows. The rank uniqueness
+  constraint drops through `RANK_CONSTRAINT_SQL` at
+  `lib/auth/schema.ts:133-137`.
+- The roles API ships at `app/api/admin/roles/route.ts` (GET `:16-46`,
+  POST `:48-94`) and `app/api/admin/roles/[id]/route.ts` (PATCH `:34-130`,
+  DELETE `:132-209`). Every route gates `roles.manage` and keeps the typed
+  403 alive through the nested Response-rethrow catch. The self-lockout
+  guard refuses mutation of the acting session's own role with code
+  `SELF_LOCKOUT_REFUSED` at `:75`, `:85`, and `:157`. `setUserRole`
+  refuses self-demotion at `lib/persistence/admin-users.ts:108-112`, and
+  the users route converts that refusal to the typed 400 code
+  `SELF_DEMOTE_REFUSED` at `app/api/admin/users/route.ts:72`. The same
+  session edits other roles and other users without friction, so the
+  cross-admin recovery path stays open.
+- The stale-cache fix is the batch centerpiece. `requirePermission` at
+  `lib/auth/permissions-server.ts:26-97` resolves the full role row at
+  `:59-69` and checks the merged set from a fresh, uncached
+  `resolvePermissionSet` call at `:88`. `resolvePermissionSet` at
+  `:125-149` documents a fresh merge on every call at `:123`. The
+  module-scoped `requestCache` WeakMap is gone. The live-route proof at
+  `tests/permissions/guard-live-route.pg.test.ts:135-168` toggles the SAME
+  learner role on one pool identity in one server process: baseline 403
+  `permission_denied` at `:135-141`, grant then 400 `MISSING_PROVIDER` at
+  `:143-155`, revoke then 403 again at `:157-168`, with a second toggle
+  cycle at `:170-189`. No restart anywhere in the run.
+- The roles section UI ships at `components/admin/roles-section.tsx`. The
+  page gate becomes `users.manage` OR `roles.manage` at
+  `app/admin/settings/page.tsx:27` and `:33`. The users picker fetches
+  `/api/admin/roles` at `components/admin/users-section.tsx:66`, values
+  options by role id at `:208`, and highlights the current selection by
+  roleId at `:203`. Guard messages became stable codes plus i18n templates
+  in the S4 fix `6543b106`. The `admin.roles` key group lands at
+  `lib/i18n/locales/en-US.json:2208`.
+- The audience probe ships at `tests/admin/roles-audience.pg.test.ts` and
+  the `includeDeleted` hardening at `app/api/admin/courses/route.ts:29-33`.
+  The corrected audit semantics hold: rank 2 is at or above audience 1, so
+  the guest-audience boundary allows. The live STEP3 proof at
+  `tests/admin/roles-audience.pg.test.ts:204-222` asserts `allow`, with
+  the comment at `:220` recording rank 2 >= audience 1 => allow.
+
+### Deviations and surprises
+
+(a) The batch B per-request cache claim was false as shipped. The
+pool-keyed `requestCache` WeakMap spanned requests, and production passed
+the process-lifetime pool, so every merge read a frozen copy until a
+restart. Batch B's own pg suite masked the bug with fresh pools per
+assertion (`tests/permissions/role-permissions.pg.test.ts:116-120`,
+`:128-132`), because a fresh pool is a fresh WeakMap key. The fix drops
+the cache instead of building per-request machinery, and the doctrine is
+recorded in the S3 postcondition.
+
+(b) Three implementer rounds used a false skip excuse: `PG_CONTRACT_URL`
+is not CI-only. Orchestrator runs proved every pg gate passes locally.
+Doctrine: pg gates run here, always.
+
+(c) The S2, S4, and S5 pg suites each shipped broken-then-fixed. S2
+shipped a fixture that pointed `DATABASE_URL` at the wrong target,
+inserted unsigned raw-token session rows, and omitted `emailVerified`; the
+rewrite signs real sessions through the better-auth sign-in API
+(`tests/admin/roles-lockout.pg.test.ts`). S4's `next/headers` mock missed
+the `cookies` export; the shipped mock exports it at
+`tests/admin/roles-rsc-probe.pg.test.ts:36-44` and feeds the real signed
+cookie at `:197` and `:246`. S5 provisioned `stage_meta` before its
+`document_stages` parent; the suite now creates `document_stages` first at
+`tests/admin/roles-audience.pg.test.ts:50-68`.
+
+(d) S4 was rejected at round 1: the picker compared `value=name` against
+`options=ID`, so a uuid-id custom role rendered blank and the highlight
+never matched. Every unit gate stayed green. Only the live UI caught it
+(`docs/research/ui-after/34-picker-admin-r2.png`). This is the 018(a)
+lesson again: client-state bugs need DOM-level live proof, not
+`renderToString`.
+
+(e) Guard messages leaked raw English. The S4 fix `6543b106` replaced
+them with stable codes plus i18n templates, `SELF_LOCKOUT_REFUSED` and
+`SELF_DEMOTE_REFUSED`, under the `admin.roles` group at
+`lib/i18n/locales/en-US.json:2208`.
+
+(f) The diff classifier reports "missing" for file-basename pins. The
+scratch-ledger experiment proved it is a tool artifact, not a spec gap.
+
+(g) The create form persists explicit denies for unchecked boxes. The
+plan assumed absence meant default; the shipped semantics record a
+`granted=false` row. Documented and accepted.
+
+(h) Four pre-existing `Failed to load` fallback strings remain i18n
+strays. The round-2 findings carry the report-only list.
+
+### Test results
+
+All 19 gates passed green at round 2. The final table is 19 of 19: S1 3,
+S2 4, S3 4, S4 4, S5 4. The doubles ran clean and the fail-closed behavior
+is proven: every pg gate throws without `PG_CONTRACT_URL`. The full suite
+ran 7933 tests with 1 tolerated failure. The production build exits 0.
+Safari shots 31-34 are console-clean, with `34-picker-admin-r2.png`
+committed at the round-2 verdict. The live-wire matrices hold:
+stale-cache (`tests/permissions/guard-live-route.pg.test.ts:135-168`),
+audience (`tests/admin/roles-audience.pg.test.ts`), and lockout
+(`tests/admin/roles-lockout.pg.test.ts`).
+
+### Follow-on notes
+
+- The runner-skills-registration env-dependent baseline is a pre-existing
+  owed ticket. It predates this batch.
+- The four `Failed to load` strays await an i18n sweep. See deviation (h).
+- `settingsGated` gear visibility stays open from batch E
+  (`docs/specs/018-admin-suite.md:785-788`).
+- The RSC live-probe doctrine is proven twice now: 018(a) and 019(d).
+  Future page work keeps the real-cookie wire probe in its gates.
+
+### Program closeout
+
+- All seven meta children certify after this batch. The RBAC program
+  closes with the role editor shipped and the enforcement seam wired end
+  to end.
+- The S5 postcondition correction in this update is the honest research
+  record: the guest-audience boundary allows for a rank-2 holder, proven
+  live at `tests/admin/roles-audience.pg.test.ts:204-222`.
