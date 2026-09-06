@@ -4,12 +4,12 @@
   "spec": {
     "reference": "docs/specs/017-publishing-visibility.md",
     "title": "Batch 017 spec: publishing-visibility",
-    "hash": "6bb238ab3f0ce25bc7fd163df53a5ade1044d6f14681e018b237b6037f10c1cc"
+    "hash": "b3e6d4f6e76a43c2a25e93f1dc6ff60c5eb27b503aa4002f3751c00b764b0091"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "research_update",
+  "stage": "closed",
   "retry": {
     "count": 2,
     "max": 5,
@@ -2039,7 +2039,30 @@
       "slice": null,
       "hash": "f5204373a8f539eb3be709636fc08234eb6b28b8d39cd8c3fe9041a2e3109e21",
       "fileHash": "d6f7642ebbba5e1ebc2f2bb34e03938b24a17ff8cba130c51aec2b1905b9718a"
+    },
+    {
+      "seq": 90,
+      "id": "fe6d026a-6929-47e8-bb9e-b809c558d490",
+      "at": "2026-09-06T08:29:44.478Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:respecify:research update recorded after round-3 verification; i18n completion shipped in 9c1ee0bd",
+      "slice": null,
+      "hash": "37596020d6f771d8fecaf209ee3d2ffb5a0610a6dbcec9d4226c218b07dd706a",
+      "fileHash": "f28ae3dba2b02577d1e13f12f1b2a258b050a613605cca440aec9cee5e2f05b6"
+    },
+    {
+      "seq": 91,
+      "id": "eae28e0d-04a4-4e40-a831-8164af25e090",
+      "at": "2026-09-06T08:29:44.545Z",
+      "actor": "verifier",
+      "command": "certify",
+      "transition": "certify:8c4bfd96aff12be214a070754f824d8347493d2cba0371982ad102cb066b58ca",
+      "slice": null,
+      "hash": "24ff8f19197b5c4c4a041bfbc09d21fd85979148c5c157f1b9b1f6d53e6cd1fd",
+      "oracle": "8c4bfd96aff12be214a070754f824d8347493d2cba0371982ad102cb066b58ca",
+      "fileHash": "8af94f02894323c288e28bedad061e0fb04369a22af44d2f7593aa819d7214cf"
     }
   ],
-  "fileHash": "f28ae3dba2b02577d1e13f12f1b2a258b050a613605cca440aec9cee5e2f05b6"
+  "fileHash": "d6bb6fd1b2149a5d69f53b6e8810e8b001bd7afc30cd1008bc1445f083289645"
 }

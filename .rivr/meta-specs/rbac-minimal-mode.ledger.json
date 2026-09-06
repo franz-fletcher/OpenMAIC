@@ -326,7 +326,18 @@
       "slice": null,
       "hash": "f57ad0010b915e438cdc310815bf4c9e52cf7d7f8d17373e214e709b4db9571d",
       "fileHash": "fed827b2b280364bb129390c442ea6ffc9b3a60095df7b153b9b99ac149f7a23"
+    },
+    {
+      "seq": 27,
+      "id": "c79b862e-f011-4123-8908-4cc74f68cb39",
+      "at": "2026-09-06T08:29:44.598Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:clarification:child 017 closed and accepted",
+      "slice": null,
+      "hash": "9e561e3fc689d74de899ea35aece26669adbb8b55227cb2aea8076f195fa5b7d",
+      "fileHash": "ab2e6e56c73cdf9af3ba15536a44527ea493c452ea2adbad296db2371fb67bae"
     }
   ],
-  "fileHash": "ab2e6e56c73cdf9af3ba15536a44527ea493c452ea2adbad296db2371fb67bae"
+  "fileHash": "68989bbfc95fcf8102b0d89196f616dec3f123e3fb5d7dc36155b5dd1b0f1150"
 }
