@@ -48,10 +48,10 @@ export default function UsersSection() {
       if (data.success) {
         setUsers(data.users);
       } else {
-        setError(data.message || 'Failed to load users');
+        setError(data.message || t('admin.users.loadFailed'));
       }
     } catch {
-      setError('Failed to load users');
+      setError(t('admin.users.loadFailed'));
     } finally {
       setLoading(false);
     }

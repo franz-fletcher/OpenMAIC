@@ -54,10 +54,10 @@ export default function RolesSection() {
       if (data.success) {
         setRoles(data.roles);
       } else {
-        setError(data.message || 'Failed to load roles');
+        setError(data.message || t('admin.roles.loadFailed'));
       }
     } catch {
-      setError('Failed to load roles');
+      setError(t('admin.roles.loadFailed'));
     } finally {
       setLoading(false);
     }
@@ -176,7 +176,9 @@ export default function RolesSection() {
         if (data.error === 'attached-users') {
           setError(t('admin.roles.deleteAttachedUsers').replace('{{role}}', data.role ?? roleName));
         } else if (data.error === 'pending-invites') {
-          setError(t('admin.roles.deletePendingInvites').replace('{{role}}', data.role ?? roleName));
+          setError(
+            t('admin.roles.deletePendingInvites').replace('{{role}}', data.role ?? roleName),
+          );
         } else if (data.error === 'system-role') {
           setError(t('admin.roles.deleteSystemRole').replace('{{role}}', data.role ?? roleName));
         } else if (data.error === 'not-found') {

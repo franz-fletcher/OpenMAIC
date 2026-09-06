@@ -20218,6 +20218,37 @@
       "slice": "S1",
       "outcome": "ok",
       "extra": {}
+    },
+    {
+      "ts": "2026-09-06T21:40:12.443Z",
+      "command": "report",
+      "flags": [
+        "actor",
+        "slice",
+        "verbose"
+      ],
+      "exit": 0,
+      "duration_ms": 3,
+      "stage": "implementation",
+      "actor": "implementer",
+      "slice": "S2",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-06T21:43:55.629Z",
+      "command": "slice.mark",
+      "flags": [
+        "actor",
+        "slice"
+      ],
+      "exit": 0,
+      "duration_ms": 8,
+      "stage": "implementation",
+      "actor": "implementer",
+      "slice": "S2",
+      "outcome": "ok",
+      "extra": {}
     }
   ],
   "audit": [
@@ -34618,7 +34649,29 @@
       "slice": "S1",
       "hash": "a610c90f702f6d257b78e50d9400c033059bf3e713dc12de455aaffb4be9d1d0",
       "fileHash": "8267d98208a1915573b6d25f736c8551de1ab11f09c23c7d33a99e8ca9a8876c"
+    },
+    {
+      "seq": 1310,
+      "id": "2670cc5c-6e36-4391-816f-79d0f72abb37",
+      "at": "2026-09-06T21:40:12.443Z",
+      "actor": "implementer",
+      "command": "telemetry",
+      "transition": "command:report:exit:0:outcome:ok",
+      "slice": "S2",
+      "hash": "1eb90de6705b659672d7f04e762a73a39b6c4081f3d00333235d8a55d9c5cc10",
+      "fileHash": "0a0086c0716b142f3544c3d92b4d69272079955f966515fe373d9fa1401bb93e"
+    },
+    {
+      "seq": 1311,
+      "id": "40bea058-eb76-490a-ad7f-8b3e4561620e",
+      "at": "2026-09-06T21:43:55.629Z",
+      "actor": "implementer",
+      "command": "telemetry",
+      "transition": "command:slice.mark:exit:0:outcome:ok",
+      "slice": "S2",
+      "hash": "d351e870a6d92405454da6fcbd7bea90a3d36ac653c06029cad005745b1c748f",
+      "fileHash": "4de1d4e0c5dfa3cf9b63b19d1669f5b0b80e5956a62c7d295b4f2d862a052efa"
     }
   ],
-  "fileHash": "0a0086c0716b142f3544c3d92b4d69272079955f966515fe373d9fa1401bb93e"
+  "fileHash": "adefea39693b70a35343a71bb9e78fd70a4f7b055f422f4ab47bd16a9eb11d54"
 }

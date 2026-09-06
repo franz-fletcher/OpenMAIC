@@ -2166,7 +2166,8 @@
       "bannedNo": "いいえ",
       "yes": "はい",
       "no": "いいえ",
-      "noUsers": "ユーザーが見つかりません。"
+      "noUsers": "ユーザーが見つかりません。",
+      "loadFailed": "ユーザーの読み込みに失敗しました"
     },
     "invites": {
       "title": "Invites",
@@ -2237,7 +2238,8 @@
       "deleteFailed": "Failed to delete role.",
       "updateFailed": "Failed to update role.",
       "createFailed": "Failed to create role.",
-      "resetFailed": "Failed to reset role."
+      "resetFailed": "Failed to reset role.",
+      "loadFailed": "ロールの読み込みに失敗しました"
     },
     "notAuthorized": "You do not have permission to access this page."
   }

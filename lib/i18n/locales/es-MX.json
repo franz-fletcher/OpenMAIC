@@ -2166,7 +2166,8 @@
       "bannedNo": "No",
       "yes": "Sí",
       "no": "No",
-      "noUsers": "No se encontraron usuarios."
+      "noUsers": "No se encontraron usuarios.",
+      "loadFailed": "Error al cargar usuarios"
     },
     "invites": {
       "title": "Invites",
@@ -2237,7 +2238,8 @@
       "deleteFailed": "Failed to delete role.",
       "updateFailed": "Failed to update role.",
       "createFailed": "Failed to create role.",
-      "resetFailed": "Failed to reset role."
+      "resetFailed": "Failed to reset role.",
+      "loadFailed": "Error al cargar roles"
     },
     "notAuthorized": "You do not have permission to access this page."
   }

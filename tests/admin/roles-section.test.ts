@@ -153,6 +153,22 @@ describe('ROLES_UI_OK: roles section unit', () => {
     });
   });
 
+  describe('no raw English fallback strings', () => {
+    it('roles-section uses t() for loadFailed, not a literal string', async () => {
+      const src = await import('node:fs').then((m) =>
+        m.default.readFileSync('components/admin/roles-section.tsx', 'utf-8'),
+      );
+      expect(src).not.toContain("'Failed to load roles'");
+      expect(src).not.toContain('"Failed to load roles"');
+    });
+    it('users-section uses t() for loadFailed, not a literal string', async () => {
+      const src = await import('node:fs').then((m) =>
+        m.default.readFileSync('components/admin/users-section.tsx', 'utf-8'),
+      );
+      expect(src).not.toContain("'Failed to load users'");
+      expect(src).not.toContain('"Failed to load users"');
+    });
+  });
   describe('i18n key coverage', () => {
     it('has all required admin.roles.* keys', async () => {
       const requiredKeys = [

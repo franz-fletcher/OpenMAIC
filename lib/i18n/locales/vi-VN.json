@@ -2166,7 +2166,8 @@
       "bannedNo": "Không",
       "yes": "Có",
       "no": "Không",
-      "noUsers": "Không tìm thấy người dùng."
+      "noUsers": "Không tìm thấy người dùng.",
+      "loadFailed": "Không thể tải danh sách người dùng"
     },
     "invites": {
       "title": "Invites",
@@ -2237,7 +2238,8 @@
       "deleteFailed": "Failed to delete role.",
       "updateFailed": "Failed to update role.",
       "createFailed": "Failed to create role.",
-      "resetFailed": "Failed to reset role."
+      "resetFailed": "Failed to reset role.",
+      "loadFailed": "Không thể tải danh sách vai trò"
     },
     "notAuthorized": "You do not have permission to access this page."
   }

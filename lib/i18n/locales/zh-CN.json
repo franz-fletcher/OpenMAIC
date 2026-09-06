@@ -2166,7 +2166,8 @@
       "bannedNo": "否",
       "yes": "是",
       "no": "否",
-      "noUsers": "未找到用户。"
+      "noUsers": "未找到用户。",
+      "loadFailed": "加载用户失败"
     },
     "invites": {
       "title": "Invites",
@@ -2237,7 +2238,8 @@
       "deleteFailed": "Failed to delete role.",
       "updateFailed": "Failed to update role.",
       "createFailed": "Failed to create role.",
-      "resetFailed": "Failed to reset role."
+      "resetFailed": "Failed to reset role.",
+      "loadFailed": "加载角色失败"
     },
     "notAuthorized": "You do not have permission to access this page."
   }
