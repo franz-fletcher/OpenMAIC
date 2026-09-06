@@ -18144,6 +18144,62 @@
       "slice": "S1",
       "outcome": "ok",
       "extra": {}
+    },
+    {
+      "ts": "2026-09-06T16:40:34.513Z",
+      "command": "report",
+      "flags": [
+        "actor",
+        "verbose"
+      ],
+      "exit": 0,
+      "duration_ms": 1,
+      "stage": "implementation",
+      "actor": "implementer",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-06T16:40:57.804Z",
+      "command": "stage.advance",
+      "flags": [
+        "actor",
+        "to"
+      ],
+      "exit": 2,
+      "duration_ms": 3,
+      "stage": "implementation",
+      "actor": "implementer",
+      "outcome": "permission",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-06T16:59:21.607Z",
+      "command": "slice.mark",
+      "flags": [
+        "actor",
+        "slice"
+      ],
+      "exit": 0,
+      "duration_ms": 5,
+      "stage": "implementation",
+      "actor": "implementer",
+      "slice": "S2",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-06T16:59:25.942Z",
+      "command": "report",
+      "flags": [
+        "actor"
+      ],
+      "exit": 0,
+      "duration_ms": 1,
+      "stage": "implementation",
+      "actor": "implementer",
+      "outcome": "ok",
+      "extra": {}
     }
   ],
   "audit": [
@@ -31026,7 +31082,51 @@
       "slice": "S1",
       "hash": "3b97c743c243e333f70953434049f47f67936c08a1319b422dd997e9bf77fd75",
       "fileHash": "2484a99db9e9ca324cbca8750c99dbff978122c888d5d62f381c353e60d85fb8"
+    },
+    {
+      "seq": 1172,
+      "id": "c2838355-7989-4a5d-b7fc-2ef5ce44c30b",
+      "at": "2026-09-06T16:40:34.513Z",
+      "actor": "implementer",
+      "command": "telemetry",
+      "transition": "command:report:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "b06d8f08d57e8f97925b4b16d9eae45f97e2bfba8bb87ad386066e374f365110",
+      "fileHash": "a1eb5ef39a01a88384330b219ea93444e16184733439ad4fefa31aafbc317ca0"
+    },
+    {
+      "seq": 1173,
+      "id": "3b5b7378-db65-4d53-a7f3-0bd05d289a6a",
+      "at": "2026-09-06T16:40:57.804Z",
+      "actor": "implementer",
+      "command": "telemetry",
+      "transition": "command:stage.advance:exit:2:outcome:permission",
+      "slice": null,
+      "hash": "e7acffa6553fa7a582e95d9970b4d16259e5724cc1623712c9054c16f1c01fb7",
+      "fileHash": "94a8d080a6e4274ff9db5c37e2b6e80e251e3bbcd8b92d34997ad54baccb2cce"
+    },
+    {
+      "seq": 1174,
+      "id": "04a1d92a-4353-46fd-bcfa-bf4d687ad8d9",
+      "at": "2026-09-06T16:59:21.607Z",
+      "actor": "implementer",
+      "command": "telemetry",
+      "transition": "command:slice.mark:exit:0:outcome:ok",
+      "slice": "S2",
+      "hash": "eeeb34a62e405a8f133e372696169f799fbdba721cf780798a783672447233c6",
+      "fileHash": "f563d91332032c2be8725a340888dcdfc264636e3721ab37c2373b7ff5691514"
+    },
+    {
+      "seq": 1175,
+      "id": "68be5b96-7d7e-498e-924d-85bd9a0efc44",
+      "at": "2026-09-06T16:59:25.942Z",
+      "actor": "implementer",
+      "command": "telemetry",
+      "transition": "command:report:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "08fa226bc5ac92849472fdedce8ee04a895635f9b7dc1ea93f786917453c3ad7",
+      "fileHash": "920c9908f5f900c66290fe136908ce73ccbd325a0b6e6ae80a7727489b32e13a"
     }
   ],
-  "fileHash": "a1eb5ef39a01a88384330b219ea93444e16184733439ad4fefa31aafbc317ca0"
+  "fileHash": "d0fc3546ac6de2961be4088a870804d04a71a6e4c8a3d1b86306b3672ecb9ce3"
 }

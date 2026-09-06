@@ -1519,7 +1519,6 @@
     "glmVoiceLuodo": "Luodo voice",
     "qwenTpVoiceLonganlingxin": "Longanlingxin",
     "qwenTpVoiceLonganlufeng": "Longanlufeng",
-
     "qwenVoiceCherry": "Sunny, warm and natural",
     "qwenVoiceSerena": "Gentle and soft",
     "qwenVoiceEthan": "Energetic and vibrant",
@@ -2205,6 +2204,32 @@
       "delete": "Delete",
       "deleteConfirm": "Delete this course? This action cannot be undone.",
       "noCourses": "No courses found."
+    },
+    "roles": {
+      "title": "Roles",
+      "name": "Name",
+      "rank": "Rank",
+      "system": "System",
+      "custom": "Custom",
+      "actions": "Actions",
+      "create": "Create Role",
+      "edit": "Edit",
+      "delete": "Delete",
+      "reset": "Reset to Defaults",
+      "rename": "Rename",
+      "changeRank": "Change Rank",
+      "permissions": "Permissions",
+      "defaults": "Defaults",
+      "overrides": "Overrides",
+      "effective": "Effective",
+      "noRoles": "No roles found.",
+      "deleteConfirm": "Delete this role? Users with this role will need to be reassigned.",
+      "createTitle": "Create New Role",
+      "editTitle": "Edit Role",
+      "roleName": "Role Name",
+      "selectRank": "Select Rank",
+      "selfLockoutError": "Cannot mutate your own role.",
+      "selfDemoteError": "Cannot change your own role assignment."
     },
     "notAuthorized": "You do not have permission to access this page."
   }

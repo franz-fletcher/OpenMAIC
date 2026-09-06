@@ -62,7 +62,21 @@ export async function PATCH(req: NextRequest): Promise<Response> {
           { status: 400 },
         );
       }
-      await setUserRole(pool, userId, roleId, session.userId);
+      try {
+        await setUserRole(pool, userId, roleId, session.userId);
+      } catch (err) {
+        if (err instanceof Error && err.message === 'Cannot change your own role assignment') {
+          return Response.json(
+            {
+              success: false,
+              code: 'SELF_DEMOTE_REFUSED',
+              message: 'Cannot change your own role assignment',
+            },
+            { status: 400 },
+          );
+        }
+        throw err;
+      }
       return Response.json({ success: true });
     }
 

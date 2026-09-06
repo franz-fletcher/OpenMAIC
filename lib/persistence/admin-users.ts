@@ -103,6 +103,12 @@ export async function setUserRole(
   roleId: string,
   grantedBy: string,
 ): Promise<void> {
+  // Self-demote refusal: mirror the self-ban refusal pattern.
+  // An administrator cannot change their own role assignment.
+  if (grantedBy === userId) {
+    throw new Error('Cannot change your own role assignment');
+  }
+
   await queryable.query(
     `INSERT INTO user_roles (user_id, role_id, granted_by, granted_at)
      VALUES ($1, $2, $3, now())
