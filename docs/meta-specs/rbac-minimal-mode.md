@@ -317,3 +317,22 @@ The program is done when all of these hold.
 - The admin suite is usable end to end. An operator invites an email to a
   verified role, and the invited user reaches that role after signup and
   verification.
+## Certification Report
+
+Certified: 2026-09-06T20:42:14.841Z
+Signature: 16ad5096a24c681cc5b4df6bb409f365bd83db07effda5c2dd56dc7c05e0ffcc
+
+### Summary
+
+Slices: 0
+Symbols: 0
+Gates: 0
+
+### Implemented Symbols
+
+
+### Gates Passed
+
+
+Certification hash: 16ad5096a24c681cc5b4df6bb409f365bd83db07effda5c2dd56dc7c05e0ffcc
+Certified: 2026-09-06T20:42:14.841Z | Signature: 16ad5096a24c681cc5b4df6bb409f365bd83db07effda5c2dd56dc7c05e0ffcc | Certifier: verifier
