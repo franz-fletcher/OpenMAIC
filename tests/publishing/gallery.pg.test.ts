@@ -7,12 +7,28 @@ const { Pool } = pg;
 
 const PG_URL = process.env.PG_CONTRACT_URL;
 
+function databaseUrl(base: string, database: string): string {
+  const url = new URL(base);
+  url.pathname = `/${database}`;
+  return url.toString();
+}
+
 describe.skipIf(!PG_URL)('publishing gallery (integration)', () => {
   let pool: pg.Pool;
+  let scratchDbUrl: string;
 
   beforeAll(async () => {
     if (!PG_URL) throw new Error('PG_CONTRACT_URL is required for integration tests');
-    pool = new Pool({ connectionString: PG_URL });
+
+    // Provision scratch DB to avoid interference from parallel test files.
+    const admin = new Pool({ connectionString: PG_URL, max: 2 });
+    const dbName = `openmaic_gallery_${process.pid}`;
+    await admin.query(`DROP DATABASE IF EXISTS ${dbName}`);
+    await admin.query(`CREATE DATABASE ${dbName}`);
+    await admin.end();
+
+    scratchDbUrl = databaseUrl(PG_URL, dbName);
+    pool = new Pool({ connectionString: scratchDbUrl, max: 4 });
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS "user" (
@@ -78,26 +94,35 @@ describe.skipIf(!PG_URL)('publishing gallery (integration)', () => {
       ON CONFLICT (name) DO NOTHING;
     `);
 
+    // Use raw IDs (no prefix) because resolveViewerRank strips 'user:' prefix.
     await pool.query(`
       INSERT INTO "user" (id, name, email) VALUES
-        ('user:anon', 'anon', 'anon@test.example'),
-        ('user:guest', 'guest', 'guest@test.example'),
-        ('user:learner', 'learner', 'learner@test.example'),
-        ('user:creator', 'creator', 'creator@test.example')
+        ('anon', 'anon', 'anon@test.example'),
+        ('guest', 'guest', 'guest@test.example'),
+        ('learner', 'learner', 'learner@test.example'),
+        ('creator', 'creator', 'creator@test.example')
       ON CONFLICT (id) DO NOTHING;
     `);
     await pool.query(`
       INSERT INTO user_roles (user_id, role_id) VALUES
-        ('user:guest', 'role-guest'),
-        ('user:learner', 'role-learner'),
-        ('user:creator', 'role-creator')
+        ('guest', 'role-guest'),
+        ('learner', 'role-learner'),
+        ('creator', 'role-creator')
       ON CONFLICT (user_id) DO NOTHING;
     `);
   });
 
   afterAll(async () => {
-    await pool.end();
-  });
+    await pool?.end();
+    const admin = new Pool({ connectionString: PG_URL, max: 2 });
+    admin.on('error', () => {});
+    try {
+      await admin.query(`DROP DATABASE IF EXISTS openmaic_gallery_${process.pid} WITH (FORCE)`);
+    } catch {
+      // Silently ignore.
+    }
+    await admin.end();
+  }, 60_000);
 
   it('lists only published courses visible to the viewer rank', async () => {
     const now = Date.now();
@@ -105,18 +130,18 @@ describe.skipIf(!PG_URL)('publishing gallery (integration)', () => {
     // Create courses in every audience tier.
     await pool.query(
       `INSERT INTO document_stages (id, owner_id, name) VALUES
-        ('gal-everyone', 'user:creator', 'Everyone Course'),
-        ('gal-guest', 'user:creator', 'Guest Course'),
-        ('gal-learner', 'user:creator', 'Learner Course')
+        ('gal-everyone', 'creator', 'Everyone Course'),
+        ('gal-guest', 'creator', 'Guest Course'),
+        ('gal-learner', 'creator', 'Learner Course')
       ON CONFLICT (id) DO NOTHING`,
     );
 
     await pool.query(
       `INSERT INTO stage_meta (stage_id, owner_id, status, audience, is_public, published_at, generation_complete, deleted_at) VALUES
-        ('gal-everyone', 'user:creator', 'published', 0, true, $1, false, null),
-        ('gal-guest', 'user:creator', 'published', 1, true, $1, false, null),
-        ('gal-learner', 'user:creator', 'published', 2, true, $1, false, null)
-      ON CONFLICT (stage_id) DO UPDATE SET status = EXCLUDED.status`,
+        ('gal-everyone', 'creator', 'published', 0, true, $1, false, null),
+        ('gal-guest', 'creator', 'published', 1, true, $1, false, null),
+        ('gal-learner', 'creator', 'published', 2, true, $1, false, null)
+      ON CONFLICT (stage_id) DO UPDATE SET status = EXCLUDED.status, audience = EXCLUDED.audience`,
       [now],
     );
 
@@ -158,12 +183,12 @@ describe.skipIf(!PG_URL)('publishing gallery (integration)', () => {
     const now = Date.now();
 
     await pool.query(
-      `INSERT INTO document_stages (id, owner_id, name) VALUES ('gal-draft', 'user:creator', 'Draft Course') ON CONFLICT (id) DO NOTHING`,
+      `INSERT INTO document_stages (id, owner_id, name) VALUES ('gal-draft', 'creator', 'Draft Course') ON CONFLICT (id) DO NOTHING`,
     );
 
     await pool.query(
       `INSERT INTO stage_meta (stage_id, owner_id, status, audience, is_public, published_at, generation_complete, deleted_at) VALUES
-        ('gal-draft', 'user:creator', 'draft', 0, false, null, false, null)
+        ('gal-draft', 'creator', 'draft', 0, false, null, false, null)
       ON CONFLICT (stage_id) DO UPDATE SET status = EXCLUDED.status`,
     );
 
@@ -180,12 +205,12 @@ describe.skipIf(!PG_URL)('publishing gallery (integration)', () => {
     const now = Date.now();
 
     await pool.query(
-      `INSERT INTO document_stages (id, owner_id, name) VALUES ('gal-tomb', 'user:creator', 'Tombstoned Course') ON CONFLICT (id) DO NOTHING`,
+      `INSERT INTO document_stages (id, owner_id, name) VALUES ('gal-tomb', 'creator', 'Tombstoned Course') ON CONFLICT (id) DO NOTHING`,
     );
 
     await pool.query(
       `INSERT INTO stage_meta (stage_id, owner_id, status, audience, is_public, published_at, generation_complete, deleted_at) VALUES
-        ('gal-tomb', 'user:creator', 'published', 0, true, $1, false, now())
+        ('gal-tomb', 'creator', 'published', 0, true, $1, false, now())
       ON CONFLICT (stage_id) DO UPDATE SET status = EXCLUDED.status`,
       [now],
     );
@@ -204,16 +229,16 @@ describe.skipIf(!PG_URL)('publishing gallery (integration)', () => {
     const newer = Date.now();
 
     await pool.query(
-      `INSERT INTO document_stages (id, owner_id, name) VALUES ('gal-oldest', 'user:creator', 'Oldest') ON CONFLICT (id) DO NOTHING`,
+      `INSERT INTO document_stages (id, owner_id, name) VALUES ('gal-oldest', 'creator', 'Oldest') ON CONFLICT (id) DO NOTHING`,
     );
     await pool.query(
-      `INSERT INTO document_stages (id, owner_id, name) VALUES ('gal-newest', 'user:creator', 'Newest') ON CONFLICT (id) DO NOTHING`,
+      `INSERT INTO document_stages (id, owner_id, name) VALUES ('gal-newest', 'creator', 'Newest') ON CONFLICT (id) DO NOTHING`,
     );
 
     await pool.query(
       `INSERT INTO stage_meta (stage_id, owner_id, status, audience, is_public, published_at, generation_complete, deleted_at) VALUES
-        ('gal-oldest', 'user:creator', 'published', 0, true, $1, false, null),
-        ('gal-newest', 'user:creator', 'published', 0, true, $2, false, null)
+        ('gal-oldest', 'creator', 'published', 0, true, $1, false, null),
+        ('gal-newest', 'creator', 'published', 0, true, $2, false, null)
       ON CONFLICT (stage_id) DO UPDATE SET status = EXCLUDED.status`,
       [older, newer],
     );

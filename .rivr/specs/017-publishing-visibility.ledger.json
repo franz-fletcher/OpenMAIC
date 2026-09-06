@@ -342,8 +342,10 @@
       "riskTier": 3,
       "uuid": "b604c89e-9bcf-4d36-967d-4563dac90a5d",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "fd9444065a7ea5006806fba49400f15892c062145d03c464a7d85ac59a18076d",
+        "actor": "implementer",
+        "at": "2026-09-06T07:06:32.512Z"
       },
       "verification": {
         "status": "rejected",
@@ -564,8 +566,10 @@
       "riskTier": 3,
       "uuid": "b681a4d8-9102-4398-9578-6b2d1fd909b1",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "e0980defbb1f4558e922e33b66b9f44dd1035aefe4e60037cf6a43b18873f16f",
+        "actor": "implementer",
+        "at": "2026-09-06T07:06:32.643Z"
       },
       "verification": {
         "status": "rejected",
@@ -726,8 +730,10 @@
       "riskTier": 3,
       "uuid": "50f9bad6-32f2-4bd4-b077-f125dbe7a3e2",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "663e3499454aec190c799d031928f97f28252d79b3d83b3996a1c7aec56feeff",
+        "actor": "implementer",
+        "at": "2026-09-06T07:06:32.776Z"
       },
       "verification": {
         "status": "rejected",
@@ -847,8 +853,10 @@
       "riskTier": 4,
       "uuid": "a6934f38-a89a-4646-9557-4445f3f7a227",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "baa4a4cdb7c707ff06c11f65054355b8a65cb5ccfe0970ab49c7594bcca50ed4",
+        "actor": "implementer",
+        "at": "2026-09-06T07:06:32.953Z"
       },
       "verification": {
         "status": "rejected",
@@ -1764,7 +1772,51 @@
       "slice": null,
       "hash": "4ea06f026f496e2cc94763e1c9b42c33738478ad01678cd53a47ea3b924c1add",
       "fileHash": "8835172b34f9e09242d99ce47cc09abbef5972c679c14bd5dcf1886022e97c90"
+    },
+    {
+      "seq": 74,
+      "id": "1ebe6acd-9294-4586-b3b2-3e6cf6cdc75f",
+      "at": "2026-09-06T07:06:32.512Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S2:impl:pending->ready_for_verification",
+      "slice": "S2",
+      "hash": "d5f69eff036a55264e535bee5af059d709f21436f99c4075f95d9a17d2efac5e",
+      "fileHash": "cfaddfc1900bc269bc4e83ebeac71ff6d134c1f1b54635254d1d11ac309eab5f"
+    },
+    {
+      "seq": 75,
+      "id": "c28e48b5-9e0b-4a98-9e91-54738061397e",
+      "at": "2026-09-06T07:06:32.643Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S3:impl:pending->ready_for_verification",
+      "slice": "S3",
+      "hash": "5cd67712c630176b3933790579e2ba81cd51a0fa178fb8bea64d4f3470cfe149",
+      "fileHash": "b9bb765bb1d3e021c0b603fa83b16563553e799311043c497ff567260bad20fb"
+    },
+    {
+      "seq": 76,
+      "id": "dcf67165-9246-4e98-8bcb-38304f4239e5",
+      "at": "2026-09-06T07:06:32.776Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S4:impl:pending->ready_for_verification",
+      "slice": "S4",
+      "hash": "e3e184c5beef6bbf53754778a37c9917edd9d4e3207a6b92bb0a6b4406143e29",
+      "fileHash": "0ffa9c2633e6e3529db670e43a6b2ba386f57bb550c76200c5423e7395b9e7e8"
+    },
+    {
+      "seq": 77,
+      "id": "61be332b-a4bc-4cbb-9c8d-bb21da635888",
+      "at": "2026-09-06T07:06:32.953Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S5:impl:pending->ready_for_verification",
+      "slice": "S5",
+      "hash": "d29c13818f8d3d71f532ceac123f590bcd3e622ba76db72e0204003bed8714e6",
+      "fileHash": "4a89bece2bca80a8be20ea7b2589f52189d21ecdb42e087b9f772ff875b3fa16"
     }
   ],
-  "fileHash": "cfaddfc1900bc269bc4e83ebeac71ff6d134c1f1b54635254d1d11ac309eab5f"
+  "fileHash": "11d1af8def596d64b820e4022b33b3efb592ab660ce3db9bd64ba305320b4828"
 }

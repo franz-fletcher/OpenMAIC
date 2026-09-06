@@ -23,15 +23,23 @@ export const AUDIENCE_RANK = {
  * Returns `0` for `anon:` owners and unknown users. Returns the role rank
  * join for `user:` owners. The rank comes from the same database query that
  * `requirePermission` uses, so the value is consistent across the stack.
+ *
+ * `withRequestOwnerId` passes `user:<raw-id>` as the owner, but
+ * `user_roles.user_id` stores the raw better-auth id. This function strips
+ * the `user:` prefix before the join so the query matches.
  */
 export async function resolveViewerRank(queryable: Queryable, ownerId: string): Promise<number> {
   if (ownerId.startsWith('anon:')) {
     return 0;
   }
 
+  // withRequestOwnerId passes 'user:<raw-id>' but user_roles.user_id
+  // stores the raw better-auth id. Strip the prefix to match.
+  const rawUserId = ownerId.startsWith('user:') ? ownerId.slice(5) : ownerId;
+
   const result = await queryable.query<{ rank: number }>(
     `SELECT r.rank FROM user_roles ur JOIN roles r ON ur.role_id = r.id WHERE ur.user_id = $1`,
-    [ownerId],
+    [rawUserId],
   );
 
   return result.rows.length > 0 ? result.rows[0].rank : 0;

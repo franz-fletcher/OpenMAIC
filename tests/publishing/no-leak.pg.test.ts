@@ -1,5 +1,5 @@
 /**
- * No-leak adversarial proof — S5.
+ * No-leak adversarial proof -- S5.
  *
  * Proves the read gate leaks no cross-audience content through any seam.
  *
@@ -10,8 +10,8 @@
  *
  * Toggles MINIMAL_MODE in-process for the no-row classroom probe.
  *
- * Four role classes: anonymous (rank 0), guest (rank 1), learner (rank 2),
- * creator (rank 3). One owner identity per course (the row's owner_id).
+ * Six role classes: anonymous (rank 0), guest (rank 1), learner (rank 2),
+ * creator (rank 3), admin (rank 4), owner (course owner).
  *
  * Five course states: draft, published-everyone, published-guest,
  * published-learner, tombstoned.
@@ -33,8 +33,10 @@ vi.mock('@/lib/auth', () => ({
 }));
 
 // Track callerId via a module-scoped variable set by probeRoute.
-// For authenticated callers (user:*) we resolve to the user ID directly;
-// for anonymous callers (user:anon) we resolve to the anon identity.
+// For authenticated callers we resolve to the raw user ID directly;
+// for anonymous callers we resolve to the anon identity.
+// The raw ID is what user_roles.user_id stores, matching production
+// better-auth convention.
 let _callerIdForOwner: string | undefined;
 vi.mock('@/lib/server/agent-runtime/owner', () => ({
   resolveRequestOwnerId: (_req: Pick<Request, 'headers'>, resHeaders: Headers) => {
@@ -43,12 +45,13 @@ vi.mock('@/lib/server/agent-runtime/owner', () => ({
       'Set-Cookie',
       `anonymous_id=${id}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${30 * 24 * 60 * 60}`,
     );
-    // Return user: for authenticated callers so resolveViewerRank returns the role rank.
+    // Return raw ID for authenticated callers.
+    // resolveViewerRank strips 'user:' prefix, so a raw ID passes through unchanged.
     // Return anon: for anonymous callers so resolveViewerRank returns 0.
-    if (id.startsWith('user:')) {
-      return id; // e.g. "user:guest" -> resolveViewerRank joins roles and returns rank 1
+    if (id.startsWith('anon:')) {
+      return id;
     }
-    return `anon:${id}`;
+    return id;
   },
 }));
 
@@ -93,7 +96,7 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
     // Suppress harmless "terminating connection due to administrator command"
     // errors that occur when the scratch DB is dropped in afterAll.
     pool.on('error', () => {
-      // Silently ignore — the error is from the DB drop, not a real failure.
+      // Silently ignore -- the error is from the DB drop, not a real failure.
     });
 
     // Drop and recreate application tables to ensure fresh schema.
@@ -198,32 +201,32 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
       ON CONFLICT (name) DO NOTHING;
     `);
 
-    // Seed users.
+    // Seed users with RAW better-auth ids (no 'user:' prefix).
+    // This matches how better-auth stores user ids in production.
     await pool.query(`
       INSERT INTO "user" (id, name, email, "emailVerified") VALUES
-        ('user:anon', 'anon', 'anon@test.example', true),
-        ('user:guest', 'guest', 'guest@test.example', true),
-        ('user:learner', 'learner', 'learner@test.example', true),
-        ('user:creator', 'creator', 'creator@test.example', true),
-        ('user:admin', 'admin', 'admin@test.example', true)
+        ('guest-raw', 'guest', 'guest@test.example', true),
+        ('learner-raw', 'learner', 'learner@test.example', true),
+        ('creator-raw', 'creator', 'creator@test.example', true),
+        ('admin-raw', 'admin', 'admin@test.example', true)
       ON CONFLICT (id) DO NOTHING;
     `);
     await pool.query(`
       INSERT INTO user_roles (user_id, role_id) VALUES
-        ('user:guest', 'role-guest'),
-        ('user:learner', 'role-learner'),
-        ('user:creator', 'role-creator'),
-        ('user:admin', 'role-admin')
+        ('guest-raw', 'role-guest'),
+        ('learner-raw', 'role-learner'),
+        ('creator-raw', 'role-creator'),
+        ('admin-raw', 'role-admin')
       ON CONFLICT (user_id) DO NOTHING;
     `);
 
     // Seed better-auth sessions for authenticated users.
     await pool.query(`
       INSERT INTO "session" (id, "userId", expires_at, token) VALUES
-        ('sess:guest', 'user:guest', now() + interval '1 day', 'tok:guest'),
-        ('sess:learner', 'user:learner', now() + interval '1 day', 'tok:learner'),
-        ('sess:creator', 'user:creator', now() + interval '1 day', 'tok:creator'),
-        ('sess:admin', 'user:admin', now() + interval '1 day', 'tok:admin')
+        ('sess:guest', 'guest-raw', now() + interval '1 day', 'tok:guest'),
+        ('sess:learner', 'learner-raw', now() + interval '1 day', 'tok:learner'),
+        ('sess:creator', 'creator-raw', now() + interval '1 day', 'tok:creator'),
+        ('sess:admin', 'admin-raw', now() + interval '1 day', 'tok:admin')
       ON CONFLICT (id) DO NOTHING;
     `);
 
@@ -242,12 +245,12 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
     await pool?.end();
     const admin = new Pool({ connectionString: PG_URL, max: 2 });
     admin.on('error', () => {
-      // Silently ignore — the error is from the DB drop.
+      // Silently ignore -- the DB may not exist.
     });
     try {
       await admin.query(`DROP DATABASE IF EXISTS openmaic_noleak_${process.pid} WITH (FORCE)`);
     } catch {
-      // Silently ignore — the DB may not exist.
+      // Silently ignore.
     }
     await admin.end();
     delete process.env.DATABASE_URL;
@@ -380,7 +383,7 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
     _origUncaught = process.listeners('uncaughtException') as any;
     process.on('uncaughtException', (err) => {
       if (err && typeof err === 'object' && 'code' in err && (err as any).code === '57P01') {
-        // Silently ignore — the error is from the DB drop, not a real failure.
+        // Silently ignore -- the error is from the DB drop, not a real failure.
         return;
       }
       // Re-throw for other errors.
@@ -391,9 +394,9 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
   describe('stage-meta route', () => {
     it('anon gets 404 for learner-tier published course', async () => {
       const stageId = 'noleak-meta-anon-vs-learner';
-      await seedCourse(stageId, 'anon:test-anon-uuid', 'published', 2);
+      await seedCourse(stageId, 'anon-owner', 'published', 2);
 
-      const res = await probeRoute(getStageMeta, `/api/stage-meta/${stageId}`, 'user:anon', {
+      const res = await probeRoute(getStageMeta, `/api/stage-meta/${stageId}`, 'anon:anon', {
         stageId,
       });
       expect(res.status).toBe(404);
@@ -406,9 +409,9 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
 
     it('guest gets 404 for learner-tier published course', async () => {
       const stageId = 'noleak-meta-guest-vs-learner';
-      await seedCourse(stageId, 'anon:test-anon-uuid', 'published', 2);
+      await seedCourse(stageId, 'anon-owner', 'published', 2);
 
-      const res = await probeRoute(getStageMeta, `/api/stage-meta/${stageId}`, 'user:guest', {
+      const res = await probeRoute(getStageMeta, `/api/stage-meta/${stageId}`, 'guest-raw', {
         stageId,
       });
       expect(res.status).toBe(404);
@@ -421,9 +424,9 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
 
     it('learner gets 200 for learner-tier published course', async () => {
       const stageId = 'noleak-meta-learner-vs-learner';
-      await seedCourse(stageId, 'anon:test-anon-uuid', 'published', 2);
+      await seedCourse(stageId, 'anon-owner', 'published', 2);
 
-      const res = await probeRoute(getStageMeta, `/api/stage-meta/${stageId}`, 'user:learner', {
+      const res = await probeRoute(getStageMeta, `/api/stage-meta/${stageId}`, 'learner-raw', {
         stageId,
       });
       expect(res.status).toBeGreaterThanOrEqual(200);
@@ -436,9 +439,9 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
 
     it('guest gets 200 for guest-tier published course', async () => {
       const stageId = 'noleak-meta-guest-tier';
-      await seedCourse(stageId, 'anon:test-anon-uuid', 'published', 1);
+      await seedCourse(stageId, 'anon-owner', 'published', 1);
 
-      const res = await probeRoute(getStageMeta, `/api/stage-meta/${stageId}`, 'user:guest', {
+      const res = await probeRoute(getStageMeta, `/api/stage-meta/${stageId}`, 'guest-raw', {
         stageId,
       });
       expect(res.status).toBeGreaterThanOrEqual(200);
@@ -451,15 +454,15 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
 
     it('owner gets 200 for their draft, non-owner gets 404', async () => {
       const stageId = 'noleak-meta-draft';
-      // Seed with owner ID matching what the mock resolves for 'user:owner'.
-      await seedCourse(stageId, 'user:owner', 'draft', 3);
+      // Seed with raw owner ID matching what the mock resolves for 'owner-raw'.
+      await seedCourse(stageId, 'owner-raw', 'draft', 3);
 
-      const ownerRes = await probeRoute(getStageMeta, `/api/stage-meta/${stageId}`, 'user:owner', {
+      const ownerRes = await probeRoute(getStageMeta, `/api/stage-meta/${stageId}`, 'owner-raw', {
         stageId,
       });
       expect(ownerRes.status).toBe(200);
 
-      const guestRes = await probeRoute(getStageMeta, `/api/stage-meta/${stageId}`, 'user:guest', {
+      const guestRes = await probeRoute(getStageMeta, `/api/stage-meta/${stageId}`, 'guest-raw', {
         stageId,
       });
       expect(guestRes.status).toBe(404);
@@ -472,15 +475,15 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
 
     it('tombstoned course 404s for everyone including owner', async () => {
       const stageId = 'noleak-meta-tomb';
-      await seedCourse(stageId, 'user:owner', 'published', 0, new Date());
+      await seedCourse(stageId, 'owner-raw', 'published', 0, new Date());
 
-      const ownerRes = await probeRoute(getStageMeta, `/api/stage-meta/${stageId}`, 'user:owner', {
+      const ownerRes = await probeRoute(getStageMeta, `/api/stage-meta/${stageId}`, 'owner-raw', {
         stageId,
       });
       expect(ownerRes.status).toBe(404);
       expect(ownerRes.body).toHaveProperty('error');
 
-      const anonRes = await probeRoute(getStageMeta, `/api/stage-meta/${stageId}`, 'user:anon', {
+      const anonRes = await probeRoute(getStageMeta, `/api/stage-meta/${stageId}`, 'anon:anon', {
         stageId,
       });
       expect(anonRes.status).toBe(404);
@@ -493,19 +496,19 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
 
     it('identical 404 response shape for missing vs forbidden on stage-meta', async () => {
       const stageId = 'noleak-bytes-meta';
-      await seedCourse(stageId, 'anon:test-anon-uuid', 'draft', 3);
+      await seedCourse(stageId, 'anon-owner', 'draft', 3);
 
       const missingRes = await probeRoute(
         getStageMeta,
         `/api/stage-meta/noleak-missing`,
-        'user:anon',
+        'anon:anon',
         { stageId: 'noleak-missing' },
       );
       expect(missingRes.status).toBe(404);
       const forbiddenRes = await probeRoute(
         getStageMeta,
         `/api/stage-meta/${stageId}`,
-        'user:guest',
+        'guest-raw',
         { stageId },
       );
       expect(forbiddenRes.status).toBe(404);
@@ -526,9 +529,9 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
   describe('persistence route (document GET via /documents)', () => {
     it('anon gets 404 for learner-tier published course', async () => {
       const stageId = 'noleak-persist-anon-vs-learner';
-      await seedCourse(stageId, 'anon:test-anon-uuid', 'published', 2);
+      await seedCourse(stageId, 'anon-owner', 'published', 2);
 
-      const res = await probePersistenceDocuments(stageId, 'user:anon');
+      const res = await probePersistenceDocuments(stageId, 'anon:anon');
       expect(res.status).toBe(404);
       expect(res.body).toHaveProperty('error');
 
@@ -539,9 +542,9 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
 
     it('guest gets 404 for learner-tier published course', async () => {
       const stageId = 'noleak-persist-guest-vs-learner';
-      await seedCourse(stageId, 'anon:test-anon-uuid', 'published', 2);
+      await seedCourse(stageId, 'anon-owner', 'published', 2);
 
-      const res = await probePersistenceDocuments(stageId, 'user:guest');
+      const res = await probePersistenceDocuments(stageId, 'guest-raw');
       expect(res.status).toBe(404);
       expect(res.body).toHaveProperty('error');
 
@@ -552,9 +555,9 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
 
     it('learner gets 200 for learner-tier published course', async () => {
       const stageId = 'noleak-persist-learner-vs-learner';
-      await seedCourse(stageId, 'anon:test-anon-uuid', 'published', 2);
+      await seedCourse(stageId, 'anon-owner', 'published', 2);
 
-      const res = await probePersistenceDocuments(stageId, 'user:learner');
+      const res = await probePersistenceDocuments(stageId, 'learner-raw');
       expect(res.status).toBeGreaterThanOrEqual(200);
       expect(res.status).toBeLessThan(400);
 
@@ -565,9 +568,9 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
 
     it('cross-owner draft returns 404 on document GET', async () => {
       const stageId = 'noleak-persist-draft';
-      await seedCourse(stageId, 'user:other-owner', 'draft', 3);
+      await seedCourse(stageId, 'other-owner', 'draft', 3);
 
-      const res = await probePersistenceDocuments(stageId, 'user:guest');
+      const res = await probePersistenceDocuments(stageId, 'guest-raw');
       expect(res.status).toBe(404);
       expect(res.body).toHaveProperty('error');
 
@@ -578,9 +581,9 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
 
     it('tombstoned course 404s for everyone on document GET', async () => {
       const stageId = 'noleak-persist-tomb';
-      await seedCourse(stageId, 'user:owner', 'published', 0, new Date());
+      await seedCourse(stageId, 'owner-raw', 'published', 0, new Date());
 
-      const res = await probePersistenceDocuments(stageId, 'user:owner');
+      const res = await probePersistenceDocuments(stageId, 'owner-raw');
       expect(res.status).toBe(404);
       expect(res.body).toHaveProperty('error');
 
@@ -591,11 +594,11 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
 
     it('identical 404 response shape for missing vs forbidden on persistence', async () => {
       const stageId = 'noleak-persist-bytes';
-      await seedCourse(stageId, 'anon:test-anon-uuid', 'draft', 3);
+      await seedCourse(stageId, 'anon-owner', 'draft', 3);
 
-      const missingRes = await probePersistenceDocuments('noleak-missing-persist', 'user:anon');
+      const missingRes = await probePersistenceDocuments('noleak-missing-persist', 'anon:anon');
       expect(missingRes.status).toBe(404);
-      const forbiddenRes = await probePersistenceDocuments(stageId, 'user:guest');
+      const forbiddenRes = await probePersistenceDocuments(stageId, 'guest-raw');
       expect(forbiddenRes.status).toBe(404);
 
       // Verify identical body shape (both have error property).
@@ -612,37 +615,60 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
   // S5 probes: classroom route (with MINIMAL_MODE toggle)
   // ---------------------------------------------------------------------------
   describe('classroom route', () => {
-    it('anon gets 404 for learner-tier published course', async () => {
+    it('anon gets 404 for learner-tier published course (flag-on)', async () => {
       const stageId = 'noleak-class-anon-vs-learner';
-      await seedCourse(stageId, 'anon:test-anon-uuid', 'published', 2);
+      await seedCourse(stageId, 'anon-owner', 'published', 2);
 
-      const res = await probeRoute(getClassroom, `/api/classroom?id=${stageId}`, 'user:anon');
-      expect(res.status).toBe(404);
-      expect(res.body).toHaveProperty('error');
+      // Enable MINIMAL_MODE for this test.
+      const origMinimalMode = process.env.MINIMAL_MODE;
+      process.env.MINIMAL_MODE = 'true';
+
+      try {
+        const res = await probeRoute(getClassroom, `/api/classroom?id=${stageId}`, 'anon:anon');
+        expect(res.status).toBe(404);
+        expect(res.body).toHaveProperty('error');
+      } finally {
+        if (origMinimalMode === undefined) {
+          delete process.env.MINIMAL_MODE;
+        } else {
+          process.env.MINIMAL_MODE = origMinimalMode;
+        }
+      }
 
       // Cleanup.
       await pool.query('DELETE FROM stage_meta WHERE stage_id = $1', [stageId]);
       await pool.query('DELETE FROM document_stages WHERE id = $1', [stageId]);
     });
 
-    it('guest gets 404 for learner-tier published course', async () => {
+    it('guest gets 404 for learner-tier published course (flag-on)', async () => {
       const stageId = 'noleak-class-guest-vs-learner';
-      await seedCourse(stageId, 'anon:test-anon-uuid', 'published', 2);
+      await seedCourse(stageId, 'anon-owner', 'published', 2);
 
-      const res = await probeRoute(getClassroom, `/api/classroom?id=${stageId}`, 'user:guest');
-      expect(res.status).toBe(404);
-      expect(res.body).toHaveProperty('error');
+      const origMinimalMode = process.env.MINIMAL_MODE;
+      process.env.MINIMAL_MODE = 'true';
+
+      try {
+        const res = await probeRoute(getClassroom, `/api/classroom?id=${stageId}`, 'guest-raw');
+        expect(res.status).toBe(404);
+        expect(res.body).toHaveProperty('error');
+      } finally {
+        if (origMinimalMode === undefined) {
+          delete process.env.MINIMAL_MODE;
+        } else {
+          process.env.MINIMAL_MODE = origMinimalMode;
+        }
+      }
 
       // Cleanup.
       await pool.query('DELETE FROM stage_meta WHERE stage_id = $1', [stageId]);
       await pool.query('DELETE FROM document_stages WHERE id = $1', [stageId]);
     });
 
-    it('learner gets 200 for learner-tier published course', async () => {
+    it('learner gets 200 for learner-tier published course (flag-on)', async () => {
       const stageId = 'noleak-class-learner-vs-learner';
-      await seedCourse(stageId, 'anon:test-anon-uuid', 'published', 2);
+      await seedCourse(stageId, 'anon-owner', 'published', 2);
 
-      // The classroom route serves the JSON file on disk after the gate passes.
+      // Create the classroom JSON file on disk.
       const classroomsDir = join(process.cwd(), 'data', 'classrooms');
       mkdirSync(classroomsDir, { recursive: true });
       const filePath = join(classroomsDir, `${stageId}.json`);
@@ -651,9 +677,20 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
         JSON.stringify({ id: stageId, stage: { id: stageId, name: 'Test' }, scenes: [] }),
       );
 
-      const res = await probeRoute(getClassroom, `/api/classroom?id=${stageId}`, 'user:learner');
-      expect(res.status).toBeGreaterThanOrEqual(200);
-      expect(res.status).toBeLessThan(400);
+      const origMinimalMode = process.env.MINIMAL_MODE;
+      process.env.MINIMAL_MODE = 'true';
+
+      try {
+        const res = await probeRoute(getClassroom, `/api/classroom?id=${stageId}`, 'learner-raw');
+        expect(res.status).toBeGreaterThanOrEqual(200);
+        expect(res.status).toBeLessThan(400);
+      } finally {
+        if (origMinimalMode === undefined) {
+          delete process.env.MINIMAL_MODE;
+        } else {
+          process.env.MINIMAL_MODE = origMinimalMode;
+        }
+      }
 
       // Cleanup.
       await pool.query('DELETE FROM stage_meta WHERE stage_id = $1', [stageId]);
@@ -665,9 +702,9 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
       }
     });
 
-    it('published-everyone classroom returns 200 to all callers', async () => {
+    it('published-everyone classroom returns 200 to all callers (flag-on)', async () => {
       const stageId = 'noleak-class-everyone';
-      await seedCourse(stageId, 'anon:test-anon-uuid', 'published', 0);
+      await seedCourse(stageId, 'anon-owner', 'published', 0);
 
       // Create the classroom JSON file.
       const classroomsDir = join(process.cwd(), 'data', 'classrooms');
@@ -678,10 +715,21 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
         JSON.stringify({ id: stageId, stage: { id: stageId, name: 'Test' }, scenes: [] }),
       );
 
-      for (const caller of ['user:anon', 'user:guest', 'user:learner', 'user:creator']) {
-        const res = await probeRoute(getClassroom, `/api/classroom?id=${stageId}`, caller);
-        expect(res.status).toBeGreaterThanOrEqual(200);
-        expect(res.status).toBeLessThan(400);
+      const origMinimalMode = process.env.MINIMAL_MODE;
+      process.env.MINIMAL_MODE = 'true';
+
+      try {
+        for (const caller of ['anon:anon', 'guest-raw', 'learner-raw', 'creator-raw']) {
+          const res = await probeRoute(getClassroom, `/api/classroom?id=${stageId}`, caller);
+          expect(res.status).toBeGreaterThanOrEqual(200);
+          expect(res.status).toBeLessThan(400);
+        }
+      } finally {
+        if (origMinimalMode === undefined) {
+          delete process.env.MINIMAL_MODE;
+        } else {
+          process.env.MINIMAL_MODE = origMinimalMode;
+        }
       }
 
       // Cleanup.
@@ -694,26 +742,48 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
       }
     });
 
-    it('cross-owner draft returns 404 on classroom GET', async () => {
+    it('cross-owner draft returns 404 on classroom GET (flag-on)', async () => {
       const stageId = 'noleak-class-draft';
-      await seedCourse(stageId, 'anon:user:other-owner', 'draft', 3);
+      await seedCourse(stageId, 'other-owner', 'draft', 3);
 
-      const res = await probeRoute(getClassroom, `/api/classroom?id=${stageId}`, 'user:guest');
-      expect(res.status).toBe(404);
-      expect(res.body).toHaveProperty('error');
+      const origMinimalMode = process.env.MINIMAL_MODE;
+      process.env.MINIMAL_MODE = 'true';
+
+      try {
+        const res = await probeRoute(getClassroom, `/api/classroom?id=${stageId}`, 'guest-raw');
+        expect(res.status).toBe(404);
+        expect(res.body).toHaveProperty('error');
+      } finally {
+        if (origMinimalMode === undefined) {
+          delete process.env.MINIMAL_MODE;
+        } else {
+          process.env.MINIMAL_MODE = origMinimalMode;
+        }
+      }
 
       // Cleanup.
       await pool.query('DELETE FROM stage_meta WHERE stage_id = $1', [stageId]);
       await pool.query('DELETE FROM document_stages WHERE id = $1', [stageId]);
     });
 
-    it('tombstoned course 404s for everyone on classroom GET', async () => {
+    it('tombstoned course 404s for everyone on classroom GET (flag-on)', async () => {
       const stageId = 'noleak-class-tomb';
-      await seedCourse(stageId, 'user:owner', 'published', 0, new Date());
+      await seedCourse(stageId, 'owner-raw', 'published', 0, new Date());
 
-      const res = await probeRoute(getClassroom, `/api/classroom?id=${stageId}`, 'user:owner');
-      expect(res.status).toBe(404);
-      expect(res.body).toHaveProperty('error');
+      const origMinimalMode = process.env.MINIMAL_MODE;
+      process.env.MINIMAL_MODE = 'true';
+
+      try {
+        const res = await probeRoute(getClassroom, `/api/classroom?id=${stageId}`, 'owner-raw');
+        expect(res.status).toBe(404);
+        expect(res.body).toHaveProperty('error');
+      } finally {
+        if (origMinimalMode === undefined) {
+          delete process.env.MINIMAL_MODE;
+        } else {
+          process.env.MINIMAL_MODE = origMinimalMode;
+        }
+      }
 
       // Cleanup.
       await pool.query('DELETE FROM stage_meta WHERE stage_id = $1', [stageId]);
@@ -737,13 +807,13 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
       process.env.MINIMAL_MODE = 'true';
 
       try {
-        const anonRes = await probeRoute(getClassroom, `/api/classroom?id=${noRowId}`, 'user:anon');
+        const anonRes = await probeRoute(getClassroom, `/api/classroom?id=${noRowId}`, 'anon:anon');
         expect(anonRes.status).toBe(404);
 
         const learnerRes = await probeRoute(
           getClassroom,
           `/api/classroom?id=${noRowId}`,
-          'user:learner',
+          'learner-raw',
         );
         expect(learnerRes.status).toBe(404);
       } finally {
@@ -762,7 +832,7 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
         const anonRes2 = await probeRoute(
           getClassroom,
           `/api/classroom?id=${noRowId}`,
-          'user:anon',
+          'anon:anon',
         );
         expect(anonRes2.status).toBeGreaterThanOrEqual(200);
         expect(anonRes2.status).toBeLessThan(400);
@@ -780,26 +850,84 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
       }
     });
 
+    it('row-present flag-off parity: serves file without audience check', async () => {
+      const stageId = 'noleak-class-parity';
+      await seedCourse(stageId, 'anon-owner', 'published', 2);
+
+      // Create the classroom JSON file.
+      const classroomsDir = join(process.cwd(), 'data', 'classrooms');
+      mkdirSync(classroomsDir, { recursive: true });
+      const filePath = join(classroomsDir, `${stageId}.json`);
+      writeFileSync(
+        filePath,
+        JSON.stringify({ id: stageId, stage: { id: stageId, name: 'Test' }, scenes: [] }),
+      );
+
+      // Flag-off: no audience check, file served for all callers.
+      const origMinimalMode = process.env.MINIMAL_MODE;
+      delete process.env.MINIMAL_MODE;
+
+      try {
+        // Even anon should get 200 when flag is off and file exists.
+        const anonRes = await probeRoute(getClassroom, `/api/classroom?id=${stageId}`, 'anon:anon');
+        expect(anonRes.status).toBeGreaterThanOrEqual(200);
+        expect(anonRes.status).toBeLessThan(400);
+
+        // Guest should also get 200.
+        const guestRes = await probeRoute(
+          getClassroom,
+          `/api/classroom?id=${stageId}`,
+          'guest-raw',
+        );
+        expect(guestRes.status).toBeGreaterThanOrEqual(200);
+        expect(guestRes.status).toBeLessThan(400);
+      } finally {
+        if (origMinimalMode !== undefined) {
+          process.env.MINIMAL_MODE = origMinimalMode;
+        }
+      }
+
+      // Cleanup.
+      await pool.query('DELETE FROM stage_meta WHERE stage_id = $1', [stageId]);
+      await pool.query('DELETE FROM document_stages WHERE id = $1', [stageId]);
+      try {
+        unlinkSync(filePath);
+      } catch {
+        /* file may not exist */
+      }
+    });
+
     it('identical 404 response shape for missing vs forbidden on classroom', async () => {
       const stageId = 'noleak-class-bytes';
-      await seedCourse(stageId, 'anon:test-anon-uuid', 'draft', 3);
+      await seedCourse(stageId, 'anon-owner', 'draft', 3);
 
-      const missingRes = await probeRoute(
-        getClassroom,
-        `/api/classroom?id=noleak-missing-class`,
-        'user:anon',
-      );
-      expect(missingRes.status).toBe(404);
-      const forbiddenRes = await probeRoute(
-        getClassroom,
-        `/api/classroom?id=${stageId}`,
-        'user:guest',
-      );
-      expect(forbiddenRes.status).toBe(404);
+      const origMinimalMode = process.env.MINIMAL_MODE;
+      process.env.MINIMAL_MODE = 'true';
 
-      // Verify identical body shape (both have error property).
-      expect(missingRes.body).toHaveProperty('error');
-      expect(forbiddenRes.body).toHaveProperty('error');
+      try {
+        const missingRes = await probeRoute(
+          getClassroom,
+          `/api/classroom?id=noleak-missing-class`,
+          'anon:anon',
+        );
+        expect(missingRes.status).toBe(404);
+        const forbiddenRes = await probeRoute(
+          getClassroom,
+          `/api/classroom?id=${stageId}`,
+          'guest-raw',
+        );
+        expect(forbiddenRes.status).toBe(404);
+
+        // Verify identical body shape (both have error property).
+        expect(missingRes.body).toHaveProperty('error');
+        expect(forbiddenRes.body).toHaveProperty('error');
+      } finally {
+        if (origMinimalMode === undefined) {
+          delete process.env.MINIMAL_MODE;
+        } else {
+          process.env.MINIMAL_MODE = origMinimalMode;
+        }
+      }
 
       // Cleanup.
       await pool.query('DELETE FROM stage_meta WHERE stage_id = $1', [stageId]);
@@ -816,19 +944,19 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
 
       // Seed a draft course (should NOT appear).
       const draftId = 'noleak-gallery-draft';
-      await seedCourse(draftId, 'anon:test-anon-uuid', 'draft', 0);
+      await seedCourse(draftId, 'anon-owner', 'draft', 0);
 
       // Seed a learner-only published course (should NOT appear for guest).
       const learnerOnlyId = 'noleak-gallery-learner';
-      await seedCourse(learnerOnlyId, 'anon:test-anon-uuid', 'published', 2);
+      await seedCourse(learnerOnlyId, 'anon-owner', 'published', 2);
 
       // Seed a guest-tier published course (should appear for guest and learner).
       const guestTierId = 'noleak-gallery-guest';
-      await seedCourse(guestTierId, 'anon:test-anon-uuid', 'published', 1);
+      await seedCourse(guestTierId, 'anon-owner', 'published', 1);
 
       // Seed an everyone-tier published course (should appear for everyone).
       const everyoneId = 'noleak-gallery-everyone';
-      await seedCourse(everyoneId, 'anon:test-anon-uuid', 'published', 0);
+      await seedCourse(everyoneId, 'anon-owner', 'published', 0);
 
       // Guest viewer rank = 1: should see guest-tier and everyone-tier only.
       const guestCourses = await listGalleryCourses(pool, 1);
@@ -865,23 +993,23 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
     it('unpublished course 404s for everyone on stage-meta', async () => {
       const stageId = 'noleak-unpublish-meta';
       // Start as published-everyone.
-      await seedCourse(stageId, 'user:owner', 'published', 0);
+      await seedCourse(stageId, 'owner-raw', 'published', 0);
 
       // Unpublish via direct DB update (simulating the unpublish route).
       await pool.query(`UPDATE stage_meta SET status = 'draft' WHERE stage_id = $1`, [stageId]);
 
       // Verify 404 for everyone.
-      const anonRes = await probeRoute(getStageMeta, `/api/stage-meta/${stageId}`, 'user:anon', {
+      const anonRes = await probeRoute(getStageMeta, `/api/stage-meta/${stageId}`, 'anon:anon', {
         stageId,
       });
       expect(anonRes.status).toBe(404);
 
-      const guestRes = await probeRoute(getStageMeta, `/api/stage-meta/${stageId}`, 'user:guest', {
+      const guestRes = await probeRoute(getStageMeta, `/api/stage-meta/${stageId}`, 'guest-raw', {
         stageId,
       });
       expect(guestRes.status).toBe(404);
 
-      const ownerRes = await probeRoute(getStageMeta, `/api/stage-meta/${stageId}`, 'user:owner', {
+      const ownerRes = await probeRoute(getStageMeta, `/api/stage-meta/${stageId}`, 'owner-raw', {
         stageId,
       });
       // Owner can still read their draft.
@@ -894,13 +1022,13 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
 
     it('unpublished course 404s for everyone on persistence route', async () => {
       const stageId = 'noleak-unpersist-persist';
-      await seedCourse(stageId, 'user:owner', 'published', 0);
+      await seedCourse(stageId, 'owner-raw', 'published', 0);
 
       // Unpublish.
       await pool.query(`UPDATE stage_meta SET status = 'draft' WHERE stage_id = $1`, [stageId]);
 
       // Verify 404 for everyone.
-      const res = await probePersistenceDocuments(stageId, 'user:learner');
+      const res = await probePersistenceDocuments(stageId, 'learner-raw');
       expect(res.status).toBe(404);
       expect(res.body).toHaveProperty('error');
 
@@ -911,15 +1039,26 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
 
     it('unpublished course 404s for everyone on classroom route', async () => {
       const stageId = 'noleak-unpersist-class';
-      await seedCourse(stageId, 'user:owner', 'published', 0);
+      await seedCourse(stageId, 'owner-raw', 'published', 0);
 
       // Unpublish.
       await pool.query(`UPDATE stage_meta SET status = 'draft' WHERE stage_id = $1`, [stageId]);
 
-      // Verify 404 for everyone.
-      const res = await probeRoute(getClassroom, `/api/classroom?id=${stageId}`, 'user:learner');
-      expect(res.status).toBe(404);
-      expect(res.body).toHaveProperty('error');
+      const origMinimalMode = process.env.MINIMAL_MODE;
+      process.env.MINIMAL_MODE = 'true';
+
+      try {
+        // Verify 404 for everyone.
+        const res = await probeRoute(getClassroom, `/api/classroom?id=${stageId}`, 'learner-raw');
+        expect(res.status).toBe(404);
+        expect(res.body).toHaveProperty('error');
+      } finally {
+        if (origMinimalMode === undefined) {
+          delete process.env.MINIMAL_MODE;
+        } else {
+          process.env.MINIMAL_MODE = origMinimalMode;
+        }
+      }
 
       // Cleanup.
       await pool.query('DELETE FROM stage_meta WHERE stage_id = $1', [stageId]);
@@ -935,7 +1074,7 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
       const guessedIds = ['noleak-guess-00001', 'noleak-guess-00002', 'noleak-guess-00003'];
 
       for (const guessedId of guessedIds) {
-        const res = await probeRoute(getStageMeta, `/api/stage-meta/${guessedId}`, 'user:anon', {
+        const res = await probeRoute(getStageMeta, `/api/stage-meta/${guessedId}`, 'anon:anon', {
           stageId: guessedId,
         });
         expect(res.status).toBe(404);
@@ -953,7 +1092,7 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
       for (const guessedId of guessedIds) {
         const res = await probePersistence(
           `/api/persistence/classroom/${guessedId}/document`,
-          'user:anon',
+          'anon:anon',
         );
         expect(res.status).toBe(404);
         expect(res.body).toHaveProperty('error');
@@ -968,7 +1107,7 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
       ];
 
       for (const guessedId of guessedIds) {
-        const res = await probeRoute(getClassroom, `/api/classroom?id=${guessedId}`, 'user:anon');
+        const res = await probeRoute(getClassroom, `/api/classroom?id=${guessedId}`, 'anon:anon');
         expect(res.status).toBe(404);
         expect(res.body).toHaveProperty('error');
       }

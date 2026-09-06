@@ -11,14 +11,28 @@ const PG_URL = process.env.PG_CONTRACT_URL;
 
 describe.skipIf(!PG_URL)('publishing read gate (integration)', () => {
   let pool: pg.Pool;
+  let scratchDbUrl: string;
+
+  function databaseUrl(base: string, database: string): string {
+    const url = new URL(base);
+    url.pathname = `/${database}`;
+    return url.toString();
+  }
 
   beforeAll(async () => {
     if (!PG_URL) throw new Error('PG_CONTRACT_URL is required for integration tests');
-    pool = new Pool({ connectionString: PG_URL });
 
-    // Provision scratch DB: auth tables, document_stages, stage_meta, and
-    // the audience-enforced schema that decideDocumentAccess and
-    // resolveStageAccess depend on.
+    // Provision scratch DB to avoid interference from parallel test files.
+    const admin = new Pool({ connectionString: PG_URL, max: 2 });
+    const dbName = `openmaic_readgate_${process.pid}`;
+    await admin.query(`DROP DATABASE IF EXISTS ${dbName}`);
+    await admin.query(`CREATE DATABASE ${dbName}`);
+    await admin.end();
+
+    scratchDbUrl = databaseUrl(PG_URL, dbName);
+    pool = new Pool({ connectionString: scratchDbUrl, max: 4 });
+
+    // Provision scratch DB.
     await pool.query(`
       CREATE TABLE IF NOT EXISTS "user" (
         id TEXT PRIMARY KEY,
@@ -73,7 +87,7 @@ describe.skipIf(!PG_URL)('publishing read gate (integration)', () => {
         ON stage_meta (audience, published_at DESC) WHERE status = 'published' AND deleted_at IS NULL;
     `);
 
-    // Seed roles used by resolveViewerRank rank joins.
+    // Seed roles.
     await pool.query(`
       INSERT INTO roles (id, name, rank, "isSystem") VALUES
         ('role-anon', 'anon', 0, true),
@@ -84,45 +98,52 @@ describe.skipIf(!PG_URL)('publishing read gate (integration)', () => {
       ON CONFLICT (name) DO NOTHING;
     `);
 
-    // Seed user_roles mappings so resolveViewerRank returns the correct ranks.
-    // user_roles FKs to "user"(id), so insert users first.
+    // Seed users and roles. Use plain IDs that resolveViewerRank will look up
+    // after stripping the 'user:' prefix from the ownerId passed by withRequestOwnerId.
+    // e.g. resolveViewerRank('user:guest') -> strips prefix -> queries for 'guest'.
     await pool.query(`
       INSERT INTO "user" (id, name, email) VALUES
-        ('user:guest', 'guest', 'guest@test.example'),
-        ('user:learner', 'learner', 'learner@test.example'),
-        ('user:creator', 'creator', 'creator@test.example'),
-        ('user:owner', 'owner', 'owner@test.example')
+        ('guest', 'guest', 'guest@test.example'),
+        ('learner', 'learner', 'learner@test.example'),
+        ('creator', 'creator', 'creator@test.example'),
+        ('owner', 'owner', 'owner@test.example')
       ON CONFLICT (id) DO NOTHING;
     `);
     await pool.query(`
       INSERT INTO user_roles (user_id, role_id) VALUES
-        ('user:guest', 'role-guest'),
-        ('user:learner', 'role-learner'),
-        ('user:creator', 'role-creator'),
-        ('user:owner', 'role-creator')
+        ('guest', 'role-guest'),
+        ('learner', 'role-learner'),
+        ('creator', 'role-creator'),
+        ('owner', 'role-creator')
       ON CONFLICT (user_id) DO NOTHING;
     `);
   });
 
   afterAll(async () => {
     await pool.end();
-  });
+    const admin = new Pool({ connectionString: PG_URL, max: 2 });
+    admin.on('error', () => {});
+    try {
+      await admin.query(`DROP DATABASE IF EXISTS openmaic_readgate_${process.pid} WITH (FORCE)`);
+    } catch {
+      // Silently ignore.
+    }
+    await admin.end();
+  }, 60_000);
 
   it('enforces audience on the persistence document seam', async () => {
     const stageId = 'gate-pg-doc-' + Math.random().toString(36).slice(2);
 
-    // Create a matching document_stage row first (stage_meta FKs to it).
     await pool.query(
       `INSERT INTO document_stages (id, owner_id, name)
-       VALUES ($1, 'user:owner', 'test-course')
+       VALUES ($1, 'owner', 'test-course')
        ON CONFLICT (id) DO NOTHING`,
       [stageId],
     );
 
-    // Create a stage_meta row for a published guest-only course.
     await pool.query(
       `INSERT INTO stage_meta (stage_id, owner_id, status, audience, is_public, published_at, generation_complete, deleted_at)
-       VALUES ($1, 'user:owner', 'published', 1, true, $2, false, null)
+       VALUES ($1, 'owner', 'published', 1, true, $2, false, null)
        ON CONFLICT (stage_id) DO UPDATE SET status = EXCLUDED.status`,
       [stageId, Date.now()],
     );
@@ -162,18 +183,16 @@ describe.skipIf(!PG_URL)('publishing read gate (integration)', () => {
   it('returns not-found for non-owner when rank is below audience', async () => {
     const stageId = 'gate-pg-rank-' + Math.random().toString(36).slice(2);
 
-    // Create a matching document_stage row first (stage_meta FKs to it).
     await pool.query(
       `INSERT INTO document_stages (id, owner_id, name)
-       VALUES ($1, 'user:owner', 'test-course')
+       VALUES ($1, 'owner', 'test-course')
        ON CONFLICT (id) DO NOTHING`,
       [stageId],
     );
 
-    // Create a published learner-only course.
     await pool.query(
       `INSERT INTO stage_meta (stage_id, owner_id, status, audience, is_public, published_at, generation_complete, deleted_at)
-       VALUES ($1, 'user:owner', 'published', 2, true, $2, false, null)
+       VALUES ($1, 'owner', 'published', 2, true, $2, false, null)
        ON CONFLICT (stage_id) DO UPDATE SET status = EXCLUDED.status`,
       [stageId, Date.now()],
     );
@@ -200,23 +219,20 @@ describe.skipIf(!PG_URL)('publishing read gate (integration)', () => {
   it('stage-meta route enforces audience via resolveStageAccess', async () => {
     const stageId = 'gate-pg-meta-' + Math.random().toString(36).slice(2);
 
-    // Create a matching document_stage row first (stage_meta FKs to it).
     await pool.query(
       `INSERT INTO document_stages (id, owner_id, name)
-       VALUES ($1, 'user:owner', 'test-course')
+       VALUES ($1, 'owner', 'test-course')
        ON CONFLICT (id) DO NOTHING`,
       [stageId],
     );
 
-    // Create a draft course.
     await pool.query(
       `INSERT INTO stage_meta (stage_id, owner_id, status, audience, is_public, published_at, generation_complete, deleted_at)
-       VALUES ($1, 'user:owner', 'draft', 0, false, null, false, null)
+       VALUES ($1, 'owner', 'draft', 0, false, null, false, null)
        ON CONFLICT (stage_id) DO UPDATE SET status = EXCLUDED.status`,
       [stageId],
     );
 
-    // Use the scratch pool directly (resolveStageAccess defaults to the real DB).
     const result = await pool.query(
       `SELECT m.owner_id            AS meta_owner_id,
               m.is_public           AS meta_is_public,

@@ -1,5 +1,5 @@
 /**
- * POST /api/stages/[id]/publish — make a document-backed course public.
+ * POST /api/stages/[id]/publish -- make a document-backed course public.
  *
  * Enforces course.publish through requirePermission inside the
  * Response-rethrow catch so the typed 403 survives both catch layers.
@@ -17,6 +17,7 @@ import { setStageVisibility } from '@/lib/persistence/stage-meta';
 import { getStageAccessDb, resolveStageAccess } from '@/lib/server/stage-access';
 import { withRequestOwnerId } from '@/lib/server/agent-runtime/with-owner';
 import { requirePermission } from '@/lib/auth';
+import { resolveViewerRank } from '@/lib/persistence/audience';
 
 export const runtime = 'nodejs';
 
@@ -43,21 +44,32 @@ export async function POST(req: NextRequest, { params }: Params) {
         return NextResponse.json({ error: 'not_found' }, { status: 404, headers: responseHeaders });
       }
 
-      // Admin (rank 4) can publish any course.
-      const isOwner = access.ownerId === ownerId;
+      // Owner or admin (rank 4) can publish any course.
+      // withRequestOwnerId passes 'user:<raw-id>' but access.ownerId is the raw DB value.
+      const rawOwnerId = ownerId.startsWith('user:') ? ownerId.slice(5) : ownerId;
+      const isOwner = access.ownerId === rawOwnerId;
       if (!isOwner) {
-        return NextResponse.json(
-          { error: 'forbidden' },
-          { status: 403, headers: responseHeaders },
-        );
+        const db = await getStageAccessDb();
+        const viewerRank = await resolveViewerRank(db, ownerId);
+        const isAdmin = viewerRank >= 4;
+        if (!isAdmin) {
+          return NextResponse.json(
+            { error: 'forbidden' },
+            { status: 403, headers: responseHeaders },
+          );
+        }
       }
 
-      // Parse optional audience from body.
-      const body = (await req.json()) as Record<string, unknown>;
-      const rawAudience = body?.audience;
+      // Parse optional audience from body. Default to 0 (everyone).
       let audience = 0;
-      if (typeof rawAudience === 'number' && rawAudience >= 0 && rawAudience <= 2) {
-        audience = rawAudience;
+      try {
+        const body = (await req.json()) as Record<string, unknown>;
+        const rawAudience = body?.audience;
+        if (typeof rawAudience === 'number' && rawAudience >= 0 && rawAudience <= 2) {
+          audience = rawAudience;
+        }
+      } catch {
+        // No body or invalid JSON: use default audience.
       }
 
       // Idempotent: republish returns current row without rewriting published_at.

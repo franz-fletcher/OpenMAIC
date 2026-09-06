@@ -33,7 +33,7 @@ describe('publishing read gate', () => {
       expect(rank).toBe(0);
       expect(queryable.query).toHaveBeenCalledWith(
         'SELECT r.rank FROM user_roles ur JOIN roles r ON ur.role_id = r.id WHERE ur.user_id = $1',
-        ['user:unknown'],
+        ['unknown'],
       );
     });
 

@@ -86,10 +86,7 @@ export function PublishDialog({ open, stageId, onOpenChange }: PublishDialogProp
             </legend>
             <div className="space-y-2">
               {AUDIENCE_OPTIONS.map((opt) => (
-                <label
-                  key={opt.value}
-                  className="flex items-center gap-2 cursor-pointer text-sm"
-                >
+                <label key={opt.value} className="flex items-center gap-2 cursor-pointer text-sm">
                   <input
                     type="radio"
                     name="audience"
@@ -107,9 +104,7 @@ export function PublishDialog({ open, stageId, onOpenChange }: PublishDialogProp
 
         <DialogFooter>
           {status === 'error' ? (
-            <span className="text-sm text-destructive">
-              {t('publishing.publishFailed')}
-            </span>
+            <span className="text-sm text-destructive">{t('publishing.publishFailed')}</span>
           ) : null}
 
           <Button
@@ -122,20 +117,14 @@ export function PublishDialog({ open, stageId, onOpenChange }: PublishDialogProp
             {t('common.cancel')}
           </Button>
 
-          <Button
-            disabled={isLoading}
-            onClick={handlePublish}
-          >
+          <Button disabled={isLoading} onClick={handlePublish}>
             {isLoading && status === 'publishing' ? (
               <Loader2 className="size-4 animate-spin" />
             ) : null}
             {t('publishing.publish')}
           </Button>
 
-          <Button
-            disabled={isLoading}
-            onClick={handleUnpublish}
-          >
+          <Button disabled={isLoading} onClick={handleUnpublish}>
             {isLoading && status === 'unpublishing' ? (
               <Loader2 className="size-4 animate-spin" />
             ) : null}

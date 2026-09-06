@@ -1,5 +1,5 @@
 /**
- * POST /api/stages/[id]/unpublish — make a document-backed course private.
+ * POST /api/stages/[id]/unpublish -- make a document-backed course private.
  *
  * Enforces course.publish through requirePermission inside the
  * Response-rethrow catch so the typed 403 survives both catch layers.
@@ -16,6 +16,7 @@ import { setStageVisibility } from '@/lib/persistence/stage-meta';
 import { getStageAccessDb, resolveStageAccess } from '@/lib/server/stage-access';
 import { withRequestOwnerId } from '@/lib/server/agent-runtime/with-owner';
 import { requirePermission } from '@/lib/auth';
+import { resolveViewerRank } from '@/lib/persistence/audience';
 
 export const runtime = 'nodejs';
 
@@ -42,13 +43,20 @@ export async function POST(req: NextRequest, { params }: Params) {
         return NextResponse.json({ error: 'not_found' }, { status: 404, headers: responseHeaders });
       }
 
-      // Admin (rank 4) can unpublish any course.
-      const isOwner = access.ownerId === ownerId;
+      // Owner or admin (rank 4) can unpublish any course.
+      // withRequestOwnerId passes 'user:<raw-id>' but access.ownerId is the raw DB value.
+      const rawOwnerId = ownerId.startsWith('user:') ? ownerId.slice(5) : ownerId;
+      const isOwner = access.ownerId === rawOwnerId;
       if (!isOwner) {
-        return NextResponse.json(
-          { error: 'forbidden' },
-          { status: 403, headers: responseHeaders },
-        );
+        const db = await getStageAccessDb();
+        const viewerRank = await resolveViewerRank(db, ownerId);
+        const isAdmin = viewerRank >= 4;
+        if (!isAdmin) {
+          return NextResponse.json(
+            { error: 'forbidden' },
+            { status: 403, headers: responseHeaders },
+          );
+        }
       }
 
       // Keep the stored audience when returning to draft.

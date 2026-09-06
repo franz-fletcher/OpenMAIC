@@ -81,11 +81,6 @@ export async function GET(request: NextRequest) {
     }
 
     return withRequestOwnerId(request, async (ownerId, responseHeaders) => {
-      // Audience-enforced gate: resolve the viewer rank and check against the
-      // course audience.
-      const db = await getStageAccessDb();
-      const viewerRank = await resolveViewerRank(db, ownerId);
-
       // Check stage_meta for this id.
       const access = await resolveStageAccess(id);
 
@@ -103,12 +98,19 @@ export async function GET(request: NextRequest) {
         return apiSuccess({ classroom });
       }
 
-      // stage_meta exists: apply the audience rule.
-      if (access.status !== 'published') {
-        return apiError(API_ERROR_CODES.INVALID_REQUEST, 404, 'Classroom not found');
-      }
-      if (viewerRank < access.audience) {
-        return apiError(API_ERROR_CODES.INVALID_REQUEST, 404, 'Classroom not found');
+      // stage_meta exists: apply the audience rule ONLY under MINIMAL_MODE.
+      // Flag-off keeps today's file serving unchanged (parity with pre-batch
+      // behavior where stage_meta was not checked on the classroom seam).
+      if (isMinimalMode()) {
+        const db = await getStageAccessDb();
+        const viewerRank = await resolveViewerRank(db, ownerId);
+
+        if (access.status !== 'published') {
+          return apiError(API_ERROR_CODES.INVALID_REQUEST, 404, 'Classroom not found');
+        }
+        if (viewerRank < access.audience) {
+          return apiError(API_ERROR_CODES.INVALID_REQUEST, 404, 'Classroom not found');
+        }
       }
 
       const classroom = await readClassroom(id);
