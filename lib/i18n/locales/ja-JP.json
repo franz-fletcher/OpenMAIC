@@ -2190,7 +2190,20 @@
       "expiresLabel": "有効期限"
     },
     "courses": {
-      "title": "Courses"
+      "title": "Courses",
+      "name": "Name",
+      "owner": "Owner",
+      "status": "Status",
+      "audience": "Audience",
+      "published": "Published",
+      "actions": "Actions",
+      "statusPublished": "Published",
+      "statusDraft": "Draft",
+      "unpublish": "Unpublish",
+      "republish": "Republish",
+      "delete": "Delete",
+      "deleteConfirm": "Delete this course? This action cannot be undone.",
+      "noCourses": "No courses found."
     },
     "notAuthorized": "You do not have permission to access this page."
   }
