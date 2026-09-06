@@ -740,6 +740,7 @@ function HomePage() {
       {/* ═══ Top-right capsule ═══ */}
       <HeaderCapsule
         onSettingsOpen={() => setSettingsOpen(true)}
+        settingsGated={minimalMode}
         accountSlot={
           <AccountZone
             onOpenSettings={() => setSettingsOpen(true)}

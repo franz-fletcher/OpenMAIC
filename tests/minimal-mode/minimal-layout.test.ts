@@ -378,3 +378,103 @@ describe('Minimal-mode flag behavior', () => {
     });
   });
 });
+
+
+// ---------------------------------------------------------------------------
+// HeaderCapsule gear-visibility tests (jsdom)
+// ---------------------------------------------------------------------------
+
+// @vitest-environment jsdom
+describe('Minimal-mode header capsule gear visibility', () => {
+  let root: any;
+  let container: HTMLDivElement;
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    document.body.innerHTML = '';
+    const { createRoot } = await import('react-dom/client');
+    const { createElement } = await import('react');
+
+    container = document.createElement('div');
+    document.body.appendChild(container);
+    root = createRoot(container);
+  });
+
+  afterEach(async () => {
+    const { act } = await import('react');
+    act(() => {
+      root?.unmount();
+    });
+    document.body.innerHTML = '';
+  });
+
+  describe('LAYOUT_OK: gear visibility under settingsGated', () => {
+    it('flag ON + no settings.manage: gear hidden', async () => {
+      process.env.NEXT_PUBLIC_MINIMAL_MODE = 'true';
+      _testPermissions = [];
+
+      const { HeaderCapsule } = await import('@/components/header-capsule');
+      const { createElement } = await import('react');
+      const { act } = await import('react');
+
+      await act(async () => {
+        root.render(
+          createElement(HeaderCapsule, {
+            onSettingsOpen: vi.fn(),
+            settingsGated: true,
+          }),
+        );
+        await new Promise((r) => setTimeout(r, 0));
+      });
+
+      const html = container.innerHTML;
+      expect(html).not.toContain('SETTINGS_ICON');
+    });
+
+    it('flag ON + settings.manage: gear visible', async () => {
+      process.env.NEXT_PUBLIC_MINIMAL_MODE = 'true';
+      _testPermissions = ['settings.manage'];
+
+      const { HeaderCapsule } = await import('@/components/header-capsule');
+      const { createElement } = await import('react');
+      const { act } = await import('react');
+
+      await act(async () => {
+        root.render(
+          createElement(HeaderCapsule, {
+            onSettingsOpen: vi.fn(),
+            settingsGated: true,
+          }),
+        );
+        await new Promise((r) => setTimeout(r, 0));
+      });
+
+      const html = container.innerHTML;
+      expect(html).toContain('SETTINGS_ICON');
+
+      _testPermissions = [];
+    });
+
+    it('flag OFF: gear visible for all ranks', async () => {
+      delete process.env.NEXT_PUBLIC_MINIMAL_MODE;
+      _testPermissions = [];
+
+      const { HeaderCapsule } = await import('@/components/header-capsule');
+      const { createElement } = await import('react');
+      const { act } = await import('react');
+
+      await act(async () => {
+        root.render(
+          createElement(HeaderCapsule, {
+            onSettingsOpen: vi.fn(),
+            settingsGated: false,
+          }),
+        );
+        await new Promise((r) => setTimeout(r, 0));
+      });
+
+      const html = container.innerHTML;
+      expect(html).toContain('SETTINGS_ICON');
+    });
+  });
+});
