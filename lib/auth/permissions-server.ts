@@ -1,13 +1,13 @@
 /**
  * Server-only permission resolver and guard. Merges database
- * role_permissions overrides over rank-derived defaults. Per-request cache
- * only, never global.
+ * role_permissions overrides over rank-derived defaults. Fresh merge on
+ * every call; no caching.
  *
  * This module must never be imported by client components. It depends on
  * server-only APIs and database access.
  */
 import type { Queryable } from '@openmaic/storage/document/pg';
-import { can, defaultPermissionsForRank, type Permission } from '@/lib/auth/permissions';
+import { defaultPermissionsForRank, type Permission } from '@/lib/auth/permissions';
 import { getSession, type Session } from '@/lib/auth/index';
 import type { Role } from '@/lib/auth/roles';
 import { getServerPersistenceProvider } from '@/lib/persistence/server-provider';
@@ -15,14 +15,12 @@ import { getServerPersistenceProvider } from '@/lib/persistence/server-provider'
 /** Immutable permission set returned by the resolver. */
 export type PermissionSet = ReadonlySet<Permission>;
 
-/** Per-request cache: keyed by (queryable, role.name). Never global. */
-const requestCache = new WeakMap<object, Map<string, PermissionSet>>();
-
 /**
  * Returns the session or throws a typed 403 refusal.
  *
- * Resolves the user's role rank from the database and checks the requested
- * permission against rank defaults via can(). Throws a Response with shape
+ * Resolves the user's full role row from the database and checks the
+ * requested permission against the merged set from resolvePermissionSet
+ * (rank defaults plus database overrides). Throws a Response with shape
  * { message, code } when the session is missing or the permission is denied.
  */
 export async function requirePermission(
@@ -57,15 +55,38 @@ export async function requirePermission(
     // Column does not exist yet. Continue to rank resolution.
   }
 
-  // Resolve the user's role rank from the database.
-  const result = await pool.query<{ rank: number }>(
-    `SELECT r.rank FROM user_roles ur JOIN roles r ON ur.role_id = r.id WHERE ur.user_id = $1`,
+  // Resolve the user's full role row from the database.
+  const result = await pool.query<{
+    id: string;
+    name: string;
+    rank: number;
+    is_system: boolean;
+    created_at: Date;
+    updated_at: Date;
+  }>(
+    `SELECT r.id, r.name, r.rank, r."isSystem" as is_system, r."createdAt" as created_at, r."updatedAt" as updated_at FROM user_roles ur JOIN roles r ON ur.role_id = r.id WHERE ur.user_id = $1`,
     [session.userId],
   );
-  const rank = result.rows.length > 0 ? result.rows[0].rank : 0;
 
-  const principal = { rank };
-  if (!can(principal, permission)) {
+  if (result.rows.length === 0) {
+    throw new Response(
+      JSON.stringify({ message: 'permission denied', code: 'permission_denied' }),
+      { status: 403, headers: { 'content-type': 'application/json' } },
+    );
+  }
+
+  const row = result.rows[0];
+  const role = {
+    id: row.id,
+    name: row.name,
+    rank: row.rank,
+    isSystem: row.is_system,
+    createdAt: new Date(row.created_at),
+    updatedAt: new Date(row.updated_at),
+  };
+
+  const merged = await resolvePermissionSet(pool, role);
+  if (!merged.has(permission)) {
     throw new Response(
       JSON.stringify({ message: 'permission denied', code: 'permission_denied' }),
       { status: 403, headers: { 'content-type': 'application/json' } },
@@ -99,22 +120,12 @@ export async function requirePermissionIfMinimalMode(
  * - granted=true adds the permission to the default set.
  * - granted=false removes the permission from the default set.
  * - Returns an immutable ReadonlySet.
- * - Cached per request (WeakMap keyed on queryable). Same queryable + role
- *   returns the same set within one request lifecycle.
+ * - Fresh merge on every call. No caching.
  */
 export async function resolvePermissionSet(
   queryable: Queryable,
   role: Role,
 ): Promise<PermissionSet> {
-  // Per-request cache lookup.
-  let roleMap = requestCache.get(queryable);
-  if (!roleMap) {
-    roleMap = new Map();
-    requestCache.set(queryable, roleMap);
-  }
-  const cached = roleMap.get(role.name);
-  if (cached) return cached;
-
   // Start from rank-derived defaults.
   const allowed = new Set<Permission>(defaultPermissionsForRank(role.rank));
 
@@ -134,7 +145,5 @@ export async function resolvePermissionSet(
   }
 
   // Freeze into an immutable set.
-  const frozen: PermissionSet = Object.freeze(new Set(allowed)) as PermissionSet;
-  roleMap.set(role.name, frozen);
-  return frozen;
+  return Object.freeze(new Set(allowed)) as PermissionSet;
 }

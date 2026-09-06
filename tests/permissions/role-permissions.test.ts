@@ -118,14 +118,15 @@ describe('resolvePermissionSet — DB overrides', () => {
 // resolvePermissionSet — per-request cache
 // ---------------------------------------------------------------------------
 
-describe('resolvePermissionSet — per-request cache', () => {
-  it('returns the same object on repeated calls with the same role', async () => {
+describe('resolvePermissionSet — fresh merge (no cache)', () => {
+  it('returns a new object on each call (no cross-request cache)', async () => {
     const q = freshQueryable();
     mocks.mockQuery.mockResolvedValue({ rows: [] });
     const role = fakeRole({ name: 'guest', rank: 1 });
     const first = await resolvePermissionSet(q, role);
     const second = await resolvePermissionSet(q, role);
-    expect(first).toBe(second);
+    expect(first).not.toBe(second);
+    expect(first).toStrictEqual(second);
   });
 
   it('returns different objects for different roles', async () => {
