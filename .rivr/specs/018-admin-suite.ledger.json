@@ -9,13 +9,13 @@
   "tracker": {
     "mode": "none"
   },
-  "stage": "verification",
+  "stage": "implementation",
   "retry": {
-    "count": 1,
+    "count": 2,
     "max": 5,
     "consecutive_same_cause": 1,
     "escalate_at": 3,
-    "last_cause": "page-guard-empty-headers"
+    "last_cause": "fix-introduced-prettier-breach"
   },
   "slices": [
     {
@@ -185,19 +185,51 @@
       "riskTier": 2,
       "uuid": "f9fe2b29-9a7f-4a03-863e-529912e0a1ef",
       "impl": {
-        "status": "ready_for_verification",
-        "hash": "f97b2c1e26a4f02b1f1696eb1a0d37294fe0ac1064304db484b062642afe9980",
-        "actor": "implementer",
-        "at": "2026-09-06T13:28:11.817Z"
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
       },
       "verification": {
         "status": "rejected",
-        "hash": "3fbb237603d071a7c9d39672c531adbbdb1cc983951fc39f52f06f24073c851d",
+        "hash": "8d11e740a5c6600f2358b00e68c4bb4377b1b1b41444f53e495f7e3863923222",
         "actor": "verifier",
-        "at": "2026-09-06T13:15:31.945Z",
+        "at": "2026-09-06T13:57:36.487Z",
         "deficiencies": [
-          "Page guard calls requirePermission(new Headers(), users.manage) at app/admin/settings/page.tsx:19 with an empty Headers object that carries no cookie, so getSession always returns null and the typed 403 always fires: the page is permanently not-authorized for every user. Live-wire + Safari proved a real admin with a signed cookie sees the not-authorized state and never the three sections (postcondition fails). ADMIN_PAGE_OK passes only because admin-page-gate.test.ts:56-66 mocks requirePermission at the module boundary, a 017 failure-class-(d) tautology that masks the broken seam. The page also renders raw i18n keys (admin.notAuthorized at :37, admin.settings.title at :47) and hardcoded English instead of resolving the locale, contradicting its own expectation text. The shared TSC gate fails repo-wide due to S6's cold-boot test file."
-        ]
+          "pnpm check fails repo-wide on app/admin/settings/page.tsx (prettier 3.8.1 violations at :36-38 and :61-63) and tests/admin/admin-page-gate.test.ts (:144-145, :171-172, :176-178, :209-210). Both files were formatting-clean at the round-1 tree (3c975660) and dirty at b8d65102: the fix commit introduced the violations, breaking the repo CI gate pnpm check. Orchestrator confirmation of no formatter damage is contradicted by the fresh pinned-prettier run."
+        ],
+        "evidence": {
+          "gates": [
+            {
+              "id": "g1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/admin-page-gate.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/admin-page-gate.test.ts \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 162\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m6 passed\u001b[39m\u001b[22m\u001b[90m (6)\u001b[39m\n\u001b[2m   Start at \u001b[22m 01:36:10\n\u001b[2m   Duration \u001b[22m 242ms\u001b[2m (transform 34ms, setup 9ms, import 15ms, tests 162ms, environment 0ms)\u001b[22m\n\nADMIN_PAGE_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> node scripts/check-i18n-keys.mjs\n\ni18n key alignment check passed (12 locale files, source: en-US.json).\nI18N_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "A holder of users.manage reaches /admin/settings and sees the three sections; a denied rank receives the typed 403 rendered as the dedicated not-authorized state, so the Response never reaches the error boundary; the account Admin entry navigates, the Settings entry opens the provider dialog, and the soon badge is gone from Settings; under the client mirror the gear hides for non-holders while flag-off keeps today's gear; the new account and capsule props ship optional so minimal-layout.test.ts keeps compiling and passing unchanged; all new strings pass the 12-locale parity check.",
       "gates": [
@@ -206,21 +238,43 @@
           "type": "unit",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/admin/admin-page-gate.test.ts && echo ADMIN_PAGE_OK",
           "expect": "ADMIN_PAGE_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/admin-page-gate.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/admin-page-gate.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m6 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 162\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m6 passed\\u001b[39m\\u001b[22m\\u001b[90m (6)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 01:36:10\\n\\u001b[2m   Duration \\u001b[22m 242ms\\u001b[2m (transform 34ms, setup 9ms, import 15ms, tests 162ms, environment 0ms)\\u001b[22m\\n\\nADMIN_PAGE_OK\\n\",\"passed\":true}",
+          "captures": [
+            {
+              "captureId": "64231175-b171-4a19-bbe7-909ed969bdfb",
+              "ts": "2026-09-06T13:37:54.324Z",
+              "actor": "verifier",
+              "stage": "verification",
+              "headSha": "99a0236acaaea1724fc525f6f160084633dff8e8",
+              "round": 116,
+              "oracleSignature": "a56918da2b5cb1dfbd72b48d8f0fb66a3e3dbb9018276c38314a331eaccef3af",
+              "evidence": {
+                "id": "g1",
+                "shell": "/bin/sh",
+                "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+                "exit": 0,
+                "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+                "pathCount": 30,
+                "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/admin-page-gate.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/admin-page-gate.test.ts \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 169\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m6 passed\u001b[39m\u001b[22m\u001b[90m (6)\u001b[39m\n\u001b[2m   Start at \u001b[22m 01:37:54\n\u001b[2m   Duration \u001b[22m 253ms\u001b[2m (transform 40ms, setup 13ms, import 17ms, tests 169ms, environment 0ms)\u001b[22m\n\nADMIN_PAGE_OK\n",
+                "passed": true
+              },
+              "consumed": false
+            }
+          ]
         },
         {
           "id": "g2",
           "type": "unit",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm check:i18n-keys && echo I18N_OK",
           "expect": "I18N_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> node scripts/check-i18n-keys.mjs\\n\\ni18n key alignment check passed (12 locale files, source: en-US.json).\\nI18N_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g3",
           "type": "smoke",
           "check": "npx tsc --noEmit && echo TSC_OK",
           "expect": "TSC_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}"
         }
       ],
       "findings": [
@@ -234,6 +288,17 @@
           "level": "error",
           "deficiency": "Page guard calls requirePermission(new Headers(), users.manage) at app/admin/settings/page.tsx:19 with an empty Headers object that carries no cookie, so getSession always returns null and the typed 403 always fires: the page is permanently not-authorized for every user. Live-wire + Safari proved a real admin with a signed cookie sees the not-authorized state and never the three sections (postcondition fails). ADMIN_PAGE_OK passes only because admin-page-gate.test.ts:56-66 mocks requirePermission at the module boundary, a 017 failure-class-(d) tautology that masks the broken seam. The page also renders raw i18n keys (admin.notAuthorized at :37, admin.settings.title at :47) and hardcoded English instead of resolving the locale, contradicting its own expectation text. The shared TSC gate fails repo-wide due to S6's cold-boot test file.",
           "evidence": "page-guard-empty-headers"
+        },
+        {
+          "id": 2,
+          "correlation": "fb538072c6f829da4bfce20310a7aa355598fd88b0a5e6e7e58133f19a60f59d",
+          "at": "2026-09-06T13:57:36.487Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "pnpm check fails repo-wide on app/admin/settings/page.tsx (prettier 3.8.1 violations at :36-38 and :61-63) and tests/admin/admin-page-gate.test.ts (:144-145, :171-172, :176-178, :209-210). Both files were formatting-clean at the round-1 tree (3c975660) and dirty at b8d65102: the fix commit introduced the violations, breaking the repo CI gate pnpm check. Orchestrator confirmation of no formatter damage is contradicted by the fresh pinned-prettier run.",
+          "evidence": "fix-introduced-prettier-breach"
         }
       ]
     },
@@ -418,13 +483,57 @@
         "at": "2026-09-06T13:28:11.980Z"
       },
       "verification": {
-        "status": "rejected",
-        "hash": "ee66d763c6fd51a2d83a5d1c8da5ab1568c55257dab0ff3632ae1bcdb611e101",
+        "status": "verified",
+        "hash": "04718fa4252699b5dee919f001797f86cca28bde632fab95ad72bb347922c2f0",
         "actor": "verifier",
-        "at": "2026-09-06T13:15:31.945Z",
+        "at": "2026-09-06T13:36:29.921Z",
         "deficiencies": [
           "The users section renders only inside the S1 admin page, which is permanently not-authorized, so the postcondition 'the section renders in Safari' cannot hold with the current S1 guard. Additionally the shared TSC gate fails repo-wide (tests/admin/cold-boot-owner.pg.test.ts:112), blocking this slice's g4. All three own gates (USERS_ADMIN_OK, USERS_ADMIN_PG_OK, BAN_ADV_OK) pass."
-        ]
+        ],
+        "evidence": {
+          "gates": [
+            {
+              "id": "g1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/users-admin.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/users-admin.test.ts \u001b[2m(\u001b[22m\u001b[2m21 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 43\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m21 passed\u001b[39m\u001b[22m\u001b[90m (21)\u001b[39m\n\u001b[2m   Start at \u001b[22m 01:36:24\n\u001b[2m   Duration \u001b[22m 132ms\u001b[2m (transform 46ms, setup 11ms, import 23ms, tests 43ms, environment 0ms)\u001b[22m\n\nUSERS_ADMIN_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/users-admin.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/users-admin.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m9 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 201\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m9 passed\u001b[39m\u001b[22m\u001b[90m (9)\u001b[39m\n\u001b[2m   Start at \u001b[22m 01:36:25\n\u001b[2m   Duration \u001b[22m 289ms\u001b[2m (transform 33ms, setup 12ms, import 22ms, tests 201ms, environment 0ms)\u001b[22m\n\nUSERS_ADMIN_PG_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/ban-adversarial.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/ban-adversarial.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m7 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 191\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m7 passed\u001b[39m\u001b[22m\u001b[90m (7)\u001b[39m\n\u001b[2m   Start at \u001b[22m 01:36:26\n\u001b[2m   Duration \u001b[22m 272ms\u001b[2m (transform 30ms, setup 12ms, import 16ms, tests 191ms, environment 0ms)\u001b[22m\n\nBAN_ADV_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g4",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "An operator lists users with search and filter, assigns one role per user, and bans or un-bans a user; a banned user loses every session immediately, receives the typed 403 with code banned from any guarded call, and resolves to rank 0 on every rank gate; the typed 403-body assertions depend on the pinned Response-rethrow passthrough, because the two outer catch layers would flatten the throw to a 500 without it; an admin cannot ban their own session; the identity never renders in the UI.",
       "gates": [
@@ -433,28 +542,28 @@
           "type": "unit",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/admin/users-admin.test.ts && echo USERS_ADMIN_OK",
           "expect": "USERS_ADMIN_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/users-admin.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/users-admin.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m21 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 43\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m21 passed\\u001b[39m\\u001b[22m\\u001b[90m (21)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 01:36:24\\n\\u001b[2m   Duration \\u001b[22m 132ms\\u001b[2m (transform 46ms, setup 11ms, import 23ms, tests 43ms, environment 0ms)\\u001b[22m\\n\\nUSERS_ADMIN_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g2",
           "type": "integration",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/admin/users-admin.pg.test.ts && echo USERS_ADMIN_PG_OK",
           "expect": "USERS_ADMIN_PG_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/users-admin.pg.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/users-admin.pg.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m9 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 201\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m9 passed\\u001b[39m\\u001b[22m\\u001b[90m (9)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 01:36:25\\n\\u001b[2m   Duration \\u001b[22m 289ms\\u001b[2m (transform 33ms, setup 12ms, import 22ms, tests 201ms, environment 0ms)\\u001b[22m\\n\\nUSERS_ADMIN_PG_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g3",
           "type": "adversarial",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/admin/ban-adversarial.pg.test.ts && echo BAN_ADV_OK",
           "expect": "BAN_ADV_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/ban-adversarial.pg.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/ban-adversarial.pg.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m7 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 191\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m7 passed\\u001b[39m\\u001b[22m\\u001b[90m (7)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 01:36:26\\n\\u001b[2m   Duration \\u001b[22m 272ms\\u001b[2m (transform 30ms, setup 12ms, import 16ms, tests 191ms, environment 0ms)\\u001b[22m\\n\\nBAN_ADV_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g4",
           "type": "smoke",
           "check": "npx tsc --noEmit && echo TSC_OK",
           "expect": "TSC_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g4\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}"
         }
       ],
       "findings": [
@@ -704,13 +813,77 @@
         "at": "2026-09-06T13:28:12.329Z"
       },
       "verification": {
-        "status": "rejected",
-        "hash": "665482f76de80e1af45bd0aa63d4295d6ad836f1ce1c1d5160b909e61d07acbf",
+        "status": "verified",
+        "hash": "7942aef2ef0a877a41ecec8f9a1dd1432e374fd534d7e6a311f0aa3180632ae1",
         "actor": "verifier",
-        "at": "2026-09-06T13:15:31.945Z",
+        "at": "2026-09-06T13:36:44.687Z",
         "deficiencies": [
           "Production build fails at /invite/accept prerender: app/invite/accept/page.tsx:25 calls useSearchParams() without a Suspense boundary (Next.js missing-suspense-with-csr-bailout), so pnpm build exits 1. The invite-create UI is additionally unreachable because the S1 admin page never authorizes. Shared TSC gate fails repo-wide. Own gates (INVITES_OK, I18N_OK, INVITE_MAILER_OK, INVITES_PG_OK, INVITE_RACE_OK x2) pass."
-        ]
+        ],
+        "evidence": {
+          "gates": [
+            {
+              "id": "g1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/invites.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/invites.test.ts \u001b[2m(\u001b[22m\u001b[2m21 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 47\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m21 passed\u001b[39m\u001b[22m\u001b[90m (21)\u001b[39m\n\u001b[2m   Start at \u001b[22m 01:36:38\n\u001b[2m   Duration \u001b[22m 137ms\u001b[2m (transform 48ms, setup 10ms, import 25ms, tests 47ms, environment 0ms)\u001b[22m\n\nINVITES_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> node scripts/check-i18n-keys.mjs\n\ni18n key alignment check passed (12 locale files, source: en-US.json).\nI18N_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/invite-mailer.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/invite-mailer.test.ts \u001b[2m(\u001b[22m\u001b[2m5 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 26\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m5 passed\u001b[39m\u001b[22m\u001b[90m (5)\u001b[39m\n\u001b[2m   Start at \u001b[22m 01:36:39\n\u001b[2m   Duration \u001b[22m 101ms\u001b[2m (transform 18ms, setup 11ms, import 8ms, tests 26ms, environment 0ms)\u001b[22m\n\nINVITE_MAILER_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g4",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/invites.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/invites.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m10 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 218\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m10 passed\u001b[39m\u001b[22m\u001b[90m (10)\u001b[39m\n\u001b[2m   Start at \u001b[22m 01:36:40\n\u001b[2m   Duration \u001b[22m 302ms\u001b[2m (transform 27ms, setup 14ms, import 16ms, tests 218ms, environment 0ms)\u001b[22m\n\nINVITES_PG_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g5",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/invite-race.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/invite-race.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m1 test\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 99\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m   Start at \u001b[22m 01:36:40\n\u001b[2m   Duration \u001b[22m 177ms\u001b[2m (transform 20ms, setup 9ms, import 14ms, tests 99ms, environment 0ms)\u001b[22m\n\nINVITE_RACE_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g6",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "An admin creates an invite for an email and role with the default seven-day expiry, the mailer sends the accept link through console, smtp, or resend, and the pending list shows it; the accept page prefills the email; the user-create hook consumes the invite and grants the invited role in the same transaction at user creation, before email verification; a second use, an expired invite, and a revoked invite all render the invalid state and grant nothing; the mailer keeps its flag-off console behavior.",
       "gates": [
@@ -719,42 +892,64 @@
           "type": "unit",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/admin/invites.test.ts && echo INVITES_OK",
           "expect": "INVITES_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/invites.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/invites.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m21 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 47\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m21 passed\\u001b[39m\\u001b[22m\\u001b[90m (21)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 01:36:38\\n\\u001b[2m   Duration \\u001b[22m 137ms\\u001b[2m (transform 48ms, setup 10ms, import 25ms, tests 47ms, environment 0ms)\\u001b[22m\\n\\nINVITES_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g2",
           "type": "unit",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm check:i18n-keys && echo I18N_OK",
           "expect": "I18N_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> node scripts/check-i18n-keys.mjs\\n\\ni18n key alignment check passed (12 locale files, source: en-US.json).\\nI18N_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g3",
           "type": "unit",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE MAIL_TRANSPORT AUTH_SECRET RESEND_API_KEY SMTP_HOST SMTP_PORT SMTP_USER SMTP_PASS MAIL_FROM; pnpm test tests/admin/invite-mailer.test.ts && echo INVITE_MAILER_OK",
           "expect": "INVITE_MAILER_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/invite-mailer.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/invite-mailer.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m5 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 26\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m5 passed\\u001b[39m\\u001b[22m\\u001b[90m (5)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 01:36:39\\n\\u001b[2m   Duration \\u001b[22m 101ms\\u001b[2m (transform 18ms, setup 11ms, import 8ms, tests 26ms, environment 0ms)\\u001b[22m\\n\\nINVITE_MAILER_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g4",
           "type": "integration",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/admin/invites.pg.test.ts && echo INVITES_PG_OK",
           "expect": "INVITES_PG_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g4\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/invites.pg.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/invites.pg.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m10 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 218\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m10 passed\\u001b[39m\\u001b[22m\\u001b[90m (10)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 01:36:40\\n\\u001b[2m   Duration \\u001b[22m 302ms\\u001b[2m (transform 27ms, setup 14ms, import 16ms, tests 218ms, environment 0ms)\\u001b[22m\\n\\nINVITES_PG_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g5",
           "type": "adversarial",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/admin/invite-race.pg.test.ts && echo INVITE_RACE_OK",
           "expect": "INVITE_RACE_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g5\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/invite-race.pg.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/invite-race.pg.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m1 test\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 99\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 01:36:40\\n\\u001b[2m   Duration \\u001b[22m 177ms\\u001b[2m (transform 20ms, setup 9ms, import 14ms, tests 99ms, environment 0ms)\\u001b[22m\\n\\nINVITE_RACE_OK\\n\",\"passed\":true}",
+          "captures": [
+            {
+              "captureId": "d7e58d04-98be-4073-a0bc-8e956c4912b7",
+              "ts": "2026-09-06T13:37:58.396Z",
+              "actor": "verifier",
+              "stage": "verification",
+              "headSha": "99a0236acaaea1724fc525f6f160084633dff8e8",
+              "round": 116,
+              "oracleSignature": "5751c5723a57a4a965d7dd17d0e13d2b473ca641395f6c038a178e1638630c53",
+              "evidence": {
+                "id": "g5",
+                "shell": "/bin/sh",
+                "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+                "exit": 0,
+                "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+                "pathCount": 30,
+                "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/invite-race.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/invite-race.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m1 test\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 105\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m   Start at \u001b[22m 01:37:58\n\u001b[2m   Duration \u001b[22m 184ms\u001b[2m (transform 19ms, setup 10ms, import 14ms, tests 105ms, environment 0ms)\u001b[22m\n\nINVITE_RACE_OK\n",
+                "passed": true
+              },
+              "consumed": false
+            }
+          ]
         },
         {
           "id": "g6",
           "type": "smoke",
           "check": "npx tsc --noEmit && echo TSC_OK",
           "expect": "TSC_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g6\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}"
         }
       ],
       "findings": [
@@ -856,19 +1051,51 @@
       "riskTier": 3,
       "uuid": "e9a65063-a5ec-42fc-bf20-aeaca5b1938d",
       "impl": {
-        "status": "ready_for_verification",
-        "hash": "65ed9b5a1fa3341048ddf62daff5d2b0eaa71e32e8fc9b8a3a369bade2b591b6",
-        "actor": "implementer",
-        "at": "2026-09-06T13:28:19.964Z"
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
       },
       "verification": {
         "status": "rejected",
-        "hash": "5479982bbad3888daa7717c091f71998b58497d38047dc766ad256d3d6386e3e",
+        "hash": "a73988679c2284d89f21230546a9dc2cf4e57282110d4908a59cd1979ee17007",
         "actor": "verifier",
-        "at": "2026-09-06T13:15:31.945Z",
+        "at": "2026-09-06T13:57:36.487Z",
         "deficiencies": [
-          "The courses section renders only inside the permanently not-authorized S1 admin page, so the postcondition 'the section renders in Safari' cannot hold. Shared TSC gate fails repo-wide, blocking this slice's g3. Own gates (ADMIN_COURSES_OK, ADMIN_COURSES_PG_OK) pass."
-        ]
+          "GET /api/admin/courses does not exist: app/api/admin/courses/route.ts is absent (only [id]/route.ts exists) and never existed in git history, yet components/admin/courses-section.tsx:43 fetches it as the section data path. Live-wire GET /api/admin/courses answers 404; Safari shows Failed to load courses + No courses found; the console logs a 404 on every load. No gate exercises the section data path: ADMIN_COURSES_OK checks only module exports and the DELETE route, ADMIN_COURSES_PG_OK never hits the list route. The postcondition an admin sees every non-deleted course and the section renders in Safari cannot hold (spec 018 :503 requires a new app-owned admin course list route, never a reuse of GET /api/stages)."
+        ],
+        "evidence": {
+          "gates": [
+            {
+              "id": "g1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/admin-courses.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/admin-courses.test.ts \u001b[2m(\u001b[22m\u001b[2m13 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 181\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m13 passed\u001b[39m\u001b[22m\u001b[90m (13)\u001b[39m\n\u001b[2m   Start at \u001b[22m 01:36:58\n\u001b[2m   Duration \u001b[22m 268ms\u001b[2m (transform 151ms, setup 13ms, import 19ms, tests 181ms, environment 0ms)\u001b[22m\n\nADMIN_COURSES_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/admin-courses.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/admin-courses.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m10 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 371\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m10 passed\u001b[39m\u001b[22m\u001b[90m (10)\u001b[39m\n\u001b[2m   Start at \u001b[22m 01:36:59\n\u001b[2m   Duration \u001b[22m 459ms\u001b[2m (transform 143ms, setup 13ms, import 20ms, tests 371ms, environment 0ms)\u001b[22m\n\nADMIN_COURSES_PG_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "An admin sees every non-deleted course with owner, status, audience, and publish date; the unpublish and republish actions drive the certified 017 routes and work for any course; the delete action removes any course, cascades stage meta, and never resurrects through PUT because PUT is existence-gated; a creator without course.delete gets 403 on the admin delete route.",
       "gates": [
@@ -877,21 +1104,21 @@
           "type": "unit",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/admin/admin-courses.test.ts && echo ADMIN_COURSES_OK",
           "expect": "ADMIN_COURSES_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/admin-courses.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/admin-courses.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m13 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 181\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m13 passed\\u001b[39m\\u001b[22m\\u001b[90m (13)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 01:36:58\\n\\u001b[2m   Duration \\u001b[22m 268ms\\u001b[2m (transform 151ms, setup 13ms, import 19ms, tests 181ms, environment 0ms)\\u001b[22m\\n\\nADMIN_COURSES_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g2",
           "type": "integration",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/admin/admin-courses.pg.test.ts && echo ADMIN_COURSES_PG_OK",
           "expect": "ADMIN_COURSES_PG_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/admin-courses.pg.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/admin-courses.pg.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m10 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[33m 371\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m10 passed\\u001b[39m\\u001b[22m\\u001b[90m (10)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 01:36:59\\n\\u001b[2m   Duration \\u001b[22m 459ms\\u001b[2m (transform 143ms, setup 13ms, import 20ms, tests 371ms, environment 0ms)\\u001b[22m\\n\\nADMIN_COURSES_PG_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g3",
           "type": "smoke",
           "check": "npx tsc --noEmit && echo TSC_OK",
           "expect": "TSC_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}"
         }
       ],
       "findings": [
@@ -905,6 +1132,17 @@
           "level": "error",
           "deficiency": "The courses section renders only inside the permanently not-authorized S1 admin page, so the postcondition 'the section renders in Safari' cannot hold. Shared TSC gate fails repo-wide, blocking this slice's g3. Own gates (ADMIN_COURSES_OK, ADMIN_COURSES_PG_OK) pass.",
           "evidence": "shared-tsc-breach"
+        },
+        {
+          "id": 2,
+          "correlation": "2b306d67b9a8239772839ffde8a7a6f7768107108f8d08651e1dd01c8b7313c2",
+          "at": "2026-09-06T13:57:36.487Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "GET /api/admin/courses does not exist: app/api/admin/courses/route.ts is absent (only [id]/route.ts exists) and never existed in git history, yet components/admin/courses-section.tsx:43 fetches it as the section data path. Live-wire GET /api/admin/courses answers 404; Safari shows Failed to load courses + No courses found; the console logs a 404 on every load. No gate exercises the section data path: ADMIN_COURSES_OK checks only module exports and the DELETE route, ADMIN_COURSES_PG_OK never hits the list route. The postcondition an admin sees every non-deleted course and the section renders in Safari cannot hold (spec 018 :503 requires a new app-owned admin course list route, never a reuse of GET /api/stages).",
+          "evidence": "courses-list-route-missing"
         }
       ]
     },
@@ -967,13 +1205,57 @@
         "at": "2026-09-06T13:28:20.798Z"
       },
       "verification": {
-        "status": "rejected",
-        "hash": "443763b68e84f20f1840032c722d72b468c6d8002517f47db331ed4dbd605f45",
+        "status": "verified",
+        "hash": "a9a8043252a682ed1a859ec259247a3110afef25e6c69287f27b2f3dfeb7075d",
         "actor": "verifier",
-        "at": "2026-09-06T13:15:31.945Z",
+        "at": "2026-09-06T13:37:20.451Z",
         "deficiencies": [
           "Shared TSC gate (g4) fails repo-wide: npx tsc --noEmit exits 1 on tests/admin/cold-boot-owner.pg.test.ts:112. All own gates pass including MEDIA_NO_LEAK_OK twice."
-        ]
+        ],
+        "evidence": {
+          "gates": [
+            {
+              "id": "g1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/media-gate.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/media-gate.test.ts \u001b[2m(\u001b[22m\u001b[2m11 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 120\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m11 passed\u001b[39m\u001b[22m\u001b[90m (11)\u001b[39m\n\u001b[2m   Start at \u001b[22m 01:37:15\n\u001b[2m   Duration \u001b[22m 203ms\u001b[2m (transform 115ms, setup 13ms, import 16ms, tests 120ms, environment 0ms)\u001b[22m\n\nMEDIA_GATE_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/media-gate.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/media-gate.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m12 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 360\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m12 passed\u001b[39m\u001b[22m\u001b[90m (12)\u001b[39m\n\u001b[2m   Start at \u001b[22m 01:37:15\n\u001b[2m   Duration \u001b[22m 447ms\u001b[2m (transform 149ms, setup 14ms, import 19ms, tests 360ms, environment 0ms)\u001b[22m\n\nMEDIA_GATE_PG_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/media-no-leak.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/media-no-leak.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m19 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 369\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m19 passed\u001b[39m\u001b[22m\u001b[90m (19)\u001b[39m\n\u001b[2m   Start at \u001b[22m 01:37:16\n\u001b[2m   Duration \u001b[22m 457ms\u001b[2m (transform 151ms, setup 10ms, import 24ms, tests 369ms, environment 0ms)\u001b[22m\n\nMEDIA_NO_LEAK_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g4",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "Under the flag, published everyone-audience media serves to rank 0 and above, guest media to rank 1 and above, learner media to rank 2 and above, while drafts, wrong-audience courses, and media ids with no stage_meta row answer 404 with no bytes; the gated responses carry a cache header that no longer claims public immutability; flag-off response bodies, statuses, and headers stay byte-identical; range streaming keeps working; the flag-on gate never opens the file before the decision.",
       "gates": [
@@ -982,28 +1264,50 @@
           "type": "unit",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/admin/media-gate.test.ts && echo MEDIA_GATE_OK",
           "expect": "MEDIA_GATE_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/media-gate.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/media-gate.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m11 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 120\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m11 passed\\u001b[39m\\u001b[22m\\u001b[90m (11)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 01:37:15\\n\\u001b[2m   Duration \\u001b[22m 203ms\\u001b[2m (transform 115ms, setup 13ms, import 16ms, tests 120ms, environment 0ms)\\u001b[22m\\n\\nMEDIA_GATE_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g2",
           "type": "integration",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/admin/media-gate.pg.test.ts && echo MEDIA_GATE_PG_OK",
           "expect": "MEDIA_GATE_PG_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/media-gate.pg.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/media-gate.pg.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m12 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[33m 360\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m12 passed\\u001b[39m\\u001b[22m\\u001b[90m (12)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 01:37:15\\n\\u001b[2m   Duration \\u001b[22m 447ms\\u001b[2m (transform 149ms, setup 14ms, import 19ms, tests 360ms, environment 0ms)\\u001b[22m\\n\\nMEDIA_GATE_PG_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g3",
           "type": "adversarial",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && MINIMAL_MODE=true pnpm test tests/admin/media-no-leak.pg.test.ts && echo MEDIA_NO_LEAK_OK",
           "expect": "MEDIA_NO_LEAK_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/media-no-leak.pg.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/media-no-leak.pg.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m19 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[33m 369\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m19 passed\\u001b[39m\\u001b[22m\\u001b[90m (19)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 01:37:16\\n\\u001b[2m   Duration \\u001b[22m 457ms\\u001b[2m (transform 151ms, setup 10ms, import 24ms, tests 369ms, environment 0ms)\\u001b[22m\\n\\nMEDIA_NO_LEAK_OK\\n\",\"passed\":true}",
+          "captures": [
+            {
+              "captureId": "b5fbb09f-bbf4-4392-8de0-c49f6a1c6ac1",
+              "ts": "2026-09-06T13:38:03.178Z",
+              "actor": "verifier",
+              "stage": "verification",
+              "headSha": "99a0236acaaea1724fc525f6f160084633dff8e8",
+              "round": 116,
+              "oracleSignature": "d0387cdea77a6b03ec13e6193de30b4a5406eaee358fe6e2509d12c1be6ef605",
+              "evidence": {
+                "id": "g3",
+                "shell": "/bin/sh",
+                "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+                "exit": 0,
+                "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+                "pathCount": 30,
+                "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/media-no-leak.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/media-no-leak.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m19 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 375\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m19 passed\u001b[39m\u001b[22m\u001b[90m (19)\u001b[39m\n\u001b[2m   Start at \u001b[22m 01:38:02\n\u001b[2m   Duration \u001b[22m 464ms\u001b[2m (transform 146ms, setup 10ms, import 23ms, tests 375ms, environment 0ms)\u001b[22m\n\nMEDIA_NO_LEAK_OK\n",
+                "passed": true
+              },
+              "consumed": false
+            }
+          ]
         },
         {
           "id": "g4",
           "type": "smoke",
           "check": "npx tsc --noEmit && echo TSC_OK",
           "expect": "TSC_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g4\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}"
         }
       ],
       "findings": [
@@ -1112,13 +1416,57 @@
         "at": "2026-09-06T13:28:21.134Z"
       },
       "verification": {
-        "status": "rejected",
-        "hash": "aa18857aab92232ec204babf00a1fc1d1f6b42b378488b4984b4d8fec3d391c3",
+        "status": "verified",
+        "hash": "c11cdb145024ef3abda2a578054cfb47fa2cbb4186c2efc50633c592159bd466",
         "actor": "verifier",
-        "at": "2026-09-06T13:15:31.945Z",
+        "at": "2026-09-06T13:37:34.486Z",
         "deficiencies": [
           "tests/admin/cold-boot-owner.pg.test.ts:112 uses ReturnType<typeof createAuthServer> in a type position, but createAuthServer is only imported dynamically inside test bodies (:153, :231, :241), so npx tsc --noEmit fails repo-wide. The shared TSC gate on every slice fails because of this slice's own deliverable. COLD_BOOT_OK, COLD_BOOT_ANON_OK, COLD_BOOT_PG_OK x2 pass under vitest; the type error breaks the CI compile gate."
-        ]
+        ],
+        "evidence": {
+          "gates": [
+            {
+              "id": "g1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/cold-boot-session.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/cold-boot-session.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 14\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m3 passed\u001b[39m\u001b[22m\u001b[90m (3)\u001b[39m\n\u001b[2m   Start at \u001b[22m 01:37:28\n\u001b[2m   Duration \u001b[22m 97ms\u001b[2m (transform 23ms, setup 13ms, import 13ms, tests 14ms, environment 0ms)\u001b[22m\n\nCOLD_BOOT_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/cold-boot-anon.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/cold-boot-anon.test.ts \u001b[2m(\u001b[22m\u001b[2m4 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 20\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m4 passed\u001b[39m\u001b[22m\u001b[90m (4)\u001b[39m\n\u001b[2m   Start at \u001b[22m 01:37:29\n\u001b[2m   Duration \u001b[22m 101ms\u001b[2m (transform 26ms, setup 14ms, import 12ms, tests 20ms, environment 0ms)\u001b[22m\n\nCOLD_BOOT_ANON_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/cold-boot-owner.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/admin/cold-boot-owner.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mCOLD_BOOT_PG_OK: cold-boot owner transient probes\u001b[2m > \u001b[22m\u001b[2mcold boot: first PUT with valid session writes user:<id> not anon:\n\u001b[22m\u001b[39m[mailer] Verification link for cold-boot-user-1788701850598@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImNvbGQtYm9vdC11c2VyLTE3ODg3MDE4NTA1OThAdGVzdC5jb20iLCJpYXQiOjE3ODg3MDE4NTAsImV4cCI6MTc4ODcwNTQ1MH0.wVBZI5Kbn5NEXvxOswyeAOOkQyrTIj-YI3AHbaanbw0&callbackURL=%2F\n\n\u001b[90mstdout\u001b[2m | tests/admin/cold-boot-owner.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mCOLD_BOOT_PG_OK: cold-boot owner transient probes\u001b[2m > \u001b[22m\u001b[2mcold boot: miswired reset cannot pass vacuously\n\u001b[22m\u001b[39m[mailer] Verification link for vacuous-user-1788701850936@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InZhY3VvdXMtdXNlci0xNzg4NzAxODUwOTM2QHRlc3QuY29tIiwiaWF0IjoxNzg4NzAxODUwLCJleHAiOjE3ODg3MDU0NTB9.LMNc38BOLr4WMePTYuhJ3uRfeiSG72lYoT8-Ri72300&callbackURL=%2F\n\n \u001b[32m✓\u001b[39m tests/admin/cold-boot-owner.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 1013\u001b[2mms\u001b[22m\u001b[39m\n     \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m cold boot: first PUT with valid session writes user:<id> not anon: \u001b[33m 571\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m3 passed\u001b[39m\u001b[22m\u001b[90m (3)\u001b[39m\n\u001b[2m   Start at \u001b[22m 01:37:29\n\u001b[2m   Duration \u001b[22m 1.10s\u001b[2m (transform 198ms, setup 12ms, import 20ms, tests 1.01s, environment 0ms)\u001b[22m\n\nCOLD_BOOT_PG_OK\n\u001b[90mstderr\u001b[2m | tests/admin/cold-boot-owner.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mCOLD_BOOT_PG_OK: cold-boot owner transient probes\u001b[2m > \u001b[22m\u001b[2mcold boot: first PUT with valid session writes user:<id> not anon:\n\u001b[22m\u001b[39m2026-09-06T13:37:30.602Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\n\n\u001b[90mstderr\u001b[2m | tests/admin/cold-boot-owner.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mCOLD_BOOT_PG_OK: cold-boot owner transient probes\u001b[2m > \u001b[22m\u001b[2mcold boot: first PUT with valid session writes user:<id> not anon:\n\u001b[22m\u001b[39m2026-09-06T13:37:30.797Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\n\n\u001b[90mstderr\u001b[2m | tests/admin/cold-boot-owner.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mCOLD_BOOT_PG_OK: cold-boot owner transient probes\u001b[2m > \u001b[22m\u001b[2mcold boot: first PUT with valid session writes user:<id> not anon:\n\u001b[22m\u001b[39m2026-09-06T13:37:30.850Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\n\n\u001b[90mstderr\u001b[2m | tests/admin/cold-boot-owner.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mCOLD_BOOT_PG_OK: cold-boot owner transient probes\u001b[2m > \u001b[22m\u001b[2mcold boot: first PUT with valid session writes user:<id> not anon:\n\u001b[22m\u001b[39m2026-09-06T13:37:30.893Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\n\n\u001b[90mstderr\u001b[2m | tests/admin/cold-boot-owner.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mCOLD_BOOT_PG_OK: cold-boot owner transient probes\u001b[2m > \u001b[22m\u001b[2mcold boot: cookie-less request still resolves to anon\n\u001b[22m\u001b[39m2026-09-06T13:37:30.93",
+              "passed": true
+            },
+            {
+              "id": "g4",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "The probe reproduces the failure class, the hardening keeps a real signed-in session from resolving to anon on the first PUT after a cold boot, and the probe passes across repeated cold boots; a request without a session cookie still resolves the anon identity; a miswired reset cannot pass the gate vacuously because the probe asserts the exact owner bytes.",
       "gates": [
@@ -1127,28 +1475,50 @@
           "type": "unit",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/admin/cold-boot-session.test.ts && echo COLD_BOOT_OK",
           "expect": "COLD_BOOT_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/cold-boot-session.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/cold-boot-session.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m3 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 14\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m3 passed\\u001b[39m\\u001b[22m\\u001b[90m (3)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 01:37:28\\n\\u001b[2m   Duration \\u001b[22m 97ms\\u001b[2m (transform 23ms, setup 13ms, import 13ms, tests 14ms, environment 0ms)\\u001b[22m\\n\\nCOLD_BOOT_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g2",
           "type": "unit",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/admin/cold-boot-anon.test.ts && echo COLD_BOOT_ANON_OK",
           "expect": "COLD_BOOT_ANON_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/cold-boot-anon.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/cold-boot-anon.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m4 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 20\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m4 passed\\u001b[39m\\u001b[22m\\u001b[90m (4)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 01:37:29\\n\\u001b[2m   Duration \\u001b[22m 101ms\\u001b[2m (transform 26ms, setup 14ms, import 12ms, tests 20ms, environment 0ms)\\u001b[22m\\n\\nCOLD_BOOT_ANON_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g3",
           "type": "adversarial",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/admin/cold-boot-owner.pg.test.ts && echo COLD_BOOT_PG_OK",
           "expect": "COLD_BOOT_PG_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/cold-boot-owner.pg.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/admin/cold-boot-owner.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mCOLD_BOOT_PG_OK: cold-boot owner transient probes\\u001b[2m > \\u001b[22m\\u001b[2mcold boot: first PUT with valid session writes user:<id> not anon:\\n\\u001b[22m\\u001b[39m[mailer] Verification link for cold-boot-user-1788701850598@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImNvbGQtYm9vdC11c2VyLTE3ODg3MDE4NTA1OThAdGVzdC5jb20iLCJpYXQiOjE3ODg3MDE4NTAsImV4cCI6MTc4ODcwNTQ1MH0.wVBZI5Kbn5NEXvxOswyeAOOkQyrTIj-YI3AHbaanbw0&callbackURL=%2F\\n\\n\\u001b[90mstdout\\u001b[2m | tests/admin/cold-boot-owner.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mCOLD_BOOT_PG_OK: cold-boot owner transient probes\\u001b[2m > \\u001b[22m\\u001b[2mcold boot: miswired reset cannot pass vacuously\\n\\u001b[22m\\u001b[39m[mailer] Verification link for vacuous-user-1788701850936@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InZhY3VvdXMtdXNlci0xNzg4NzAxODUwOTM2QHRlc3QuY29tIiwiaWF0IjoxNzg4NzAxODUwLCJleHAiOjE3ODg3MDU0NTB9.LMNc38BOLr4WMePTYuhJ3uRfeiSG72lYoT8-Ri72300&callbackURL=%2F\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/cold-boot-owner.pg.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m3 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[33m 1013\\u001b[2mms\\u001b[22m\\u001b[39m\\n     \\u001b[33m\\u001b[2m✓\\u001b[22m\\u001b[39m cold boot: first PUT with valid session writes user:<id> not anon: \\u001b[33m 571\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m3 passed\\u001b[39m\\u001b[22m\\u001b[90m (3)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 01:37:29\\n\\u001b[2m   Duration \\u001b[22m 1.10s\\u001b[2m (transform 198ms, setup 12ms, import 20ms, tests 1.01s, environment 0ms)\\u001b[22m\\n\\nCOLD_BOOT_PG_OK\\n\\u001b[90mstderr\\u001b[2m | tests/admin/cold-boot-owner.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mCOLD_BOOT_PG_OK: cold-boot owner transient probes\\u001b[2m > \\u001b[22m\\u001b[2mcold boot: first PUT with valid session writes user:<id> not anon:\\n\\u001b[22m\\u001b[39m2026-09-06T13:37:30.602Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\\n\\n\\u001b[90mstderr\\u001b[2m | tests/admin/cold-boot-owner.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mCOLD_BOOT_PG_OK: cold-boot owner transient probes\\u001b[2m > \\u001b[22m\\u001b[2mcold boot: first PUT with valid session writes user:<id> not anon:\\n\\u001b[22m\\u001b[39m2026-09-06T13:37:30.797Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\\n\\n\\u001b[90mstderr\\u001b[2m | tests/admin/cold-boot-owner.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mCOLD_BOOT_PG_OK: cold-boot owner transient probes\\u001b[2m > \\u001b[22m\\u001b[2mcold boot: first PUT with valid session writes user:<id> not anon:\\n\\u001b[22m\\u001b[39m2026-09-06T13:37:30.850Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\\n\\n\\u001b[90mstderr\\u001b[2m | tests/admin/cold-boot-owner.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mCOLD_BOOT_PG_OK: cold-boot owner transient probes\\u001b[2m > \\u001b[22m\\u001b[2mcold boot: first PUT with valid session writes user:<id> not anon:\\n\\u001b[22m\\u001b[39m2026-09-06T13:37:30.893Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\\n\\n\\u001b[90mstderr\\u001b[2m | tests/admin/cold-boot-owner.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mCOLD_BOOT_PG_OK: cold-boot owner transient probes\\u001b[2m > \\u001b[22m\\u001b[2mcold boot: cookie-less request still resolves to anon\\n\\u001b[22m\\u001b[39m2026-09-06T13:37:30.93\",\"passed\":true}",
+          "captures": [
+            {
+              "captureId": "d165fd08-529f-4138-a3ec-951999afd0dc",
+              "ts": "2026-09-06T13:38:07.962Z",
+              "actor": "verifier",
+              "stage": "verification",
+              "headSha": "99a0236acaaea1724fc525f6f160084633dff8e8",
+              "round": 116,
+              "oracleSignature": "525bf7c67d2cf45bd69f605d80cc612fe5e3122b17109f8f838f45f3f5254a6f",
+              "evidence": {
+                "id": "g3",
+                "shell": "/bin/sh",
+                "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+                "exit": 0,
+                "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+                "pathCount": 30,
+                "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/cold-boot-owner.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/admin/cold-boot-owner.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mCOLD_BOOT_PG_OK: cold-boot owner transient probes\u001b[2m > \u001b[22m\u001b[2mcold boot: first PUT with valid session writes user:<id> not anon:\n\u001b[22m\u001b[39m[mailer] Verification link for cold-boot-user-1788701887512@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImNvbGQtYm9vdC11c2VyLTE3ODg3MDE4ODc1MTJAdGVzdC5jb20iLCJpYXQiOjE3ODg3MDE4ODcsImV4cCI6MTc4ODcwNTQ4N30.ZbvoNsN_QaDwcnRbk1csnGUVITyRhSRHg-iYiVtnLTk&callbackURL=%2F\n\n\u001b[90mstdout\u001b[2m | tests/admin/cold-boot-owner.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mCOLD_BOOT_PG_OK: cold-boot owner transient probes\u001b[2m > \u001b[22m\u001b[2mcold boot: miswired reset cannot pass vacuously\n\u001b[22m\u001b[39m[mailer] Verification link for vacuous-user-1788701887820@test.com: http://localhost:3000/api/auth/verify-email?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InZhY3VvdXMtdXNlci0xNzg4NzAxODg3ODIwQHRlc3QuY29tIiwiaWF0IjoxNzg4NzAxODg3LCJleHAiOjE3ODg3MDU0ODd9.pupS5D4cRsSxD8TVGwyuW6ypgH0cG0jtYG0ChX93I0Y&callbackURL=%2F\n\n \u001b[32m✓\u001b[39m tests/admin/cold-boot-owner.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 901\u001b[2mms\u001b[22m\u001b[39m\n     \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m cold boot: first PUT with valid session writes user:<id> not anon: \u001b[33m 472\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m3 passed\u001b[39m\u001b[22m\u001b[90m (3)\u001b[39m\n\u001b[2m   Start at \u001b[22m 01:38:06\n\u001b[2m   Duration \u001b[22m 984ms\u001b[2m (transform 195ms, setup 10ms, import 19ms, tests 901ms, environment 0ms)\u001b[22m\n\nCOLD_BOOT_PG_OK\n\u001b[90mstderr\u001b[2m | tests/admin/cold-boot-owner.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mCOLD_BOOT_PG_OK: cold-boot owner transient probes\u001b[2m > \u001b[22m\u001b[2mcold boot: first PUT with valid session writes user:<id> not anon:\n\u001b[22m\u001b[39m2026-09-06T13:38:07.516Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\n\n\u001b[90mstderr\u001b[2m | tests/admin/cold-boot-owner.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mCOLD_BOOT_PG_OK: cold-boot owner transient probes\u001b[2m > \u001b[22m\u001b[2mcold boot: first PUT with valid session writes user:<id> not anon:\n\u001b[22m\u001b[39m2026-09-06T13:38:07.695Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\n\n\u001b[90mstderr\u001b[2m | tests/admin/cold-boot-owner.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mCOLD_BOOT_PG_OK: cold-boot owner transient probes\u001b[2m > \u001b[22m\u001b[2mcold boot: first PUT with valid session writes user:<id> not anon:\n\u001b[22m\u001b[39m2026-09-06T13:38:07.745Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\n\n\u001b[90mstderr\u001b[2m | tests/admin/cold-boot-owner.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mCOLD_BOOT_PG_OK: cold-boot owner transient probes\u001b[2m > \u001b[22m\u001b[2mcold boot: first PUT with valid session writes user:<id> not anon:\n\u001b[22m\u001b[39m2026-09-06T13:38:07.782Z WARN [Better Auth]: [better-auth] Base URL is not set. Set the baseURL option or BETTER_AUTH_URL env, or use a dynamic baseURL with allowedHosts for multi-host setups. Without it the origin is derived from the incoming request, and callbacks and redirects may not work correctly.\n\n\u001b[90mstderr\u001b[2m | tests/admin/cold-boot-owner.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mCOLD_BOOT_PG_OK: cold-boot owner transient probes\u001b[2m > \u001b[22m\u001b[2mcold boot: cookie-less request still resolves to anon\n\u001b[22m\u001b[39m2026-09-06T13:38:07.817",
+                "passed": true
+              },
+              "consumed": false
+            }
+          ]
         },
         {
           "id": "g4",
           "type": "smoke",
           "check": "npx tsc --noEmit && echo TSC_OK",
           "expect": "TSC_OK",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g4\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}"
         }
       ],
       "findings": [
@@ -2374,7 +2744,148 @@
       "slice": null,
       "hash": "13a6cc65f761e391297089064961d1428f758ea3b366d0e3e39d67215ec4fe24",
       "fileHash": "a5e513c7f9a5b15f7d1ff1ebdd732e804038d9e9676b017b1829d7aaba4db369"
+    },
+    {
+      "seq": 111,
+      "id": "243830b3-75ce-4cbf-84a0-8ded82249fb3",
+      "at": "2026-09-06T13:36:15.670Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S1:verification:pending->verified",
+      "slice": "S1",
+      "hash": "979c1d24af1ceb33e5ad7e2daca990e5cca241180a354ddaa878724658a1918c",
+      "oracle": "71e19ea1e5dfa9a7a7f3b72f6480168807090924ce3f7420fc8a17d1aaec5405",
+      "evidence": "eb34e64dbe586573ee43cffadf3a8a1b832e9fa247d8dac2245c3040317a4e75",
+      "fileHash": "c5012b16173a1b65093d3f8d824ae12b4d70d0a061e4e25d4e06d5ff80c7ff4b"
+    },
+    {
+      "seq": 112,
+      "id": "5afcca7e-2090-4a66-8378-46af250c8dc1",
+      "at": "2026-09-06T13:36:29.921Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S2:verification:pending->verified",
+      "slice": "S2",
+      "hash": "69ba17ab35b05dd173ec18f5188234fc1ef3c3faecc328de6a4f06e22798c259",
+      "oracle": "71a8dfeedeb67640172b200e4d88bcc605c9032657acc0a2745865dbfce7e7c1",
+      "evidence": "6f774a61dc860fe82e0585c6dfee96fca79c2ae4c188e72d25752c7a72f884c9",
+      "fileHash": "7ef837ea090a567ecf1f9f496ab79dd9d9dd13bd50c6f3ecc3fd4be84ed53eeb"
+    },
+    {
+      "seq": 113,
+      "id": "dbee2847-3e35-45fd-b55a-fb43baff1b3b",
+      "at": "2026-09-06T13:36:44.687Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S3:verification:pending->verified",
+      "slice": "S3",
+      "hash": "6331862650f2f0a7b343b0edbb1df4f4abcb36a0a33ef8b8aa8c52da36da8ecb",
+      "oracle": "a42caa995b395178787f396605dc87b818d8578ebfa8a619a700d18531f70392",
+      "evidence": "08b5b94d7efd8be31054b32b849c085db7b2eb94baf0b95f5876c88879452f36",
+      "fileHash": "6f9a75f914221efe9beb2c2c057f57f267a928707c4c8d32bb6f2b94b1c58f66"
+    },
+    {
+      "seq": 114,
+      "id": "1480bb80-eb27-4bf2-be8c-1128ded07556",
+      "at": "2026-09-06T13:37:03.530Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S4:verification:pending->verified",
+      "slice": "S4",
+      "hash": "6a02de49742e33a2601945d49b7d58098dca5b07f8dafb181a773672c9741838",
+      "oracle": "4e71a4a4f8566957d2467a666cf53008eacb888ae5540387eac56878f3ca538c",
+      "evidence": "f35d56ef656e6925cbe7e34067116db4505128ccef28010c4ffe4021a7ee025d",
+      "fileHash": "8914036cbf093cd779e53fd0e68487bf0f77b9750eab93847b670dfe2ba79bcb"
+    },
+    {
+      "seq": 115,
+      "id": "c6c6378a-9611-494b-b44c-c978d2d45919",
+      "at": "2026-09-06T13:37:20.451Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S5:verification:pending->verified",
+      "slice": "S5",
+      "hash": "f401a2f36bd31034923cd1b6d33c26d6aba6e0a31b854fe657406034b5ddb93b",
+      "oracle": "b64b71a8f37f0ea7cc39d65bab75c960b05028a136098c8355dfb1834d6a9c50",
+      "evidence": "0a89ef41efa443dacdf55a769d969ab1dfe6ba0137ac3cc05b46aaa98c6b9387",
+      "fileHash": "1cbeb8e1354b0aefbfa5f8f195a399c2a479e95821a45082a42c29b19e9c8635"
+    },
+    {
+      "seq": 116,
+      "id": "75512b85-b06f-4070-9514-319345641445",
+      "at": "2026-09-06T13:37:34.486Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S6:verification:pending->verified",
+      "slice": "S6",
+      "hash": "5e0e81b433f417e4771c954ab516908a43f3670f95f1e9eb65c497d5f3225482",
+      "oracle": "1d96379d37513dca87b94baaed4c665c86a884b82d00be2d5718a2755b1d2c59",
+      "evidence": "e0d26e767a22d24a62997600fa22ebea541be049ba49a8aef70efe0a18aa256e",
+      "fileHash": "60e8540064e4301db92f4643155ea95f893efd5f689a404b01898b213d2b794b"
+    },
+    {
+      "seq": 117,
+      "id": "26d81500-39fc-42fb-8cda-3ac6ba6eda3c",
+      "at": "2026-09-06T13:37:54.324Z",
+      "actor": "verifier",
+      "command": "gate_run",
+      "transition": "slice:S1:gate-run:g1:64231175-b171-4a19-bbe7-909ed969bdfb",
+      "slice": "S1",
+      "hash": "65b87b855992102720daa9148ad9095211fa926a90501070fecdc26a46af84d7",
+      "oracle": "a56918da2b5cb1dfbd72b48d8f0fb66a3e3dbb9018276c38314a331eaccef3af",
+      "evidence": "4a3f1b46af566f0cc66df84218e22b3b3825989b1c81249e760cade8d1faa209",
+      "fileHash": "4db7afe0d6999dde4bdf4a6d75562d327e7f06d51013c54bac3d0b318c48ba79"
+    },
+    {
+      "seq": 118,
+      "id": "404475de-f080-42a4-8d25-6cd93034dfad",
+      "at": "2026-09-06T13:37:58.396Z",
+      "actor": "verifier",
+      "command": "gate_run",
+      "transition": "slice:S3:gate-run:g5:d7e58d04-98be-4073-a0bc-8e956c4912b7",
+      "slice": "S3",
+      "hash": "1ff836346438485b60017cd1487c2b7e465ba53105c785871d38ece3406bafd4",
+      "oracle": "5751c5723a57a4a965d7dd17d0e13d2b473ca641395f6c038a178e1638630c53",
+      "evidence": "a06b6865a384ffc855929cc152960818a2bd5a09f1326b7effcdd992be44100d",
+      "fileHash": "437d090870f88d7aaf8710653d96c66e55e6f6aed633098f7e287e32d02ebcee"
+    },
+    {
+      "seq": 119,
+      "id": "96d6b381-b165-4444-93f1-da9ffde0dbd6",
+      "at": "2026-09-06T13:38:03.178Z",
+      "actor": "verifier",
+      "command": "gate_run",
+      "transition": "slice:S5:gate-run:g3:b5fbb09f-bbf4-4392-8de0-c49f6a1c6ac1",
+      "slice": "S5",
+      "hash": "9f001207a16319f7ddd47157a80ba09f46485f65591658ce44c1f921d8d2ae2b",
+      "oracle": "d0387cdea77a6b03ec13e6193de30b4a5406eaee358fe6e2509d12c1be6ef605",
+      "evidence": "943aca9c2f3dc56bc28edd4b4da94f528ce739ab0aae7738797e14df6c86c578",
+      "fileHash": "cf796d830cd6237211e9d1833ff3732e655fa3ef460356caa5766495c41dfbbd"
+    },
+    {
+      "seq": 120,
+      "id": "7a2bb380-e054-473f-9468-9e5942ae5f74",
+      "at": "2026-09-06T13:38:07.962Z",
+      "actor": "verifier",
+      "command": "gate_run",
+      "transition": "slice:S6:gate-run:g3:d165fd08-529f-4138-a3ec-951999afd0dc",
+      "slice": "S6",
+      "hash": "3b863b2148cd02860a05aca5dd41f70d7f2a7ad0b8f749e3f689b50ba1d49d22",
+      "oracle": "525bf7c67d2cf45bd69f605d80cc612fe5e3122b17109f8f838f45f3f5254a6f",
+      "evidence": "bf3b7f8cdaef459a3a7860adf7b64222560b1663bfc49e58550619475777b391",
+      "fileHash": "f3cc4f5868cfaaf57fe099bb4c891a75db7e2be2f67b7ea0a56bc4de00cfe424"
+    },
+    {
+      "seq": 121,
+      "id": "487cdaf5-27c2-49dc-b1a7-c8462f4e4f6b",
+      "at": "2026-09-06T13:57:36.487Z",
+      "actor": "verifier",
+      "command": "slice_reject_batch",
+      "transition": "reject-batch:S1,S4",
+      "slice": null,
+      "hash": "8e60d3a0a57a9c2df4c29f0c51791ec24d9e17cd7ba3c587b19bda5fc7f5d9ec",
+      "fileHash": "4967af9ac6503be02a9d87c04733232307da3b3c9f2da5db3b8d6d34d8c23aec"
     }
   ],
-  "fileHash": "c5012b16173a1b65093d3f8d824ae12b4d70d0a061e4e25d4e06d5ff80c7ff4b"
+  "fileHash": "70b742459c52fbba2c99241d48ff600b984e69dc7b719af4fa94bad67c6dd5de"
 }
