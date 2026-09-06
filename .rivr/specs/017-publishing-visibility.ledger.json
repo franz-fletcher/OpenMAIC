@@ -4,12 +4,12 @@
   "spec": {
     "reference": "docs/specs/017-publishing-visibility.md",
     "title": "Batch 017 spec: publishing-visibility",
-    "hash": "706a1266855951fbce79eca0eea891fb7a10bda14f86e73be6099697e6cda6d3"
+    "hash": "2f69eacd91c5b1a3361a39977fd781033cb0ed42a1aaa7856fec4ea61ced51e5"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "implementation",
+  "stage": "verification",
   "retry": {
     "count": 0,
     "max": 5,
@@ -1440,7 +1440,18 @@
       "slice": "S5",
       "hash": "a996d5de66aff2f9e00318a654ecadb4d73a5517ace6aeb272231fbed5f064d9",
       "fileHash": "b9322ce80a96e1bca2357846b7ed250775e51dd163fcaaafd2f4dafe2efe385a"
+    },
+    {
+      "seq": 67,
+      "id": "1392b5ed-3f62-45db-a3e0-f99dadc1d036",
+      "at": "2026-09-06T05:50:54.616Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "1972725f7a93481c66e94f7fe96ef916a769f31724820c533a75fe3861893eeb",
+      "fileHash": "32aeab6bc56d45c10af2ba91b3ba6352122a1f044bfba4e06a56de4426648721"
     }
   ],
-  "fileHash": "32aeab6bc56d45c10af2ba91b3ba6352122a1f044bfba4e06a56de4426648721"
+  "fileHash": "385807df1488bbe1a9b17c572274165a651247d7bf304f141a0aa696144c407d"
 }
