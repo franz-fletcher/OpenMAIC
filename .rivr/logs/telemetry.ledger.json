@@ -12561,6 +12561,72 @@
       "slice": "S4",
       "outcome": "ok",
       "extra": {}
+    },
+    {
+      "ts": "2026-09-05T20:47:31.869Z",
+      "command": "report",
+      "flags": [
+        "verbose"
+      ],
+      "exit": 0,
+      "duration_ms": 5,
+      "stage": "implementation",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-06T05:37:22.529Z",
+      "command": "report",
+      "flags": [],
+      "exit": 0,
+      "duration_ms": 4,
+      "stage": "implementation",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-06T05:38:13.437Z",
+      "command": "report",
+      "flags": [
+        "actor",
+        "verbose"
+      ],
+      "exit": 0,
+      "duration_ms": 3,
+      "stage": "implementation",
+      "actor": "implementer",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-06T05:38:37.812Z",
+      "command": "diff",
+      "flags": [
+        "actor",
+        "slice"
+      ],
+      "exit": 2,
+      "duration_ms": 2,
+      "stage": "implementation",
+      "actor": "verifier",
+      "slice": "S5",
+      "outcome": "permission",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-06T05:47:59.442Z",
+      "command": "slice.mark",
+      "flags": [
+        "actor",
+        "slice"
+      ],
+      "exit": 0,
+      "duration_ms": 7,
+      "stage": "implementation",
+      "actor": "implementer",
+      "slice": "S5",
+      "outcome": "ok",
+      "extra": {}
     }
   ],
   "audit": [
@@ -21494,7 +21560,62 @@
       "slice": "S4",
       "hash": "00d7ac90ef71812a4433ae1c413a73fbbe1c3016a385916d96e31048d4a26d91",
       "fileHash": "2a36e42aded18425ca110db8c37e28ed68f5421ee70c39fb172540372641e682"
+    },
+    {
+      "seq": 813,
+      "id": "2867c254-b49a-4afb-a89e-819ead84fcc0",
+      "at": "2026-09-05T20:47:31.869Z",
+      "actor": "anonymous",
+      "command": "telemetry",
+      "transition": "command:report:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "b8c8ec83d302be3c855859eb7b30c643e8c2a10f46531c0530cecfa8e685fab4",
+      "fileHash": "b0056edee791a217e755c52ba7b47fc575b57ef85341507312ce12e6497e1c6e"
+    },
+    {
+      "seq": 814,
+      "id": "a12f5b55-b53f-489a-ba6d-98282d9ae3d2",
+      "at": "2026-09-06T05:37:22.529Z",
+      "actor": "anonymous",
+      "command": "telemetry",
+      "transition": "command:report:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "4ea6692498b8478d440544b88c6252697c5f8d2bf3dccb24ee4b5f05ad78f4e3",
+      "fileHash": "af9f08e4bd2d4ef12b12df049f13f91cb125c0c5d64af600805055cf1e92ab75"
+    },
+    {
+      "seq": 815,
+      "id": "406d947a-51e9-4b22-a8f4-92a880eb9e25",
+      "at": "2026-09-06T05:38:13.437Z",
+      "actor": "implementer",
+      "command": "telemetry",
+      "transition": "command:report:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "6b882b28ae68eb9eb17abe7e8486e6ead7956de930ef05717fc91c9bf6a12da1",
+      "fileHash": "997c08dd3494ea17a149bb93d5d2c8fcbb57f391fe708c6d8875f88e8b86ef7f"
+    },
+    {
+      "seq": 816,
+      "id": "2cb6afa3-f780-4a1e-93d7-985b3ace8da0",
+      "at": "2026-09-06T05:38:37.812Z",
+      "actor": "verifier",
+      "command": "telemetry",
+      "transition": "command:diff:exit:2:outcome:permission",
+      "slice": "S5",
+      "hash": "75f83e9a158d179362a3ff8ad5dc31fe68987a6565266d682f852f325c597c6a",
+      "fileHash": "35e58e0607f7e927bd8eb8124028d1d9e0e7cbf0cfa0b209f66a16485167b50a"
+    },
+    {
+      "seq": 817,
+      "id": "b1dc3db4-1528-41cc-882f-9cf7291876d3",
+      "at": "2026-09-06T05:47:59.442Z",
+      "actor": "implementer",
+      "command": "telemetry",
+      "transition": "command:slice.mark:exit:0:outcome:ok",
+      "slice": "S5",
+      "hash": "9f552fa9d26c1975f1ff7d1c0d24a9deda1259df4ce664dfcb73d9ae27165e20",
+      "fileHash": "d950429601736c4946201d12555a4a7b1562d06dddc35fce2eca7c3861583de0"
     }
   ],
-  "fileHash": "b0056edee791a217e755c52ba7b47fc575b57ef85341507312ce12e6497e1c6e"
+  "fileHash": "a931a217524962c426ace9baedbc2957c191e97bdd069bfe17acfdcf978107cd"
 }

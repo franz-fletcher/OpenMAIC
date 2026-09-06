@@ -10,6 +10,7 @@ import {
 import { createLogger } from '@/lib/logger';
 import { resolveViewerRank } from '@/lib/persistence/audience';
 import { resolveStageAccess, getStageAccessDb } from '@/lib/server/stage-access';
+import { withRequestOwnerId } from '@/lib/server/agent-runtime/with-owner';
 
 const log = createLogger('Classroom API');
 
@@ -79,41 +80,44 @@ export async function GET(request: NextRequest) {
       return apiError(API_ERROR_CODES.INVALID_REQUEST, 400, 'Invalid classroom id');
     }
 
-    // Audience-enforced gate: resolve the viewer rank and check against the
-    // course audience.
-    const viewerRank = await resolveViewerRank(await getStageAccessDb(), 'anon:guest');
+    return withRequestOwnerId(request, async (ownerId, responseHeaders) => {
+      // Audience-enforced gate: resolve the viewer rank and check against the
+      // course audience.
+      const db = await getStageAccessDb();
+      const viewerRank = await resolveViewerRank(db, ownerId);
 
-    // Check stage_meta for this id.
-    const access = await resolveStageAccess(id);
+      // Check stage_meta for this id.
+      const access = await resolveStageAccess(id);
 
-    // No stage_meta row: under MINIMAL_MODE answer 404 (creates nothing).
-    // Flag-off keeps today's file serving (parity).
-    if (!access) {
-      if (isMinimalMode()) {
+      // No stage_meta row: under MINIMAL_MODE answer 404 (creates nothing).
+      // Flag-off keeps today's file serving (parity).
+      if (!access) {
+        if (isMinimalMode()) {
+          return apiError(API_ERROR_CODES.INVALID_REQUEST, 404, 'Classroom not found');
+        }
+        // Flag-off: keep today's file serving.
+        const classroom = await readClassroom(id);
+        if (!classroom) {
+          return apiError(API_ERROR_CODES.INVALID_REQUEST, 404, 'Classroom not found');
+        }
+        return apiSuccess({ classroom });
+      }
+
+      // stage_meta exists: apply the audience rule.
+      if (access.status !== 'published') {
         return apiError(API_ERROR_CODES.INVALID_REQUEST, 404, 'Classroom not found');
       }
-      // Flag-off: keep today's file serving.
+      if (viewerRank < access.audience) {
+        return apiError(API_ERROR_CODES.INVALID_REQUEST, 404, 'Classroom not found');
+      }
+
       const classroom = await readClassroom(id);
       if (!classroom) {
         return apiError(API_ERROR_CODES.INVALID_REQUEST, 404, 'Classroom not found');
       }
+
       return apiSuccess({ classroom });
-    }
-
-    // stage_meta exists: apply the audience rule.
-    if (access.status !== 'published') {
-      return apiError(API_ERROR_CODES.INVALID_REQUEST, 404, 'Classroom not found');
-    }
-    if (viewerRank < access.audience) {
-      return apiError(API_ERROR_CODES.INVALID_REQUEST, 404, 'Classroom not found');
-    }
-
-    const classroom = await readClassroom(id);
-    if (!classroom) {
-      return apiError(API_ERROR_CODES.INVALID_REQUEST, 404, 'Classroom not found');
-    }
-
-    return apiSuccess({ classroom });
+    });
   } catch (error) {
     log.error(
       `Classroom retrieval failed [id=${request.nextUrl.searchParams.get('id') ?? 'unknown'}]:`,
