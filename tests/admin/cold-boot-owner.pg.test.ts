@@ -109,7 +109,7 @@ describe.skipIf(!contractUrl)('COLD_BOOT_PG_OK: cold-boot owner transient probes
    * Returns { userId, signedCookie }.
    */
   async function createSignedSession(
-    auth: ReturnType<typeof createAuthServer>,
+    auth: { apiCall: (path: string, init?: RequestInit) => Promise<Response> },
     label: string,
   ): Promise<{ userId: string; signedCookie: string }> {
     const email = `${label}-${Date.now()}@test.com`;

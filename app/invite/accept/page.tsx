@@ -10,7 +10,7 @@
  *
  * Invalid, expired, used, or revoked codes show the invalid state.
  */
-import { useState, useEffect } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
@@ -20,7 +20,7 @@ interface InviteInfo {
   expiresAt: string;
 }
 
-export default function Page() {
+function InviteContent() {
   const searchParams = useSearchParams();
   const code = searchParams.get('code');
 
@@ -193,5 +193,21 @@ export default function Page() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-[100dvh] flex items-center justify-center bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-4">
+          <div className="w-full max-w-[400px] text-center">
+            <p className="text-sm text-gray-500 dark:text-gray-400">Loading...</p>
+          </div>
+        </div>
+      }
+    >
+      <InviteContent />
+    </Suspense>
   );
 }

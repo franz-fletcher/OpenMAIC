@@ -1,14 +1,19 @@
 /**
  * Hermetic unit test for the admin settings page gate.
  *
- * Verifies:
- * - AdminSettingsPage exports and renders the three sections when authorized
- * - The not-authorized state renders when requirePermission throws
- * - The page catches the guard throw (Response) and never lets it escape
- * - The three PLACEHOLDER sections exist as client components
+ * Verifies through the REAL requirePermission + the REAL guard():
+ * - Admin with a users.manage role renders the three sections
+ * - Guest (no session) receives the not-authorized state
+ * - The page catches the guard throw and never lets it escape
+ * - Translated i18n strings are rendered, not raw keys
  *
- * Flag OFF behavior: the admin page still enforces users.manage unconditionally
- * (admin surface gates unconditionally per the settings gate split decision).
+ * Mocks only at the transport boundary: getSession (cookie lookup)
+ * and getServerPersistenceProvider (DB queries for ban + rank).
+ * requirePermission itself runs real code.
+ *
+ * Flag OFF behavior: the admin page still enforces users.manage
+ * unconditionally (admin surface gates unconditionally per the settings
+ * gate split decision).
  */
 
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
@@ -44,29 +49,57 @@ afterEach(() => {
 });
 
 // ---------------------------------------------------------------------------
-// Mocks
+// Mocks -- transport boundary only
 // ---------------------------------------------------------------------------
 
-let _mockSession: { userId: string; token: string; id: string } | null = {
+interface FullSession {
+  id: string;
+  userId: string;
+  token: string;
+  expiresAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  ipAddress: string | null;
+  userAgent: string | null;
+}
+
+let _mockSession: FullSession | null = {
+  id: 'sess-1',
   userId: 'test-user',
   token: 'tok',
-  id: 'sess',
+  expiresAt: new Date('2099-01-01'),
+  createdAt: new Date('2025-01-01'),
+  updatedAt: new Date('2025-01-01'),
+  ipAddress: null,
+  userAgent: null,
 };
 
-vi.mock('@/lib/auth/permissions-server', () => ({
-  requirePermission: vi.fn(async () => {
-    if (!_mockSession) {
-      throw new Response(
-        JSON.stringify({ message: 'permission denied', code: 'permission_denied' }),
-        { status: 403, headers: { 'content-type': 'application/json' } },
-      );
-    }
-    return _mockSession;
-  }),
-}));
+// Mock getSession at the transport boundary.
+vi.mock('@/lib/auth/index', async (importOriginal) => {
+  const orig = await importOriginal<typeof import('@/lib/auth/index')>();
+  return {
+    ...orig,
+    getSession: vi.fn(async () => _mockSession),
+  };
+});
 
-vi.mock('@/lib/auth/index', () => ({
-  getSession: vi.fn(async () => _mockSession),
+// Mock getServerPersistenceProvider so requirePermission DB calls resolve.
+vi.mock('@/lib/persistence/server-provider', () => ({
+  getServerPersistenceProvider: vi.fn(async () => ({
+    pool: {
+      query: vi.fn(async (sql: string) => {
+        // Ban check: not banned
+        if (sql.includes('"banned"')) {
+          return { rows: [{ banned: false }] };
+        }
+        // Role rank: return admin rank 4 for the test user
+        if (sql.includes('user_roles') || sql.includes('roles')) {
+          return { rows: [{ rank: 4 }] };
+        }
+        return { rows: [] };
+      }),
+    },
+  })),
 }));
 
 vi.mock('@/lib/hooks/use-i18n', () => ({
@@ -89,6 +122,36 @@ vi.mock('@/components/admin/courses-section', () => ({
   default: () => 'COURSES_SECTION',
 }));
 
+// Mock next/headers to return real Headers with cookie.
+vi.mock('next/headers', () => ({
+  headers: vi.fn(async () => {
+    const h = new Headers();
+    if (_mockSession) {
+      h.set('cookie', 'better-auth.session_token=test-token');
+    }
+    return h;
+  }),
+}));
+
+// Mock i18n server functions.
+vi.mock('@/lib/i18n/server', () => ({
+  resolveServerLocale: vi.fn(async () => 'en-US'),
+}));
+
+vi.mock('@/lib/i18n/server-translate', () => ({
+  serverTranslate: vi.fn(async (_locale: string, key: string) => {
+    const translations: Record<string, string> = {
+      'admin.notAuthorized':
+        'You do not have permission to access this page.',
+      'admin.settings.title': 'Admin Settings',
+      'admin.users.title': 'Users',
+      'admin.invites.title': 'Invites',
+      'admin.courses.title': 'Courses',
+    };
+    return translations[key] ?? key;
+  }),
+}));
+
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
@@ -101,31 +164,62 @@ describe('Admin settings page gate', () => {
     });
   });
 
-  describe('ADMIN_PAGE_OK: not-authorized state', () => {
-    it('renders not-authorized when requirePermission throws a Response', async () => {
+  describe('ADMIN_PAGE_OK: guest -> not-authorized state', () => {
+    it('renders translated not-authorized when session is null', async () => {
       _mockSession = null;
       try {
-        const { default: AdminSettingsPage } = await import('@/app/admin/settings/page');
+        const { default: AdminSettingsPage } =
+          await import('@/app/admin/settings/page');
         const result = await AdminSettingsPage();
         const { renderToStaticMarkup } = await import('react-dom/server');
         const html = renderToStaticMarkup(result as React.ReactElement);
-        expect(html).toContain('admin.notAuthorized');
+        expect(html).toContain(
+          'You do not have permission to access this page.',
+        );
+        expect(html).not.toContain('USERS_SECTION');
+        expect(html).not.toContain('INVITES_SECTION');
+        expect(html).not.toContain('COURSES_SECTION');
       } finally {
-        _mockSession = { userId: 'test-user', token: 'tok', id: 'sess' };
+        _mockSession = {
+          id: 'sess-1',
+          userId: 'test-user',
+          token: 'tok',
+          expiresAt: new Date('2099-01-01'),
+          createdAt: new Date('2025-01-01'),
+          updatedAt: new Date('2025-01-01'),
+          ipAddress: null,
+          userAgent: null,
+        };
       }
     });
   });
 
-  describe('ADMIN_PAGE_OK: authorized state renders three sections', () => {
-    it('renders users, invites, and courses sections', async () => {
-      _mockSession = { userId: 'test-user', token: 'tok', id: 'sess' };
-      const { default: AdminSettingsPage } = await import('@/app/admin/settings/page');
+  describe('ADMIN_PAGE_OK: admin -> renders three sections', () => {
+    it('renders users, invites, and courses sections with translated titles', async () => {
+      _mockSession = {
+        id: 'sess-1',
+        userId: 'test-user',
+        token: 'tok',
+        expiresAt: new Date('2099-01-01'),
+        createdAt: new Date('2025-01-01'),
+        updatedAt: new Date('2025-01-01'),
+        ipAddress: null,
+        userAgent: null,
+      };
+      const { default: AdminSettingsPage } =
+        await import('@/app/admin/settings/page');
       const result = await AdminSettingsPage();
       const { renderToStaticMarkup } = await import('react-dom/server');
       const html = renderToStaticMarkup(result as React.ReactElement);
-      expect(html).toContain('admin.users.title');
-      expect(html).toContain('admin.invites.title');
-      expect(html).toContain('admin.courses.title');
+      // Verify translated strings, not raw keys
+      expect(html).toContain('Admin Settings');
+      expect(html).toContain('Users');
+      expect(html).toContain('Invites');
+      expect(html).toContain('Courses');
+      // Verify section components render
+      expect(html).toContain('USERS_SECTION');
+      expect(html).toContain('INVITES_SECTION');
+      expect(html).toContain('COURSES_SECTION');
     });
   });
 
