@@ -1,6 +1,6 @@
 # Batch 017 spec: publishing-visibility
 
-Spec status: implementation
+Spec status: research_update
 
 ## Problem Statement
 
@@ -509,4 +509,125 @@ probe covers the flag-on deny and the flag-off parity 200.
   and the gallery render in localhost and are approved in Safari first, per
   the program process rules.
 - Batch D holds no new operator env var. `.env.example` is untouched.
-- Commit convention for this batch: `feat(rbac): ...`.
+- Commit convention for this batch: `feat(rbac): ...`.## Research Update (2026-09-06)
+
+Batch D shipped in five slice commits: `4c3899c2`, `c8c4d694`, `d708bf62`,
+`7326faeb`, and `76502afb`. Round 1 rejected S2 through S5 at `bd0531b8`. The
+fix round landed in `dbdf745e`. Round 2 verified S2, S4, and S5 and rejected
+S3 at `ef6849ce`. The second fix round landed in `682063aa`. Round 3 verified
+all five slices at `6c944bf4`, chain 88. This section records what shipped,
+what deviated from the plan, and what the next batches inherit.
+
+### What shipped
+
+- The `status` and `audience` columns land in `STAGE_META_SCHEMA` at
+  `lib/persistence/stage-meta.ts:44-48`. The guarded backfill sits at `:50`.
+  The gallery partial index sits at `:57-58`. `StageMetaRow` carries the new
+  fields at `:8-11`. `setStageVisibility` at `:171-184` writes status and
+  audience and keeps `is_public` and `published_at` in agreement.
+  `readStageMeta` at `:74-108` derives `isPublic` from status.
+- `AUDIENCE_RANK` freezes the three pickable tiers at
+  `lib/persistence/audience.ts:14-18`. `resolveViewerRank` at `:31-46` returns
+  0 for `anon:` and unknown owners and runs the role rank join for `user:`
+  owners. It strips the prefix before the join at `:36-38`.
+- `decideDocumentAccess` extends the read case at
+  `lib/persistence/document-access.ts:71-82`. Tombstoned rows answer 404.
+  Owners always pass. Everyone else needs `status published` and
+  `viewerRank >= audience`, else `not-found`.
+- The persistence route resolves the viewer rank once at
+  `app/api/persistence/[...path]/route.ts:292` and passes it into the gate at
+  `:302`.
+- The stage-meta sidecar denies drafts and wrong-audience courses at
+  `app/api/stage-meta/[stageId]/route.ts:58-74`. Owners keep the 200.
+- The classroom GET answers 404 for ids with no row under `MINIMAL_MODE` at
+  `app/api/classroom/route.ts:87-92`. Flag-off keeps today's file serving at
+  `:93-99`. The audience rule runs only under the flag at `:101-114`.
+- The generation pipeline claims the row for the creating owner right after
+  persist at `lib/server/classroom-generation.ts:725-737`, so generated
+  courses carry owner, draft status, and audience 3.
+- The publish route enforces the typed 403 inside the Response-rethrow catch
+  at `app/api/stages/[id]/publish/route.ts:35-40`. It normalizes both id
+  sides at `:48-52`, lets rank 4 publish any course at `:53-63`, parses the
+  body audience with default 0 at `:65-75`, and republishes idempotently at
+  `:77-83`. The unpublish route mirrors the shape at
+  `app/api/stages/[id]/unpublish/route.ts:34-39` and keeps the stored
+  audience at `:64-67`.
+- `PublishDialog` at `components/publishing/publish-dialog.tsx:36` ships the
+  audience picker at `:83-102`. HomePage mounts it at `app/page.tsx:1275-1282`
+  and wires the card affordance at `:1741-1753`.
+- `listGalleryCourses` at `lib/persistence/gallery.ts:21-50` lists published
+  non-deleted rows with `audience <= viewerRank`, ordered by `published_at`
+  descending, with no tenancy fields. `app/gallery/page.tsx:18-52` renders
+  the cards. The home entry link sits at `app/page.tsx:1073-1081`, before the
+  import button, visible to every rank.
+- The no-leak suite at `tests/publishing/no-leak.pg.test.ts` drives the three
+  real route handlers across five course states and six role classes, 29
+  tests. The 12-locale `publishing` group lands at
+  `lib/i18n/locales/en-US.json:2134-2150`.
+
+### Deviations and surprises
+
+(a) Round 1's live wire caught the id mismatch. `resolveViewerRank` joins
+`user_roles.user_id`, which stores raw ids, while the routes passed the
+prefixed owner. Every real session resolved to rank 0. The fixtures masked
+the defect, so the gate stayed green. The docstring at
+`lib/persistence/audience.ts:20-29` records the mismatch.
+
+(b) The fix round inverted the id space. It compared raw ids and seeded raw
+`stage_meta.owner_id` fixture rows, so a production owner could not publish.
+Round 2 caught the regression. The final rule normalizes both sides at
+`app/api/stages/[id]/publish/route.ts:48-52`, and the pg suites seed
+production bytes, `user:<raw>`, at
+`tests/publishing/publish-live-wire.pg.test.ts:292-309`.
+
+(c) The classroom audience rule started ungated by the flag and broke
+flag-off parity. The shipped code applies it only under `MINIMAL_MODE` at
+`app/api/classroom/route.ts:101-114`.
+
+(d) Two S3 gate suites were tautological. They asserted route behavior
+without driving the routes. Both were rewritten to call the real POST
+handlers with a module-level auth mock at
+`tests/publishing/publish-routes.test.ts:12-74` and
+`tests/publishing/publish-live-wire.pg.test.ts:30-37`. The mock reimplements
+the rank check against the scratch database. Round 3 judged the seam honesty
+HONEST.
+
+(e) Story 6, the admin publish-any override, was silently unimplemented until
+rejection round 1. The shipped admin branch sits at
+`app/api/stages/[id]/publish/route.ts:53-63`.
+
+(f) The `generateClassroom` row claim was added mid-S2 to close spec B2. It
+ships at `lib/server/classroom-generation.ts:725-737`.
+
+(g) The rivr diff still shows four cosmetic deviations. Prettier wraps two
+rows. Capture artifacts cover one JSON symbol and one test-file symbol. No
+semantic drift.
+
+(h) Eight of the fifteen publishing keys ship without a consumer:
+`publishedBadge`, `draftBadge`, `audienceEveryone`, `audienceGuests`,
+`audienceLearners`, `unpublishFailed`, `unpublishConfirm`, and
+`galleryEmpty`. The picker labels are hardcoded English at
+`components/publishing/publish-dialog.tsx:18-22`. The gallery page hardcodes
+its heading and empty state at `app/gallery/page.tsx:28` and `:32`. The
+dialog takes no refresh callback, so the library list changes only after a
+reload.
+
+### Test results
+
+All 15 gates passed green at round 3. The final table is 15 of 15: S1 2, S2
+3, S3 3, S4 3, S5 4. The full suite ran 7766 tests with 1 tolerated failure.
+The production build exits 0. Safari shots 21-24 are console-clean. The wire
+matrix: learner 200 on all three seams, owner 200, foreign creator 403, admin
+200, and flag-off parity in both sub-cases.
+
+### Follow-on notes
+
+- The media-bytes seam now stands with a second deferral, formally owed to
+  batch E. The Out of Scope text names the exposure at
+  `docs/specs/017-publishing-visibility.md:465-476`. The register amendment
+  for the second deferral lands at closure.
+- The cold-auth-bootstrap transient needs a follow-up probe. The first PUT
+  after boot wrote `anon:` as the owner on a real session. Batch E touches
+  session boot and should carry the probe.
+- The gallery entry link is visible to every rank. That is the approved
+  decision, and it ships at `app/page.tsx:1073-1081`.

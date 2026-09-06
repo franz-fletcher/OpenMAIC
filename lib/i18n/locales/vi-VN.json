@@ -2134,8 +2134,6 @@
     "title": "Publish course",
     "publish": "Publish",
     "unpublish": "Unpublish",
-    "publishedBadge": "Published",
-    "draftBadge": "Draft",
     "audience": "Audience",
     "audienceEveryone": "Everyone",
     "audienceGuests": "Guests only",

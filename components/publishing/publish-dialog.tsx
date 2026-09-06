@@ -15,16 +15,11 @@ import { Loader2 } from 'lucide-react';
 
 type AudienceTier = 0 | 1 | 2;
 
-const AUDIENCE_OPTIONS: { value: AudienceTier; label: string }[] = [
-  { value: 0, label: 'Everyone' },
-  { value: 1, label: 'Guests only' },
-  { value: 2, label: 'Learners only' },
-];
-
 interface PublishDialogProps {
   open: boolean;
   stageId: string;
   onOpenChange: (open: boolean) => void;
+  onPublishSuccess?: () => void;
 }
 
 /**
@@ -33,10 +28,22 @@ interface PublishDialogProps {
  * Renders radio buttons for the three audience tiers (everyone, guests, learners)
  * and calls POST /api/stages/[id]/publish or unpublish with the chosen audience.
  */
-export function PublishDialog({ open, stageId, onOpenChange }: PublishDialogProps) {
+export function PublishDialog({
+  open,
+  stageId,
+  onOpenChange,
+  onPublishSuccess,
+}: PublishDialogProps) {
   const { t } = useI18n();
   const [audience, setAudience] = useState<AudienceTier>(0);
   const [status, setStatus] = useState<'idle' | 'publishing' | 'unpublishing' | 'error'>('idle');
+  const [unpublishError, setUnpublishError] = useState(false);
+
+  const AUDIENCE_OPTIONS: { value: AudienceTier; label: string }[] = [
+    { value: 0, label: t('publishing.audienceEveryone') },
+    { value: 1, label: t('publishing.audienceGuests') },
+    { value: 2, label: t('publishing.audienceLearners') },
+  ];
 
   const handlePublish = async () => {
     setStatus('publishing');
@@ -48,6 +55,8 @@ export function PublishDialog({ open, stageId, onOpenChange }: PublishDialogProp
       });
       if (!res.ok) {
         setStatus('error');
+      } else {
+        onPublishSuccess?.();
       }
     } catch {
       setStatus('error');
@@ -56,6 +65,7 @@ export function PublishDialog({ open, stageId, onOpenChange }: PublishDialogProp
 
   const handleUnpublish = async () => {
     setStatus('unpublishing');
+    setUnpublishError(false);
     try {
       const res = await fetch(`/api/stages/${stageId}/unpublish`, {
         method: 'POST',
@@ -63,9 +73,13 @@ export function PublishDialog({ open, stageId, onOpenChange }: PublishDialogProp
       });
       if (!res.ok) {
         setStatus('error');
+        setUnpublishError(true);
+      } else {
+        onPublishSuccess?.();
       }
     } catch {
       setStatus('error');
+      setUnpublishError(true);
     }
   };
 
@@ -104,7 +118,9 @@ export function PublishDialog({ open, stageId, onOpenChange }: PublishDialogProp
 
         <DialogFooter>
           {status === 'error' ? (
-            <span className="text-sm text-destructive">{t('publishing.publishFailed')}</span>
+            <span className="text-sm text-destructive">
+              {unpublishError ? t('publishing.unpublishFailed') : t('publishing.publishFailed')}
+            </span>
           ) : null}
 
           <Button
@@ -124,7 +140,16 @@ export function PublishDialog({ open, stageId, onOpenChange }: PublishDialogProp
             {t('publishing.publish')}
           </Button>
 
-          <Button disabled={isLoading} onClick={handleUnpublish}>
+          <Button
+            disabled={isLoading}
+            onClick={() => {
+              if (status !== 'unpublishing' && status !== 'publishing') {
+                if (window.confirm(t('publishing.unpublishConfirm'))) {
+                  handleUnpublish();
+                }
+              }
+            }}
+          >
             {isLoading && status === 'unpublishing' ? (
               <Loader2 className="size-4 animate-spin" />
             ) : null}

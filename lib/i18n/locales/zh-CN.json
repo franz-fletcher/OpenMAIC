@@ -2134,8 +2134,6 @@
     "title": "Publish course",
     "publish": "Publish",
     "unpublish": "Unpublish",
-    "publishedBadge": "Published",
-    "draftBadge": "Draft",
     "audience": "Audience",
     "audienceEveryone": "Everyone",
     "audienceGuests": "Guests only",
@@ -2144,7 +2142,7 @@
     "publishFailed": "Publishing failed. Please try again.",
     "unpublishFailed": "Unpublishing failed. Please try again.",
     "unpublishConfirm": "Unpublish this course?",
-    "galleryTitle": "Gallery",
-    "galleryEmpty": "No courses available yet."
+    "galleryTitle": "课程画廊",
+    "galleryEmpty": "暂无可用课程。"
   }
 }

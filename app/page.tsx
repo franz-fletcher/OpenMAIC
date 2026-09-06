@@ -1279,6 +1279,7 @@ function HomePage() {
           setPublishOpen(open);
           if (!open) setPublishStageId(null);
         }}
+        onPublishSuccess={loadClassrooms}
       />
 
       {/* Footer — flows with content, at the very end */}
