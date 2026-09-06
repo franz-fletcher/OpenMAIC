@@ -19109,6 +19109,20 @@
       "stage": "verification",
       "outcome": "ok",
       "extra": {}
+    },
+    {
+      "ts": "2026-09-06T20:32:49.100Z",
+      "command": "stage.advance",
+      "flags": [
+        "actor",
+        "to"
+      ],
+      "exit": 0,
+      "duration_ms": 8,
+      "stage": "research_update",
+      "actor": "orchestrator",
+      "outcome": "ok",
+      "extra": {}
     }
   ],
   "audit": [
@@ -32761,7 +32775,18 @@
       "slice": null,
       "hash": "92b2476fda56888896f197b2ed29247f15e6d3a39f60b20d335345f5e10ee46d",
       "fileHash": "eb5627ceff0648e0b1bdf68ec9e2b2af8794f81ab3f8f09afdf8bbf0ca89e889"
+    },
+    {
+      "seq": 1242,
+      "id": "c7fdcf11-bb39-42ef-bb9e-8b42efbe3720",
+      "at": "2026-09-06T20:32:49.100Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:stage.advance:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "cc1bcf3dce9a55752c1cec0310ea5433df01652e9b999c00159067802f82fc2a",
+      "fileHash": "600534f87b0e132da1c7e73ba76e5c1803a0b27eb03cdec4e00c34827cfc9414"
     }
   ],
-  "fileHash": "600534f87b0e132da1c7e73ba76e5c1803a0b27eb03cdec4e00c34827cfc9414"
+  "fileHash": "b0837b12ba2b008cd81716932dfa3170ccbedb3960d116cc1b880641241bc523"
 }

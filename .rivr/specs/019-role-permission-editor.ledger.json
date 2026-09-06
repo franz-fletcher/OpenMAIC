@@ -4,12 +4,12 @@
   "spec": {
     "reference": "docs/specs/019-role-permission-editor.md",
     "title": "Batch 019 spec: role-permission-editor",
-    "hash": "08bea2b77609cf9a5636a808e4e8c65dec3a19f2917b3ed9e754d2b965184158"
+    "hash": "1aff6b9a1a758f93692b97a369826d112bce822a9158aac1396958fa72e8bc61"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "verification",
+  "stage": "research_update",
   "retry": {
     "count": 1,
     "max": 5,
@@ -1992,7 +1992,18 @@
       "oracle": "997a06cd9e38552ad30b09f987ca2675dc03077d4a82f86cf589612b32f0b1ea",
       "evidence": "795cf4faaf5e15007ec59b4d8524fb0f87848d734ef313e1d5cc0f79e0f0c02b",
       "fileHash": "b678093d69cecd4317d59d3f8973bff7c3dd9746d5644e91ddb7b8ed43c63634"
+    },
+    {
+      "seq": 84,
+      "id": "f802df9a-e9b4-4b1b-9cbd-dd9c2303cd3f",
+      "at": "2026-09-06T20:32:49.096Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:verification->research_update",
+      "slice": null,
+      "hash": "a3a7e7b8bf8efd8c7236bad22a969f4934686d26317ef128548f1f25ebaa562d",
+      "fileHash": "f3add5fe70fb41e2b0343457728d0792c3c96c540f182d5a3e0bf8ec1c763673"
     }
   ],
-  "fileHash": "f3add5fe70fb41e2b0343457728d0792c3c96c540f182d5a3e0bf8ec1c763673"
+  "fileHash": "63d895c7f0aaa9f16e991615e62342642f2e7558a880b790034cd157e07a93d0"
 }
