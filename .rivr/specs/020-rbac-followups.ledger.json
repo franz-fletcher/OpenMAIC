@@ -4,12 +4,12 @@
   "spec": {
     "reference": "docs/specs/020-rbac-followups.md",
     "title": "Batch 020 spec: rbac-followups",
-    "hash": "329a76e065a95c5c3e36e3236ccb3dd5cd6302178d6095f8c2b7c916497250a9"
+    "hash": "db6f767988303622d04828cf9340e25b5984b754ee5c5d311c359be7aa50b589"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "implementation",
+  "stage": "verification",
   "retry": {
     "count": 0,
     "max": 5,
@@ -1407,7 +1407,18 @@
       "slice": "S3",
       "hash": "3d528f644a6b1309ee1a5980663fb6e5f6f9a9b3ac2c3068ed2dcb79fc3a73f6",
       "fileHash": "47354b4a53133c2eebd3ad64a029d1b5e5d8c10eff100ac4aa622670f22c8f36"
+    },
+    {
+      "seq": 69,
+      "id": "c77701e9-2a3c-4ba5-bab2-2e4f91c2d524",
+      "at": "2026-09-06T22:21:36.281Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "e3ccbe1323cd5cd0e661168077ebc81580a825aa6688edb7b03571674887a5a0",
+      "fileHash": "f1efdb7d6410240e853b3835ad11058e10f45626ae600b034d7d7303d4a37d42"
     }
   ],
-  "fileHash": "f1efdb7d6410240e853b3835ad11058e10f45626ae600b034d7d7303d4a37d42"
+  "fileHash": "8b775a7e60f8ee969b2201703b6269a7e854ffc93213a0a664a6dfe4fa99cb12"
 }

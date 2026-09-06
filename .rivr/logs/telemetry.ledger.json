@@ -20287,6 +20287,20 @@
       "slice": "S3",
       "outcome": "ok",
       "extra": {}
+    },
+    {
+      "ts": "2026-09-06T22:21:36.282Z",
+      "command": "stage.advance",
+      "flags": [
+        "actor",
+        "to"
+      ],
+      "exit": 0,
+      "duration_ms": 3,
+      "stage": "verification",
+      "actor": "orchestrator",
+      "outcome": "ok",
+      "extra": {}
     }
   ],
   "audit": [
@@ -34742,7 +34756,18 @@
       "slice": "S3",
       "hash": "e16f91ec88d1883b3b793f1df3e47700d3bac298706048cdd19934a0b9821615",
       "fileHash": "a83368a2fb3652cf36ba694dfbc1a0ef053bd98b2d8f8347ad402f6f8824bb9c"
+    },
+    {
+      "seq": 1315,
+      "id": "6ed35d4e-bb25-48a5-ac9e-950c3a3c6267",
+      "at": "2026-09-06T22:21:36.282Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:stage.advance:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "7378f11c25d5029a0e918c6a8f14026892905e4b67c4de78fab86cf5982f4cf9",
+      "fileHash": "afab55a74b71972e8ba8f8ade9d5274956f0563f447d7d105d3eb9c4866a927d"
     }
   ],
-  "fileHash": "afab55a74b71972e8ba8f8ade9d5274956f0563f447d7d105d3eb9c4866a927d"
+  "fileHash": "5c9d446f0dfe9f9e866651f80baebe4b5e43f96e69cba1f291bc9e44fde84f2c"
 }
