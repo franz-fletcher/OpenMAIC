@@ -4,12 +4,12 @@
   "spec": {
     "reference": "docs/specs/018-admin-suite.md",
     "title": "Batch 018 spec: admin-suite",
-    "hash": "8b8c2350b04b830be5f7737dd27ac7cf8bc566334401f4b77278f80b336d929f"
+    "hash": "261fbc45c25e87787179eb671b42d7f7b85a06739b92528e8257af06955c2474"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "implementation",
+  "stage": "verification",
   "retry": {
     "count": 0,
     "max": 5,
@@ -2166,7 +2166,18 @@
       "slice": "S6",
       "hash": "5bac979f5eb87c0dec65cab9ebbfe6372ea94d4eac78dfb5faea305c101f677e",
       "fileHash": "19c2ed32cc29d9bf9100005f2e6ed7e38babf4738ab9db901b70ee16ed59a0e5"
+    },
+    {
+      "seq": 102,
+      "id": "59eff0a9-6598-416b-bba2-0a2745ddc882",
+      "at": "2026-09-06T12:44:13.244Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "4ff107ff661da8230f0ffd6fea04dd0114550fb1287d3892ee857ae726bf4a5c",
+      "fileHash": "9a9aebcf5a0e247d5a87884c98d06815cbd0e639d9bf16bfaee4311076258414"
     }
   ],
-  "fileHash": "9a9aebcf5a0e247d5a87884c98d06815cbd0e639d9bf16bfaee4311076258414"
+  "fileHash": "ed1ad512780b827deaa2ce61c5c8ef249fe24012a78e674624db0fe7640d5e22"
 }
