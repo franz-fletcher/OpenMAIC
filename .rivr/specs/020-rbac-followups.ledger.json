@@ -1,0 +1,1374 @@
+{
+  "schema_version": 2,
+  "$schema": "https://rivr.dev/schemas/ledger/v2",
+  "spec": {
+    "reference": "docs/specs/020-rbac-followups.md",
+    "title": "Batch 020 spec: rbac-followups",
+    "hash": "329a76e065a95c5c3e36e3236ccb3dd5cd6302178d6095f8c2b7c916497250a9"
+  },
+  "tracker": {
+    "mode": "none"
+  },
+  "stage": "implementation",
+  "retry": {
+    "count": 0,
+    "max": 5,
+    "consecutive_same_cause": 0,
+    "escalate_at": 3
+  },
+  "slices": [
+    {
+      "id": "S1",
+      "title": "Hermetic runner-skills registration",
+      "intent": "the deterministic capability mock in the runner-skills suite, the same-family audit, and the retirement of the tolerated-failure doctrine across the four records that carry it",
+      "user_stories": [
+        1
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "tests/agent-runtime/runner-skills-registration.test.ts",
+          "symbols": [
+            {
+              "name": "runner-skills-registration.test.ts",
+              "kind": "file",
+              "expectation": "modified: gains a `vi.mock` of `@/lib/server/agent-runtime/web-search` returning `resolveWebSearchCapability: () => null`, mirroring the runner-wakeup pattern; the suite runs with a deterministic no-web-search toolset, so the asserted tool array and allowlist hold on any operator config",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "gains a `vi.mock` of `@/lib/server/agent-runtime/web-search` returning `resolveWebSearchCapability: () => null`, mirroring the runner-wakeup pattern"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "docs/research/013-implementation-diagnosis.md",
+          "symbols": [
+            {
+              "name": "013-implementation-diagnosis.md",
+              "kind": "file",
+              "expectation": "modified: the tolerated-failure record closes with the fix and the two-run proof",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable",
+                "signature": "item 5 gains a resolution note naming batch 020"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "docs/specs/017-publishing-visibility.md",
+          "symbols": [
+            {
+              "name": "017-publishing-visibility.md",
+              "kind": "file",
+              "expectation": "modified: historical run result stays, the follow-up closure is recorded",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable",
+                "signature": "the \"1 tolerated failure\" line gains a one-line resolution pointer to batch 020"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "docs/specs/018-admin-suite.md",
+          "symbols": [
+            {
+              "name": "018-admin-suite.md",
+              "kind": "file",
+              "expectation": "modified: historical run result stays, the follow-up closure is recorded",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable",
+                "signature": "the \"1 tolerated failure\" line gains a one-line resolution pointer to batch 020"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "docs/specs/019-role-permission-editor.md",
+          "symbols": [
+            {
+              "name": "019-role-permission-editor.md",
+              "kind": "file",
+              "expectation": "modified: historical run result stays, the follow-up closure is recorded",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable",
+                "signature": "the \"1 tolerated failure\" line gains a one-line resolution pointer to batch 020"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "lib/server/agent-runtime/web-search.ts",
+          "symbols": [
+            {
+              "name": "resolveWebSearchCapability",
+              "kind": "function",
+              "expectation": "contract symbol, unchanged: the resolver S1 mocks at the module boundary; outline signature `(): WebSearchCapability | null`",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(): WebSearchCapability | null"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(): WebSearchCapability | null"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "tests/agent-runtime/runner-wakeup.test.ts",
+          "symbols": [
+            {
+              "name": "runner-wakeup.test.ts",
+              "kind": "file",
+              "expectation": "contract symbol, unchanged: hermetic web-search mock already present; the mock pattern S1 copies",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "describe('runSession NOTIFY wakeup wiring', () => {"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "db85c8c8-bc9c-4267-a007-54b8acc91b41",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "the suite passes with the operator config present AND with it emptied, because the mock replaces the capability source entirely. The full baseline runs 100 percent green with zero tolerated failures, the four doctrine records point at batch 020, and the lint-llm-entry-guard.test.ts matrix stays untouched.",
+      "gates": [
+        {
+          "id": "g1",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/agent-runtime/runner-skills-registration.test.ts tests/agent-runtime/runner-web-search-registration.test.ts tests/agent-runtime/runner-voice-registration.test.ts tests/agent-runtime/runner-wakeup.test.ts; A=$?; { test -f server-providers.yml && cp server-providers.yml /tmp/skills-gate-020.yml && echo '' > server-providers.yml; }; unset TAVILY_API_KEY BRAVE_SEARCH_API_KEY WEB_SEARCH_CLAUDE_API_KEY WEB_SEARCH_CLAUDE_BASE_URL WEB_SEARCH_CLAUDE_MODELS WEB_SEARCH_MINIMAX_API_KEY WEB_SEARCH_MINIMAX_BASE_URL WEB_SEARCH_DOUBAO_API_KEY WEB_SEARCH_DOUBAO_BASE_URL; pnpm test tests/agent-runtime/runner-skills-registration.test.ts tests/agent-runtime/runner-web-search-registration.test.ts tests/agent-runtime/runner-voice-registration.test.ts tests/agent-runtime/runner-wakeup.test.ts; B=$?; { test -f /tmp/skills-gate-020.yml && cp /tmp/skills-gate-020.yml server-providers.yml && rm -f /tmp/skills-gate-020.yml; }; test $A -eq 0 && test $B -eq 0 && echo RUNNER_HERMETIC_OK",
+          "expect": "RUNNER_HERMETIC_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g2",
+          "type": "smoke",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "evidence": "pending"
+        }
+      ]
+    },
+    {
+      "id": "S2",
+      "title": "i18n strays and repo hygiene",
+      "intent": "the two new admin error keys across all 12 locales, the four component fallback swaps, and the deletion of the stray root config file",
+      "user_stories": [
+        1
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/i18n/locales/en-US.json",
+          "symbols": [
+            {
+              "name": "en-US.json",
+              "kind": "file",
+              "expectation": "modified: source-of-truth keys for the admin error fallbacks; `admin.users.loadFailed` gains value \"Failed to load users\", `admin.roles.loadFailed` gains value \"Failed to load roles\"",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable",
+                "signature": "`admin.users.loadFailed` gains value \"Failed to load users\", `admin.roles.loadFailed` gains value \"Failed to load roles\""
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "lib/i18n/locales/ar-SA.json",
+          "symbols": [
+            {
+              "name": "ar-SA.json",
+              "kind": "file",
+              "expectation": "modified: 12-locale parity; `admin.users.loadFailed` and `admin.roles.loadFailed` gain a translated value",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable",
+                "signature": "`admin.users.loadFailed` and `admin.roles.loadFailed` gain a translated value"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "lib/i18n/locales/de-DE.json",
+          "symbols": [
+            {
+              "name": "de-DE.json",
+              "kind": "file",
+              "expectation": "modified: 12-locale parity; `admin.users.loadFailed` and `admin.roles.loadFailed` gain a translated value",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable",
+                "signature": "`admin.users.loadFailed` and `admin.roles.loadFailed` gain a translated value"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "lib/i18n/locales/es-MX.json",
+          "symbols": [
+            {
+              "name": "es-MX.json",
+              "kind": "file",
+              "expectation": "modified: 12-locale parity; `admin.users.loadFailed` and `admin.roles.loadFailed` gain a translated value",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable",
+                "signature": "`admin.users.loadFailed` and `admin.roles.loadFailed` gain a translated value"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "lib/i18n/locales/fr-FR.json",
+          "symbols": [
+            {
+              "name": "fr-FR.json",
+              "kind": "file",
+              "expectation": "modified: 12-locale parity; `admin.users.loadFailed` and `admin.roles.loadFailed` gain a translated value",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable",
+                "signature": "`admin.users.loadFailed` and `admin.roles.loadFailed` gain a translated value"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "lib/i18n/locales/ja-JP.json",
+          "symbols": [
+            {
+              "name": "ja-JP.json",
+              "kind": "file",
+              "expectation": "modified: 12-locale parity; `admin.users.loadFailed` and `admin.roles.loadFailed` gain a translated value",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable",
+                "signature": "`admin.users.loadFailed` and `admin.roles.loadFailed` gain a translated value"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "lib/i18n/locales/ko-KR.json",
+          "symbols": [
+            {
+              "name": "ko-KR.json",
+              "kind": "file",
+              "expectation": "modified: 12-locale parity; `admin.users.loadFailed` and `admin.roles.loadFailed` gain a translated value",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable",
+                "signature": "`admin.users.loadFailed` and `admin.roles.loadFailed` gain a translated value"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "lib/i18n/locales/pt-BR.json",
+          "symbols": [
+            {
+              "name": "pt-BR.json",
+              "kind": "file",
+              "expectation": "modified: 12-locale parity; `admin.users.loadFailed` and `admin.roles.loadFailed` gain a translated value",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable",
+                "signature": "`admin.users.loadFailed` and `admin.roles.loadFailed` gain a translated value"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "lib/i18n/locales/ru-RU.json",
+          "symbols": [
+            {
+              "name": "ru-RU.json",
+              "kind": "file",
+              "expectation": "modified: 12-locale parity; `admin.users.loadFailed` and `admin.roles.loadFailed` gain a translated value",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable",
+                "signature": "`admin.users.loadFailed` and `admin.roles.loadFailed` gain a translated value"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "lib/i18n/locales/vi-VN.json",
+          "symbols": [
+            {
+              "name": "vi-VN.json",
+              "kind": "file",
+              "expectation": "modified: 12-locale parity; `admin.users.loadFailed` and `admin.roles.loadFailed` gain a translated value",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable",
+                "signature": "`admin.users.loadFailed` and `admin.roles.loadFailed` gain a translated value"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "lib/i18n/locales/zh-CN.json",
+          "symbols": [
+            {
+              "name": "zh-CN.json",
+              "kind": "file",
+              "expectation": "modified: 12-locale parity; `admin.users.loadFailed` and `admin.roles.loadFailed` gain a translated value",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable",
+                "signature": "`admin.users.loadFailed` and `admin.roles.loadFailed` gain a translated value"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "lib/i18n/locales/zh-TW.json",
+          "symbols": [
+            {
+              "name": "zh-TW.json",
+              "kind": "file",
+              "expectation": "modified: 12-locale parity; `admin.users.loadFailed` and `admin.roles.loadFailed` gain a translated value",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable",
+                "signature": "`admin.users.loadFailed` and `admin.roles.loadFailed` gain a translated value"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "components/admin/users-section.tsx",
+          "symbols": [
+            {
+              "name": "UsersSection",
+              "kind": "function",
+              "expectation": "modified: the two `'Failed to load users'` literals at `:51` and `:54` become `t('admin.users.loadFailed')`, signature unchanged",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "()"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "()"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "components/admin/roles-section.tsx",
+          "symbols": [
+            {
+              "name": "RolesSection",
+              "kind": "function",
+              "expectation": "modified: the two `'Failed to load roles'` literals at `:57` and `:60` become `t('admin.roles.loadFailed')`, signature unchanged",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "()"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "()"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "auth.config.mjs",
+          "symbols": [
+            {
+              "name": "auth.config.mjs",
+              "kind": "file",
+              "expectation": "removed: the stray untracked root config with the hardcoded `test-secret-for-schema-gen` value (currently auth.config.mjs, untracked per git status)",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": false
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 1,
+      "uuid": "225389f2-ac6b-4a69-a912-d8b819176902",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "admin.users.loadFailed and admin.roles.loadFailed exist in all 12 locales with key parity, the four component fallbacks read through t(...), pnpm check:i18n-keys passes, a grep for the two English strings across components/ returns zero, and the repo root no longer holds auth.config.mjs.",
+      "gates": [
+        {
+          "id": "g1",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm check:i18n-keys && ! grep -rn \"Failed to load users\\|Failed to load roles\" components/ && test ! -f auth.config.mjs && echo I18N_OK",
+          "expect": "I18N_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g2",
+          "type": "smoke",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "evidence": "pending"
+        }
+      ]
+    },
+    {
+      "id": "S3",
+      "title": "settingsGated gear visibility",
+      "intent": "the flag pass-through from the home page composition, the gear assertions in the existing minimal-layout family, and the Safari flag-on proof",
+      "user_stories": [
+        1
+      ],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "app/page.tsx",
+          "symbols": [
+            {
+              "name": "HomePage",
+              "kind": "function",
+              "expectation": "modified: the `HeaderCapsule` call at `:741-749` gains `settingsGated={minimalMode}`, where `minimalMode` is the already-computed `isMinimalModeClientEnabled()` at `:139`, signature unchanged",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "()"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "()"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "tests/minimal-mode/minimal-layout.test.ts",
+          "symbols": [
+            {
+              "name": "minimal-layout.test.ts",
+              "kind": "file",
+              "expectation": "modified: the header capsule describe block gains a gear-visibility describe with a `LAYOUT_OK:` marker, rendering `HeaderCapsule` with `settingsGated` and asserting the `SETTINGS_ICON` mock guard",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "the header capsule describe block gains a gear-visibility describe with a `LAYOUT_OK:` marker, rendering `HeaderCapsule` with `settingsGated` and asserting the `SETTINGS_ICON` mock guard"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "components/header-capsule.tsx",
+          "symbols": [
+            {
+              "name": "HeaderCapsule",
+              "kind": "function",
+              "expectation": "contract symbol, unchanged: the gate logic at `:131` already implements the required behavior, and the props interface at `:26-38` already ships `settingsGated`; outline signature `({ onSettingsOpen, accountSlot, settingsGated }: HeaderCapsuleProps)`",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "({ onSettingsOpen, accountSlot, settingsGated }: HeaderCapsuleProps)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "({ onSettingsOpen, accountSlot, settingsGated }: HeaderCapsuleProps)"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "components/account-zone.tsx",
+          "symbols": [
+            {
+              "name": "account-zone.tsx",
+              "kind": "file",
+              "expectation": "contract symbol, unchanged: `can('settings.manage')` gates the settings entry at `:58`, the hook path S3 reuses",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "({ onSignOut, onOpenSettings, onOpenAdmin }: AccountZoneProps)"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "lib/hooks/use-permissions.ts",
+          "symbols": [
+            {
+              "name": "usePermissions",
+              "kind": "function",
+              "expectation": "contract symbol, unchanged: the client permission hook already used by both `HeaderCapsule` and `AccountZone`; outline signature `(): PermissionState`",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(): PermissionState"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(): PermissionState"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "c1461301-6dca-413f-8bb2-056c3b488357",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "under NEXT_PUBLIC_MINIMAL_MODE=true, a principal without settings.manage sees no gear, and a principal with it sees the gear and opens the settings dialog. With the flag off, the header renders byte-identical to today for every rank. The minimal-layout family carries the new gear assertions with the LAYOUT_OK: marker, and the branding markup test still passes.",
+      "gates": [
+        {
+          "id": "g1",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/minimal-mode/minimal-layout.test.ts tests/branding/header-capsule.test.ts && echo LAYOUT_OK",
+          "expect": "LAYOUT_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g2",
+          "type": "smoke",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "evidence": "pending"
+        }
+      ]
+    }
+  ],
+  "audit": [
+    {
+      "seq": 1,
+      "id": "71dc6500-38af-48c2-b23b-6fe34865762f",
+      "at": "2026-09-06T21:26:35.161Z",
+      "actor": "orchestrator",
+      "command": "init",
+      "transition": "spec-approved:docs/specs/020-rbac-followups.md",
+      "slice": null,
+      "hash": "55bc76ca9120289f7d3ae7fada33701ec6c6dac3f72ce94b348deecdb358067f"
+    },
+    {
+      "seq": 2,
+      "id": "59749a3a-a793-4305-be61-809a27a8bfc9",
+      "at": "2026-09-06T21:26:35.161Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect",
+      "slice": "S1",
+      "hash": "7a5a18e04ed396d1dc98159e2e3061625b5ee457adf54cc84c3b79da9ed42188",
+      "expectationHash": "c66d41b971f7f7ed8e2deb85492ce973c6c5a2f2faff8f072cc0a20e00ed5f5f"
+    },
+    {
+      "seq": 3,
+      "id": "b64099c1-0a93-4019-bd12-e1682fc8bc93",
+      "at": "2026-09-06T21:26:35.162Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:tests/agent-runtime/runner-skills-registration.test.ts::runner-skills-registration.test.ts",
+      "slice": "S1",
+      "hash": "1e21d4c81c85fc8762b08f17a41c5ed04f38b75b9a311a429167c848d030723d",
+      "expectationHash": "b23e8ac58a7e4f0ec6b5482c471139c9fb20fabd3c05666522a295729d7d0500"
+    },
+    {
+      "seq": 4,
+      "id": "6e28189c-b61e-43e2-8210-6a9fd2d4bb80",
+      "at": "2026-09-06T21:26:35.162Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:docs/research/013-implementation-diagnosis.md::013-implementation-diagnosis.md",
+      "slice": "S1",
+      "hash": "d66ec18dfb6392df45ea0275e25a249d3f6ea5086943911cd1da981d7c1a6477",
+      "expectationHash": "790022291108bb39ad372737fa106b13545a9a1db378ddf9e96b5cb191b924dc"
+    },
+    {
+      "seq": 5,
+      "id": "0570101f-6efc-4802-9498-34bd481835b5",
+      "at": "2026-09-06T21:26:35.162Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:docs/specs/017-publishing-visibility.md::017-publishing-visibility.md",
+      "slice": "S1",
+      "hash": "8ec6ab1803a6a9898e820bba67de1acf54651cedec89466d91c79923ac36f53e",
+      "expectationHash": "8a001635a32d5957ca0e7b4592b30ab8877f280149d721cb3bf26049e31b63bd"
+    },
+    {
+      "seq": 6,
+      "id": "d99ad67f-574b-4c27-a195-de7b120e578a",
+      "at": "2026-09-06T21:26:35.162Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:docs/specs/018-admin-suite.md::018-admin-suite.md",
+      "slice": "S1",
+      "hash": "4b886025abc8b0237a26501bd9a8a147c26936a7afcb0f29c7fb2e5bd10076bb",
+      "expectationHash": "8a001635a32d5957ca0e7b4592b30ab8877f280149d721cb3bf26049e31b63bd"
+    },
+    {
+      "seq": 7,
+      "id": "376a72cf-5fee-485e-9b6f-e7d0dc3b92c1",
+      "at": "2026-09-06T21:26:35.162Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:docs/specs/019-role-permission-editor.md::019-role-permission-editor.md",
+      "slice": "S1",
+      "hash": "f6999376be10482b17b040c8a0205e8ebb7b381d409a14357a101329adba6411",
+      "expectationHash": "8a001635a32d5957ca0e7b4592b30ab8877f280149d721cb3bf26049e31b63bd"
+    },
+    {
+      "seq": 8,
+      "id": "feab39ca-2816-4783-afcd-1adf91a04d7e",
+      "at": "2026-09-06T21:26:35.162Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/server/agent-runtime/web-search.ts::resolveWebSearchCapability",
+      "slice": "S1",
+      "hash": "750e3dfdf134800cc631aacb3cc9c9bc472fc09e39b5ede0fa6a87780441b008",
+      "expectationHash": "fea8a04d216a87537b9371c34812492f6315919e8ff9fb6cc0153d2e1c948bae"
+    },
+    {
+      "seq": 9,
+      "id": "15737240-13a0-42c8-a4df-508b1d029d5f",
+      "at": "2026-09-06T21:26:35.162Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:tests/agent-runtime/runner-wakeup.test.ts::runner-wakeup.test.ts",
+      "slice": "S1",
+      "hash": "571aa3551a47ea2fce4e487bb475fbbef127305b3b0375f60038d845f3628d29",
+      "expectationHash": "139a0c251c37737a4778dd663a6f07742487067df70e1b7e563151f2fbc89eca"
+    },
+    {
+      "seq": 10,
+      "id": "29e436f3-cc36-4b19-8abd-e0590cb15652",
+      "at": "2026-09-06T21:26:35.162Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect",
+      "slice": "S2",
+      "hash": "c2778f95ad5522539f2e4d19f9ae09fd6dfa8f838df1227179cf206152478baf",
+      "expectationHash": "80e4c2eaeaef4dbeb9d02038790073e32c80b0f5d1c914392900d385ca5520c7"
+    },
+    {
+      "seq": 11,
+      "id": "e3553923-8523-4a7c-9650-f7d2ee777d75",
+      "at": "2026-09-06T21:26:35.162Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/i18n/locales/en-US.json::en-US.json",
+      "slice": "S2",
+      "hash": "e382afe7bc529dd678017517a82912a9fea239ac533f9c22e6a53800a7ded9e0",
+      "expectationHash": "56b93848fa0928698641ddf496410267ebe4a51b06afb00ab46267e9fc289ddd"
+    },
+    {
+      "seq": 12,
+      "id": "db58413d-8688-45e6-bbd1-39b140cc7f54",
+      "at": "2026-09-06T21:26:35.162Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/i18n/locales/ar-SA.json::ar-SA.json",
+      "slice": "S2",
+      "hash": "7cd2467de4b3a9836977bca5bc13b85a5898402b50d0c4887f7541f8a928d152",
+      "expectationHash": "9888cf2742901a08b58c79fc4fc7359adc00833cdd1cdf8530d72a2d1bf17c96"
+    },
+    {
+      "seq": 13,
+      "id": "e8c2f06f-a8ed-46df-8cf0-dd252e8e788e",
+      "at": "2026-09-06T21:26:35.162Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/i18n/locales/de-DE.json::de-DE.json",
+      "slice": "S2",
+      "hash": "acda75e987e88be02db0b1c4095bd1ac8158f8e3d3f0607cf437341dfa1d8f88",
+      "expectationHash": "9888cf2742901a08b58c79fc4fc7359adc00833cdd1cdf8530d72a2d1bf17c96"
+    },
+    {
+      "seq": 14,
+      "id": "22d8c5fd-bd86-4b0e-9f23-15769de6c59d",
+      "at": "2026-09-06T21:26:35.162Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/i18n/locales/es-MX.json::es-MX.json",
+      "slice": "S2",
+      "hash": "d71b659b45565f20ecd153cab6df2c314fcf503eb72c74010131705458a3e4ae",
+      "expectationHash": "9888cf2742901a08b58c79fc4fc7359adc00833cdd1cdf8530d72a2d1bf17c96"
+    },
+    {
+      "seq": 15,
+      "id": "6e6c1844-dbe8-4e1e-8482-e1a9f55610a1",
+      "at": "2026-09-06T21:26:35.162Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/i18n/locales/fr-FR.json::fr-FR.json",
+      "slice": "S2",
+      "hash": "0a53f55ce22b64fcee7d4bcf52073670f0f9dc251b9f38a22744b5459858f8a9",
+      "expectationHash": "9888cf2742901a08b58c79fc4fc7359adc00833cdd1cdf8530d72a2d1bf17c96"
+    },
+    {
+      "seq": 16,
+      "id": "4b4c4a65-d358-4ac7-a4b9-3893b421b028",
+      "at": "2026-09-06T21:26:35.162Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/i18n/locales/ja-JP.json::ja-JP.json",
+      "slice": "S2",
+      "hash": "158e7ffd74a85c4eac78365ef1bbc3a338ea9f05b869f5b5fbc891c3030023dc",
+      "expectationHash": "9888cf2742901a08b58c79fc4fc7359adc00833cdd1cdf8530d72a2d1bf17c96"
+    },
+    {
+      "seq": 17,
+      "id": "11ae838c-e118-466b-b717-c2b1644ef7d5",
+      "at": "2026-09-06T21:26:35.162Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/i18n/locales/ko-KR.json::ko-KR.json",
+      "slice": "S2",
+      "hash": "c6360642cd008ef0320829d6189a2150e0d9ad890e038d3a8d3860324ffbb647",
+      "expectationHash": "9888cf2742901a08b58c79fc4fc7359adc00833cdd1cdf8530d72a2d1bf17c96"
+    },
+    {
+      "seq": 18,
+      "id": "d963fa80-0f5b-4da0-8844-c2d8dbd05430",
+      "at": "2026-09-06T21:26:35.162Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/i18n/locales/pt-BR.json::pt-BR.json",
+      "slice": "S2",
+      "hash": "a1bb25146fc31bb778aee29191c05e43f0729dc219eb4617ee98846529dd2317",
+      "expectationHash": "9888cf2742901a08b58c79fc4fc7359adc00833cdd1cdf8530d72a2d1bf17c96"
+    },
+    {
+      "seq": 19,
+      "id": "58385558-1c32-452d-9142-676e79a6291c",
+      "at": "2026-09-06T21:26:35.162Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/i18n/locales/ru-RU.json::ru-RU.json",
+      "slice": "S2",
+      "hash": "7ab16322acc75991fc62fed4941ae59af102da1940cbd3fe84536ed82846d1a0",
+      "expectationHash": "9888cf2742901a08b58c79fc4fc7359adc00833cdd1cdf8530d72a2d1bf17c96"
+    },
+    {
+      "seq": 20,
+      "id": "f9aeb53e-2836-415e-9515-d6018539e73b",
+      "at": "2026-09-06T21:26:35.162Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/i18n/locales/vi-VN.json::vi-VN.json",
+      "slice": "S2",
+      "hash": "cc1e5caae52987f3e419eb8855ded380584d991f01b82016b66856cd047e66d2",
+      "expectationHash": "9888cf2742901a08b58c79fc4fc7359adc00833cdd1cdf8530d72a2d1bf17c96"
+    },
+    {
+      "seq": 21,
+      "id": "ce2644db-48ac-405d-8374-b4f7fe9a9df9",
+      "at": "2026-09-06T21:26:35.162Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/i18n/locales/zh-CN.json::zh-CN.json",
+      "slice": "S2",
+      "hash": "76df41e6ed99c918eb7b242dd5375ef277e73a99014c54eef5ea64b155cf6895",
+      "expectationHash": "9888cf2742901a08b58c79fc4fc7359adc00833cdd1cdf8530d72a2d1bf17c96"
+    },
+    {
+      "seq": 22,
+      "id": "d9d9aff4-5ec6-46b6-ad43-8db3e7051c71",
+      "at": "2026-09-06T21:26:35.162Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/i18n/locales/zh-TW.json::zh-TW.json",
+      "slice": "S2",
+      "hash": "a8e27dae6da71223e97f0dc1a8820777d72f49dd13a261570858c0b5c58a9c60",
+      "expectationHash": "9888cf2742901a08b58c79fc4fc7359adc00833cdd1cdf8530d72a2d1bf17c96"
+    },
+    {
+      "seq": 23,
+      "id": "ae6d32fb-7207-4ca3-975f-dccc281377ee",
+      "at": "2026-09-06T21:26:35.162Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:components/admin/users-section.tsx::UsersSection",
+      "slice": "S2",
+      "hash": "ba4fce34ee165981cbc36c34db4574e0421feaca234f817d0dc7d54dd635b75a",
+      "expectationHash": "cb511506acac1d36ff6bdc2722258ad1ec431e771bccdf1318695fdaa9702c9e"
+    },
+    {
+      "seq": 24,
+      "id": "64b8e3d5-f0d4-4412-88bb-36a41dda696e",
+      "at": "2026-09-06T21:26:35.162Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:components/admin/roles-section.tsx::RolesSection",
+      "slice": "S2",
+      "hash": "3e23459c8f4410d3ddbaa819cb14348fa4bba301cd5147818077770178af8b07",
+      "expectationHash": "3c3649d2eb6ea9ab4a1c7131af04d38f46098a0b3e75d8467fe15202957588c9"
+    },
+    {
+      "seq": 25,
+      "id": "5b77cadf-c797-4ec1-9c0f-132b831c0b79",
+      "at": "2026-09-06T21:26:35.162Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:auth.config.mjs::auth.config.mjs",
+      "slice": "S2",
+      "hash": "f173371199836dc3642db2fb1bbc40e9d4186cfd022805cfefb0e95613d11079",
+      "expectationHash": "39ce3637068b60b4a14fff46cba71d4abfde38de741c2bfd992cf55c7634e9bf"
+    },
+    {
+      "seq": 26,
+      "id": "7a99316e-f545-47f9-ba45-70825f009930",
+      "at": "2026-09-06T21:26:35.162Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect",
+      "slice": "S3",
+      "hash": "6ac7337de4c6c04dca7cbc8073048e4d3b9f0121fa45e5a6188c1369d81c0686",
+      "expectationHash": "e6d4394c0756d3d9d729a81a211700876808c5575cb77e36d7384aec446e2cb7"
+    },
+    {
+      "seq": 27,
+      "id": "c4437cd6-64c7-4b18-98ad-108afb0aa950",
+      "at": "2026-09-06T21:26:35.162Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:app/page.tsx::HomePage",
+      "slice": "S3",
+      "hash": "af928aae315ffb131be53f6cfd7b6441d6de232a3173dea3be912c30442ec78f",
+      "expectationHash": "144ddfa9692fc6d4f02b83b35702868167ff2c5ad71bc92cbd3af99b36930c26"
+    },
+    {
+      "seq": 28,
+      "id": "39e3aec7-c2a9-4c9d-8025-47e3a8f1e178",
+      "at": "2026-09-06T21:26:35.162Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:tests/minimal-mode/minimal-layout.test.ts::minimal-layout.test.ts",
+      "slice": "S3",
+      "hash": "85673ae50d24d05b34568c151e07de32a4336f8016fe96b6e608308819067ad9",
+      "expectationHash": "dff3c0f795fda41ddaba59baa45e617b3ef3125d071eaa42f5cbccf76be167e3"
+    },
+    {
+      "seq": 29,
+      "id": "b968c7f1-c759-4e46-8265-9478eef0d48c",
+      "at": "2026-09-06T21:26:35.162Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:components/header-capsule.tsx::HeaderCapsule",
+      "slice": "S3",
+      "hash": "86f4f6145c0e829cc89e0dabb013fafff727a1bb96b1b11464c9ede8c360b604",
+      "expectationHash": "252c8c9b032ab3a2b512458c4e2ca2db05fe36cbae51673dd2b2092605427327"
+    },
+    {
+      "seq": 30,
+      "id": "530ed07e-ad46-40f2-a56b-21fcc53c1be2",
+      "at": "2026-09-06T21:26:35.162Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:components/account-zone.tsx::account-zone.tsx",
+      "slice": "S3",
+      "hash": "bc847f2fa4d35cdc39aec7827201bfcd240b2b2ab66cb0007f7f58cc4eed295b",
+      "expectationHash": "287429d3361821ae961a464c2f13e5434fd38eedd44510302eb09d00327578d4"
+    },
+    {
+      "seq": 31,
+      "id": "bf1090ca-ed1c-45f9-9e4c-ceb7a27cbf6e",
+      "at": "2026-09-06T21:26:35.162Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:lib/hooks/use-permissions.ts::usePermissions",
+      "slice": "S3",
+      "hash": "a87df75abd271184c2ae8ea61512e1321ef3ebd9509a0f595ad6ae4bc11ba6d3",
+      "expectationHash": "44f9065fb7b47e90a35c01f39107af7ba5480230aa8f6405c567d47fecb2e7da"
+    },
+    {
+      "seq": 32,
+      "id": "b3197472-52df-4025-a1b6-47cf439f2ea4",
+      "at": "2026-09-06T21:26:35.162Z",
+      "actor": "orchestrator",
+      "command": "init_batch",
+      "transition": "batch-init:S1,S2,S3",
+      "slice": null,
+      "hash": "5e82687ae3dca6298ebeb495223145b2350a9afa0f050c324f476658a1d60c25"
+    },
+    {
+      "seq": 33,
+      "id": "2e939d53-1d92-4a46-bee9-822bf5683b34",
+      "at": "2026-09-06T21:26:44.729Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S1:capture",
+      "slice": "S1",
+      "hash": "b8361908d3e49721c1bbe70ef22cbc288940fa1b5494b3f65d258d09773e9e4e",
+      "fileHash": "2fe7547cafbc14e0a15f7a9ebd0adf721aa7311ce83b840fb339437c65ed5aef"
+    },
+    {
+      "seq": 34,
+      "id": "9cd7cd8f-9127-459b-8530-205a203c23f4",
+      "at": "2026-09-06T21:26:44.823Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S2:capture",
+      "slice": "S2",
+      "hash": "b0129b7c6f591d3d3ddf157ac908b356b097b5ffa8ecd6a4417283d57c15227e",
+      "fileHash": "516ac05d443b7657d2789277bff93c4594878bd19b2a2e5dd5deaa226a2a0667"
+    },
+    {
+      "seq": 35,
+      "id": "79dde855-f165-4445-ae39-eb327896e427",
+      "at": "2026-09-06T21:26:44.905Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S3:capture",
+      "slice": "S3",
+      "hash": "a9a66e4e5f6e6d92e205f0a5312d6b282c62f265a4c150826293ed816956a28c",
+      "fileHash": "3af3ee5df6077d13952391852cb1ec58459bbadc84d4b899d5cc9605f2335556"
+    },
+    {
+      "seq": 36,
+      "id": "4529962f-2afd-4f07-aaf1-132208e3bfb8",
+      "at": "2026-09-06T21:27:42.722Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:tests/agent-runtime/runner-skills-registration.test.ts::runner-skills-registration.test.ts",
+      "slice": "S1",
+      "hash": "63478644c9889a32ecbef15912d4011371edfd14021bbdbbaf44a4ca0b4bf7de",
+      "fileHash": "50617eb83e3471ab0da8056e75c9ae74107e14ed17081d364dd9cdfd92f870d4"
+    },
+    {
+      "seq": 37,
+      "id": "53e599d1-4033-4239-8553-372fe499c80c",
+      "at": "2026-09-06T21:27:42.787Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:docs/research/013-implementation-diagnosis.md::013-implementation-diagnosis.md",
+      "slice": "S1",
+      "hash": "ec6b2f57dc799bd210bed5f4da2d95c5ff4d99cef77cae0987c7d9505579c1f6",
+      "fileHash": "2df8f4c94661a4ad51813a8fce9701e1cb4d80755122c3f684eb85c02b1d929b"
+    },
+    {
+      "seq": 38,
+      "id": "260d46fb-ae1c-446a-9206-5aca85d3bd45",
+      "at": "2026-09-06T21:27:42.840Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:docs/specs/017-publishing-visibility.md::017-publishing-visibility.md",
+      "slice": "S1",
+      "hash": "af78f5b36f45ed738ad0fc5ff9bb1670bcc926fb0d399f40881f70f2e51bafdb",
+      "fileHash": "7dfbecd6caa93e1d6304dc71ef0bddfeea9d74892f8d1a6694404eccbfb269ba"
+    },
+    {
+      "seq": 39,
+      "id": "c0b0d1a1-d598-4a34-8e6b-124697081402",
+      "at": "2026-09-06T21:27:42.895Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:docs/specs/018-admin-suite.md::018-admin-suite.md",
+      "slice": "S1",
+      "hash": "69973b3aff4c743e33d94f6c5b8034724527d3583f99cd69dd1d17081f1a1d41",
+      "fileHash": "f15c3c95893796970c98e07ee057203519585ff8560a79b0fc4b29240d645946"
+    },
+    {
+      "seq": 40,
+      "id": "f1081e1d-86ae-47d8-aa0b-61c473030caa",
+      "at": "2026-09-06T21:27:42.942Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:docs/specs/019-role-permission-editor.md::019-role-permission-editor.md",
+      "slice": "S1",
+      "hash": "0bc066c1c70172adab91632b17fbac8b1fcb667e61c49076ca92e520d45e93a5",
+      "fileHash": "9aea5110498e9599c63275f8fac92db27a7c5644438e95bb220005b053a6e20b"
+    },
+    {
+      "seq": 41,
+      "id": "5ad5998e-7af9-40d0-a7d0-a67656af083b",
+      "at": "2026-09-06T21:27:42.992Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/server/agent-runtime/web-search.ts::resolveWebSearchCapability",
+      "slice": "S1",
+      "hash": "72e1babad37f98648b9809706ded09ddc1847b66437daea0dcee51ed693e2895",
+      "fileHash": "9f9b8553e283ee3f85b458acb53b77a7555c22e821d4f2553c561acbd95859cc"
+    },
+    {
+      "seq": 42,
+      "id": "8790f0c2-f901-4e40-b9ac-5955de7eeee0",
+      "at": "2026-09-06T21:27:43.043Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:tests/agent-runtime/runner-wakeup.test.ts::runner-wakeup.test.ts",
+      "slice": "S1",
+      "hash": "84df950093cb4d12b814ab59f8cce58861d0335d46581ef8ac0bba361e2e2997",
+      "fileHash": "7a4b09939b7bb6b759a7acb77e818257cd66e7535a7794ad612b163d9eed672f"
+    },
+    {
+      "seq": 43,
+      "id": "8f0867fd-5534-4927-a6c8-887a1beecb58",
+      "at": "2026-09-06T21:27:43.094Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/i18n/locales/en-US.json::en-US.json",
+      "slice": "S2",
+      "hash": "39c5c40b8d2f60bede5ccacfde046069aceb9fab1244d84e31d969ef57abbfc4",
+      "fileHash": "4e8f0f404cb942d2458698385a3e75896b51c2ac926d59ede5952cef55e27e69"
+    },
+    {
+      "seq": 44,
+      "id": "c62e6fda-2a51-49fc-bc35-b57433a695d7",
+      "at": "2026-09-06T21:27:43.141Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/i18n/locales/ar-SA.json::ar-SA.json",
+      "slice": "S2",
+      "hash": "ae48dabe890327619a588b59f589a41f5a78981dabf96c604d22986a864c6ae9",
+      "fileHash": "b64e5791ddf4b5cfc7b3f97ec1863ae615e4353bb6c94bb7291a477612e8725a"
+    },
+    {
+      "seq": 45,
+      "id": "ddc5bcd1-18ce-46ed-b341-95515c38d26d",
+      "at": "2026-09-06T21:27:43.194Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/i18n/locales/de-DE.json::de-DE.json",
+      "slice": "S2",
+      "hash": "501583b896d7a9c71fae98f5bf6d676a5419de8cb0ccd8c3404674f8291ba8ba",
+      "fileHash": "fff8725a539c6a12d42f9b0cbefe2b56c94848c14969189f965158cb2225f779"
+    },
+    {
+      "seq": 46,
+      "id": "662d9177-c03e-42d1-8cae-527adf502ec3",
+      "at": "2026-09-06T21:27:43.244Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/i18n/locales/es-MX.json::es-MX.json",
+      "slice": "S2",
+      "hash": "d13186d862670dec267d78286d8698554ab80c05580831ee9705e436f0210ce5",
+      "fileHash": "d8e9f54d72e82aa27ab7a403b0cba4296c47858889e09d072875715cf38e2e56"
+    },
+    {
+      "seq": 47,
+      "id": "380e4555-6c48-4612-afe8-d64e0ee8ed47",
+      "at": "2026-09-06T21:27:43.298Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/i18n/locales/fr-FR.json::fr-FR.json",
+      "slice": "S2",
+      "hash": "033fc2dfd2badef233cd839c5d00dc8a36b73be160b7a231e3dabe0ea9055bd2",
+      "fileHash": "2adefb5ca8c633b8a63a25fe305ba711d3884ad6214c9899a2e41b36f7db5e53"
+    },
+    {
+      "seq": 48,
+      "id": "4a34ca96-c1d7-4cf8-a088-8ecee3c6e482",
+      "at": "2026-09-06T21:27:43.345Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/i18n/locales/ja-JP.json::ja-JP.json",
+      "slice": "S2",
+      "hash": "3279852dc704b971413aa2f61019cb9f7b08224fe5ddb166a2e6a1e949fc6f5f",
+      "fileHash": "706d10022f03d77f11f6ee0fd9bc68fe201363e180790f301766198eff0c64d9"
+    },
+    {
+      "seq": 49,
+      "id": "fd49ac9e-3dfd-4603-a372-4a3a3e486617",
+      "at": "2026-09-06T21:27:43.393Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/i18n/locales/ko-KR.json::ko-KR.json",
+      "slice": "S2",
+      "hash": "adc21dedda2fec4e4db596670db5d8d4cbf640e1f8e40f9a7e9c7042ee82d136",
+      "fileHash": "bb2e48f2d65612120f85f0d5f2d71113d94de17c47d6ad9fe286366870768352"
+    },
+    {
+      "seq": 50,
+      "id": "c3b32de2-d6c6-4207-96d0-f0002073cb0b",
+      "at": "2026-09-06T21:27:43.440Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/i18n/locales/pt-BR.json::pt-BR.json",
+      "slice": "S2",
+      "hash": "6bca395c8c536a12f05363c03bff4a62d7936a19aee3b0fc1e924d19ecc2ee2f",
+      "fileHash": "8a3b5b59ad93d6d989d36acf26895efae69e3cccd231847c75930aa6dc1a809b"
+    },
+    {
+      "seq": 51,
+      "id": "a89252df-6d98-47a7-a9d3-12c58b46473c",
+      "at": "2026-09-06T21:27:43.490Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/i18n/locales/ru-RU.json::ru-RU.json",
+      "slice": "S2",
+      "hash": "6a917265e7c6fe02fa976969ba0f3b84cd8ba327a7a2875f38e22e3d6ee76d2a",
+      "fileHash": "a46c3f35dd2dd85e6e4d3cb42f572d955d18ab57354fa225f96bad3fb1d82228"
+    },
+    {
+      "seq": 52,
+      "id": "59bb1ee1-5598-4bd2-8c5c-35c9a929bc88",
+      "at": "2026-09-06T21:27:43.538Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/i18n/locales/vi-VN.json::vi-VN.json",
+      "slice": "S2",
+      "hash": "d81dbcdf0ae112ce3161d3d07aa9ca6d8897c57670d4f4a9411da11359b11856",
+      "fileHash": "6ad8249bd8378e36e1794d36e9e080a342db700a27d5b2f812e65bf2b0a48474"
+    },
+    {
+      "seq": 53,
+      "id": "c2df1942-38e6-4929-9d54-0f228cdf07a1",
+      "at": "2026-09-06T21:27:43.588Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/i18n/locales/zh-CN.json::zh-CN.json",
+      "slice": "S2",
+      "hash": "0dc451d8e579f1ba1ad30d7ede0a4c0f78e2c80e0c05f21c534c520fc31a5b3b",
+      "fileHash": "4594f591adc3bf8487acb6a03109756ebac642b7614b5bf99d46972ccd1a7191"
+    },
+    {
+      "seq": 54,
+      "id": "dda77da5-cf26-4fe3-88ce-29a91bac801e",
+      "at": "2026-09-06T21:27:43.636Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/i18n/locales/zh-TW.json::zh-TW.json",
+      "slice": "S2",
+      "hash": "6ef8a1aba7bb4b946555be6ca3444df723d97c533d40baaec1971c9a73232b7c",
+      "fileHash": "0d0288ba0ee2572cf73d6ac76e78616343a14690fd3877f433aaa3c64ff47ea4"
+    },
+    {
+      "seq": 55,
+      "id": "35416ffe-200b-4cff-b00c-a9b486443358",
+      "at": "2026-09-06T21:27:43.687Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:components/admin/users-section.tsx::UsersSection",
+      "slice": "S2",
+      "hash": "2ef2fea97256259ee7b9427e7ae3c7003d2342acf30458eaa193a1d1ce3295cd",
+      "fileHash": "d5bf9b849969a32e507123fa38d9798602443939ca67e4898ba8cc9d814df8f4"
+    },
+    {
+      "seq": 56,
+      "id": "55505967-dc72-4e5b-ad13-f8d66a90f4e2",
+      "at": "2026-09-06T21:27:43.734Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:components/admin/roles-section.tsx::RolesSection",
+      "slice": "S2",
+      "hash": "ab8ca9ed8309f93a1c5225f5a6ad7b42034fc623381164516582954f76b97da1",
+      "fileHash": "766e595573413d414d129a97c3d32fa1f17cb8bdd868fefce3836d097b9dec0a"
+    },
+    {
+      "seq": 57,
+      "id": "6ac9a5b7-c3e8-4533-8b53-8a7a2e02abcb",
+      "at": "2026-09-06T21:27:43.786Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:auth.config.mjs::auth.config.mjs",
+      "slice": "S2",
+      "hash": "dc37f9ff2e7812e1ac2960cbafccfa214d97bca275b52546034e492acf9cbe91",
+      "fileHash": "2dc543ca589c261ac751366379be661ac9cc26750af1a2ac86e5c0a8f6725ac7"
+    },
+    {
+      "seq": 58,
+      "id": "dc7d11cc-dcd7-4f0f-a877-273658e180a2",
+      "at": "2026-09-06T21:27:43.834Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:app/page.tsx::HomePage",
+      "slice": "S3",
+      "hash": "5ba5af1dc1af2bed4103de90517d4534f32c158b5f88bf264e49ca191ff33bff",
+      "fileHash": "ecdbabe50f1fa099c86eabacd51d037c07c9e801db308dedf351a9c4e4ca01d6"
+    },
+    {
+      "seq": 59,
+      "id": "4a44fc5f-78de-490c-a655-be1126e7f3af",
+      "at": "2026-09-06T21:27:43.884Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:tests/minimal-mode/minimal-layout.test.ts::minimal-layout.test.ts",
+      "slice": "S3",
+      "hash": "3ce5124552d363667b5c336d4d22c0221e6ccf404925b114f704af822902424f",
+      "fileHash": "dd5b989515f7c1f7135f9e5104fa44e215eaaf9efb5aa0e74bda92f2c607d234"
+    },
+    {
+      "seq": 60,
+      "id": "76622306-9c3f-4c55-82f1-773070c00c9c",
+      "at": "2026-09-06T21:27:43.930Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:components/header-capsule.tsx::HeaderCapsule",
+      "slice": "S3",
+      "hash": "6362d775adc040fa04d44ebc6605e556f094b6873b9fdca249570dd6864892a4",
+      "fileHash": "c04bb591b9102d6139fc7d09b0c3229b1452ebc6870e497677af463951348788"
+    },
+    {
+      "seq": 61,
+      "id": "57be0882-35f6-4589-984f-9382fb28e46f",
+      "at": "2026-09-06T21:27:43.980Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:components/account-zone.tsx::account-zone.tsx",
+      "slice": "S3",
+      "hash": "41b15efd17a343325b08858e70105a5d4c3215c9865d954d144934a59365eb5a",
+      "fileHash": "b467f989d11f6fd9a420c5d249cea695edb5d01945baadecce2f964969b9d9f7"
+    },
+    {
+      "seq": 62,
+      "id": "eab0dabb-b2d4-4f33-8c89-04c41bb6264c",
+      "at": "2026-09-06T21:27:44.030Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:lib/hooks/use-permissions.ts::usePermissions",
+      "slice": "S3",
+      "hash": "a36fb7a898c1b4b81871b8d2438d61c62b1789f8a3aca2ae10ef3a99beafbce4",
+      "fileHash": "c1ddf63c4f4b809ca2e3896d5fce1fc310e60a15eafd81e45ee17ba39e6959c9"
+    },
+    {
+      "seq": 63,
+      "id": "80bc766f-44f5-4ab6-97fb-a0c28b3c40fa",
+      "at": "2026-09-06T21:28:11.410Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:clarification:Batch 020 spec human-approved via Plannotator review, no feedback; marker moved to the research stage value so the stage advance pre-check accepts the spec binding",
+      "slice": null,
+      "hash": "a9ee8977218cd296070e83c09313c8f8c84723c2bfeef1fc3b813027c3d30172",
+      "fileHash": "66165847303d3f0b2c6f51f234caf4f59fa9025b767c34b807d701cb5e047a39"
+    },
+    {
+      "seq": 64,
+      "id": "02a56bee-025b-462d-9c49-3ae8985b25d7",
+      "at": "2026-09-06T21:29:23.209Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:clarification:Batch 020 spec human-approved via Plannotator review, no feedback; marker synced to research and hash rebound after the approval ceremony",
+      "slice": null,
+      "hash": "413db38e30a03dbfe092e5b606ab8514a19bd04ce23d25d2ab913839ebbfb1d3",
+      "fileHash": "7d7340a943f4905335f060623fb5e99d0c4b63716275ae9a262d550bda3ff7d4"
+    },
+    {
+      "seq": 65,
+      "id": "bec6c001-e4f1-435b-b82c-f209e9c58005",
+      "at": "2026-09-06T21:29:28.063Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "99a62f1d835d0ec87ce480d2fa3a08c22a4705ef8807970db5a775fb1513eb03",
+      "fileHash": "40de036ac464442a1a2c94abb947cd9b7700d0bdb6d0c1f40d213185b6e17164"
+    }
+  ],
+  "fileHash": "5dbe389a363a49ceea1174fe830d94dad0ef42a2c3082f474a3271c59923f719"
+}
