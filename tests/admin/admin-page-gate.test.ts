@@ -2,7 +2,7 @@
  * Hermetic unit test for the admin settings page gate.
  *
  * Verifies through the REAL requirePermission + the REAL guard():
- * - Admin with a users.manage role renders the three sections
+ * - Admin with a users.manage or roles.manage role renders the sections
  * - Guest (no session) receives the not-authorized state
  * - The page catches the guard throw and never lets it escape
  * - Translated i18n strings are rendered, not raw keys
@@ -11,12 +11,12 @@
  * and getServerPersistenceProvider (DB queries for ban + rank).
  * requirePermission itself runs real code.
  *
- * Flag OFF behavior: the admin page still enforces users.manage
- * unconditionally (admin surface gates unconditionally per the settings
- * gate split decision).
+ * Page gate: users.manage OR roles.manage (S4 delta).
  */
 
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
+import React from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
 
 const ENV_KEYS = [
   'DATABASE_URL',
@@ -92,7 +92,7 @@ vi.mock('@/lib/persistence/server-provider', () => ({
         if (sql.includes('"banned"')) {
           return { rows: [{ banned: false }] };
         }
-        // Role rank: return admin rank 4 for the test user
+        // Role resolution: return admin rank 4 for the test user
         if (sql.includes('user_roles') || sql.includes('roles')) {
           return { rows: [{ rank: 4 }] };
         }
@@ -122,6 +122,10 @@ vi.mock('@/components/admin/courses-section', () => ({
   default: () => 'COURSES_SECTION',
 }));
 
+vi.mock('@/components/admin/roles-section', () => ({
+  default: () => 'ROLES_SECTION',
+}));
+
 // Mock next/headers to return real Headers with cookie.
 vi.mock('next/headers', () => ({
   headers: vi.fn(async () => {
@@ -146,6 +150,7 @@ vi.mock('@/lib/i18n/server-translate', () => ({
       'admin.users.title': 'Users',
       'admin.invites.title': 'Invites',
       'admin.courses.title': 'Courses',
+      'admin.roles.title': 'Roles',
     };
     return translations[key] ?? key;
   }),
@@ -169,12 +174,12 @@ describe('Admin settings page gate', () => {
       try {
         const { default: AdminSettingsPage } = await import('@/app/admin/settings/page');
         const result = await AdminSettingsPage();
-        const { renderToStaticMarkup } = await import('react-dom/server');
         const html = renderToStaticMarkup(result as React.ReactElement);
         expect(html).toContain('You do not have permission to access this page.');
         expect(html).not.toContain('USERS_SECTION');
         expect(html).not.toContain('INVITES_SECTION');
         expect(html).not.toContain('COURSES_SECTION');
+        expect(html).not.toContain('ROLES_SECTION');
       } finally {
         _mockSession = {
           id: 'sess-1',
@@ -190,8 +195,8 @@ describe('Admin settings page gate', () => {
     });
   });
 
-  describe('ADMIN_PAGE_OK: admin -> renders three sections', () => {
-    it('renders users, invites, and courses sections with translated titles', async () => {
+  describe('ADMIN_PAGE_OK: admin -> renders sections', () => {
+    it('renders users, invites, courses, and roles sections with translated titles', async () => {
       _mockSession = {
         id: 'sess-1',
         userId: 'test-user',
@@ -204,17 +209,18 @@ describe('Admin settings page gate', () => {
       };
       const { default: AdminSettingsPage } = await import('@/app/admin/settings/page');
       const result = await AdminSettingsPage();
-      const { renderToStaticMarkup } = await import('react-dom/server');
       const html = renderToStaticMarkup(result as React.ReactElement);
       // Verify translated strings, not raw keys
       expect(html).toContain('Admin Settings');
       expect(html).toContain('Users');
       expect(html).toContain('Invites');
       expect(html).toContain('Courses');
+      expect(html).toContain('Roles');
       // Verify section components render
       expect(html).toContain('USERS_SECTION');
       expect(html).toContain('INVITES_SECTION');
       expect(html).toContain('COURSES_SECTION');
+      expect(html).toContain('ROLES_SECTION');
     });
   });
 
@@ -231,6 +237,11 @@ describe('Admin settings page gate', () => {
 
     it('courses-section exports a component', async () => {
       const mod = await import('@/components/admin/courses-section');
+      expect(typeof mod.default).toBe('function');
+    });
+
+    it('roles-section exports a component', async () => {
+      const mod = await import('@/components/admin/roles-section');
       expect(typeof mod.default).toBe('function');
     });
   });

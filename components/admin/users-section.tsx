@@ -58,19 +58,40 @@ export default function UsersSection() {
 
   useEffect(() => {
     fetchUsers();
-    // Load roles for the picker
-    fetch('/api/admin/users')
+    // Load roles from the roles API instead of hardcoding.
+    // Option values are role IDs and the current-selection highlight
+    // resolves by ID through the fetched list, because user.role
+    // carries the role NAME and custom role ids are uuids, not names.
+    fetch('/api/admin/roles')
       .then((r) => r.json())
-      .then(() => {
-        // Roles are embedded in the user list; extract unique roles
+      .then((data) => {
+        if (data.success && Array.isArray(data.roles)) {
+          setRoles(
+            data.roles.map((r: { id: string; name: string; rank: number }) => ({
+              id: r.id,
+              name: r.name,
+              rank: r.rank,
+            })),
+          );
+        } else {
+          // Fallback to hardcoded system roles on failure
+          setRoles([
+            { id: 'guest', name: 'guest', rank: 1 },
+            { id: 'learner', name: 'learner', rank: 2 },
+            { id: 'creator', name: 'creator', rank: 3 },
+            { id: 'admin', name: 'admin', rank: 4 },
+          ]);
+        }
+      })
+      .catch(() => {
+        // Fallback to hardcoded system roles on network error
         setRoles([
           { id: 'guest', name: 'guest', rank: 1 },
           { id: 'learner', name: 'learner', rank: 2 },
           { id: 'creator', name: 'creator', rank: 3 },
           { id: 'admin', name: 'admin', rank: 4 },
         ]);
-      })
-      .catch(() => {});
+      });
   }, [fetchUsers]);
 
   const handleSearch = (e: React.FormEvent) => {

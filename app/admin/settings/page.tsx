@@ -1,9 +1,9 @@
 /**
- * Admin settings page. Server component gated by users.manage.
+ * Admin settings page. Server component gated by users.manage OR roles.manage.
  *
  * Catches the guard throw and renders a dedicated not-authorized state
  * instead of letting the Response reach the error boundary.
- * The three section components ship as client components for S2-S4 wiring.
+ * The four section components ship as client components for S2-S4 wiring.
  */
 import { headers } from 'next/headers';
 import { requirePermission } from '@/lib/auth/permissions-server';
@@ -12,14 +12,25 @@ import { serverTranslate } from '@/lib/i18n/server-translate';
 import UsersSection from '@/components/admin/users-section';
 import InvitesSection from '@/components/admin/invites-section';
 import CoursesSection from '@/components/admin/courses-section';
+import RolesSection from '@/components/admin/roles-section';
 
 export const metadata = {
   title: 'Admin Settings',
 };
 
 async function guard(h: Headers): Promise<boolean> {
+  // The page is reachable with users.manage OR roles.manage.
+  // A roles-only holder reaches the page and the roles section together
+  // with the roles API routes. Users, invites, and courses sections
+  // stay intact for users.manage holders.
   try {
     await requirePermission(h, 'users.manage');
+    return true;
+  } catch (err) {
+    if (!(err instanceof Response)) throw err;
+  }
+  try {
+    await requirePermission(h, 'roles.manage');
     return true;
   } catch (err) {
     if (err instanceof Response) return false;
@@ -46,11 +57,12 @@ export default async function AdminSettingsPage() {
   }
 
   const locale = await resolveServerLocale();
-  const [title, usersTitle, invitesTitle, coursesTitle] = await Promise.all([
+  const [title, usersTitle, invitesTitle, coursesTitle, rolesTitle] = await Promise.all([
     serverTranslate(locale, 'admin.settings.title'),
     serverTranslate(locale, 'admin.users.title'),
     serverTranslate(locale, 'admin.invites.title'),
     serverTranslate(locale, 'admin.courses.title'),
+    serverTranslate(locale, 'admin.roles.title'),
   ]);
 
   return (
@@ -75,6 +87,12 @@ export default async function AdminSettingsPage() {
               {coursesTitle}
             </h2>
             <CoursesSection />
+          </div>
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+              {rolesTitle}
+            </h2>
+            <RolesSection />
           </div>
         </div>
       </div>
