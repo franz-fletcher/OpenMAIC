@@ -4,12 +4,12 @@
   "spec": {
     "reference": "docs/specs/019-role-permission-editor.md",
     "title": "Batch 019 spec: role-permission-editor",
-    "hash": "303902f3fb3825e574ffb06bd4262e4d8aba7f24028e9583532ce58235446233"
+    "hash": "08bea2b77609cf9a5636a808e4e8c65dec3a19f2917b3ed9e754d2b965184158"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "implementation",
+  "stage": "verification",
   "retry": {
     "count": 0,
     "max": 5,
@@ -1493,7 +1493,18 @@
       "slice": "S5",
       "hash": "dbd5d66f0c89c8b4d89f6f3b6b82e0aedf0b4d601f4c5013c039132e0fb662dd",
       "fileHash": "b0320dc0bd4ee29ffe691421d562e5470a219f7dfd4ef03706923d66c2b93736"
+    },
+    {
+      "seq": 70,
+      "id": "7bef9121-f133-468b-bfc4-f89874178df5",
+      "at": "2026-09-06T18:04:37.498Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:implementation->verification",
+      "slice": null,
+      "hash": "36c4bb1faa3e1d0c7d71b4d63fe40f45ba988ff8df32a7fadfe154dff030f530",
+      "fileHash": "91c0f21ead52d470f52213e27029ee0ebee38c9f738784a6a0c452893539da7f"
     }
   ],
-  "fileHash": "91c0f21ead52d470f52213e27029ee0ebee38c9f738784a6a0c452893539da7f"
+  "fileHash": "f1dcd2e35870ce72c5d82542c863d6c6703765cce7f0f26835e1182f133a7ee7"
 }

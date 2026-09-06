@@ -18341,6 +18341,20 @@
       "actor": "implementer",
       "outcome": "ok",
       "extra": {}
+    },
+    {
+      "ts": "2026-09-06T18:04:37.500Z",
+      "command": "stage.advance",
+      "flags": [
+        "actor",
+        "to"
+      ],
+      "exit": 0,
+      "duration_ms": 7,
+      "stage": "verification",
+      "actor": "orchestrator",
+      "outcome": "ok",
+      "extra": {}
     }
   ],
   "audit": [
@@ -31377,7 +31391,18 @@
       "slice": null,
       "hash": "664be86aac7569a271f8fcd8b656f3ca4dc7c3b16222b8f52d1a4ab9eb771d0b",
       "fileHash": "9e70f75cd91c0dd112a3313dd9ab71b6eedee4d5328b01b17912e08f939818c8"
+    },
+    {
+      "seq": 1186,
+      "id": "0fc48c98-91ca-4d94-a4d6-f51728a2aedf",
+      "at": "2026-09-06T18:04:37.500Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:stage.advance:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "34db20fe5d6b65714b8dda88db8f0d2ba43eb3ed748c35f97ef31f58caff4978",
+      "fileHash": "11731f07ed64d919ce1b21321b6c37eb3570649e399a9b2b2ce357a1a67160e2"
     }
   ],
-  "fileHash": "11731f07ed64d919ce1b21321b6c37eb3570649e399a9b2b2ce357a1a67160e2"
+  "fileHash": "7da89713f06c82f06a1eb50c24ff4190c1ace395d6d7e4725a2fa9cce932e4fc"
 }
