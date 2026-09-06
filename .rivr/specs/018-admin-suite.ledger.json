@@ -1,0 +1,2094 @@
+{
+  "schema_version": 2,
+  "$schema": "https://rivr.dev/schemas/ledger/v2",
+  "spec": {
+    "reference": "docs/specs/018-admin-suite.md",
+    "title": "Batch 018 spec: admin-suite",
+    "hash": "8b8c2350b04b830be5f7737dd27ac7cf8bc566334401f4b77278f80b336d929f"
+  },
+  "tracker": {
+    "mode": "none"
+  },
+  "stage": "implementation",
+  "retry": {
+    "count": 0,
+    "max": 5,
+    "consecutive_same_cause": 0,
+    "escalate_at": 3
+  },
+  "slices": [
+    {
+      "id": "S1",
+      "title": "Admin settings page and account navigation",
+      "intent": "the gated admin page shell, the account-zone navigation delta, the settings-dialog wiring, and the new i18n keys",
+      "user_stories": [],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "app/admin/settings/page.tsx",
+          "symbols": [
+            {
+              "name": "AdminSettingsPage",
+              "kind": "function",
+              "expectation": "new: server component that enforces `users.manage`, resolves the locale, renders the three admin sections, no tenancy leaks, catches the guard throw and renders a dedicated not-authorized state instead of letting the `Response` reach the error boundary",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "()"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "components/account-zone.tsx",
+          "symbols": [
+            {
+              "name": "AccountZone",
+              "kind": "function",
+              "expectation": "modified: Settings entry calls `onOpenSettings`, Admin entry calls `onOpenAdmin`, the `soon` badge leaves the Settings entry; the two new props ship optional",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "({ onSignOut }: AccountZoneProps)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "({ onSignOut }: AccountZoneProps)"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "components/header-capsule.tsx",
+          "symbols": [
+            {
+              "name": "HeaderCapsule",
+              "kind": "function",
+              "expectation": "modified: hides the settings gear for non-`settings.manage` ranks under the client mirror, keeps today's visibility off; the new `settingsGated` prop ships optional",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "({ onSettingsOpen, accountSlot }: HeaderCapsuleProps)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "({ onSettingsOpen, accountSlot }: HeaderCapsuleProps)"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "components/admin/users-section.tsx",
+          "symbols": [
+            {
+              "name": "users-section.tsx",
+              "kind": "file",
+              "expectation": "new: search, role picker, ban toggle",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "client section for the user table"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "components/admin/invites-section.tsx",
+          "symbols": [
+            {
+              "name": "invites-section.tsx",
+              "kind": "file",
+              "expectation": "new: create invite form, list, revoke",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "client section for the invite table"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "components/admin/courses-section.tsx",
+          "symbols": [
+            {
+              "name": "courses-section.tsx",
+              "kind": "file",
+              "expectation": "new: status, audience, publish, delete actions",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "client section for the course table"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "tests/minimal-mode/minimal-layout.test.ts",
+          "symbols": [
+            {
+              "name": "minimal-layout.test.ts",
+              "kind": "file",
+              "expectation": "modified: keeps rendering the real `AccountZone` (`:161-163`) and the real `HeaderCapsule` (`:240-245`, `:257-262`, `:276-281`); stays green because the new S1 props ship optional, so root `tsc --noEmit` keeps passing across every smoke gate",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "describe('Minimal-mode account zone')"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "lib/i18n/locales/en-US.json",
+          "symbols": [
+            {
+              "name": "en-US.json",
+              "kind": "file",
+              "expectation": "modified: source-of-truth keys for the page, sections, and actions",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable",
+                "signature": "new `admin` group"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 2,
+      "uuid": "f9fe2b29-9a7f-4a03-863e-529912e0a1ef",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "A holder of users.manage reaches /admin/settings and sees the three sections; a denied rank receives the typed 403 rendered as the dedicated not-authorized state, so the Response never reaches the error boundary; the account Admin entry navigates, the Settings entry opens the provider dialog, and the soon badge is gone from Settings; under the client mirror the gear hides for non-holders while flag-off keeps today's gear; the new account and capsule props ship optional so minimal-layout.test.ts keeps compiling and passing unchanged; all new strings pass the 12-locale parity check.",
+      "gates": [
+        {
+          "id": "g1",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/admin/admin-page-gate.test.ts && echo ADMIN_PAGE_OK",
+          "expect": "ADMIN_PAGE_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g2",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm check:i18n-keys && echo I18N_OK",
+          "expect": "I18N_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g3",
+          "type": "smoke",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "evidence": "pending"
+        }
+      ]
+    },
+    {
+      "id": "S2",
+      "title": "User management: list, search, role assign, and ban",
+      "intent": "the user listing query, the single-role assigner, the ban state on the user table, session revocation, the enforcement points, and the client section",
+      "user_stories": [],
+      "blocked_by": [
+        "S1"
+      ],
+      "targets": [
+        {
+          "path": "lib/auth/schema.ts",
+          "symbols": [
+            {
+              "name": "ensureAuthSchema",
+              "kind": "function",
+              "expectation": "modified: appends the ban columns to the `user` table",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable): Promise<void>"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable): Promise<void>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "lib/persistence/admin-users.ts",
+          "symbols": [
+            {
+              "name": "listUsers",
+              "kind": "function",
+              "expectation": "new: joins `user`, `user_roles`, and `roles`, returns email, verified, role, rank, banned, created, never password data",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable, filter?: { query?: string; roleName?: string; banned?: boolean }): Promise<AdminUser[]>"
+              },
+              "postcondition_quality": "INFERRED"
+            },
+            {
+              "name": "setUserRole",
+              "kind": "function",
+              "expectation": "new: upserts the single `user_roles` row",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable, userId: string, roleId: string, grantedBy: string): Promise<void>"
+              },
+              "postcondition_quality": "INFERRED"
+            },
+            {
+              "name": "setUserBanned",
+              "kind": "function",
+              "expectation": "new: writes the ban columns and revokes every session for the user",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable, userId: string, banned: boolean, reason?: string): Promise<void>"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "lib/auth/permissions-server.ts",
+          "symbols": [
+            {
+              "name": "requirePermission",
+              "kind": "function",
+              "expectation": "modified: denies banned sessions with the typed 403 code `banned`",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  headers: Headers,\n  permission: Permission,\n): Promise<Session>"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  headers: Headers,\n  permission: Permission,\n): Promise<Session>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "lib/persistence/audience.ts",
+          "symbols": [
+            {
+              "name": "resolveViewerRank",
+              "kind": "function",
+              "expectation": "modified: returns 0 for banned users so every rank-based gate revokes them",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable, ownerId: string): Promise<number>"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable, ownerId: string): Promise<number>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/admin/users/route.ts",
+          "symbols": [
+            {
+              "name": "GET",
+              "kind": "function",
+              "expectation": "new: gated `users.manage`, returns the filtered user list, guard wrapped in the nested Response-rethrow catch so the typed 403 survives both outer catch layers",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<Response>"
+              },
+              "postcondition_quality": "INFERRED"
+            },
+            {
+              "name": "PATCH",
+              "kind": "function",
+              "expectation": "new: gated `users.manage`, applies role or ban mutations, guard wrapped in the nested Response-rethrow catch so the typed 403 survives both outer catch layers",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<Response>"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "components/admin/users-section.tsx",
+          "symbols": [
+            {
+              "name": "users-section.tsx",
+              "kind": "file",
+              "expectation": "modified: search input, role picker, ban toggle wired to the routes",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "client section for the user table"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 4,
+      "uuid": "86737ab3-aa38-414a-859e-f80d0503fb84",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "An operator lists users with search and filter, assigns one role per user, and bans or un-bans a user; a banned user loses every session immediately, receives the typed 403 with code banned from any guarded call, and resolves to rank 0 on every rank gate; the typed 403-body assertions depend on the pinned Response-rethrow passthrough, because the two outer catch layers would flatten the throw to a 500 without it; an admin cannot ban their own session; the identity never renders in the UI.",
+      "gates": [
+        {
+          "id": "g1",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/admin/users-admin.test.ts && echo USERS_ADMIN_OK",
+          "expect": "USERS_ADMIN_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g2",
+          "type": "integration",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/admin/users-admin.pg.test.ts && echo USERS_ADMIN_PG_OK",
+          "expect": "USERS_ADMIN_PG_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g3",
+          "type": "adversarial",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/admin/ban-adversarial.pg.test.ts && echo BAN_ADV_OK",
+          "expect": "BAN_ADV_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g4",
+          "type": "smoke",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "evidence": "pending"
+        }
+      ]
+    },
+    {
+      "id": "S3",
+      "title": "Invite by email: create, send, accept, and revoke",
+      "intent": "the `invites` table, the invite service, the mailer extension, the create and list and revoke routes, the accept page, the verified-grant hook, and the i18n keys",
+      "user_stories": [],
+      "blocked_by": [
+        "S1",
+        "S2"
+      ],
+      "targets": [
+        {
+          "path": "lib/auth/schema.ts",
+          "symbols": [
+            {
+              "name": "ensureAuthSchema",
+              "kind": "function",
+              "expectation": "modified: composes the `invites` table into the ensure chain",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable): Promise<void>"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable): Promise<void>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "lib/auth/invites.ts",
+          "symbols": [
+            {
+              "name": "createInvite",
+              "kind": "function",
+              "expectation": "new: writes one row with a single-use code, returns it",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable, email: string, roleName: string, createdBy: string, expiresAt: Date): Promise<Invite>"
+              },
+              "postcondition_quality": "INFERRED"
+            },
+            {
+              "name": "consumeInvite",
+              "kind": "function",
+              "expectation": "new: atomically marks one unused, unexpired row used and returns the invited role, null otherwise",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable, code: string, userId: string): Promise<string | null>"
+              },
+              "postcondition_quality": "INFERRED"
+            },
+            {
+              "name": "listPendingInvites",
+              "kind": "function",
+              "expectation": "new: lists unused, unrevoked, unexpired rows",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable): Promise<Invite[]>"
+              },
+              "postcondition_quality": "INFERRED"
+            },
+            {
+              "name": "revokeInvite",
+              "kind": "function",
+              "expectation": "new: writes the revoked state so the link dies",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable, id: string): Promise<void>"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "lib/auth/mailer.ts",
+          "symbols": [
+            {
+              "name": "Mailer",
+              "kind": "interface",
+              "expectation": "modified: adds the invite send across all three transports with the same DI seam",
+              "before": {
+                "exists": true,
+                "kind": "interface"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "interface",
+                "signature": "{ transport; sendVerificationLink; sendInviteLink }"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/admin/invites/route.ts",
+          "symbols": [
+            {
+              "name": "POST",
+              "kind": "function",
+              "expectation": "new: gated `users.manage`, validates email and role, creates and sends the invite, guard wrapped in the nested Response-rethrow catch so the typed 403 survives both outer catch layers",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<Response>"
+              },
+              "postcondition_quality": "INFERRED"
+            },
+            {
+              "name": "GET",
+              "kind": "function",
+              "expectation": "new: gated `users.manage`, returns pending invites, guard wrapped in the nested Response-rethrow catch so the typed 403 survives both outer catch layers",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<Response>"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/admin/invites/[id]/route.ts",
+          "symbols": [
+            {
+              "name": "DELETE",
+              "kind": "function",
+              "expectation": "new: gated `users.manage`, revokes one invite, guard wrapped in the nested Response-rethrow catch so the typed 403 survives both outer catch layers",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest, { params }: Params)"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "app/invite/accept/page.tsx",
+          "symbols": [
+            {
+              "name": "Page",
+              "kind": "function",
+              "expectation": "new: validates the code, prefills the signup form, renders the invited role and expiry",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "()"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "lib/auth/server.ts",
+          "symbols": [
+            {
+              "name": "createAuthServer",
+              "kind": "function",
+              "expectation": "modified: the user-create hook consumes a valid invite before the guest default and grants the invited role in the same transaction",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(options: AuthServerOptions): AuthServer"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(options: AuthServerOptions): AuthServer"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "lib/i18n/locales/en-US.json",
+          "symbols": [
+            {
+              "name": "en-US.json",
+              "kind": "file",
+              "expectation": "modified: source-of-truth keys for the flow",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable",
+                "signature": "new `invite` group"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 3,
+      "uuid": "fc83ff99-34a4-4a2f-b961-26061141290b",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "An admin creates an invite for an email and role with the default seven-day expiry, the mailer sends the accept link through console, smtp, or resend, and the pending list shows it; the accept page prefills the email; the user-create hook consumes the invite and grants the invited role in the same transaction at user creation, before email verification; a second use, an expired invite, and a revoked invite all render the invalid state and grant nothing; the mailer keeps its flag-off console behavior.",
+      "gates": [
+        {
+          "id": "g1",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/admin/invites.test.ts && echo INVITES_OK",
+          "expect": "INVITES_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g2",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm check:i18n-keys && echo I18N_OK",
+          "expect": "I18N_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g3",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE MAIL_TRANSPORT AUTH_SECRET RESEND_API_KEY SMTP_HOST SMTP_PORT SMTP_USER SMTP_PASS MAIL_FROM; pnpm test tests/admin/invite-mailer.test.ts && echo INVITE_MAILER_OK",
+          "expect": "INVITE_MAILER_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g4",
+          "type": "integration",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/admin/invites.pg.test.ts && echo INVITES_PG_OK",
+          "expect": "INVITES_PG_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g5",
+          "type": "adversarial",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/admin/invite-race.pg.test.ts && echo INVITE_RACE_OK",
+          "expect": "INVITE_RACE_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g6",
+          "type": "smoke",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "evidence": "pending"
+        }
+      ]
+    },
+    {
+      "id": "S4",
+      "title": "Course administration list and delete-any",
+      "intent": "the admin course list query, the admin delete route, and the section that surfaces the batch D unpublish-any override",
+      "user_stories": [],
+      "blocked_by": [
+        "S1",
+        "S2"
+      ],
+      "targets": [
+        {
+          "path": "lib/persistence/admin-courses.ts",
+          "symbols": [
+            {
+              "name": "listAllCoursesForAdmin",
+              "kind": "function",
+              "expectation": "new: joins `stage_meta` and `document_stages`, left-joins `user` for the owner email, returns owner, status, audience, publish date, deleted state",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable): Promise<AdminCourse[]>"
+              },
+              "postcondition_quality": "INFERRED"
+            },
+            {
+              "name": "deleteCourseForAdmin",
+              "kind": "function",
+              "expectation": "new: deletes the document row through the owner scope so the cascade removes children and `stage_meta`",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable, stageId: string, ownerId: string): Promise<void>"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/admin/courses/[id]/route.ts",
+          "symbols": [
+            {
+              "name": "DELETE",
+              "kind": "function",
+              "expectation": "new: gated `requirePermission(headers, 'course.delete')` plus an explicit rank-4 check, resolves the owner from stage meta, deletes, guard wrapped in the nested Response-rethrow catch so the typed 403 survives both outer catch layers",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest, { params }: Params)"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "components/admin/courses-section.tsx",
+          "symbols": [
+            {
+              "name": "courses-section.tsx",
+              "kind": "file",
+              "expectation": "modified: table with owner, status, audience, publish date, unpublish and delete actions",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "client section for the course table"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 3,
+      "uuid": "e9a65063-a5ec-42fc-bf20-aeaca5b1938d",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "An admin sees every non-deleted course with owner, status, audience, and publish date; the unpublish and republish actions drive the certified 017 routes and work for any course; the delete action removes any course, cascades stage meta, and never resurrects through PUT because PUT is existence-gated; a creator without course.delete gets 403 on the admin delete route.",
+      "gates": [
+        {
+          "id": "g1",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/admin/admin-courses.test.ts && echo ADMIN_COURSES_OK",
+          "expect": "ADMIN_COURSES_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g2",
+          "type": "integration",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/admin/admin-courses.pg.test.ts && echo ADMIN_COURSES_PG_OK",
+          "expect": "ADMIN_COURSES_PG_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g3",
+          "type": "smoke",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "evidence": "pending"
+        }
+      ]
+    },
+    {
+      "id": "S5",
+      "title": "Classroom-media audience gate (owed item)",
+      "intent": "the audience gate on the media byte server, the cache-header change under the flag, and the flag-off parity proof",
+      "user_stories": [],
+      "blocked_by": [
+        "S2"
+      ],
+      "targets": [
+        {
+          "path": "lib/persistence/media-access.ts",
+          "symbols": [
+            {
+              "name": "decideMediaAccess",
+              "kind": "function",
+              "expectation": "new: resolves the viewer rank once, reads `stage_meta`, allows only published rows with `audience <= rank`, denies missing rows",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable, classroomId: string, ownerId: string): Promise<'allow' | 'deny'>"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/classroom-media/[classroomId]/[...path]/route.ts",
+          "symbols": [
+            {
+              "name": "GET",
+              "kind": "function",
+              "expectation": "modified: under `MINIMAL_MODE` decides access before the file open, denies with 404, and swaps the cache header off public immutable; flag-off keeps today's bytes and headers exactly",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  req: NextRequest,\n  { params }: { params: Promise<{ classroomId: string; path: string[] }> },\n)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  req: NextRequest,\n  { params }: { params: Promise<{ classroomId: string; path: string[] }> },\n)"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 4,
+      "uuid": "6896b370-07e3-4a54-bb8f-90796d39f2e4",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "Under the flag, published everyone-audience media serves to rank 0 and above, guest media to rank 1 and above, learner media to rank 2 and above, while drafts, wrong-audience courses, and media ids with no stage_meta row answer 404 with no bytes; the gated responses carry a cache header that no longer claims public immutability; flag-off response bodies, statuses, and headers stay byte-identical; range streaming keeps working; the flag-on gate never opens the file before the decision.",
+      "gates": [
+        {
+          "id": "g1",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/admin/media-gate.test.ts && echo MEDIA_GATE_OK",
+          "expect": "MEDIA_GATE_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g2",
+          "type": "integration",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/admin/media-gate.pg.test.ts && echo MEDIA_GATE_PG_OK",
+          "expect": "MEDIA_GATE_PG_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g3",
+          "type": "adversarial",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && MINIMAL_MODE=true pnpm test tests/admin/media-no-leak.pg.test.ts && echo MEDIA_NO_LEAK_OK",
+          "expect": "MEDIA_NO_LEAK_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g4",
+          "type": "smoke",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "evidence": "pending"
+        }
+      ]
+    },
+    {
+      "id": "S6",
+      "title": "Cold-boot owner transient probe and hardening (owed item)",
+      "intent": "the regression probe that reproduces the cold-boot owner transient and the hardening in the session resolution path",
+      "user_stories": [],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/auth/index.ts",
+          "symbols": [
+            {
+              "name": "getSession",
+              "kind": "function",
+              "expectation": "modified: on the first cold request, waits for provider and auth readiness before the session lookup, so a genuine session never falls back to the anon owner; the cold-boot probe drives both cold starts through the pinned reset seam",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(headers: Headers): Promise<Session | null>"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(headers: Headers): Promise<Session | null>"
+              },
+              "postcondition_quality": "VERIFIED"
+            },
+            {
+              "name": "resetAuth",
+              "kind": "function",
+              "expectation": "new: test-only reset that clears the module-scope `cachedAuth`, mirroring `resetServerPersistenceProvider`, so a probe can force the auth cold start deterministically",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(): Promise<void>"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "lib/server/agent-runtime/with-owner.ts",
+          "symbols": [
+            {
+              "name": "withRequestOwnerId",
+              "kind": "function",
+              "expectation": "modified: hardens the session-failure fallback, keeping the anon identity only for requests without a valid session cookie",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  req: Pick<Request, 'headers'>,\n  handler: OwnerHandler,\n): Promise<Response>"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  req: Pick<Request, 'headers'>,\n  handler: OwnerHandler,\n): Promise<Response>"
+              },
+              "postcondition_quality": "VERIFIED"
+            }
+          ]
+        },
+        {
+          "path": "tests/admin/cold-boot-owner.pg.test.ts",
+          "symbols": [
+            {
+              "name": "cold-boot-owner.pg.test.ts",
+              "kind": "suite",
+              "expectation": "new: resets the provider and the auth bootstrap, signs a real user, fires the first PUT, asserts the stage meta owner is `user:<id>`",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "describe('cold-boot owner transient probes')"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 4,
+      "uuid": "22ff17bf-413b-4cb7-862c-4a99b4d115a3",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "The probe reproduces the failure class, the hardening keeps a real signed-in session from resolving to anon on the first PUT after a cold boot, and the probe passes across repeated cold boots; a request without a session cookie still resolves the anon identity; a miswired reset cannot pass the gate vacuously because the probe asserts the exact owner bytes.",
+      "gates": [
+        {
+          "id": "g1",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/admin/cold-boot-session.test.ts && echo COLD_BOOT_OK",
+          "expect": "COLD_BOOT_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g2",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/admin/cold-boot-anon.test.ts && echo COLD_BOOT_ANON_OK",
+          "expect": "COLD_BOOT_ANON_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g3",
+          "type": "adversarial",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/admin/cold-boot-owner.pg.test.ts && echo COLD_BOOT_PG_OK",
+          "expect": "COLD_BOOT_PG_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g4",
+          "type": "smoke",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "evidence": "pending"
+        }
+      ]
+    }
+  ],
+  "audit": [
+    {
+      "seq": 1,
+      "id": "5c4acd8c-c910-4716-9859-917bc8bf0630",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "init",
+      "transition": "spec-approved:docs/specs/018-admin-suite.md",
+      "slice": null,
+      "hash": "88b143164b9c3101c074569a0a1d306ccf3810d70e3985128155edca0a73a887"
+    },
+    {
+      "seq": 2,
+      "id": "79c11a67-6a06-4b61-beb1-41f75ae8b92f",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect",
+      "slice": "S1",
+      "hash": "85bf096b86240de3c92a27e31a604f4179eca3b15f2342058e4890d37778321e",
+      "expectationHash": "9409e18411dc25fd2dd726880ca9c8e989e3c7d398cfa404c9f609ad6d20553f"
+    },
+    {
+      "seq": 3,
+      "id": "067c033b-be08-40ad-b477-91464493992c",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:app/admin/settings/page.tsx::AdminSettingsPage",
+      "slice": "S1",
+      "hash": "0537b7520e4a3494aa8ae7b9a65e4159a831a2b0ee3e823544d26813308fdfa3",
+      "expectationHash": "116c12f5a203f6020f708d90bb7fcb3a30daa5d58c7e0b393504b815215e90a9"
+    },
+    {
+      "seq": 4,
+      "id": "ee51d913-a5bf-4fb0-af8f-7ac21200a46f",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:components/account-zone.tsx::AccountZone",
+      "slice": "S1",
+      "hash": "ec104f64828c33896a7a511228e41327c7d57b095b3d7294368a540e9a7b67e1",
+      "expectationHash": "c58b44ac3dcf15ef6a40a29409d0b982d51a7d6589161e7efdc8dee750993844"
+    },
+    {
+      "seq": 5,
+      "id": "3b302903-20d9-411c-af35-0ee916babfa0",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:components/header-capsule.tsx::HeaderCapsule",
+      "slice": "S1",
+      "hash": "e3d5730e73cbe946baf9ac69a1145786ea49914a11e859c717f39bf451273795",
+      "expectationHash": "76ffcfbc45537a0bd89a06f422a3fb95d9cfd8c131697597fed2ae26d6a9e835"
+    },
+    {
+      "seq": 6,
+      "id": "941a0b34-02de-496f-888c-66561eeea952",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:components/admin/users-section.tsx::users-section.tsx",
+      "slice": "S1",
+      "hash": "04e271e90153b4acf3c41e0071e3284ee1874a4778047d815eab74048b35a3fc",
+      "expectationHash": "cb382b61cd6ffbdbeea12acba8489b051e0eaf2809a6bbfd8385132bed6a0a51"
+    },
+    {
+      "seq": 7,
+      "id": "f52e0d0d-cbb3-49a4-9c02-379cdb19b497",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:components/admin/invites-section.tsx::invites-section.tsx",
+      "slice": "S1",
+      "hash": "5dbcbd7c2fcc9df3144a9a2d8a8023137c9a7907ec0df8f0d1bc8502a2255917",
+      "expectationHash": "14b889b7c10080f132ac932f5fee85e3df10f0bb94a66961a0e1345324d59faa"
+    },
+    {
+      "seq": 8,
+      "id": "94139dce-48ca-4c37-b867-fbafe03b839a",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:components/admin/courses-section.tsx::courses-section.tsx",
+      "slice": "S1",
+      "hash": "8382b2f691a63d3217e4a1d60fa1ca8bc36823c82945f06873a2488ae7f4c8de",
+      "expectationHash": "8e9f225ae62d4b301013fb9b716adad4625e6786567bbae139ccf5cb1284f263"
+    },
+    {
+      "seq": 9,
+      "id": "26d7af5c-638c-4768-844c-0ced4dc604ab",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:tests/minimal-mode/minimal-layout.test.ts::minimal-layout.test.ts",
+      "slice": "S1",
+      "hash": "9b4ec0ccd9f75ea32eafeb08e5b82030c7034d3f736d340effb3f7fcf28a9066",
+      "expectationHash": "56b596d7db162ebb5dee5d1aa39992be1bb180040196fad3e302cb782983eed7"
+    },
+    {
+      "seq": 10,
+      "id": "9b7c8e86-70fb-491d-9b0c-70bc44d78d91",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/i18n/locales/en-US.json::en-US.json",
+      "slice": "S1",
+      "hash": "aa09cffd55a8325205f9c614314a6032c2251a469ba8ed0a55bd6f06173f1e14",
+      "expectationHash": "0a20dc0aeb9daed18c7f78f89712f152cb7062985f561a12281113c327b0310a"
+    },
+    {
+      "seq": 11,
+      "id": "f36c0edb-50ee-440a-a463-ed24a39e338a",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect",
+      "slice": "S2",
+      "hash": "7c161687589658604fdaccc934a99fcfb8fe0aabac6c67395055e3e5a060823f",
+      "expectationHash": "abaa93ec5502c7df70f0a33b9724510303ddc1c3faf15da5f22be25bdcfb0668"
+    },
+    {
+      "seq": 12,
+      "id": "2b00a565-062a-44b6-8b89-03dfc48e1633",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/auth/schema.ts::ensureAuthSchema",
+      "slice": "S2",
+      "hash": "eed865378b5236bd8165ea22b64b1dde5018ddb37b9e7635d438306669d1af38",
+      "expectationHash": "ff31c79db0fb53de4224e69360f6bcf5414543efeedfa5ae6dd9f76fd341fb33"
+    },
+    {
+      "seq": 13,
+      "id": "81a54ce1-f5fd-4c61-be82-f01f65e9b1e2",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/persistence/admin-users.ts::listUsers",
+      "slice": "S2",
+      "hash": "17e5d0ef1d46834af289234e423e49efebc5681427db8ed2c003dcfb6d381e03",
+      "expectationHash": "de54cfa7a849bb8365e6904f720947592514ebb59b4700b0f6a9c24cbfa5762d"
+    },
+    {
+      "seq": 14,
+      "id": "49421982-abe2-471f-a475-5969fbdd4ac3",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/persistence/admin-users.ts::setUserRole",
+      "slice": "S2",
+      "hash": "758a85d1cce02ec8633ee3aff81030e4bebc0052939b1bed8612a785330775eb",
+      "expectationHash": "6415b069fc9c92942d1093282905763c08f399b8e2902d667e1bc1bc0b54743d"
+    },
+    {
+      "seq": 15,
+      "id": "bd067e08-6a50-4180-97cb-315eba4d68e5",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/persistence/admin-users.ts::setUserBanned",
+      "slice": "S2",
+      "hash": "905215e9c5a94357ab1a819147145b04f843a46b9bf059bf6f90c7c3514df4d3",
+      "expectationHash": "459c7001e15a723671b88c5b59f1d2f5b399f9dfec6629c3fadd573930700023"
+    },
+    {
+      "seq": 16,
+      "id": "a9891eaf-7994-4274-b1f1-fde699512fc2",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/auth/permissions-server.ts::requirePermission",
+      "slice": "S2",
+      "hash": "22c7eea2e7dff7d66f9ccf9672a17b4f2ab08fe3bfb4d3c63905b810f1a3a7c1",
+      "expectationHash": "16c90d2a6f71beea65b495379123e9265536b0a9cff3ca2c3fab57229171b04c"
+    },
+    {
+      "seq": 17,
+      "id": "6519413a-39d8-4186-b10e-d5e07667f418",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/persistence/audience.ts::resolveViewerRank",
+      "slice": "S2",
+      "hash": "3af58e7d43fd218f5e2105e79c88e441eba82c19081e80db3bb475006dcb7b10",
+      "expectationHash": "095ac9a817cffa9e7b4a7c2f2a4a8255c327e2fbd8237a3b29efc201cba1378c"
+    },
+    {
+      "seq": 18,
+      "id": "0d384a2e-3ac5-4f47-ae72-26788962c71a",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/admin/users/route.ts::GET",
+      "slice": "S2",
+      "hash": "07ac037fbcb20116e2d9ada56353a7a0f8d662cf786a97463c5f812319286280",
+      "expectationHash": "64142ccbeb7734ed3b6be9db1a30a4e051795d424b91b44b7aa533710559fbeb"
+    },
+    {
+      "seq": 19,
+      "id": "6679df65-bb72-4707-a120-f38d7911fddd",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/admin/users/route.ts::PATCH",
+      "slice": "S2",
+      "hash": "40e84aae9ed0a1fb6ae05b3a6b8eb36a0685b9047291e9aebcc51a4cc0c67b93",
+      "expectationHash": "4ca41866ce1b67f923b0887c696340c2b5809d6cc8a8e512fd426c0e267ad459"
+    },
+    {
+      "seq": 20,
+      "id": "d1759ea7-9ded-4579-a646-7ec173240ec3",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:components/admin/users-section.tsx::users-section.tsx",
+      "slice": "S2",
+      "hash": "422faed329858ed1adf699ee38b4c6e694dff590ccdd94f81abc74eebaf4cf67",
+      "expectationHash": "fa3f5d27b28c0718860fd2380c9b5d01507af3a5593665a335a899704da86710"
+    },
+    {
+      "seq": 21,
+      "id": "1acf0aa8-2b45-4802-a849-00d9aa88bbc1",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect",
+      "slice": "S3",
+      "hash": "4e0db9834d0a4c12695ac9f6992af0039217df8058e9ee67aaab7a19a0970fe8",
+      "expectationHash": "c75c8ad8f593ff36338f8602f6278da67fe76490647f76d8a0aa2993676bcc4a"
+    },
+    {
+      "seq": 22,
+      "id": "7e075832-a336-4c56-8320-e6e0dd671e20",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:lib/auth/schema.ts::ensureAuthSchema",
+      "slice": "S3",
+      "hash": "e3938dcae4dd9cdd94085c257c8e336ba04812d11a6326382ba10265df31abb9",
+      "expectationHash": "812c19b7dc117f65ff769197b1c3ce4f2e69e017aed93c4e6cfe6930dec85120"
+    },
+    {
+      "seq": 23,
+      "id": "f444e8c8-dcbf-4ba4-814b-eeb4c7357100",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:lib/auth/invites.ts::createInvite",
+      "slice": "S3",
+      "hash": "7341c097c64f8f35a8e40f455b017aa6bcf5b00a01c6c6b829ff9ec3244924b6",
+      "expectationHash": "a79fdfaf93b942abdcb40109105f57cb9913fbfff11af2f8e50970ad74f85823"
+    },
+    {
+      "seq": 24,
+      "id": "29e1057e-bd86-42d8-9ab9-9a9cfe747af1",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:lib/auth/invites.ts::consumeInvite",
+      "slice": "S3",
+      "hash": "cb8cdb4b882f4d75f595acfea75155c7f623acc14dc0995f72dd53ffbcfda3e7",
+      "expectationHash": "0c8e8e0b5de67052ac6fe474344ac9df5a0b158047715127d160bc35972570af"
+    },
+    {
+      "seq": 25,
+      "id": "846f93fd-1a65-4117-ac4d-35942acfec97",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:lib/auth/invites.ts::listPendingInvites",
+      "slice": "S3",
+      "hash": "41a994cbd3d3421d59ad852970950f30b18dc5e4916771ed3fc95abb97f7cc3a",
+      "expectationHash": "d332e7d90dde58c5dc718ce729da078162b8de852ededa32985c0adea0d1f98b"
+    },
+    {
+      "seq": 26,
+      "id": "dddf8ba2-e57d-4c54-b588-89955bfe5ef3",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:lib/auth/invites.ts::revokeInvite",
+      "slice": "S3",
+      "hash": "52ece8ceb02317d773499a1c55e6e8b94698a136896c540fc9992d67147c7982",
+      "expectationHash": "f3b8e8ed0d0daa76d4542c9ee131bd8057e89b9dbd4e908e02c11c7167c244c0"
+    },
+    {
+      "seq": 27,
+      "id": "44b93d69-0829-4f74-a21d-aa065d2d5e48",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:lib/auth/mailer.ts::Mailer",
+      "slice": "S3",
+      "hash": "662cc60ea765f8d0798ec630107cda2c1a15136f5592b49893932e7c81b979d9",
+      "expectationHash": "139a47c457f5dd8484e23c7951231e7252ca2d4c773da9071c8c7ba49e5bbbf2"
+    },
+    {
+      "seq": 28,
+      "id": "05bf9c1b-9c33-40b4-81e9-e53fb3941556",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:app/api/admin/invites/route.ts::POST",
+      "slice": "S3",
+      "hash": "77dfc9ca0a6f32048770373087a823406cfc2328c405b6616e14c605eb78ea13",
+      "expectationHash": "a17352bebf7cad6797f2654b6528d975db156430e6776f69a68224e89b62fc9e"
+    },
+    {
+      "seq": 29,
+      "id": "94f1683d-7afb-403a-aed5-443b9eecdbb6",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:app/api/admin/invites/route.ts::GET",
+      "slice": "S3",
+      "hash": "ac71936ffe67bbfd3747e84e6432ff561769987d4818132a5874036b2ae80e85",
+      "expectationHash": "8e8b4952d6b896e8941d51466fc1360ea2fb82ad0c57c387bf5b588ddffb6a38"
+    },
+    {
+      "seq": 30,
+      "id": "624b36a4-193c-4a14-af88-e9a6bef20706",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:app/api/admin/invites/[id]/route.ts::DELETE",
+      "slice": "S3",
+      "hash": "3576759248d290d7f914f11983c387010ea8a7ea8227444078f4b172f6258d75",
+      "expectationHash": "1804ea9c0a170a43730f8b2bf799b8ad1880043a5510c7ee7e0904d82c183aae"
+    },
+    {
+      "seq": 31,
+      "id": "91d763e0-1058-4322-961d-b144810b86db",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:app/invite/accept/page.tsx::Page",
+      "slice": "S3",
+      "hash": "1dfd53ecd2e4ed925666409653889b8f13b535785190ffa1481ae378232ded3e",
+      "expectationHash": "35dec91b114c92ae8aa88a428ed53c9fe30c21bbc73a908cb302c3b611a900da"
+    },
+    {
+      "seq": 32,
+      "id": "ce59aa86-0655-4fe8-8f53-536dae57f355",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:lib/auth/server.ts::createAuthServer",
+      "slice": "S3",
+      "hash": "5e3e51f53fec4d874d8b5961ab46503fd6718cab5005edee517c072bf3bd1511",
+      "expectationHash": "9192151f70978ff5502af650381207935f155a17ee096db5e532e66de2e3ebe3"
+    },
+    {
+      "seq": 33,
+      "id": "9b680b0d-bb08-444c-b601-f31ca204e63a",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:lib/i18n/locales/en-US.json::en-US.json",
+      "slice": "S3",
+      "hash": "d2b4605fa0f5e0058a00905e33b5003ca6faca9a77b56675e6dc8ebbf7edb336",
+      "expectationHash": "13a7721c8ab50bcb3380bc93b9e825bc062d944d54d2e61c1804523ca418a0b7"
+    },
+    {
+      "seq": 34,
+      "id": "d5168425-48dd-4a94-9c35-7d0357e715b7",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect",
+      "slice": "S4",
+      "hash": "b983c4c67ace128a689570ce06f2e2a9909b091cb195e7cc97befe087cf28950",
+      "expectationHash": "eb0051fb2ffd86b82059d2d284c3d422e8cde7ccea4afc10e887576367c52fd7"
+    },
+    {
+      "seq": 35,
+      "id": "911abb4b-0767-4951-a30f-b13c2a73a834",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect-symbol:lib/persistence/admin-courses.ts::listAllCoursesForAdmin",
+      "slice": "S4",
+      "hash": "bb57ca0235daac427989c3a64d2c3d96defc4d9966cb67775c6fbd989f2764f0",
+      "expectationHash": "86bc8cfab5e82ec61d2234737d858158853b9cfb0944c346c58ff666fd907de8"
+    },
+    {
+      "seq": 36,
+      "id": "e0186c74-a0f5-4847-b6cc-f1ed53edee67",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect-symbol:lib/persistence/admin-courses.ts::deleteCourseForAdmin",
+      "slice": "S4",
+      "hash": "b4799bf07c7a9bd714609a00c46a4c03acb67468a18f0b832ccfafb5e8b06c5e",
+      "expectationHash": "cbde35e01efb9b63f59862414174ed8e74da2aea46111f473db16f4f2cdad491"
+    },
+    {
+      "seq": 37,
+      "id": "7a7a5b0e-f250-4062-ab50-97adf8b74c9b",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect-symbol:app/api/admin/courses/[id]/route.ts::DELETE",
+      "slice": "S4",
+      "hash": "12bae546987c0315bc0403489c679d99b3c75859ecf506495e8422dc0d80c5cc",
+      "expectationHash": "579f802a100561ce824bacc63401075a0591996ff3a380fd4bd8719a007ba965"
+    },
+    {
+      "seq": 38,
+      "id": "323603d6-f55a-4c8f-8c6d-5aeda473cfa8",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect-symbol:components/admin/courses-section.tsx::courses-section.tsx",
+      "slice": "S4",
+      "hash": "2ff84e7b19cd7d7c418f3558d09592ed734c1d81057c4c21e315414a1a3caeed",
+      "expectationHash": "f760f57596f3aeca9bb5b34ed382dd3bb20d5906b89afc0f308ffa6414f018d6"
+    },
+    {
+      "seq": 39,
+      "id": "b4734aac-0434-4e06-a5ac-a1ac17dd9390",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S5:expect",
+      "slice": "S5",
+      "hash": "d8d1464c0bc1f3b3892138bbcb9765815a1e28b06ce88203fa527cfabef427b8",
+      "expectationHash": "e89cc20199cad57f00a1f4489dcdf2e7d1d75a4d336f05ac46157aa7848ba382"
+    },
+    {
+      "seq": 40,
+      "id": "2164f4e4-65c7-477b-a21a-afac027ffbbd",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S5:expect-symbol:lib/persistence/media-access.ts::decideMediaAccess",
+      "slice": "S5",
+      "hash": "07b62823bea4ae6ebffd8b6c36866dbb4bb3b1dd01ace2e987fe413e4ba5b634",
+      "expectationHash": "880d0248e6ef2ca3d15102e0ffc38eb29eb9b4c0fa8e96ebde1e6ffbfaa880a6"
+    },
+    {
+      "seq": 41,
+      "id": "96c659dd-1abf-4353-8935-d9824aa2000e",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S5:expect-symbol:app/api/classroom-media/[classroomId]/[...path]/route.ts::GET",
+      "slice": "S5",
+      "hash": "dc5232a89e1ab735bfb06aeda91c1a0eb1f4bf6ce01cd5090a7120bd1e065594",
+      "expectationHash": "3df7dccceeaa48bdcfa577c5bb3198a40c4dfb42bbf6b5c2a60565e4bbdfcc56"
+    },
+    {
+      "seq": 42,
+      "id": "e9c6f000-5dfc-4284-956e-b3c087d9219a",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S6:expect",
+      "slice": "S6",
+      "hash": "3ca85d689aae3a82b66460747cb20f337c0f5f8bc104dfa2d888611080d79a97",
+      "expectationHash": "a61d71c9370d5c2042797400aa6e4d0c88a0d6e1df3001c812cc5fff73189720"
+    },
+    {
+      "seq": 43,
+      "id": "a46e39f7-48e4-47d8-8b9d-41528064e66b",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S6:expect-symbol:lib/auth/index.ts::getSession",
+      "slice": "S6",
+      "hash": "6a6e1ad15db5b772dd4da07c01ae7005ebc6b00366ad2004e57144b50268647d",
+      "expectationHash": "4b1225726a415f202f60e9da8d908d75f3584ec4267fab6d49b14b1f64e515de"
+    },
+    {
+      "seq": 44,
+      "id": "1820a157-2c54-45f5-ae56-ba0f95ab3522",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S6:expect-symbol:lib/auth/index.ts::resetAuth",
+      "slice": "S6",
+      "hash": "7b3cb345ae5a6f9d7832e4e144beb45b1575a5d7b21cd9e6c015138dbebcf512",
+      "expectationHash": "1585ac749d79404ef5bd8bbec2e90877fd0b53ab17ea4ffa16ac8c383f67bfd5"
+    },
+    {
+      "seq": 45,
+      "id": "38735f1f-f64a-42e7-9851-44ce500c7329",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S6:expect-symbol:lib/server/agent-runtime/with-owner.ts::withRequestOwnerId",
+      "slice": "S6",
+      "hash": "2940f760cf62f560bb67e0c6f82775d2fc4c6602d6dfeac51b4605b889d668d8",
+      "expectationHash": "a5d96132a76f8984b2a97bd6e6ca9f45c4a5c90ab62bc6641456fafe5090686d"
+    },
+    {
+      "seq": 46,
+      "id": "b5d9211f-25c8-4c3d-bacd-d4bf11a4ba0d",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S6:expect-symbol:tests/admin/cold-boot-owner.pg.test.ts::cold-boot-owner.pg.test.ts",
+      "slice": "S6",
+      "hash": "3f3400a5afcdb9b75a1738dc6fe93d5b268d8b26e0213a717704a6b4da729746",
+      "expectationHash": "8ca5e56911ce047559af5a1259eee5317133266d7bb5c4258f6e49a7d215bf2b"
+    },
+    {
+      "seq": 47,
+      "id": "98be8075-2d31-463e-8da2-9836c9d7ace5",
+      "at": "2026-09-06T10:04:38.840Z",
+      "actor": "orchestrator",
+      "command": "init_batch",
+      "transition": "batch-init:S1,S2,S3,S4,S5,S6",
+      "slice": null,
+      "hash": "7d48094bb17eba09c452cc1dcc24efb82a76feb9a5f7ef8d89cf2363a195f799"
+    },
+    {
+      "seq": 48,
+      "id": "b76ad1e8-77a9-4111-8e06-8828aa8f0fdb",
+      "at": "2026-09-06T10:04:52.851Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S1:capture",
+      "slice": "S1",
+      "hash": "cf84056c2d83055a4785e6de6650e40efb6e1766431794b219038c0741e8f7e0",
+      "fileHash": "bd7509ac4bd89405a73f8e09578ef7b321a3dbd18edf3b2855fc560bad6583be"
+    },
+    {
+      "seq": 49,
+      "id": "87f89b6d-d66c-4375-890f-993d64a78719",
+      "at": "2026-09-06T10:04:52.924Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S2:capture",
+      "slice": "S2",
+      "hash": "a3e3e9e51686b4931f5dd12da6b1df9e6721b25074882282aa504a62d90c1ae9",
+      "fileHash": "33e3893e35d7b0c5e35233941b53ac5c2a4e8d796bd4ea50730c11d387b6368e"
+    },
+    {
+      "seq": 50,
+      "id": "9dd7897b-e71f-4cbb-a9cc-b9df8ac1b711",
+      "at": "2026-09-06T10:04:52.984Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S3:capture",
+      "slice": "S3",
+      "hash": "0d95aa7dd056c95b2c13308354d1bfb60c092e23fb67985d9468354b0e2509f1",
+      "fileHash": "df238a26d468c48a06c5f29a099db88d7ee4e152c6c0cde59763bf4bb8099a2d"
+    },
+    {
+      "seq": 51,
+      "id": "2363186e-ba23-4692-a771-248a1974be9c",
+      "at": "2026-09-06T10:04:53.036Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S4:capture",
+      "slice": "S4",
+      "hash": "369925d214cdf99d84797a2f2700517e15795c5a3200a22f7cdbc96997cc9ee1",
+      "fileHash": "97812783782853a6ce872d946a6d407cf74aecbcfc61a6ecc29d397430d391cc"
+    },
+    {
+      "seq": 52,
+      "id": "8d0ed1a2-e300-4f2f-99ae-d2c26f11a29a",
+      "at": "2026-09-06T10:04:53.088Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S5:capture",
+      "slice": "S5",
+      "hash": "b3824d73ef735531397f18c613543b4041d48fae42d4614de013dd20e7236fe1",
+      "fileHash": "9312f3cfb532ffc1beba1e4e228621ca6a786a9c809a67245790882dfbca5940"
+    },
+    {
+      "seq": 53,
+      "id": "9cf1d80d-5030-4b94-8cca-082f9809f6a4",
+      "at": "2026-09-06T10:04:53.152Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S6:capture",
+      "slice": "S6",
+      "hash": "468afc3b955843f911e380d9265966199b4b3600662d09a9e06d19b1a4f84e94",
+      "fileHash": "5ab55a176f481ce9d6a5ad56313ff10d3b32ba67812b0b9240ff78700cf57d3a"
+    },
+    {
+      "seq": 54,
+      "id": "e30bffd1-15f5-42df-b6fe-eed33ef0c3b9",
+      "at": "2026-09-06T10:05:58.415Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:app/admin/settings/page.tsx::AdminSettingsPage",
+      "slice": "S1",
+      "hash": "3668c8be56dea2b5c9c8dfb326e4369b8b750b5a75ae541e805daedaf0d7148b",
+      "fileHash": "43f29585da753ac20a287d641502e4cd76dd404f8c3ebd7aae35bb998f56e1e8"
+    },
+    {
+      "seq": 55,
+      "id": "43b3c76d-7994-45ef-993d-667c6eb3bea3",
+      "at": "2026-09-06T10:05:58.472Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:components/account-zone.tsx::AccountZone",
+      "slice": "S1",
+      "hash": "2ce0551671a80440497b3442c1d75e0e7d79921f3c1df6fb7036000088d89f15",
+      "fileHash": "71ecff9e19c9baf15dbea77654d627487ad5e541cca9038b1f9ea1d0b730aaee"
+    },
+    {
+      "seq": 56,
+      "id": "4acdb42f-cd8f-4b35-a6f5-6fc5ed8d7aa1",
+      "at": "2026-09-06T10:05:58.524Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:components/header-capsule.tsx::HeaderCapsule",
+      "slice": "S1",
+      "hash": "bcdb6a03ecc9a0e97976380aaf3ceaf9afea4ba7a2608187874c6c9909081c99",
+      "fileHash": "7a553d0c43c2fbad89e84997e4bb5279a9001a0ecae4e97bab0ca39eeb9e285f"
+    },
+    {
+      "seq": 57,
+      "id": "158a5206-135d-4efd-8f87-3eec67cbd587",
+      "at": "2026-09-06T10:05:58.571Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:components/admin/users-section.tsx::users-section.tsx",
+      "slice": "S1",
+      "hash": "08c50ff823e44af79afc06443c8a53b9ae3b93190aadb931e935b81dea81f0a3",
+      "fileHash": "85e516afc72b8bf4c71e391ded28ac4d03a6fa6f9b87ba13572d0fbf72d8454a"
+    },
+    {
+      "seq": 58,
+      "id": "240f1724-09a6-4952-9161-bcc486cc30f2",
+      "at": "2026-09-06T10:05:58.623Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:components/admin/invites-section.tsx::invites-section.tsx",
+      "slice": "S1",
+      "hash": "8d187fe9744ee46282a50f972bff340faa74bf8fb74c21037144bc0b22619939",
+      "fileHash": "24441adfcd457d1cc304425330b49446077d15c0d892516fad318d84f71e73d2"
+    },
+    {
+      "seq": 59,
+      "id": "562a026d-2567-46c7-afb2-c88f4073c01e",
+      "at": "2026-09-06T10:05:58.671Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:components/admin/courses-section.tsx::courses-section.tsx",
+      "slice": "S1",
+      "hash": "fb1e07b4c46f5fb9a7dc849a26ccaa76021b075bb34a1d2ea8f89fd2d869334d",
+      "fileHash": "40442a559cd232d49f8a823aa150cae55c4dadfd1f1807058466fc36bb352d62"
+    },
+    {
+      "seq": 60,
+      "id": "b6bb1007-c393-4dd5-9fb6-53a4d0d814b4",
+      "at": "2026-09-06T10:05:58.725Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:tests/minimal-mode/minimal-layout.test.ts::minimal-layout.test.ts",
+      "slice": "S1",
+      "hash": "384ecdffba6d38fa730040ee20e9d2f8e06acd018520ec643eafa3507fd992a9",
+      "fileHash": "1b660bf4853569e4a092038bbe077e0a37b8ad0b10ffe3285fadc3eedef2a2ff"
+    },
+    {
+      "seq": 61,
+      "id": "7954c352-d472-49c7-8fe9-ec26bdc944d3",
+      "at": "2026-09-06T10:05:58.774Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/i18n/locales/en-US.json::en-US.json",
+      "slice": "S1",
+      "hash": "565df614d44ca7c218e7d801f6adccb8810a1c5c74629cbecdb63832076fda35",
+      "fileHash": "3d70778cb718a0c7deeba17653faf3379eed1231ac7f3f742f15015801e63e36"
+    },
+    {
+      "seq": 62,
+      "id": "dc7739f5-f872-46d8-bc00-4ff4713a3bf3",
+      "at": "2026-09-06T10:05:58.827Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/auth/schema.ts::ensureAuthSchema",
+      "slice": "S2",
+      "hash": "45c0a66f7b6dc6f75c1b07b4de4fdd086ae616f25ba8c65a75ab70d685cc1de7",
+      "fileHash": "35dcfcb4f12a23680be2f06b81d8f5062dbad5cf783a186694c6b28cfe0dfc26"
+    },
+    {
+      "seq": 63,
+      "id": "fac88d5d-0bc8-455f-9d9e-87dd6c372b20",
+      "at": "2026-09-06T10:05:58.877Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/persistence/admin-users.ts::listUsers",
+      "slice": "S2",
+      "hash": "02556d10b0de4ccf73e55e852af5f972e969f7eb08531957f84ae53e7eb895c2",
+      "fileHash": "6cbb0845d702a02680feef58a9666095c4a8838cf3fecfbf729f0444281330b6"
+    },
+    {
+      "seq": 64,
+      "id": "5483a7b2-475a-4607-a42a-e8b4df44a60f",
+      "at": "2026-09-06T10:05:58.928Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/persistence/admin-users.ts::setUserRole",
+      "slice": "S2",
+      "hash": "2c8546d997844da4366f04c286116e2bef6049d2b0db80aaf6223ee8d13fcb5a",
+      "fileHash": "0aa62678812b22b56a4c60ac504622390c4aea9a5800fedaa8a51a6c56acbc16"
+    },
+    {
+      "seq": 65,
+      "id": "463217c0-90d1-473e-b709-381a6b606f70",
+      "at": "2026-09-06T10:05:58.976Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/persistence/admin-users.ts::setUserBanned",
+      "slice": "S2",
+      "hash": "a335bb9bf2f20761e7b7f1263c40e400509cfed602b8ce789a298532516545f3",
+      "fileHash": "1715142a14f35230350544b7860e4d55099eb3467f6cc1d6bcc6536bc9ee8014"
+    },
+    {
+      "seq": 66,
+      "id": "e40f1834-5fd8-40c2-9bcc-01f19c830b98",
+      "at": "2026-09-06T10:05:59.028Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/auth/permissions-server.ts::requirePermission",
+      "slice": "S2",
+      "hash": "38d1b52478b75298dd281a861aea31719479dbc5da115c287c6ba2dba2759346",
+      "fileHash": "c004b61b5220992de9a317494e05d3f2857344c347b03b1a73ea911bddad044f"
+    },
+    {
+      "seq": 67,
+      "id": "6c2bfe68-a681-4a20-9132-b4db83ce75f0",
+      "at": "2026-09-06T10:05:59.074Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/persistence/audience.ts::resolveViewerRank",
+      "slice": "S2",
+      "hash": "0dd7bd124eff0acd7ef47647ecd78ad4552d576b24fdbf8854c54483b5564292",
+      "fileHash": "71b060535ed0d5409962644cc587343602328934deb6ef52e45dd4d246b9b48e"
+    },
+    {
+      "seq": 68,
+      "id": "90241b00-62a5-40f0-a45b-a6ecbc1cb71c",
+      "at": "2026-09-06T10:05:59.129Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/admin/users/route.ts::GET",
+      "slice": "S2",
+      "hash": "2fd5cbc657d9b189e17875799e103db7e5be8d1d211a46d9bbef0de90aad65f7",
+      "fileHash": "ecccc8c73bfe55c21953d9c040dbd383fdc5dd8d08f47f5f52cbe2aada5b8065"
+    },
+    {
+      "seq": 69,
+      "id": "17a5e1a9-22eb-43f6-bc8d-41c0f24932c5",
+      "at": "2026-09-06T10:05:59.176Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/admin/users/route.ts::PATCH",
+      "slice": "S2",
+      "hash": "596ab66765398729ff46fd57e9ac2796677ebfce0244295d9edbfabfd95ee81f",
+      "fileHash": "ee88ee5ce8ceccdec84aa5ba1ff99976e761cbeaaa6f2d1a9e4f6ad3777673b2"
+    },
+    {
+      "seq": 70,
+      "id": "17597e2e-1eff-469a-89d4-8938dcecaf49",
+      "at": "2026-09-06T10:05:59.230Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:components/admin/users-section.tsx::users-section.tsx",
+      "slice": "S2",
+      "hash": "2794f8cefb2b5a2468fb21ec6e87ded5d1ac2f435a0cfa078661ecd63ac0275b",
+      "fileHash": "afc722006245be934a177f67f0dbcaf2e52f6557987df89d272a639c7cd43575"
+    },
+    {
+      "seq": 71,
+      "id": "f876ea45-9497-46e2-a54b-3273be7a1bd1",
+      "at": "2026-09-06T10:05:59.278Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:lib/auth/schema.ts::ensureAuthSchema",
+      "slice": "S3",
+      "hash": "913cce92366be1643c91e84b79b6590ec137c6f509d1b5bf4a41d4717a268468",
+      "fileHash": "5cd2db24dde0c30fc5037dea055eb5254aae10abc8dc6bd301d9cd727e770b58"
+    },
+    {
+      "seq": 72,
+      "id": "0b486ea1-0a3d-405c-b987-2e6caa503a3c",
+      "at": "2026-09-06T10:05:59.329Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:lib/auth/invites.ts::createInvite",
+      "slice": "S3",
+      "hash": "1aa52ca044ab0727cd6a84b58182293d023349871ef2747ef1c82d76158ed6c0",
+      "fileHash": "3a384dcebd15c25ffa7c8b1d20daa96f56ae65da349a61f93a04f0f2b7dd8760"
+    },
+    {
+      "seq": 73,
+      "id": "e8ea2528-0c00-4679-95ac-6ab6de42f899",
+      "at": "2026-09-06T10:05:59.378Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:lib/auth/invites.ts::consumeInvite",
+      "slice": "S3",
+      "hash": "1fba7135f59ca30435189e1cc824aa047d787d597ec48e234a14d5ecf908012c",
+      "fileHash": "cb225a6abfe035f11026f6b84aeeda800cca689cb8d4fc8dc7bb954b04abd694"
+    },
+    {
+      "seq": 74,
+      "id": "757bd6d3-5019-4487-9e87-50192d870305",
+      "at": "2026-09-06T10:05:59.433Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:lib/auth/invites.ts::listPendingInvites",
+      "slice": "S3",
+      "hash": "22892d655e9a28dcc90622a8ba3d8218d7b9810538b45b52ddfb0a2b44eecf6b",
+      "fileHash": "792a33ce6b9c1df28f2c8658b651a25bbf430a8ad7973713a1ec53b73b22d928"
+    },
+    {
+      "seq": 75,
+      "id": "b06e658a-b2f4-4e30-9387-3e166200cedd",
+      "at": "2026-09-06T10:05:59.480Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:lib/auth/invites.ts::revokeInvite",
+      "slice": "S3",
+      "hash": "4172b33c51a7b428edd0aa720222147301c3d65125fd0d645b67a477f78df78d",
+      "fileHash": "9e884ac4de90117e3d43cb0ab2fc19bd8fde78e9c3ca88f112c47db81f41be16"
+    },
+    {
+      "seq": 76,
+      "id": "6ee3275e-310b-458e-a9da-7df7699c5a9b",
+      "at": "2026-09-06T10:05:59.534Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:lib/auth/mailer.ts::Mailer",
+      "slice": "S3",
+      "hash": "91bc03a779842f904184393a62eef3403070e4006ac0ec0caf1890ae41154373",
+      "fileHash": "603f2984e57c8b21190bf983e808750966dc06f3e98777e3f1e58d14364658dc"
+    },
+    {
+      "seq": 77,
+      "id": "66fc0674-34ca-4943-a1c1-fdf9f2437aac",
+      "at": "2026-09-06T10:05:59.582Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:app/api/admin/invites/route.ts::POST",
+      "slice": "S3",
+      "hash": "742fd3fe79f630d60c9cbdf0ffaa2db691b1d40fa831ba2afec1da2519014053",
+      "fileHash": "ed6e5be6f62126b51b73a8bce8e572b46f3d8e84b1713d146fd5e1ef7dae6c87"
+    },
+    {
+      "seq": 78,
+      "id": "6a1122b6-f5b1-4237-88b1-acd8c86d09a4",
+      "at": "2026-09-06T10:05:59.633Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:app/api/admin/invites/route.ts::GET",
+      "slice": "S3",
+      "hash": "53bb64734286f2288c227d440337827d1e91717f6e40567b8baf0a5c48b2adec",
+      "fileHash": "1064f89f4d05effdfeac8b1f69f5ec6f155bc937978cb241afae8c3e25f95fcb"
+    },
+    {
+      "seq": 79,
+      "id": "2d3a0bf8-ccb8-461a-906d-9003ec83131d",
+      "at": "2026-09-06T10:05:59.684Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:app/api/admin/invites/[id]/route.ts::DELETE",
+      "slice": "S3",
+      "hash": "f20a3a04ff123d073c34dd8b1d5213ac81ffa59d3e435cc5e6a40264d8df5de3",
+      "fileHash": "b69ab5c3289cc4a8a4ac205bf04fd9b3010f2c99bb28b45cd84c1850748e3673"
+    },
+    {
+      "seq": 80,
+      "id": "2036d124-b13f-4856-b849-3984a407f806",
+      "at": "2026-09-06T10:05:59.736Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:app/invite/accept/page.tsx::Page",
+      "slice": "S3",
+      "hash": "7e2cc52c9342af52cfd31a38bea470f70c0ee55152b31d112dbfe9c0ea14ccdb",
+      "fileHash": "54ec4a295b20a4b0580f6463a8bf198116c2a24d6bdd535bc627d794b8bc1919"
+    },
+    {
+      "seq": 81,
+      "id": "3aa2fee5-5423-4a60-a0a6-9eb14b38f981",
+      "at": "2026-09-06T10:05:59.785Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:lib/auth/server.ts::createAuthServer",
+      "slice": "S3",
+      "hash": "bf0f3def5452cde59ed18f574f11a68b05edf24e03df04a7c4b36fe998f6f549",
+      "fileHash": "0f0a9657b6a3de22f43589fb22e7c0c983f262f7d0dfa1df2e8b32ce4bf22e24"
+    },
+    {
+      "seq": 82,
+      "id": "3e31ee80-139b-4ee7-9a9d-de4b1016d86d",
+      "at": "2026-09-06T10:05:59.838Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:lib/i18n/locales/en-US.json::en-US.json",
+      "slice": "S3",
+      "hash": "49fae495d7e942a564b3c31948d7e57d506c0b404caa448a773479996e9ebd0f",
+      "fileHash": "d214aa804187c71c36b48df23c2b46952f5687cc07210f94cdda9bd2080161a8"
+    },
+    {
+      "seq": 83,
+      "id": "53654f28-0bb8-48f7-b1d7-732fb5cbebee",
+      "at": "2026-09-06T10:05:59.885Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S4:postcondition:lib/persistence/admin-courses.ts::listAllCoursesForAdmin",
+      "slice": "S4",
+      "hash": "c8c473106218e3316edc5468ac8f66c7cb49e93b4cf9e770fe1a5315412a80ab",
+      "fileHash": "4a9ad39c983ebcaf9a2dbd99eade99c5fc1146e4c42579a2f6ccee492f5164e9"
+    },
+    {
+      "seq": 84,
+      "id": "d6040b8e-475c-4871-b8e4-4da145261786",
+      "at": "2026-09-06T10:05:59.936Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S4:postcondition:lib/persistence/admin-courses.ts::deleteCourseForAdmin",
+      "slice": "S4",
+      "hash": "1e9417996578d97534cdcc35a6992d772155a480c354876e35901d71ff5a5752",
+      "fileHash": "6dd37ee2e2630cc9402dc1373971d7f1dee48d706a0855ab2c4eae126afc639a"
+    },
+    {
+      "seq": 85,
+      "id": "50134389-6636-44a4-8d6b-beccad3c3b9a",
+      "at": "2026-09-06T10:05:59.983Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S4:postcondition:app/api/admin/courses/[id]/route.ts::DELETE",
+      "slice": "S4",
+      "hash": "5bc943272b782f5511bbe51eaeae101133d7dae3499f223ea28ed97cbe1f65f2",
+      "fileHash": "1cb4a6db32a90bc61436488e909bafe30449e12068e9d65f138ff1e556be4cee"
+    },
+    {
+      "seq": 86,
+      "id": "f933d106-7621-4f51-8213-235c4b30f1fa",
+      "at": "2026-09-06T10:06:00.038Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S4:postcondition:components/admin/courses-section.tsx::courses-section.tsx",
+      "slice": "S4",
+      "hash": "fc3bbfbac695ad11d92a9ba25cab6062ae920304ebd2d5cc81d0bb04cabe3b43",
+      "fileHash": "dedb7a61f7f5698f443d21f30f80bf122f7e333d9f01b320cfbfffbb55ed6c1c"
+    },
+    {
+      "seq": 87,
+      "id": "86fd57df-1ffa-495e-8243-e2364e4084a8",
+      "at": "2026-09-06T10:06:00.086Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S5:postcondition:lib/persistence/media-access.ts::decideMediaAccess",
+      "slice": "S5",
+      "hash": "3ee9a597d982bbdefb1f4be53771acd63ef4fba805b81456a19f52f13ab23ecc",
+      "fileHash": "a71a61f2a740b873f612a97f9ed46f25c8800a96130b85030b7d8f4d9842943c"
+    },
+    {
+      "seq": 88,
+      "id": "b5aceb4a-8a87-4e8b-b78b-ce9df705e7a7",
+      "at": "2026-09-06T10:06:00.140Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S5:postcondition:app/api/classroom-media/[classroomId]/[...path]/route.ts::GET",
+      "slice": "S5",
+      "hash": "c15fc7a1ee0aca233b617ef14e92aaeb7b91c58ca20a9868d633dd0547e341c7",
+      "fileHash": "02d380e9ed674616e59e9336b6d1bd050f8ad6b05d6b816194a17d1de5cd45fc"
+    },
+    {
+      "seq": 89,
+      "id": "841f7291-0bba-4db7-baed-b14ae490476c",
+      "at": "2026-09-06T10:06:00.188Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S6:postcondition:lib/auth/index.ts::getSession",
+      "slice": "S6",
+      "hash": "4adf918a2751e54e4a7d8bde4413b40c43b2a51def56d9e6059036826aec6123",
+      "fileHash": "a8c80c14d5fc2e72679e099e2d4d84075186d10252f01f2e8609858d237c59b1"
+    },
+    {
+      "seq": 90,
+      "id": "244cb41d-7002-4205-bbfb-09622691948d",
+      "at": "2026-09-06T10:06:00.242Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S6:postcondition:lib/auth/index.ts::resetAuth",
+      "slice": "S6",
+      "hash": "c3af78d02f3954afd3cdc8dc4f2e30a92ddde2a762a286b75ea49cf91f232dd0",
+      "fileHash": "731e36d200cbc4901bbdbafd2ff45489e8f15369be4831697eb57f7ff39ac695"
+    },
+    {
+      "seq": 91,
+      "id": "3e8f9b64-7f29-4cce-bc97-cf5c5ac3581d",
+      "at": "2026-09-06T10:06:00.289Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S6:postcondition:lib/server/agent-runtime/with-owner.ts::withRequestOwnerId",
+      "slice": "S6",
+      "hash": "3f15f0095fcefc6002d05d0424e2f7a8959d4475da03b588362b6b65cfc9e4a3",
+      "fileHash": "9097136f1c3665029f7cf67bdf95da362a90b7efbc2be442988782effd7a0641"
+    },
+    {
+      "seq": 92,
+      "id": "2a5b753b-524c-4b5d-ad60-d01066ffa1ad",
+      "at": "2026-09-06T10:06:00.343Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S6:postcondition:tests/admin/cold-boot-owner.pg.test.ts::cold-boot-owner.pg.test.ts",
+      "slice": "S6",
+      "hash": "52325ba1b662d4a9054009c3c5a9b14a1225ba5028100006cca73430417cbd23",
+      "fileHash": "78edb1b9e65e7c9c96979f6a6a2cd6685c050ad808b1df2d8a8e61c919a9d127"
+    },
+    {
+      "seq": 93,
+      "id": "499aa030-e170-4dfe-b91a-910e0dadaa76",
+      "at": "2026-09-06T10:07:09.226Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:clarification:Human approval recorded ('approved' per orchestrator, chat confirmation commit ed4b2620); marker normalized approved -> research so the research stage gate accepts it; hash rebound to current bytes",
+      "slice": null,
+      "hash": "01bffeda21c17968714d6670c73b9e5acfc8e4ad1cdbac1f15f5b01917918dff",
+      "fileHash": "cad329d0d5521a14c4de1fbd63435c977fbcdea1e8bfb513daa9ffce70af264a"
+    },
+    {
+      "seq": 94,
+      "id": "76a0d5ac-8eb0-4a3b-8679-3989ee37fba2",
+      "at": "2026-09-06T10:08:09.911Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:clarification:Marker normalized approved -> research so the stage gate accepts it; hash rebound to edited bytes; human approval on record per orchestrator (chat confirmation, commit ed4b2620)",
+      "slice": null,
+      "hash": "794fdd69065167f1b6635b8266ce78a7e337852605b5c499f09c51cdb2c0486f",
+      "fileHash": "aed6d632c3faa85375d7a423fa981257a6a7600d487159e792b17ecaee8e252f"
+    },
+    {
+      "seq": 95,
+      "id": "e6e10f64-fc7c-4851-a051-1aae101d4fd9",
+      "at": "2026-09-06T10:08:18.082Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "1948afedd92a76bf83bc1305f06742a8c02567c4ca88bb429479c55efd71a7ca",
+      "fileHash": "18267893d4d02b019445ad8152aa6ed774c23dc991edc68102d55b24b8cb9245"
+    }
+  ],
+  "fileHash": "fd531d6903f19f7825a9d6d3d39b64045db420ab42450f340be580dad94417ad"
+}

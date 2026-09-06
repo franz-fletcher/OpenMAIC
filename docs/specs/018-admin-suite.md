@@ -1,6 +1,6 @@
 # Batch 018 spec: admin-suite
 
-Spec status: approved
+Spec status: implementation
 
 ## Problem Statement
 
