@@ -15470,6 +15470,20 @@
       "slice": "S6",
       "outcome": "ok",
       "extra": {}
+    },
+    {
+      "ts": "2026-09-06T13:31:16.567Z",
+      "command": "stage.advance",
+      "flags": [
+        "actor",
+        "to"
+      ],
+      "exit": 0,
+      "duration_ms": 5,
+      "stage": "verification",
+      "actor": "orchestrator",
+      "outcome": "ok",
+      "extra": {}
     }
   ],
   "audit": [
@@ -26493,7 +26507,18 @@
       "slice": "S6",
       "hash": "08757f9e44d9afe496c20a89023fcdfd5ee03fbe42d64a2812fbda45c3e6cc71",
       "fileHash": "7df50d230dc0a781bc522f0d64d9250fd5201c6a153e97d4aa5ac6e237a08749"
+    },
+    {
+      "seq": 1003,
+      "id": "374ea4fc-3b9b-4ed3-97b6-8c0b25d8c1b0",
+      "at": "2026-09-06T13:31:16.567Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:stage.advance:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "32fcc2f47d779dc932703bf9c992d7e1ea93c034d54c44b8d413b9423182b65b",
+      "fileHash": "8f33240e17972414b01680d655dc0a52623abaa53f3d385a3753b38fc1cc8263"
     }
   ],
-  "fileHash": "8f33240e17972414b01680d655dc0a52623abaa53f3d385a3753b38fc1cc8263"
+  "fileHash": "f7f600e9fb9027d3e25206f470e8064f46c01c55d8d1152f3f59dd0118921645"
 }
