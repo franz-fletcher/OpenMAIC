@@ -4,12 +4,12 @@
   "spec": {
     "reference": "docs/specs/017-publishing-visibility.md",
     "title": "Batch 017 spec: publishing-visibility",
-    "hash": "2f69eacd91c5b1a3361a39977fd781033cb0ed42a1aaa7856fec4ea61ced51e5"
+    "hash": "6bb238ab3f0ce25bc7fd163df53a5ade1044d6f14681e018b237b6037f10c1cc"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "verification",
+  "stage": "research_update",
   "retry": {
     "count": 2,
     "max": 5,
@@ -572,10 +572,10 @@
         "at": "2026-09-06T07:41:00.653Z"
       },
       "verification": {
-        "status": "rejected",
-        "hash": "e8bb07097afc783a21fb5ef78ad57e90c451639475a3732a1e46a8f5d1548ac8",
+        "status": "verified",
+        "hash": "34ebdd3bca9c3ab5e0f5a41a3d0cf2e90fc548f80c866773c590dfe1f9efcd4c",
         "actor": "verifier",
-        "at": "2026-09-06T07:25:45.349Z",
+        "at": "2026-09-06T07:54:10.550Z",
         "evidence": {
           "gates": [
             {
@@ -585,7 +585,7 @@
               "exit": 0,
               "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
               "pathCount": 30,
-              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/publishing/publish-routes.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/publishing/publish-routes.test.ts \u001b[2m(\u001b[22m\u001b[2m8 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 11\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m8 passed\u001b[39m\u001b[22m\u001b[90m (8)\u001b[39m\n\u001b[2m   Start at \u001b[22m 17:54:34\n\u001b[2m   Duration \u001b[22m 92ms\u001b[2m (transform 13ms, setup 11ms, import 8ms, tests 11ms, environment 0ms)\u001b[22m\n\nPUBLISH_ROUTES_OK\n",
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/publishing/publish-routes.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/publishing/publish-routes.test.ts\u001b[2m > \u001b[22m\u001b[2mpublish-routes\u001b[2m > \u001b[22m\u001b[2mPOST /api/stages/[id]/publish\u001b[2m > \u001b[22m\u001b[2mcreator publishes own course with default audience 0\n\u001b[22m\u001b[39mStage published { stageId: \u001b[32m'stage-1'\u001b[39m, ownerId: \u001b[32m'user:creator-user'\u001b[39m, audience: \u001b[33m0\u001b[39m }\n\n\u001b[90mstdout\u001b[2m | tests/publishing/publish-routes.test.ts\u001b[2m > \u001b[22m\u001b[2mpublish-routes\u001b[2m > \u001b[22m\u001b[2mPOST /api/stages/[id]/publish\u001b[2m > \u001b[22m\u001b[2mcreator publishes own course with explicit audience\n\u001b[22m\u001b[39mStage published { stageId: \u001b[32m'stage-1'\u001b[39m, ownerId: \u001b[32m'user:creator-user'\u001b[39m, audience: \u001b[33m2\u001b[39m }\n\n\u001b[90mstdout\u001b[2m | tests/publishing/publish-routes.test.ts\u001b[2m > \u001b[22m\u001b[2mpublish-routes\u001b[2m > \u001b[22m\u001b[2mPOST /api/stages/[id]/publish\u001b[2m > \u001b[22m\u001b[2madmin publishes foreign course\n\u001b[22m\u001b[39mStage published { stageId: \u001b[32m'stage-foreign'\u001b[39m, ownerId: \u001b[32m'user:admin-user'\u001b[39m, audience: \u001b[33m0\u001b[39m }\n\n\u001b[90mstdout\u001b[2m | tests/publishing/publish-routes.test.ts\u001b[2m > \u001b[22m\u001b[2mpublish-routes\u001b[2m > \u001b[22m\u001b[2mPOST /api/stages/[id]/publish\u001b[2m > \u001b[22m\u001b[2maudience outside 0-2 defaults to 0\n\u001b[22m\u001b[39mStage published { stageId: \u001b[32m'stage-1'\u001b[39m, ownerId: \u001b[32m'user:creator-user'\u001b[39m, audience: \u001b[33m0\u001b[39m }\n\n\u001b[90mstdout\u001b[2m | tests/publishing/publish-routes.test.ts\u001b[2m > \u001b[22m\u001b[2mpublish-routes\u001b[2m > \u001b[22m\u001b[2mPOST /api/stages/[id]/unpublish\u001b[2m > \u001b[22m\u001b[2munpublishes own course and keeps stored audience\n\u001b[22m\u001b[39mStage unpublished { stageId: \u001b[32m'stage-1'\u001b[39m, ownerId: \u001b[32m'user:creator-user'\u001b[39m }\n\n\u001b[90mstdout\u001b[2m | tests/publishing/publish-routes.test.ts\u001b[2m > \u001b[22m\u001b[2mpublish-routes\u001b[2m > \u001b[22m\u001b[2mPOST /api/stages/[id]/unpublish\u001b[2m > \u001b[22m\u001b[2madmin unpublishes foreign course\n\u001b[22m\u001b[39mStage unpublished { stageId: \u001b[32m'stage-foreign'\u001b[39m, ownerId: \u001b[32m'user:admin-user'\u001b[39m }\n\n \u001b[32m✓\u001b[39m tests/publishing/publish-routes.test.ts \u001b[2m(\u001b[22m\u001b[2m14 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 10\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m14 passed\u001b[39m\u001b[22m\u001b[90m (14)\u001b[39m\n\u001b[2m   Start at \u001b[22m 19:51:01\n\u001b[2m   Duration \u001b[22m 153ms\u001b[2m (transform 39ms, setup 14ms, import 62ms, tests 10ms, environment 0ms)\u001b[22m\n\nPUBLISH_ROUTES_OK\n",
               "passed": true
             },
             {
@@ -595,7 +595,7 @@
               "exit": 0,
               "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
               "pathCount": 30,
-              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/publishing/publish-live-wire.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/publishing/publish-live-wire.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m5 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 2\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m5 passed\u001b[39m\u001b[22m\u001b[90m (5)\u001b[39m\n\u001b[2m   Start at \u001b[22m 17:54:35\n\u001b[2m   Duration \u001b[22m 84ms\u001b[2m (transform 14ms, setup 14ms, import 7ms, tests 2ms, environment 0ms)\u001b[22m\n\nPUBLISH_LIVE_OK\n",
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/publishing/publish-live-wire.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/publishing/publish-live-wire.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mpublish-live-wire\u001b[2m > \u001b[22m\u001b[2mpublish route\u001b[2m > \u001b[22m\u001b[2mcreator publishes own course with audience 0\n\u001b[22m\u001b[39mStage published { stageId: \u001b[32m'pw-creator-own'\u001b[39m, ownerId: \u001b[32m'user:creator-raw'\u001b[39m, audience: \u001b[33m0\u001b[39m }\n\n\u001b[90mstdout\u001b[2m | tests/publishing/publish-live-wire.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mpublish-live-wire\u001b[2m > \u001b[22m\u001b[2mpublish route\u001b[2m > \u001b[22m\u001b[2mcreator publishes own course with learner audience\n\u001b[22m\u001b[39mStage published {\n  stageId: \u001b[32m'pw-creator-learner'\u001b[39m,\n  ownerId: \u001b[32m'user:creator-raw'\u001b[39m,\n  audience: \u001b[33m2\u001b[39m\n}\n\n\u001b[90mstdout\u001b[2m | tests/publishing/publish-live-wire.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mpublish-live-wire\u001b[2m > \u001b[22m\u001b[2mpublish route\u001b[2m > \u001b[22m\u001b[2madmin publishes foreign course\n\u001b[22m\u001b[39mStage published { stageId: \u001b[32m'pw-admin-foreign'\u001b[39m, ownerId: \u001b[32m'user:admin-raw'\u001b[39m, audience: \u001b[33m0\u001b[39m }\n\n\u001b[90mstdout\u001b[2m | tests/publishing/publish-live-wire.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mpublish-live-wire\u001b[2m > \u001b[22m\u001b[2mpublish route\u001b[2m > \u001b[22m\u001b[2mdefaults audience to 0 when not provided\n\u001b[22m\u001b[39mStage published {\n  stageId: \u001b[32m'pw-default-audience'\u001b[39m,\n  ownerId: \u001b[32m'user:creator-raw'\u001b[39m,\n  audience: \u001b[33m0\u001b[39m\n}\n\n\u001b[90mstdout\u001b[2m | tests/publishing/publish-live-wire.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mpublish-live-wire\u001b[2m > \u001b[22m\u001b[2munpublish route\u001b[2m > \u001b[22m\u001b[2munpublishes own course\n\u001b[22m\u001b[39mStage unpublished { stageId: \u001b[32m'pw-unpub-own'\u001b[39m, ownerId: \u001b[32m'user:creator-raw'\u001b[39m }\n\n\u001b[90mstdout\u001b[2m | tests/publishing/publish-live-wire.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mpublish-live-wire\u001b[2m > \u001b[22m\u001b[2munpublish route\u001b[2m > \u001b[22m\u001b[2madmin unpublishes foreign course\n\u001b[22m\u001b[39mStage unpublished { stageId: \u001b[32m'pw-unpub-admin'\u001b[39m, ownerId: \u001b[32m'user:admin-raw'\u001b[39m }\n\n\u001b[90mstdout\u001b[2m | tests/publishing/publish-live-wire.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mpublish-live-wire\u001b[2m > \u001b[22m\u001b[2munpublish route\u001b[2m > \u001b[22m\u001b[2munpublished course is draft after unpublish\n\u001b[22m\u001b[39mStage unpublished { stageId: \u001b[32m'pw-unpub-draft'\u001b[39m, ownerId: \u001b[32m'user:creator-raw'\u001b[39m }\n\n \u001b[32m✓\u001b[39m tests/publishing/publish-live-wire.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m11 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 340\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m11 passed\u001b[39m\u001b[22m\u001b[90m (11)\u001b[39m\n\u001b[2m   Start at \u001b[22m 19:51:06\n\u001b[2m   Duration \u001b[22m 695ms\u001b[2m (transform 209ms, setup 15ms, import 275ms, tests 340ms, environment 0ms)\u001b[22m\n\nPUBLISH_LIVE_OK\n",
               "passed": true
             },
             {
@@ -622,7 +622,29 @@
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/publishing/publish-routes.test.ts && echo PUBLISH_ROUTES_OK",
           "expect": "PUBLISH_ROUTES_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/publishing/publish-routes.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/publishing/publish-routes.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m8 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 11\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m8 passed\\u001b[39m\\u001b[22m\\u001b[90m (8)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 17:54:34\\n\\u001b[2m   Duration \\u001b[22m 92ms\\u001b[2m (transform 13ms, setup 11ms, import 8ms, tests 11ms, environment 0ms)\\u001b[22m\\n\\nPUBLISH_ROUTES_OK\\n\",\"passed\":true}"
+          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/publishing/publish-routes.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/publishing/publish-routes.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mpublish-routes\\u001b[2m > \\u001b[22m\\u001b[2mPOST /api/stages/[id]/publish\\u001b[2m > \\u001b[22m\\u001b[2mcreator publishes own course with default audience 0\\n\\u001b[22m\\u001b[39mStage published { stageId: \\u001b[32m'stage-1'\\u001b[39m, ownerId: \\u001b[32m'user:creator-user'\\u001b[39m, audience: \\u001b[33m0\\u001b[39m }\\n\\n\\u001b[90mstdout\\u001b[2m | tests/publishing/publish-routes.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mpublish-routes\\u001b[2m > \\u001b[22m\\u001b[2mPOST /api/stages/[id]/publish\\u001b[2m > \\u001b[22m\\u001b[2mcreator publishes own course with explicit audience\\n\\u001b[22m\\u001b[39mStage published { stageId: \\u001b[32m'stage-1'\\u001b[39m, ownerId: \\u001b[32m'user:creator-user'\\u001b[39m, audience: \\u001b[33m2\\u001b[39m }\\n\\n\\u001b[90mstdout\\u001b[2m | tests/publishing/publish-routes.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mpublish-routes\\u001b[2m > \\u001b[22m\\u001b[2mPOST /api/stages/[id]/publish\\u001b[2m > \\u001b[22m\\u001b[2madmin publishes foreign course\\n\\u001b[22m\\u001b[39mStage published { stageId: \\u001b[32m'stage-foreign'\\u001b[39m, ownerId: \\u001b[32m'user:admin-user'\\u001b[39m, audience: \\u001b[33m0\\u001b[39m }\\n\\n\\u001b[90mstdout\\u001b[2m | tests/publishing/publish-routes.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mpublish-routes\\u001b[2m > \\u001b[22m\\u001b[2mPOST /api/stages/[id]/publish\\u001b[2m > \\u001b[22m\\u001b[2maudience outside 0-2 defaults to 0\\n\\u001b[22m\\u001b[39mStage published { stageId: \\u001b[32m'stage-1'\\u001b[39m, ownerId: \\u001b[32m'user:creator-user'\\u001b[39m, audience: \\u001b[33m0\\u001b[39m }\\n\\n\\u001b[90mstdout\\u001b[2m | tests/publishing/publish-routes.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mpublish-routes\\u001b[2m > \\u001b[22m\\u001b[2mPOST /api/stages/[id]/unpublish\\u001b[2m > \\u001b[22m\\u001b[2munpublishes own course and keeps stored audience\\n\\u001b[22m\\u001b[39mStage unpublished { stageId: \\u001b[32m'stage-1'\\u001b[39m, ownerId: \\u001b[32m'user:creator-user'\\u001b[39m }\\n\\n\\u001b[90mstdout\\u001b[2m | tests/publishing/publish-routes.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mpublish-routes\\u001b[2m > \\u001b[22m\\u001b[2mPOST /api/stages/[id]/unpublish\\u001b[2m > \\u001b[22m\\u001b[2madmin unpublishes foreign course\\n\\u001b[22m\\u001b[39mStage unpublished { stageId: \\u001b[32m'stage-foreign'\\u001b[39m, ownerId: \\u001b[32m'user:admin-user'\\u001b[39m }\\n\\n \\u001b[32m✓\\u001b[39m tests/publishing/publish-routes.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m14 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 10\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m14 passed\\u001b[39m\\u001b[22m\\u001b[90m (14)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 19:51:01\\n\\u001b[2m   Duration \\u001b[22m 153ms\\u001b[2m (transform 39ms, setup 14ms, import 62ms, tests 10ms, environment 0ms)\\u001b[22m\\n\\nPUBLISH_ROUTES_OK\\n\",\"passed\":true}",
+          "captures": [
+            {
+              "captureId": "90d5895f-ec38-4903-bbe2-3505433f9efd",
+              "ts": "2026-09-06T07:51:01.409Z",
+              "actor": "verifier",
+              "stage": "verification",
+              "headSha": "12277403c2649c556be8fa4af63143cce558f219",
+              "round": 82,
+              "oracleSignature": "76a3876a88729ccbd245a00d74d39c4cf0e22ef7c7781e44b130a8766eceef0c",
+              "evidence": {
+                "id": "g1",
+                "shell": "/bin/sh",
+                "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+                "exit": 0,
+                "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+                "pathCount": 30,
+                "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/publishing/publish-routes.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/publishing/publish-routes.test.ts\u001b[2m > \u001b[22m\u001b[2mpublish-routes\u001b[2m > \u001b[22m\u001b[2mPOST /api/stages/[id]/publish\u001b[2m > \u001b[22m\u001b[2mcreator publishes own course with default audience 0\n\u001b[22m\u001b[39mStage published { stageId: \u001b[32m'stage-1'\u001b[39m, ownerId: \u001b[32m'user:creator-user'\u001b[39m, audience: \u001b[33m0\u001b[39m }\n\n\u001b[90mstdout\u001b[2m | tests/publishing/publish-routes.test.ts\u001b[2m > \u001b[22m\u001b[2mpublish-routes\u001b[2m > \u001b[22m\u001b[2mPOST /api/stages/[id]/publish\u001b[2m > \u001b[22m\u001b[2mcreator publishes own course with explicit audience\n\u001b[22m\u001b[39mStage published { stageId: \u001b[32m'stage-1'\u001b[39m, ownerId: \u001b[32m'user:creator-user'\u001b[39m, audience: \u001b[33m2\u001b[39m }\n\n\u001b[90mstdout\u001b[2m | tests/publishing/publish-routes.test.ts\u001b[2m > \u001b[22m\u001b[2mpublish-routes\u001b[2m > \u001b[22m\u001b[2mPOST /api/stages/[id]/publish\u001b[2m > \u001b[22m\u001b[2madmin publishes foreign course\n\u001b[22m\u001b[39mStage published { stageId: \u001b[32m'stage-foreign'\u001b[39m, ownerId: \u001b[32m'user:admin-user'\u001b[39m, audience: \u001b[33m0\u001b[39m }\n\n\u001b[90mstdout\u001b[2m | tests/publishing/publish-routes.test.ts\u001b[2m > \u001b[22m\u001b[2mpublish-routes\u001b[2m > \u001b[22m\u001b[2mPOST /api/stages/[id]/publish\u001b[2m > \u001b[22m\u001b[2maudience outside 0-2 defaults to 0\n\u001b[22m\u001b[39mStage published { stageId: \u001b[32m'stage-1'\u001b[39m, ownerId: \u001b[32m'user:creator-user'\u001b[39m, audience: \u001b[33m0\u001b[39m }\n\n\u001b[90mstdout\u001b[2m | tests/publishing/publish-routes.test.ts\u001b[2m > \u001b[22m\u001b[2mpublish-routes\u001b[2m > \u001b[22m\u001b[2mPOST /api/stages/[id]/unpublish\u001b[2m > \u001b[22m\u001b[2munpublishes own course and keeps stored audience\n\u001b[22m\u001b[39mStage unpublished { stageId: \u001b[32m'stage-1'\u001b[39m, ownerId: \u001b[32m'user:creator-user'\u001b[39m }\n\n\u001b[90mstdout\u001b[2m | tests/publishing/publish-routes.test.ts\u001b[2m > \u001b[22m\u001b[2mpublish-routes\u001b[2m > \u001b[22m\u001b[2mPOST /api/stages/[id]/unpublish\u001b[2m > \u001b[22m\u001b[2madmin unpublishes foreign course\n\u001b[22m\u001b[39mStage unpublished { stageId: \u001b[32m'stage-foreign'\u001b[39m, ownerId: \u001b[32m'user:admin-user'\u001b[39m }\n\n \u001b[32m✓\u001b[39m tests/publishing/publish-routes.test.ts \u001b[2m(\u001b[22m\u001b[2m14 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 10\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m14 passed\u001b[39m\u001b[22m\u001b[90m (14)\u001b[39m\n\u001b[2m   Start at \u001b[22m 19:51:01\n\u001b[2m   Duration \u001b[22m 153ms\u001b[2m (transform 39ms, setup 14ms, import 62ms, tests 10ms, environment 0ms)\u001b[22m\n\nPUBLISH_ROUTES_OK\n",
+                "passed": true
+              },
+              "consumed": true
+            }
+          ]
         },
         {
           "id": "g2",
@@ -630,7 +652,29 @@
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/publishing/publish-live-wire.pg.test.ts && echo PUBLISH_LIVE_OK",
           "expect": "PUBLISH_LIVE_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "{\"id\":\"g2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/publishing/publish-live-wire.pg.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/publishing/publish-live-wire.pg.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m5 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 2\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m5 passed\\u001b[39m\\u001b[22m\\u001b[90m (5)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 17:54:35\\n\\u001b[2m   Duration \\u001b[22m 84ms\\u001b[2m (transform 14ms, setup 14ms, import 7ms, tests 2ms, environment 0ms)\\u001b[22m\\n\\nPUBLISH_LIVE_OK\\n\",\"passed\":true}"
+          "evidence": "{\"id\":\"g2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/publishing/publish-live-wire.pg.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n\\u001b[90mstdout\\u001b[2m | tests/publishing/publish-live-wire.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mpublish-live-wire\\u001b[2m > \\u001b[22m\\u001b[2mpublish route\\u001b[2m > \\u001b[22m\\u001b[2mcreator publishes own course with audience 0\\n\\u001b[22m\\u001b[39mStage published { stageId: \\u001b[32m'pw-creator-own'\\u001b[39m, ownerId: \\u001b[32m'user:creator-raw'\\u001b[39m, audience: \\u001b[33m0\\u001b[39m }\\n\\n\\u001b[90mstdout\\u001b[2m | tests/publishing/publish-live-wire.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mpublish-live-wire\\u001b[2m > \\u001b[22m\\u001b[2mpublish route\\u001b[2m > \\u001b[22m\\u001b[2mcreator publishes own course with learner audience\\n\\u001b[22m\\u001b[39mStage published {\\n  stageId: \\u001b[32m'pw-creator-learner'\\u001b[39m,\\n  ownerId: \\u001b[32m'user:creator-raw'\\u001b[39m,\\n  audience: \\u001b[33m2\\u001b[39m\\n}\\n\\n\\u001b[90mstdout\\u001b[2m | tests/publishing/publish-live-wire.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mpublish-live-wire\\u001b[2m > \\u001b[22m\\u001b[2mpublish route\\u001b[2m > \\u001b[22m\\u001b[2madmin publishes foreign course\\n\\u001b[22m\\u001b[39mStage published { stageId: \\u001b[32m'pw-admin-foreign'\\u001b[39m, ownerId: \\u001b[32m'user:admin-raw'\\u001b[39m, audience: \\u001b[33m0\\u001b[39m }\\n\\n\\u001b[90mstdout\\u001b[2m | tests/publishing/publish-live-wire.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mpublish-live-wire\\u001b[2m > \\u001b[22m\\u001b[2mpublish route\\u001b[2m > \\u001b[22m\\u001b[2mdefaults audience to 0 when not provided\\n\\u001b[22m\\u001b[39mStage published {\\n  stageId: \\u001b[32m'pw-default-audience'\\u001b[39m,\\n  ownerId: \\u001b[32m'user:creator-raw'\\u001b[39m,\\n  audience: \\u001b[33m0\\u001b[39m\\n}\\n\\n\\u001b[90mstdout\\u001b[2m | tests/publishing/publish-live-wire.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mpublish-live-wire\\u001b[2m > \\u001b[22m\\u001b[2munpublish route\\u001b[2m > \\u001b[22m\\u001b[2munpublishes own course\\n\\u001b[22m\\u001b[39mStage unpublished { stageId: \\u001b[32m'pw-unpub-own'\\u001b[39m, ownerId: \\u001b[32m'user:creator-raw'\\u001b[39m }\\n\\n\\u001b[90mstdout\\u001b[2m | tests/publishing/publish-live-wire.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mpublish-live-wire\\u001b[2m > \\u001b[22m\\u001b[2munpublish route\\u001b[2m > \\u001b[22m\\u001b[2madmin unpublishes foreign course\\n\\u001b[22m\\u001b[39mStage unpublished { stageId: \\u001b[32m'pw-unpub-admin'\\u001b[39m, ownerId: \\u001b[32m'user:admin-raw'\\u001b[39m }\\n\\n\\u001b[90mstdout\\u001b[2m | tests/publishing/publish-live-wire.pg.test.ts\\u001b[2m > \\u001b[22m\\u001b[2mpublish-live-wire\\u001b[2m > \\u001b[22m\\u001b[2munpublish route\\u001b[2m > \\u001b[22m\\u001b[2munpublished course is draft after unpublish\\n\\u001b[22m\\u001b[39mStage unpublished { stageId: \\u001b[32m'pw-unpub-draft'\\u001b[39m, ownerId: \\u001b[32m'user:creator-raw'\\u001b[39m }\\n\\n \\u001b[32m✓\\u001b[39m tests/publishing/publish-live-wire.pg.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m11 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[33m 340\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m11 passed\\u001b[39m\\u001b[22m\\u001b[90m (11)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 19:51:06\\n\\u001b[2m   Duration \\u001b[22m 695ms\\u001b[2m (transform 209ms, setup 15ms, import 275ms, tests 340ms, environment 0ms)\\u001b[22m\\n\\nPUBLISH_LIVE_OK\\n\",\"passed\":true}",
+          "captures": [
+            {
+              "captureId": "b609e3e2-0e74-4404-8b4c-b3e9a5173e17",
+              "ts": "2026-09-06T07:51:06.822Z",
+              "actor": "verifier",
+              "stage": "verification",
+              "headSha": "12277403c2649c556be8fa4af63143cce558f219",
+              "round": 82,
+              "oracleSignature": "76a3876a88729ccbd245a00d74d39c4cf0e22ef7c7781e44b130a8766eceef0c",
+              "evidence": {
+                "id": "g2",
+                "shell": "/bin/sh",
+                "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+                "exit": 0,
+                "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+                "pathCount": 30,
+                "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/publishing/publish-live-wire.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/publishing/publish-live-wire.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mpublish-live-wire\u001b[2m > \u001b[22m\u001b[2mpublish route\u001b[2m > \u001b[22m\u001b[2mcreator publishes own course with audience 0\n\u001b[22m\u001b[39mStage published { stageId: \u001b[32m'pw-creator-own'\u001b[39m, ownerId: \u001b[32m'user:creator-raw'\u001b[39m, audience: \u001b[33m0\u001b[39m }\n\n\u001b[90mstdout\u001b[2m | tests/publishing/publish-live-wire.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mpublish-live-wire\u001b[2m > \u001b[22m\u001b[2mpublish route\u001b[2m > \u001b[22m\u001b[2mcreator publishes own course with learner audience\n\u001b[22m\u001b[39mStage published {\n  stageId: \u001b[32m'pw-creator-learner'\u001b[39m,\n  ownerId: \u001b[32m'user:creator-raw'\u001b[39m,\n  audience: \u001b[33m2\u001b[39m\n}\n\n\u001b[90mstdout\u001b[2m | tests/publishing/publish-live-wire.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mpublish-live-wire\u001b[2m > \u001b[22m\u001b[2mpublish route\u001b[2m > \u001b[22m\u001b[2madmin publishes foreign course\n\u001b[22m\u001b[39mStage published { stageId: \u001b[32m'pw-admin-foreign'\u001b[39m, ownerId: \u001b[32m'user:admin-raw'\u001b[39m, audience: \u001b[33m0\u001b[39m }\n\n\u001b[90mstdout\u001b[2m | tests/publishing/publish-live-wire.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mpublish-live-wire\u001b[2m > \u001b[22m\u001b[2mpublish route\u001b[2m > \u001b[22m\u001b[2mdefaults audience to 0 when not provided\n\u001b[22m\u001b[39mStage published {\n  stageId: \u001b[32m'pw-default-audience'\u001b[39m,\n  ownerId: \u001b[32m'user:creator-raw'\u001b[39m,\n  audience: \u001b[33m0\u001b[39m\n}\n\n\u001b[90mstdout\u001b[2m | tests/publishing/publish-live-wire.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mpublish-live-wire\u001b[2m > \u001b[22m\u001b[2munpublish route\u001b[2m > \u001b[22m\u001b[2munpublishes own course\n\u001b[22m\u001b[39mStage unpublished { stageId: \u001b[32m'pw-unpub-own'\u001b[39m, ownerId: \u001b[32m'user:creator-raw'\u001b[39m }\n\n\u001b[90mstdout\u001b[2m | tests/publishing/publish-live-wire.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mpublish-live-wire\u001b[2m > \u001b[22m\u001b[2munpublish route\u001b[2m > \u001b[22m\u001b[2madmin unpublishes foreign course\n\u001b[22m\u001b[39mStage unpublished { stageId: \u001b[32m'pw-unpub-admin'\u001b[39m, ownerId: \u001b[32m'user:admin-raw'\u001b[39m }\n\n\u001b[90mstdout\u001b[2m | tests/publishing/publish-live-wire.pg.test.ts\u001b[2m > \u001b[22m\u001b[2mpublish-live-wire\u001b[2m > \u001b[22m\u001b[2munpublish route\u001b[2m > \u001b[22m\u001b[2munpublished course is draft after unpublish\n\u001b[22m\u001b[39mStage unpublished { stageId: \u001b[32m'pw-unpub-draft'\u001b[39m, ownerId: \u001b[32m'user:creator-raw'\u001b[39m }\n\n \u001b[32m✓\u001b[39m tests/publishing/publish-live-wire.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m11 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 340\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m11 passed\u001b[39m\u001b[22m\u001b[90m (11)\u001b[39m\n\u001b[2m   Start at \u001b[22m 19:51:06\n\u001b[2m   Duration \u001b[22m 695ms\u001b[2m (transform 209ms, setup 15ms, import 275ms, tests 340ms, environment 0ms)\u001b[22m\n\nPUBLISH_LIVE_OK\n",
+                "passed": true
+              },
+              "consumed": true
+            }
+          ]
         },
         {
           "id": "g3",
@@ -638,7 +682,29 @@
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm check:i18n-keys && echo I18N_OK",
           "expect": "I18N_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "{\"id\":\"g3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> node scripts/check-i18n-keys.mjs\\n\\ni18n key alignment check passed (12 locale files, source: en-US.json).\\nI18N_OK\\n\",\"passed\":true}"
+          "evidence": "{\"id\":\"g3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> node scripts/check-i18n-keys.mjs\\n\\ni18n key alignment check passed (12 locale files, source: en-US.json).\\nI18N_OK\\n\",\"passed\":true}",
+          "captures": [
+            {
+              "captureId": "2c1eecf0-13cb-40df-bf3c-add24b3a0326",
+              "ts": "2026-09-06T07:51:10.385Z",
+              "actor": "verifier",
+              "stage": "verification",
+              "headSha": "12277403c2649c556be8fa4af63143cce558f219",
+              "round": 82,
+              "oracleSignature": "76a3876a88729ccbd245a00d74d39c4cf0e22ef7c7781e44b130a8766eceef0c",
+              "evidence": {
+                "id": "g3",
+                "shell": "/bin/sh",
+                "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+                "exit": 0,
+                "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+                "pathCount": 30,
+                "output": "\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> node scripts/check-i18n-keys.mjs\n\ni18n key alignment check passed (12 locale files, source: en-US.json).\nI18N_OK\n",
+                "passed": true
+              },
+              "consumed": true
+            }
+          ]
         }
       ],
       "findings": [
@@ -1910,7 +1976,70 @@
       "slice": null,
       "hash": "79aab9799d5681e8dbdb902ce9031c8c329f53dfacd1197c21bb40d782c7aa20",
       "fileHash": "777a4737807d050c0273d85416cbd8ecdb74ba8446de2fa0f0e5556043f09548"
+    },
+    {
+      "seq": 85,
+      "id": "fc9caefe-935b-4b2b-b0b5-b090548d7993",
+      "at": "2026-09-06T07:51:01.409Z",
+      "actor": "verifier",
+      "command": "gate_run",
+      "transition": "slice:S3:gate-run:g1:90d5895f-ec38-4903-bbe2-3505433f9efd",
+      "slice": "S3",
+      "hash": "90623747d83ff2b3eff0368f71422a6a4fcd3c2df6d401e83f054920b91642e4",
+      "oracle": "76a3876a88729ccbd245a00d74d39c4cf0e22ef7c7781e44b130a8766eceef0c",
+      "evidence": "5f330ef4a11c264d98372324cd46b2051c205caad55681bec55b6b71e9772998",
+      "fileHash": "26a7edbc058c6677a924c56805ec9315c83e248dc602e7607427c3aa69552229"
+    },
+    {
+      "seq": 86,
+      "id": "8b5dbcad-d3e0-4d1d-8776-6c9f96375c1d",
+      "at": "2026-09-06T07:51:06.822Z",
+      "actor": "verifier",
+      "command": "gate_run",
+      "transition": "slice:S3:gate-run:g2:b609e3e2-0e74-4404-8b4c-b3e9a5173e17",
+      "slice": "S3",
+      "hash": "af3f6f623e2aed4fd0d7a2898e421e038627fd2d7dc28715c9017bef96b1655e",
+      "oracle": "76a3876a88729ccbd245a00d74d39c4cf0e22ef7c7781e44b130a8766eceef0c",
+      "evidence": "87057f15a90125c06e8ef791da00e8e83bb4d27580b95572042f65e2fbd813bc",
+      "fileHash": "10ee54351829a24aafd1a860c15abda5a0509a630e74943ae6de0c9c90c61b88"
+    },
+    {
+      "seq": 87,
+      "id": "bf4b655a-7fd4-44f3-959b-5d5b5130799e",
+      "at": "2026-09-06T07:51:10.385Z",
+      "actor": "verifier",
+      "command": "gate_run",
+      "transition": "slice:S3:gate-run:g3:2c1eecf0-13cb-40df-bf3c-add24b3a0326",
+      "slice": "S3",
+      "hash": "df9b72b805222fa37be959f92b6d1e050fae909b6dd3d0b3dd1e8754d8e7e396",
+      "oracle": "76a3876a88729ccbd245a00d74d39c4cf0e22ef7c7781e44b130a8766eceef0c",
+      "evidence": "e93a44a040a67c37f0e7bb924ca9def5225a7848ce7b66e2cd3540ad22ca2558",
+      "fileHash": "7da4c2ce1ec2d82be1959d23fe5b381c1ba21be45adb59b1636ca3d1af2d1daf"
+    },
+    {
+      "seq": 88,
+      "id": "442c6f02-f22a-4f14-a9f6-a7e36f3f7cba",
+      "at": "2026-09-06T07:54:10.550Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S3:verification:pending->verified",
+      "slice": "S3",
+      "hash": "91d37c9c3630c4a1ab439e7a78b1a769f888352af40a7b5332a660b193ba33ec",
+      "oracle": "828487867809405d27ef2c373eb0a5387c30644b2374976af985d8c26839594c",
+      "evidence": "b4662e790ef4b4401d16fc3988dbbc93677eaa7d3ad0b1c2ec9abf4af5613f4b",
+      "fileHash": "ccb4298a69e01892d1bf989c7440baa7259bb7f3392ea4198a55188d5501a869"
+    },
+    {
+      "seq": 89,
+      "id": "285b771c-9408-43d4-bb31-0af9340d32de",
+      "at": "2026-09-06T07:55:37.746Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:verification->research_update",
+      "slice": null,
+      "hash": "f5204373a8f539eb3be709636fc08234eb6b28b8d39cd8c3fe9041a2e3109e21",
+      "fileHash": "d6f7642ebbba5e1ebc2f2bb34e03938b24a17ff8cba130c51aec2b1905b9718a"
     }
   ],
-  "fileHash": "26a7edbc058c6677a924c56805ec9315c83e248dc602e7607427c3aa69552229"
+  "fileHash": "f28ae3dba2b02577d1e13f12f1b2a258b050a613605cca440aec9cee5e2f05b6"
 }
