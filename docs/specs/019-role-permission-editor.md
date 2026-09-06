@@ -748,7 +748,7 @@ strays. The round-2 findings carry the report-only list.
 All 19 gates passed green at round 2. The final table is 19 of 19: S1 3,
 S2 4, S3 4, S4 4, S5 4. The doubles ran clean and the fail-closed behavior
 is proven: every pg gate throws without `PG_CONTRACT_URL`. The full suite
-ran 7933 tests with 1 tolerated failure. The production build exits 0.
+ran 7933 tests with 1 tolerated failure. Resolution: batch 020 S1 closed this failure (hermetic web-search mock in runner-skills-registration.test.ts).
 Safari shots 31-34 are console-clean, with `34-picker-admin-r2.png`
 committed at the round-2 verdict. The live-wire matrices hold:
 stale-cache (`tests/permissions/guard-live-route.pg.test.ts:135-168`),

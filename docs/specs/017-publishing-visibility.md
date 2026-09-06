@@ -615,7 +615,7 @@ reload.
 ### Test results
 
 All 15 gates passed green at round 3. The final table is 15 of 15: S1 2, S2
-3, S3 3, S4 3, S5 4. The full suite ran 7766 tests with 1 tolerated failure.
+3, S3 3, S4 3, S5 4. The full suite ran 7766 tests with 1 tolerated failure. Resolution: batch 020 S1 closed this failure (hermetic web-search mock in runner-skills-registration.test.ts).
 The production build exits 0. Safari shots 21-24 are console-clean. The wire
 matrix: learner 200 on all three seams, owner 200, foreign creator 403, admin
 200, and flag-off parity in both sub-cases.

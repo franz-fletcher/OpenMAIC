@@ -19,7 +19,7 @@ runtime) and four ledger signature drifts that `rivr diff` will reject.
 | 2 | Typecheck | PASS | `npx tsc --noEmit` clean |
 | 3 | Auth suites, hermetic | PASS | 30 passed, 2 skipped (`claim.pg.test.ts`, no `PG_CONTRACT_URL`), 0 failed |
 | 4 | Full suite | PASS with known | 7528 passed / 1 failed / 33 skipped |
-| 5 | The 1 failure is pre-existing | CONFIRMED | `tests/agent-runtime/runner-skills-registration.test.ts:255` fails identically on clean main with the batch stashed (`git stash` -> fail -> `stash pop`, 31 entries restored). Cause: `web_search` now registers before `create_skill`; batch A never touched tool order |
+| 5 | The 1 failure is pre-existing | CONFIRMED | `tests/agent-runtime/runner-skills-registration.test.ts:255` fails identically on clean main with the batch stashed (`git stash` -> fail -> `stash pop`, 31 entries restored). Cause: `web_search` now registers before `create_skill`; batch A never touched tool order. **Resolved** by batch 020 S1: the suite gained a hermetic `vi.mock` of `@/lib/server/agent-runtime/web-search` so the capability resolver returns null regardless of operator config. The two-run gate (`RUNNER_HERMETIC_OK`) confirms the suite passes both with and without the operator yaml/env. |
 | 6 | Pages and routes live | PASS | `/`, `/signup`, `/login`, `/verify`, `/api/site-branding` all 200 |
 | 7 | Live signup POST | FAIL | `POST /api/auth/sign-up/email` -> 500, empty body |
 | 8 | Schema present | PASS | All six auth tables exist in the dev `openmaic` DB |

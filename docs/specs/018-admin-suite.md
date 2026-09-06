@@ -772,7 +772,7 @@ i18n check exposed it. All 12 locales now carry the `admin` group and
 
 All 24 gates passed green at round 3. The doubles ran clean. The final
 table is 24 of 24: S1 3, S2 4, S3 6, S4 3, S5 4, S6 4. The full suite ran
-7863 tests with 1 tolerated failure. The production build exits 0. Safari
+7863 tests with 1 tolerated failure. Resolution: batch 020 S1 closed this failure (hermetic web-search mock in runner-skills-registration.test.ts).
 shots 27-30 are console-clean. The wire matrix: admin 200 on both course
 routes, guest 403 on the admin routes, banned 403 with code `banned` and
 rank 0 on the read gate, and the invite flow lands the invited role as

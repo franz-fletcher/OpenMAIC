@@ -104,6 +104,11 @@ vi.mock('@/lib/server/agent-runtime/user-skills', async (importActual) => {
   const actual = await importActual<typeof import('@/lib/server/agent-runtime/user-skills')>();
   return { ...actual, listUserSkills: vi.fn(async () => []) };
 });
+// Capability resolution stays hermetic: the suite pins registration logic,
+// not operator config.
+vi.mock('@/lib/server/agent-runtime/web-search', () => ({
+  resolveWebSearchCapability: () => null,
+}));
 
 import { runSession } from '@/lib/server/agent-runtime/runner';
 
