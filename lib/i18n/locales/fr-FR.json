@@ -2150,10 +2150,44 @@
       "title": "Admin Settings"
     },
     "users": {
-      "title": "Users"
+      "title": "Users",
+      "search": "Rechercher par e-mail ou nom...",
+      "searchButton": "Rechercher",
+      "email": "E-mail",
+      "verified": "Vérifié",
+      "role": "Rôle",
+      "banned": "Banni",
+      "created": "Créé le",
+      "actions": "Actions",
+      "ban": "Bannir",
+      "unban": "Débannir",
+      "banConfirm": "Bannir cet utilisateur ? Les sessions seront révoquées immédiatement.",
+      "bannedYes": "Oui",
+      "bannedNo": "Non",
+      "yes": "Oui",
+      "no": "Non",
+      "noUsers": "Aucun utilisateur trouvé."
     },
     "invites": {
-      "title": "Invites"
+      "title": "Invites",
+      "emailPlaceholder": "Entrez votre adresse e-mail",
+      "send": "Envoyer l'invitation",
+      "noInvites": "Aucune invitation en attente.",
+      "email": "E-mail",
+      "role": "Rôle",
+      "expires": "Expire le",
+      "actions": "Actions",
+      "revoke": "Révoquer",
+      "revokeConfirm": "Révoquer cette invitation ? Le lien cessera de fonctionner immédiatement.",
+      "invalidCode": "Ce lien d'invitation est invalide, expiré ou déjà utilisé.",
+      "noCode": "Aucun code d'invitation fourni.",
+      "validateTitle": "Validation de l'invitation...",
+      "accepted": "Vous avez été invité",
+      "acceptedSubtitle": "Complétez votre inscription pour accepter cette invitation.",
+      "continueToSignup": "Continuer vers l'inscription",
+      "expired": "Expiré",
+      "roleLabel": "Rôle invité",
+      "expiresLabel": "Expire le"
     },
     "courses": {
       "title": "Courses"

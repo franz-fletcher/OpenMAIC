@@ -2150,10 +2150,44 @@
       "title": "Admin Settings"
     },
     "users": {
-      "title": "Users"
+      "title": "Users",
+      "search": "Buscar por correo o nombre...",
+      "searchButton": "Buscar",
+      "email": "Correo electrónico",
+      "verified": "Verificado",
+      "role": "Rol",
+      "banned": "Bloqueado",
+      "created": "Creado",
+      "actions": "Acciones",
+      "ban": "Bloquear",
+      "unban": "Desbloquear",
+      "banConfirm": "¿Bloquear a este usuario? Sus sesiones se revocarán inmediatamente.",
+      "bannedYes": "Sí",
+      "bannedNo": "No",
+      "yes": "Sí",
+      "no": "No",
+      "noUsers": "No se encontraron usuarios."
     },
     "invites": {
-      "title": "Invites"
+      "title": "Invites",
+      "emailPlaceholder": "Ingrese su correo electrónico",
+      "send": "Enviar invitación",
+      "noInvites": "No hay invitaciones pendientes.",
+      "email": "Correo electrónico",
+      "role": "Rol",
+      "expires": "Expira",
+      "actions": "Acciones",
+      "revoke": "Revocar",
+      "revokeConfirm": "¿Revocar esta invitación? El enlace dejará de funcionar inmediatamente.",
+      "invalidCode": "Este enlace de invitación no es válido, ha expirado o ya fue utilizado.",
+      "noCode": "No se proporcionó código de invitación.",
+      "validateTitle": "Validando invitación...",
+      "accepted": "Has sido invitado",
+      "acceptedSubtitle": "Complete su registro para aceptar esta invitación.",
+      "continueToSignup": "Continuar al registro",
+      "expired": "Expirado",
+      "roleLabel": "Rol invitado",
+      "expiresLabel": "Expira"
     },
     "courses": {
       "title": "Courses"

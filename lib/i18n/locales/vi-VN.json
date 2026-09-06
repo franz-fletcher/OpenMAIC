@@ -2150,10 +2150,44 @@
       "title": "Admin Settings"
     },
     "users": {
-      "title": "Users"
+      "title": "Users",
+      "search": "Tìm kiếm theo email hoặc tên...",
+      "searchButton": "Tìm kiếm",
+      "email": "Email",
+      "verified": "Đã xác minh",
+      "role": "Vai trò",
+      "banned": "Đã chặn",
+      "created": "Ngày tạo",
+      "actions": "Hành động",
+      "ban": "Chặn",
+      "unban": "Bỏ chặn",
+      "banConfirm": "Chặn người dùng này? Phiên sẽ bị thu hồi ngay lập tức.",
+      "bannedYes": "Có",
+      "bannedNo": "Không",
+      "yes": "Có",
+      "no": "Không",
+      "noUsers": "Không tìm thấy người dùng."
     },
     "invites": {
-      "title": "Invites"
+      "title": "Invites",
+      "emailPlaceholder": "Nhập địa chỉ email",
+      "send": "Gửi lời mời",
+      "noInvites": "Không có lời mời đang chờ xử lý.",
+      "email": "Email",
+      "role": "Vai trò",
+      "expires": "Hết hạn",
+      "actions": "Hành động",
+      "revoke": "Thu hồi",
+      "revokeConfirm": "Thu hồi lời mời này? Liên kết sẽ ngừng hoạt động ngay lập tức.",
+      "invalidCode": "Liên kết mời này không hợp lệ, đã hết hạn hoặc đã được sử dụng.",
+      "noCode": "Không có mã mời được cung cấp.",
+      "validateTitle": "Đang xác thực lời mời...",
+      "accepted": "Bạn đã được mời",
+      "acceptedSubtitle": "Hoàn tất đăng ký để chấp nhận lời mời này.",
+      "continueToSignup": "Tiếp tục đăng ký",
+      "expired": "Đã hết hạn",
+      "roleLabel": "Vai trò được mời",
+      "expiresLabel": "Hết hạn"
     },
     "courses": {
       "title": "Courses"

@@ -2150,10 +2150,44 @@
       "title": "Admin Settings"
     },
     "users": {
-      "title": "Users"
+      "title": "Users",
+      "search": "이메일 또는 이름으로 검색...",
+      "searchButton": "검색",
+      "email": "이메일",
+      "verified": "인증됨",
+      "role": "역할",
+      "banned": "차단됨",
+      "created": "생성일",
+      "actions": "작업",
+      "ban": "차단",
+      "unban": "차단 해제",
+      "banConfirm": "이 사용자를 차단하시겠습니까? 세션이 즉시 취소됩니다.",
+      "bannedYes": "예",
+      "bannedNo": "아니오",
+      "yes": "예",
+      "no": "아니오",
+      "noUsers": "사용자를 찾을 수 없습니다."
     },
     "invites": {
-      "title": "Invites"
+      "title": "Invites",
+      "emailPlaceholder": "이메일 주소를 입력하세요",
+      "send": "초대 보내기",
+      "noInvites": "대기 중인 초대가 없습니다.",
+      "email": "이메일",
+      "role": "역할",
+      "expires": "만료일",
+      "actions": "작업",
+      "revoke": "취소",
+      "revokeConfirm": "이 초대를 취소하시겠습니까? 링크가 즉시 작동을 멈춥니다.",
+      "invalidCode": "이 초대 링크는 유효하지 않거나 만료되었거나 이미 사용되었습니다.",
+      "noCode": "초대 코드가 제공되지 않았습니다.",
+      "validateTitle": "초대 확인 중...",
+      "accepted": "초대되었습니다",
+      "acceptedSubtitle": "이 초대를 수락하려면 회원가입을 완료하세요.",
+      "continueToSignup": "회원가입으로 계속",
+      "expired": "만료됨",
+      "roleLabel": "초대된 역할",
+      "expiresLabel": "만료일"
     },
     "courses": {
       "title": "Courses"

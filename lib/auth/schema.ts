@@ -102,6 +102,24 @@ CREATE TABLE IF NOT EXISTS quiz_grade_quota (
   count INTEGER NOT NULL DEFAULT 0,
   PRIMARY KEY (user_id, day)
 );
+
+-- Invite codes for email-based role grants
+
+CREATE TABLE IF NOT EXISTS invites (
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  email TEXT NOT NULL,
+  role_name TEXT NOT NULL,
+  code TEXT NOT NULL,
+  expires_at TIMESTAMPTZ NOT NULL,
+  used_at TIMESTAMPTZ,
+  revoked_at TIMESTAMPTZ,
+  used_by TEXT,
+  created_by TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS invites_email_idx ON invites (email);
+CREATE INDEX IF NOT EXISTS invites_code_idx ON invites (code);
 `;
 
 // Ban columns: app-owned status on the user table. Added via lazy ALTER

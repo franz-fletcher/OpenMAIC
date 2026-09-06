@@ -1,5 +1,5 @@
 /**
- * Mailer transport for auth verification emails.
+ * Mailer transport for auth verification and invite emails.
  *
  * Selects the transport by MAIL_TRANSPORT env: smtp (nodemailer), resend
  * (Resend SDK), or console fallback (logs the verification URL).
@@ -19,6 +19,7 @@ export interface MailerEnv {
 export interface Mailer {
   transport: 'console' | 'smtp' | 'resend';
   sendVerificationLink: (to: string, url: string) => Promise<void>;
+  sendInviteLink: (to: string, url: string) => Promise<void>;
 }
 
 /**
@@ -54,6 +55,21 @@ export function createMailer(
           html: `<p>Click the link to verify your email: <a href="${url}">Verify email</a></p>`,
         });
       },
+      sendInviteLink: async (to: string, url: string) => {
+        const transporter = makeTransport({
+          host: env.SMTP_HOST,
+          port: Number(env.SMTP_PORT ?? 587),
+          secure: Number(env.SMTP_PORT ?? 587) === 465,
+          auth: env.SMTP_USER ? { user: env.SMTP_USER, pass: env.SMTP_PASS } : undefined,
+        });
+
+        await transporter.sendMail({
+          from: env.MAIL_FROM ?? 'noreply@openmaic.com',
+          to,
+          subject: 'You have been invited to openMAIC',
+          html: `<p>You have been invited to join openMAIC. <a href="${url}">Accept invitation</a></p>`,
+        });
+      },
     };
   }
 
@@ -74,6 +90,16 @@ export function createMailer(
           html: `<p>Click the link to verify your email: <a href="${url}">Verify email</a></p>`,
         });
       },
+      sendInviteLink: async (to: string, url: string) => {
+        const resend = new ResendClass(env.RESEND_API_KEY ?? '');
+
+        await resend.emails.send({
+          from: env.MAIL_FROM ?? 'noreply@openmaic.com',
+          to,
+          subject: 'You have been invited to openMAIC',
+          html: `<p>You have been invited to join openMAIC. <a href="${url}">Accept invitation</a></p>`,
+        });
+      },
     };
   }
 
@@ -83,6 +109,9 @@ export function createMailer(
     sendVerificationLink: async (to: string, url: string) => {
       console.log(`[mailer] Verification link for ${to}: ${url}`);
     },
+    sendInviteLink: async (to: string, url: string) => {
+      console.log(`[mailer] Invite link for ${to}: ${url}`);
+    },
   };
 }
 
@@ -91,4 +120,11 @@ export function createMailer(
  */
 export async function sendVerificationLink(mailer: Mailer, to: string, url: string): Promise<void> {
   await mailer.sendVerificationLink(to, url);
+}
+
+/**
+ * Sends an invite link through the selected mailer transport.
+ */
+export async function sendInviteLink(mailer: Mailer, to: string, url: string): Promise<void> {
+  await mailer.sendInviteLink(to, url);
 }

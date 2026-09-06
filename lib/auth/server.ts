@@ -33,9 +33,9 @@ export interface AuthServer {
  * Creates a wrapped better-auth server with email and password enabled,
  * mandatory email verification, and a guest default role hook.
  *
- * The verification callback calls the mailer. The guest role assignment
+ * The verification callback calls the mailer. The role assignment
  * runs after a verified signup and defaults to rank 1 (guest) when no
- * role grant exists.
+ * invite or role grant exists.
  */
 export function createAuthServer(options: AuthServerOptions): AuthServer {
   const secret = options.secret ?? process.env.AUTH_SECRET ?? 'dev-secret-change-me';
@@ -73,16 +73,82 @@ export function createAuthServer(options: AuthServerOptions): AuthServer {
           user: {
             create: {
               after: async (user) => {
-                // Assign guest role (rank 1) to newly created users.
-                // The role seed (S02) handles ADMIN_EMAILS overrides.
-                // This hook runs on every verified signup.
+                // Check for an invite matching this email. If found,
+                // consume it and grant the invited role in one transaction.
+                // Without an invite, insert guest (rank 1) as the default.
                 try {
-                  await options.pool!.query(
-                    `INSERT INTO user_roles (user_id, role_id, granted_at)
-                 SELECT $1, id, now() FROM roles WHERE name = 'guest'
-                 ON CONFLICT (user_id) DO NOTHING`,
-                    [user.id],
-                  );
+                  const pool = options.pool!;
+                  // Use a real Pool transaction for atomicity.
+                  const client = await pool.connect();
+                  try {
+                    await client.query('BEGIN');
+
+                    // Look up a valid invite for this email.
+                    const inviteResult = await client.query<{
+                      id: string;
+                      role_name: string;
+                      code: string;
+                    }>(
+                      `SELECT id, role_name, code FROM invites
+                       WHERE email = $1
+                         AND used_at IS NULL
+                         AND revoked_at IS NULL
+                         AND expires_at > now()
+                       LIMIT 1`,
+                      [user.email.toLowerCase()],
+                    );
+
+                    if (inviteResult.rows.length > 0) {
+                      const invite = inviteResult.rows[0];
+
+                      // Atomically consume the invite.
+                      const consumeResult = await client.query<{ role_name: string }>(
+                        `UPDATE invites
+                         SET used_at = now(), used_by = $1
+                         WHERE id = $2
+                           AND used_at IS NULL
+                           AND revoked_at IS NULL
+                           AND expires_at > now()
+                         RETURNING role_name`,
+                        [user.id, invite.id],
+                      );
+
+                      if (consumeResult.rows.length > 0) {
+                        const roleName = consumeResult.rows[0].role_name;
+                        // Grant the invited role (replaces guest default).
+                        await client.query(
+                          `INSERT INTO user_roles (user_id, role_id, granted_at)
+                           SELECT $1, id, now() FROM roles WHERE name = $2
+                           ON CONFLICT (user_id) DO UPDATE SET role_id = EXCLUDED.role_id`,
+                          [user.id, roleName],
+                        );
+                      } else {
+                        // Invite was consumed by a concurrent request.
+                        // Fall back to guest.
+                        await client.query(
+                          `INSERT INTO user_roles (user_id, role_id, granted_at)
+                           SELECT $1, id, now() FROM roles WHERE name = 'guest'
+                           ON CONFLICT (user_id) DO NOTHING`,
+                          [user.id],
+                        );
+                      }
+                    } else {
+                      // No invite found. Assign guest role (rank 1).
+                      await client.query(
+                        `INSERT INTO user_roles (user_id, role_id, granted_at)
+                         SELECT $1, id, now() FROM roles WHERE name = 'guest'
+                         ON CONFLICT (user_id) DO NOTHING`,
+                        [user.id],
+                      );
+                    }
+
+                    await client.query('COMMIT');
+                  } catch (e) {
+                    await client.query('ROLLBACK').catch(() => {});
+                    throw e;
+                  } finally {
+                    client.release();
+                  }
                 } catch {
                   // Role table may not exist yet during early bootstrap.
                   // The role seed will handle this on first run.

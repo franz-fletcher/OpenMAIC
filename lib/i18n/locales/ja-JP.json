@@ -2150,10 +2150,44 @@
       "title": "Admin Settings"
     },
     "users": {
-      "title": "Users"
+      "title": "Users",
+      "search": "メールまたは名前で検索...",
+      "searchButton": "検索",
+      "email": "メール",
+      "verified": "認証済み",
+      "role": "ロール",
+      "banned": "ブロック済み",
+      "created": "作成日",
+      "actions": "操作",
+      "ban": "ブロック",
+      "unban": "ブロック解除",
+      "banConfirm": "このユーザーをブロックしますか？セッションは即座に取り消されます。",
+      "bannedYes": "はい",
+      "bannedNo": "いいえ",
+      "yes": "はい",
+      "no": "いいえ",
+      "noUsers": "ユーザーが見つかりません。"
     },
     "invites": {
-      "title": "Invites"
+      "title": "Invites",
+      "emailPlaceholder": "メールアドレスを入力",
+      "send": "招待を送信",
+      "noInvites": "保留中の招待はありません。",
+      "email": "メール",
+      "role": "ロール",
+      "expires": "有効期限",
+      "actions": "操作",
+      "revoke": "取り消す",
+      "revokeConfirm": "この招待を取り消しますか？リンクは直ちに無効になります。",
+      "invalidCode": "この招待リンクは無効、期限切れ、または既に使用されています。",
+      "noCode": "招待コードが提供されていません。",
+      "validateTitle": "招待を確認中...",
+      "accepted": "招待されました",
+      "acceptedSubtitle": "この招待を受けるには登録を完了してください。",
+      "continueToSignup": "登録に進む",
+      "expired": "期限切れ",
+      "roleLabel": "招待ロール",
+      "expiresLabel": "有効期限"
     },
     "courses": {
       "title": "Courses"

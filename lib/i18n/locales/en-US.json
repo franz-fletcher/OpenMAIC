@@ -2170,7 +2170,25 @@
       "noUsers": "No users found."
     },
     "invites": {
-      "title": "Invites"
+      "title": "Invites",
+      "emailPlaceholder": "Enter email address",
+      "send": "Send Invite",
+      "noInvites": "No pending invites.",
+      "email": "Email",
+      "role": "Role",
+      "expires": "Expires",
+      "actions": "Actions",
+      "revoke": "Revoke",
+      "revokeConfirm": "Revoke this invite? The link will stop working immediately.",
+      "invalidCode": "This invitation link is invalid, expired, or has already been used.",
+      "noCode": "No invitation code provided.",
+      "validateTitle": "Validating invitation...",
+      "accepted": "You have been invited",
+      "acceptedSubtitle": "Complete your signup to accept this invitation.",
+      "continueToSignup": "Continue to signup",
+      "expired": "Expired",
+      "roleLabel": "Invited role",
+      "expiresLabel": "Expires"
     },
     "courses": {
       "title": "Courses"

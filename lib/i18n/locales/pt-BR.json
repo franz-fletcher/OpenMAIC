@@ -2150,10 +2150,44 @@
       "title": "Admin Settings"
     },
     "users": {
-      "title": "Users"
+      "title": "Users",
+      "search": "Pesquisar por e-mail ou nome...",
+      "searchButton": "Pesquisar",
+      "email": "E-mail",
+      "verified": "Verificado",
+      "role": "Função",
+      "banned": "Bloqueado",
+      "created": "Criado",
+      "actions": "Ações",
+      "ban": "Bloquear",
+      "unban": "Desbloquear",
+      "banConfirm": "Bloquear este usuário? As sessões serão revogadas imediatamente.",
+      "bannedYes": "Sim",
+      "bannedNo": "Não",
+      "yes": "Sim",
+      "no": "Não",
+      "noUsers": "Nenhum usuário encontrado."
     },
     "invites": {
-      "title": "Invites"
+      "title": "Invites",
+      "emailPlaceholder": "Digite o endereço de e-mail",
+      "send": "Enviar convite",
+      "noInvites": "Nenhum convite pendente.",
+      "email": "E-mail",
+      "role": "Função",
+      "expires": "Expira",
+      "actions": "Ações",
+      "revoke": "Revogar",
+      "revokeConfirm": "Revogar este convite? O link parará de funcionar imediatamente.",
+      "invalidCode": "Este link de convite é inválido, expirou ou já foi utilizado.",
+      "noCode": "Nenhum código de convite fornecido.",
+      "validateTitle": "Validando convite...",
+      "accepted": "Você foi convidado",
+      "acceptedSubtitle": "Complete seu cadastro para aceitar este convite.",
+      "continueToSignup": "Continuar para o cadastro",
+      "expired": "Expirado",
+      "roleLabel": "Função convidada",
+      "expiresLabel": "Expira"
     },
     "courses": {
       "title": "Courses"

@@ -2150,10 +2150,44 @@
       "title": "Admin Settings"
     },
     "users": {
-      "title": "Users"
+      "title": "Users",
+      "search": "按邮箱或姓名搜索...",
+      "searchButton": "搜索",
+      "email": "邮箱",
+      "verified": "已验证",
+      "role": "角色",
+      "banned": "已封禁",
+      "created": "创建时间",
+      "actions": "操作",
+      "ban": "封禁",
+      "unban": "解封",
+      "banConfirm": "封禁此用户？其会话将立即撤销。",
+      "bannedYes": "是",
+      "bannedNo": "否",
+      "yes": "是",
+      "no": "否",
+      "noUsers": "未找到用户。"
     },
     "invites": {
-      "title": "Invites"
+      "title": "Invites",
+      "emailPlaceholder": "请输入邮箱地址",
+      "send": "发送邀请",
+      "noInvites": "暂无待处理的邀请。",
+      "email": "邮箱",
+      "role": "角色",
+      "expires": "过期时间",
+      "actions": "操作",
+      "revoke": "撤销",
+      "revokeConfirm": "撤销此邀请？链接将立即失效。",
+      "invalidCode": "此邀请链接无效、已过期或已被使用。",
+      "noCode": "未提供邀请码。",
+      "validateTitle": "正在验证邀请...",
+      "accepted": "您已被邀请",
+      "acceptedSubtitle": "完成注册以接受此邀请。",
+      "continueToSignup": "继续注册",
+      "expired": "已过期",
+      "roleLabel": "受邀角色",
+      "expiresLabel": "过期时间"
     },
     "courses": {
       "title": "Courses"

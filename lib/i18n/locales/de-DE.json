@@ -2150,10 +2150,44 @@
       "title": "Admin Settings"
     },
     "users": {
-      "title": "Users"
+      "title": "Users",
+      "search": "Nach E-Mail oder Name suchen...",
+      "searchButton": "Suchen",
+      "email": "E-Mail",
+      "verified": "Verifiziert",
+      "role": "Rolle",
+      "banned": "Gesperrt",
+      "created": "Erstellt",
+      "actions": "Aktionen",
+      "ban": "Sperren",
+      "unban": "Entsperren",
+      "banConfirm": "Diesen Benutzer sperren? Sitzungen werden sofort widerrufen.",
+      "bannedYes": "Ja",
+      "bannedNo": "Nein",
+      "yes": "Ja",
+      "no": "Nein",
+      "noUsers": "Keine Benutzer gefunden."
     },
     "invites": {
-      "title": "Invites"
+      "title": "Invites",
+      "emailPlaceholder": "E-Mail-Adresse eingeben",
+      "send": "Einladung senden",
+      "noInvites": "Keine ausstehenden Einladungen.",
+      "email": "E-Mail",
+      "role": "Rolle",
+      "expires": "Läuft ab",
+      "actions": "Aktionen",
+      "revoke": "Widerrufen",
+      "revokeConfirm": "Diese Einladung widerrufen? Der Link hört sofort auf zu funktionieren.",
+      "invalidCode": "Dieser Einladungslink ist ungültig, abgelaufen oder wurde bereits verwendet.",
+      "noCode": "Kein Einladungscode angegeben.",
+      "validateTitle": "Einladung wird überprüft...",
+      "accepted": "Sie wurden eingeladen",
+      "acceptedSubtitle": "Schließen Sie Ihre Registrierung ab, um diese Einladung anzunehmen.",
+      "continueToSignup": "Zur Registrierung fortfahren",
+      "expired": "Abgelaufen",
+      "roleLabel": "Eingeladene Rolle",
+      "expiresLabel": "Läuft ab"
     },
     "courses": {
       "title": "Courses"

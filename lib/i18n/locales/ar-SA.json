@@ -2150,10 +2150,44 @@
       "title": "Admin Settings"
     },
     "users": {
-      "title": "Users"
+      "title": "Users",
+      "search": "بحث بالبريد الإلكتروني أو الاسم...",
+      "searchButton": "بحث",
+      "email": "البريد الإلكتروني",
+      "verified": "موثق",
+      "role": "الدور",
+      "banned": "محظور",
+      "created": "تاريخ الإنشاء",
+      "actions": "الإجراءات",
+      "ban": "حظر",
+      "unban": "إلغاء الحظر",
+      "banConfirm": "حظر هذا المستخدم؟ سيتم إلغاء جلساته فوراً.",
+      "bannedYes": "نعم",
+      "bannedNo": "لا",
+      "yes": "نعم",
+      "no": "لا",
+      "noUsers": "لم يتم العثور على مستخدمين."
     },
     "invites": {
-      "title": "Invites"
+      "title": "Invites",
+      "emailPlaceholder": "أدخل عنوان البريد الإلكتروني",
+      "send": "إرسال الدعوة",
+      "noInvites": "لا توجد دعوات معلقة.",
+      "email": "البريد الإلكتروني",
+      "role": "الدور",
+      "expires": "ينتهي",
+      "actions": "الإجراءات",
+      "revoke": "إلغاء",
+      "revokeConfirm": "إلغاء هذه الدعوة؟ سيتوقف العمل بالرابط فوراً.",
+      "invalidCode": "رابط الدعوة غير صالح أو منتهي الصلاحية أو تم استخدامه بالفعل.",
+      "noCode": "لم يتم تقديم رمز الدعوة.",
+      "validateTitle": "جارٍ التحقق من الدعوة...",
+      "accepted": "لقد تمت دعوتك",
+      "acceptedSubtitle": "أكمل التسجيل لقبول هذه الدعوة.",
+      "continueToSignup": "المتابعة إلى التسجيل",
+      "expired": "منتهي الصلاحية",
+      "roleLabel": "الدور المدعو",
+      "expiresLabel": "ينتهي"
     },
     "courses": {
       "title": "Courses"
