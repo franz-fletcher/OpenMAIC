@@ -235,6 +235,8 @@ describe.skipIf(!PG_URL)('publish-live-wire', () => {
     `);
 
     // Seed users with RAW better-auth ids (no 'user:' prefix).
+    // stage_meta.owner_id uses the prefixed 'user:<raw>' format in production,
+    // so the seedCourse helper applies the prefix when writing stage_meta.
     await pool.query(`
       INSERT INTO "user" (id, name, email, "emailVerified") VALUES
         ('creator-raw', 'creator', 'creator@test.example', true),
@@ -287,6 +289,9 @@ describe.skipIf(!PG_URL)('publish-live-wire', () => {
   }, 60_000);
 
   // Helper: seed a course in the scratch DB.
+  // stage_meta.owner_id uses the prefixed 'user:<raw>' format in production,
+  // so we apply the prefix when writing stage_meta. document_stages.owner_id
+  // stores the raw better-auth id.
   async function seedCourse(
     stageId: string,
     ownerId: string,
@@ -298,11 +303,13 @@ describe.skipIf(!PG_URL)('publish-live-wire', () => {
        ON CONFLICT (id) DO NOTHING`,
       [stageId, ownerId, `course-${stageId}`],
     );
+    // Prefix with 'user:' to match production id format in stage_meta.
+    const metaOwnerId = ownerId.startsWith('user:') ? ownerId : `user:${ownerId}`;
     await pool.query(
       `INSERT INTO stage_meta (stage_id, owner_id, status, audience, is_public, published_at, generation_complete)
        VALUES ($1, $2, $3, $4, $5, $6, false)
        ON CONFLICT (stage_id) DO UPDATE SET status = EXCLUDED.status, audience = EXCLUDED.audience`,
-      [stageId, ownerId, status, audience, status === 'published', Date.now()],
+      [stageId, metaOwnerId, status, audience, status === 'published', Date.now()],
     );
   }
 

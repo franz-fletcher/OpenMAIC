@@ -45,9 +45,11 @@ export async function POST(req: NextRequest, { params }: Params) {
       }
 
       // Owner or admin (rank 4) can publish any course.
-      // withRequestOwnerId passes 'user:<raw-id>' but access.ownerId is the raw DB value.
-      const rawOwnerId = ownerId.startsWith('user:') ? ownerId.slice(5) : ownerId;
-      const isOwner = access.ownerId === rawOwnerId;
+      // Normalize both sides to raw IDs: strip 'user:' prefix from both
+      // the request ownerId and the DB ownerId before comparing.
+      const requestRawId = ownerId.startsWith('user:') ? ownerId.slice(5) : ownerId;
+      const dbRawId = access.ownerId.startsWith('user:') ? access.ownerId.slice(5) : access.ownerId;
+      const isOwner = requestRawId === dbRawId;
       if (!isOwner) {
         const db = await getStageAccessDb();
         const viewerRank = await resolveViewerRank(db, ownerId);

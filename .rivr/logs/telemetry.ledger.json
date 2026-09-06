@@ -13301,6 +13301,49 @@
       "actor": "verifier",
       "outcome": "ok",
       "extra": {}
+    },
+    {
+      "ts": "2026-09-06T07:28:33.943Z",
+      "command": "report",
+      "flags": [
+        "actor",
+        "verbose"
+      ],
+      "exit": 1,
+      "duration_ms": 0,
+      "stage": "implementation",
+      "actor": "implementer",
+      "outcome": "error",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-06T07:28:37.415Z",
+      "command": "report",
+      "flags": [
+        "actor",
+        "verbose"
+      ],
+      "exit": 0,
+      "duration_ms": 2,
+      "stage": "implementation",
+      "actor": "implementer",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-06T07:41:00.658Z",
+      "command": "slice.mark",
+      "flags": [
+        "actor",
+        "slice"
+      ],
+      "exit": 0,
+      "duration_ms": 8,
+      "stage": "implementation",
+      "actor": "implementer",
+      "slice": "S3",
+      "outcome": "ok",
+      "extra": {}
     }
   ],
   "audit": [
@@ -22795,7 +22838,40 @@
       "slice": null,
       "hash": "e475259b05b8af0c9090e9b929b0417b25f7635ba07239de07a5073764bc61c4",
       "fileHash": "da6054f5da60793c4536378902f7d3a2c8830934f6fd9214f3b60633617a6d9f"
+    },
+    {
+      "seq": 864,
+      "id": "3e46565b-4e9c-4486-8012-d9fbb7f0f10c",
+      "at": "2026-09-06T07:28:33.943Z",
+      "actor": "implementer",
+      "command": "telemetry",
+      "transition": "command:report:exit:1:outcome:error",
+      "slice": null,
+      "hash": "6a680d26adfa25adcae660b27b1efa319970b48edd81f8d99b34015edf77695f",
+      "fileHash": "05536a0231f007e1c2b7010ef819555c528af8750319a5a8e405a18db37e0415"
+    },
+    {
+      "seq": 865,
+      "id": "7712aa4b-874e-4bec-9798-6b7dcfa58c4a",
+      "at": "2026-09-06T07:28:37.415Z",
+      "actor": "implementer",
+      "command": "telemetry",
+      "transition": "command:report:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "929a446ded034953abec6fae7b1152b4c67db61a1459e9aa8cc344d8dd699de7",
+      "fileHash": "1a883d5afac34addb0e0a1e4920cbea45d38332b7a56924a934fbb4d0f28c735"
+    },
+    {
+      "seq": 866,
+      "id": "8645b649-dd44-4a93-80d0-52fdca4841d9",
+      "at": "2026-09-06T07:41:00.658Z",
+      "actor": "implementer",
+      "command": "telemetry",
+      "transition": "command:slice.mark:exit:0:outcome:ok",
+      "slice": "S3",
+      "hash": "a56e97332faf7445aa581d3d68211b52f51c273ee60a55dd90d4f57fcf8ca064",
+      "fileHash": "1d4d31cf565cce3422760ca881c9545f8e8339e53d03a70f9d9d342acfd615f4"
     }
   ],
-  "fileHash": "05536a0231f007e1c2b7010ef819555c528af8750319a5a8e405a18db37e0415"
+  "fileHash": "dbd9618e60f9ea88dc855b46c03fdeed3fb9d1b575f8ef83630da33a3f9f86b8"
 }
