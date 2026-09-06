@@ -28,6 +28,18 @@ export interface Session {
 
 let cachedAuth: AuthServer | null = null;
 
+/**
+ * Test-only reset that clears the module-scope auth cache.
+ *
+ * Mirrors `resetServerPersistenceProvider` so a probe can force the auth
+ * cold start deterministically. The better-auth server has no close method;
+ * we just drop the reference. The next `getAuth()` call rebuilds from the
+ * current provider.
+ */
+export async function resetAuth(): Promise<void> {
+  cachedAuth = null;
+}
+
 async function getAuth(): Promise<AuthServer> {
   if (!cachedAuth) {
     const connectionString = process.env.DATABASE_URL ?? '';
@@ -62,7 +74,31 @@ export async function getSession(headers: Headers): Promise<Session | null> {
       userAgent: (session.userAgent as string) ?? null,
     };
   } catch {
-    return null;
+    // On the first cold request the cached auth server may be bound to an
+    // ended pool (after a provider reset). Clear the cache so the next
+    // getAuth() rebuilds from the current provider, then retry once.
+    // A genuine session cookie must not silently resolve to anon.
+    cachedAuth = null;
+    try {
+      const freshAuth = await getAuth();
+      const retry = await freshAuth.apiCall('/get-session', { headers });
+      if (!retry.ok) return null;
+      const retryData = (await retry.json()) as Record<string, unknown>;
+      const retrySession = retryData.session as Record<string, unknown> | undefined;
+      if (!retrySession) return null;
+      return {
+        id: String(retrySession.id),
+        userId: String(retrySession.userId),
+        token: String(retrySession.token),
+        expiresAt: new Date(retrySession.expiresAt as string | number),
+        createdAt: new Date(retrySession.createdAt as string | number),
+        updatedAt: new Date(retrySession.updatedAt as string | number),
+        ipAddress: (retrySession.ipAddress as string) ?? null,
+        userAgent: (retrySession.userAgent as string) ?? null,
+      };
+    } catch {
+      return null;
+    }
   }
 }
 
