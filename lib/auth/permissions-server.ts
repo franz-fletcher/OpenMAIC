@@ -37,9 +37,27 @@ export async function requirePermission(
     );
   }
 
-  // Resolve the user's role rank from the database.
+  // Check if the user is banned before resolving rank. Wrap in try/catch
+  // so databases without the ban columns degrade gracefully.
   const connectionString = process.env.DATABASE_URL ?? '';
   const { pool } = await getServerPersistenceProvider(connectionString);
+  try {
+    const banResult = await pool.query<{ banned: boolean }>(
+      `SELECT "banned" FROM "user" WHERE id = $1`,
+      [session.userId],
+    );
+    if (banResult.rows.length > 0 && banResult.rows[0].banned) {
+      throw new Response(JSON.stringify({ message: 'account is banned', code: 'banned' }), {
+        status: 403,
+        headers: { 'content-type': 'application/json' },
+      });
+    }
+  } catch (err) {
+    if (err instanceof Response) throw err;
+    // Column does not exist yet. Continue to rank resolution.
+  }
+
+  // Resolve the user's role rank from the database.
   const result = await pool.query<{ rank: number }>(
     `SELECT r.rank FROM user_roles ur JOIN roles r ON ur.role_id = r.id WHERE ur.user_id = $1`,
     [session.userId],

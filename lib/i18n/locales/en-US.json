@@ -2151,7 +2151,23 @@
       "title": "Admin Settings"
     },
     "users": {
-      "title": "Users"
+      "title": "Users",
+      "search": "Search by email or name...",
+      "searchButton": "Search",
+      "email": "Email",
+      "verified": "Verified",
+      "role": "Role",
+      "banned": "Banned",
+      "created": "Created",
+      "actions": "Actions",
+      "ban": "Ban",
+      "unban": "Unban",
+      "banConfirm": "Ban this user? Their sessions will be revoked immediately.",
+      "bannedYes": "Yes",
+      "bannedNo": "No",
+      "yes": "Yes",
+      "no": "No",
+      "noUsers": "No users found."
     },
     "invites": {
       "title": "Invites"

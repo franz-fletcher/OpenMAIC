@@ -104,6 +104,14 @@ CREATE TABLE IF NOT EXISTS quiz_grade_quota (
 );
 `;
 
+// Ban columns: app-owned status on the user table. Added via lazy ALTER
+// so existing databases gain the columns without a migration step.
+const BAN_COLUMNS_SQL = `
+ALTER TABLE "user" ADD COLUMN IF NOT EXISTS "banned" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "user" ADD COLUMN IF NOT EXISTS "banReason" TEXT;
+ALTER TABLE "user" ADD COLUMN IF NOT EXISTS "banExpires" TIMESTAMPTZ;
+`;
+
 /**
  * Creates the eight auth tables idempotently. Runs as part of the lazy
  * ensure-chain in createServerPersistenceProvider. Safe to call on every
@@ -111,6 +119,11 @@ CREATE TABLE IF NOT EXISTS quiz_grade_quota (
  */
 export async function ensureAuthSchema(queryable: Queryable): Promise<void> {
   for (const sql of AUTH_SCHEMA_SQL.split(';')) {
+    const statement = sql.trim();
+    if (statement !== '') await queryable.query(statement);
+  }
+  // Lazy ALTER for ban columns. Safe to run on every boot.
+  for (const sql of BAN_COLUMNS_SQL.split(';')) {
     const statement = sql.trim();
     if (statement !== '') await queryable.query(statement);
   }

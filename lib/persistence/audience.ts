@@ -37,6 +37,21 @@ export async function resolveViewerRank(queryable: Queryable, ownerId: string): 
   // stores the raw better-auth id. Strip the prefix to match.
   const rawUserId = ownerId.startsWith('user:') ? ownerId.slice(5) : ownerId;
 
+  // Check if the user is banned. Banned users resolve to rank 0 so
+  // every rank-based gate revokes them. Wrap in try/catch so databases
+  // without the ban columns (pre-migration) degrade gracefully.
+  try {
+    const banResult = await queryable.query<{ banned: boolean }>(
+      `SELECT "banned" FROM "user" WHERE id = $1`,
+      [rawUserId],
+    );
+    if (banResult.rows.length > 0 && banResult.rows[0].banned) {
+      return 0;
+    }
+  } catch {
+    // Column does not exist yet. Continue to rank resolution.
+  }
+
   const result = await queryable.query<{ rank: number }>(
     `SELECT r.rank FROM user_roles ur JOIN roles r ON ur.role_id = r.id WHERE ur.user_id = $1`,
     [rawUserId],
