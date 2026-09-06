@@ -1,6 +1,6 @@
 # Batch 018 spec: admin-suite
 
-Spec status: verification
+Spec status: research_update
 
 ## Problem Statement
 
@@ -649,3 +649,142 @@ miswired reset therefore cannot pass the gate vacuously.
   `app/api/classroom-media/[classroomId]/[...path]/route.ts:27-38` is
   untouched.
 - Commit convention for this batch: `feat(rbac): ...`.
+
+## Research Update (2026-09-06)
+
+Batch E shipped in six slice commits: `6d1640ff`, `0cef9cb4`,
+`b1695f52`, `8ca1301b`, `21bc61f1`, and `434b49f6`. Two fix rounds landed
+in `b8d65102` and `2fccff4e`. Round 1 sent all six slices back at
+`3c975660`. Round 2 cleared S2, S3, S5, and S6 and sent S1 and S4 back at
+`3d46239a`. Round 3 cleared all six at `32377b5c`, chain 126. This section
+records what shipped, what deviated from the plan, and what the next
+batches inherit.
+
+### What shipped
+
+- The admin page ships at `app/admin/settings/page.tsx`. `AdminSettingsPage`
+  calls `requirePermission` with `users.manage` at `:22` and reads the real
+  `headers()` promise from `next/headers` at `:31`. The not-authorized
+  branch renders a dedicated state at `:34-46` and keeps the `Response` off
+  the error boundary. `serverTranslate` resolves the locale for the
+  not-authorized copy at `:36` and for the three section titles at `:49-54`.
+- `AccountZone` ships the optional `onOpenSettings` and `onOpenAdmin` props
+  at `components/account-zone.tsx:17-24`. The Settings entry gates by
+  `can('settings.manage')` at `:58`. The Admin entry gates by
+  `can('users.manage')` at `:69` and navigates through `onOpenAdmin` at
+  `:73`. The `soon` badge is gone. `HeaderCapsule` ships the optional
+  `settingsGated` prop at `components/header-capsule.tsx:38` and gates the
+  gear at `:131`.
+- The ban columns land in `ensureAuthSchema` at `lib/auth/schema.ts:128-129`.
+  `listUsers` at `lib/persistence/admin-users.ts:31-92` joins `user`,
+  `user_roles`, and `roles` and returns email, verified, role, rank, banned,
+  and created. It never selects password data. `setUserRole` at `:100-112`
+  upserts the single `user_roles` row. `setUserBanned` at `:118-137` writes
+  the ban columns, deletes every session row at `:135-137`, and refuses
+  self-ban at `:125-127`.
+- `requirePermission` denies banned sessions with the typed 403 code
+  `banned` at `lib/auth/permissions-server.ts:50-53`. `resolveViewerRank`
+  returns rank 0 for banned users at `lib/persistence/audience.ts:48-49`.
+  GET and PATCH ship at `app/api/admin/users/route.ts:17-41` and `:43-103`
+  with the nested Response-rethrow catch.
+- The invites table lands in `ensureAuthSchema` at `lib/auth/schema.ts:108`.
+  `createInvite` at `lib/auth/invites.ts:51-88` stores the SHA-256 hash of
+  a random single-use code. `consumeInvite` at `:100-121` marks one unused,
+  unexpired, unrevoked row used with one atomic `UPDATE ... RETURNING`.
+  The user-create hook at `lib/auth/server.ts:82-151` consumes the invite
+  and grants the invited role in one client transaction, COMMIT at `:145`.
+  The accept page wraps `useSearchParams` in Suspense at
+  `app/invite/accept/page.tsx:201-211`. The revoke route ships at
+  `app/api/admin/invites/[id]/route.ts:17-36`. `sendInviteLink` rides the
+  `Mailer` interface at `lib/auth/mailer.ts:22` and all three transports
+  implement it at `:58`, `:93`, and `:112`.
+- `listAllCoursesForAdmin` at `lib/persistence/admin-courses.ts:46-91`
+  left-joins `user` for the owner email at `:65` and returns non-deleted
+  rows by default. `deleteCourseForAdmin` at `:103-112` tombstones stage
+  meta then deletes the document row. The delete route at
+  `app/api/admin/courses/[id]/route.ts:29-75` gates `course.delete` and
+  adds the explicit rank-4 check at `:47-53`. The GET list route ships at
+  `app/api/admin/courses/route.ts:16-37`.
+- `decideMediaAccess` at `lib/persistence/media-access.ts:29-42` resolves
+  the viewer rank once and reads stage meta. Missing rows, tombstones,
+  drafts, and wrong-audience rows deny. The byte route gates under the flag
+  at `app/api/classroom-media/[classroomId]/[...path]/route.ts:82-99` and
+  answers 404 before opening the file. The gated cache header is
+  `private, no-store` at `:28` and `:135`. Flag-off keeps the literal
+  public immutable headers at `:27`. Range streaming stays intact at
+  `:121-148`.
+- `resetAuth` clears the module-scope auth cache at `lib/auth/index.ts:39-41`.
+  `getSession` clears and retries once after a cold-start failure at
+  `:76-101`. `withRequestOwnerId` at
+  `lib/server/agent-runtime/with-owner.ts:34-62` answers 401 for a cookie
+  without a valid session and keeps anon for cookie-less requests at
+  `:47-48`. The three probes ship at `tests/admin/cold-boot-session.test.ts`,
+  `tests/admin/cold-boot-anon.test.ts`, and
+  `tests/admin/cold-boot-owner.pg.test.ts`. The pg probe points
+  `DATABASE_URL` at the scratch database at `:53` and signs real sessions
+  through the better-auth API at `:111-148`.
+
+### Deviations and surprises
+
+(a) Round 1's page guard passed `new Headers()` to `requirePermission`.
+An empty Headers object carries no cookie, so every user lost the page.
+All unit gates stayed green because the page suite mocked the permission
+hook at the module boundary. Only Safari saw the permanent not-authorized
+state. RSC pages need a real-cookie live probe in the gate or in
+verification.
+
+(b) `ADMIN_PAGE_OK` was tautological at round 1. It asserted module
+exports and mocked `requirePermission` itself. The rewrite drives the real
+`requirePermission` and the real `guard()` with a transport-only
+`getSession` mock at `tests/admin/admin-page-gate.test.ts:77-84`.
+
+(c) The cold-boot pg probe sent itself 401s at round 1. The fixture
+pointed `DATABASE_URL` at the wrong target and inserted unsigned raw-token
+session rows. A cookie without a valid session rightly answers 401, so the
+fixture looked like a production failure. The production seam was sound.
+The fixture now signs real sessions through the better-auth sign-in API at
+`tests/admin/cold-boot-owner.pg.test.ts:111-148` and sets `DATABASE_URL`
+to the scratch database at `:53`.
+
+(d) GET `/api/admin/courses` never existed while the courses section
+fetched it at `components/admin/courses-section.tsx:43`. No gate exercised
+the list path, and Safari round 2 caught the 404 on every load. The route
+now ships at `app/api/admin/courses/route.ts:16-37`.
+
+(e) The first fix commit `b8d65102` introduced prettier violations in the
+page and its gate suite. Round 2 sent S1 back for `pnpm check`.
+`2fccff4e` restored the formatting.
+
+(f) Test-state leakage. The tombstone test left `pg-course-bob`
+tombstoned in the shared scratch database, and later assertions failed.
+Restore lines landed at `tests/admin/admin-courses.pg.test.ts:172` and
+`:274`.
+
+(g) `includeDeleted` parses `'true'` strictly at
+`app/api/admin/courses/route.ts:29`. A `'1'` silently means false. This is
+accepted as non-blocking and is a candidate for a follow-up ticket.
+
+(h) The 12-locale `admin.users` parity was silently missing until S3's
+i18n check exposed it. All 12 locales now carry the `admin` group and
+`admin.notAuthorized`.
+
+### Test results
+
+All 24 gates passed green at round 3. The doubles ran clean. The final
+table is 24 of 24: S1 3, S2 4, S3 6, S4 3, S5 4, S6 4. The full suite ran
+7863 tests with 1 tolerated failure. The production build exits 0. Safari
+shots 27-30 are console-clean. The wire matrix: admin 200 on both course
+routes, guest 403 on the admin routes, banned 403 with code `banned` and
+rank 0 on the read gate, and the invite flow lands the invited role as
+learner, not guest, through the console transport. The media matrix holds
+every audience tier under the flag.
+
+### Follow-on notes
+
+- `includeDeleted` strictness is a follow-up ticket. See deviation (g).
+- `settingsGated` is never passed as true. `app/page.tsx:741-750` renders
+  `HeaderCapsule` without it, so the gear stays visible under the flag for
+  every rank. The account Settings entry and the settings routes decide
+  the surface. Batch F may revisit the gear.
+- The RSC empty-headers lesson outlives this batch. A real-cookie live
+  probe for RSC pages belongs in the gate design of future specs.
