@@ -13014,6 +13014,20 @@
       "slice": "S5",
       "outcome": "ok",
       "extra": {}
+    },
+    {
+      "ts": "2026-09-06T07:07:28.951Z",
+      "command": "stage.advance",
+      "flags": [
+        "actor",
+        "to"
+      ],
+      "exit": 0,
+      "duration_ms": 4,
+      "stage": "verification",
+      "actor": "orchestrator",
+      "outcome": "ok",
+      "extra": {}
     }
   ],
   "audit": [
@@ -22288,7 +22302,18 @@
       "slice": "S5",
       "hash": "3dccd2fdbd4bc9536cfb45434d4c3a9bc77b6270ca100707a0e5cc32cd7d3bfe",
       "fileHash": "cf1b7f62ae5bb8b95ff1aaf8f64f4e83b16d976f124b5f926301b7edef224e89"
+    },
+    {
+      "seq": 844,
+      "id": "2d95d51a-456f-447c-8f96-83e2450c8a53",
+      "at": "2026-09-06T07:07:28.951Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:stage.advance:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "18af0690482f068fd091bad0890ac9e96ea7f2e3b1213c26fb307dbee03f1164",
+      "fileHash": "f413f138ef7332cf93a94b6307829f40e274e1d5c4fe0b41d1765c45d135626c"
     }
   ],
-  "fileHash": "f413f138ef7332cf93a94b6307829f40e274e1d5c4fe0b41d1765c45d135626c"
+  "fileHash": "929a00abad6cb06c894b78990f6f854db958638b426d52de5833aba5d2e71420"
 }
