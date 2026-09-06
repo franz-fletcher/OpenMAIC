@@ -9,12 +9,13 @@
   "tracker": {
     "mode": "none"
   },
-  "stage": "verification",
+  "stage": "implementation",
   "retry": {
-    "count": 0,
+    "count": 1,
     "max": 5,
-    "consecutive_same_cause": 0,
-    "escalate_at": 3
+    "consecutive_same_cause": 1,
+    "escalate_at": 3,
+    "last_cause": "page-guard-empty-headers"
   },
   "slices": [
     {
@@ -184,14 +185,17 @@
       "riskTier": 2,
       "uuid": "f9fe2b29-9a7f-4a03-863e-529912e0a1ef",
       "impl": {
-        "status": "ready_for_verification",
-        "hash": "5fd879ff0b9ae8ad3570373f76023373ae31f11ceefbaf089426dacaa8917745",
-        "actor": "implementer",
-        "at": "2026-09-06T10:24:53.943Z"
-      },
-      "verification": {
         "status": "pending",
         "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "rejected",
+        "hash": "3fbb237603d071a7c9d39672c531adbbdb1cc983951fc39f52f06f24073c851d",
+        "actor": "verifier",
+        "at": "2026-09-06T13:15:31.945Z",
+        "deficiencies": [
+          "Page guard calls requirePermission(new Headers(), users.manage) at app/admin/settings/page.tsx:19 with an empty Headers object that carries no cookie, so getSession always returns null and the typed 403 always fires: the page is permanently not-authorized for every user. Live-wire + Safari proved a real admin with a signed cookie sees the not-authorized state and never the three sections (postcondition fails). ADMIN_PAGE_OK passes only because admin-page-gate.test.ts:56-66 mocks requirePermission at the module boundary, a 017 failure-class-(d) tautology that masks the broken seam. The page also renders raw i18n keys (admin.notAuthorized at :37, admin.settings.title at :47) and hardcoded English instead of resolving the locale, contradicting its own expectation text. The shared TSC gate fails repo-wide due to S6's cold-boot test file."
+        ]
       },
       "expectation": "A holder of users.manage reaches /admin/settings and sees the three sections; a denied rank receives the typed 403 rendered as the dedicated not-authorized state, so the Response never reaches the error boundary; the account Admin entry navigates, the Settings entry opens the provider dialog, and the soon badge is gone from Settings; under the client mirror the gear hides for non-holders while flag-off keeps today's gear; the new account and capsule props ship optional so minimal-layout.test.ts keeps compiling and passing unchanged; all new strings pass the 12-locale parity check.",
       "gates": [
@@ -215,6 +219,19 @@
           "check": "npx tsc --noEmit && echo TSC_OK",
           "expect": "TSC_OK",
           "evidence": "pending"
+        }
+      ],
+      "findings": [
+        {
+          "id": 1,
+          "correlation": "80810cea3ed1ba0ed34500174b94692db5df88451cb2465b05423bf8c649df80",
+          "at": "2026-09-06T13:15:31.945Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "Page guard calls requirePermission(new Headers(), users.manage) at app/admin/settings/page.tsx:19 with an empty Headers object that carries no cookie, so getSession always returns null and the typed 403 always fires: the page is permanently not-authorized for every user. Live-wire + Safari proved a real admin with a signed cookie sees the not-authorized state and never the three sections (postcondition fails). ADMIN_PAGE_OK passes only because admin-page-gate.test.ts:56-66 mocks requirePermission at the module boundary, a 017 failure-class-(d) tautology that masks the broken seam. The page also renders raw i18n keys (admin.notAuthorized at :37, admin.settings.title at :47) and hardcoded English instead of resolving the locale, contradicting its own expectation text. The shared TSC gate fails repo-wide due to S6's cold-boot test file.",
+          "evidence": "page-guard-empty-headers"
         }
       ]
     },
@@ -393,14 +410,17 @@
       "riskTier": 4,
       "uuid": "86737ab3-aa38-414a-859e-f80d0503fb84",
       "impl": {
-        "status": "ready_for_verification",
-        "hash": "f949702d24ac8ff198dccf04919ec4e1a764fe430ae4f3c122ee793bbd4c879c",
-        "actor": "implementer",
-        "at": "2026-09-06T10:52:17.086Z"
-      },
-      "verification": {
         "status": "pending",
         "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "rejected",
+        "hash": "ee66d763c6fd51a2d83a5d1c8da5ab1568c55257dab0ff3632ae1bcdb611e101",
+        "actor": "verifier",
+        "at": "2026-09-06T13:15:31.945Z",
+        "deficiencies": [
+          "The users section renders only inside the S1 admin page, which is permanently not-authorized, so the postcondition 'the section renders in Safari' cannot hold with the current S1 guard. Additionally the shared TSC gate fails repo-wide (tests/admin/cold-boot-owner.pg.test.ts:112), blocking this slice's g4. All three own gates (USERS_ADMIN_OK, USERS_ADMIN_PG_OK, BAN_ADV_OK) pass."
+        ]
       },
       "expectation": "An operator lists users with search and filter, assigns one role per user, and bans or un-bans a user; a banned user loses every session immediately, receives the typed 403 with code banned from any guarded call, and resolves to rank 0 on every rank gate; the typed 403-body assertions depend on the pinned Response-rethrow passthrough, because the two outer catch layers would flatten the throw to a 500 without it; an admin cannot ban their own session; the identity never renders in the UI.",
       "gates": [
@@ -431,6 +451,19 @@
           "check": "npx tsc --noEmit && echo TSC_OK",
           "expect": "TSC_OK",
           "evidence": "pending"
+        }
+      ],
+      "findings": [
+        {
+          "id": 1,
+          "correlation": "e52546a1f83401b941f6b349fca27bef857ef2fade697968d435d1f1cd3a5fd7",
+          "at": "2026-09-06T13:15:31.945Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "The users section renders only inside the S1 admin page, which is permanently not-authorized, so the postcondition 'the section renders in Safari' cannot hold with the current S1 guard. Additionally the shared TSC gate fails repo-wide (tests/admin/cold-boot-owner.pg.test.ts:112), blocking this slice's g4. All three own gates (USERS_ADMIN_OK, USERS_ADMIN_PG_OK, BAN_ADV_OK) pass.",
+          "evidence": "shared-tsc-breach"
         }
       ]
     },
@@ -661,14 +694,17 @@
       "riskTier": 3,
       "uuid": "fc83ff99-34a4-4a2f-b961-26061141290b",
       "impl": {
-        "status": "ready_for_verification",
-        "hash": "45f9f2a625257f957a0c5718ebb25f4d2e4cf853e4a9fe728400096ba05c9e26",
-        "actor": "implementer",
-        "at": "2026-09-06T11:17:19.927Z"
-      },
-      "verification": {
         "status": "pending",
         "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "rejected",
+        "hash": "665482f76de80e1af45bd0aa63d4295d6ad836f1ce1c1d5160b909e61d07acbf",
+        "actor": "verifier",
+        "at": "2026-09-06T13:15:31.945Z",
+        "deficiencies": [
+          "Production build fails at /invite/accept prerender: app/invite/accept/page.tsx:25 calls useSearchParams() without a Suspense boundary (Next.js missing-suspense-with-csr-bailout), so pnpm build exits 1. The invite-create UI is additionally unreachable because the S1 admin page never authorizes. Shared TSC gate fails repo-wide. Own gates (INVITES_OK, I18N_OK, INVITE_MAILER_OK, INVITES_PG_OK, INVITE_RACE_OK x2) pass."
+        ]
       },
       "expectation": "An admin creates an invite for an email and role with the default seven-day expiry, the mailer sends the accept link through console, smtp, or resend, and the pending list shows it; the accept page prefills the email; the user-create hook consumes the invite and grants the invited role in the same transaction at user creation, before email verification; a second use, an expired invite, and a revoked invite all render the invalid state and grant nothing; the mailer keeps its flag-off console behavior.",
       "gates": [
@@ -713,6 +749,19 @@
           "check": "npx tsc --noEmit && echo TSC_OK",
           "expect": "TSC_OK",
           "evidence": "pending"
+        }
+      ],
+      "findings": [
+        {
+          "id": 1,
+          "correlation": "ae591028b64159230c0acf4525044867654ca1cf512fc675cb5b14ca1d324af1",
+          "at": "2026-09-06T13:15:31.945Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "Production build fails at /invite/accept prerender: app/invite/accept/page.tsx:25 calls useSearchParams() without a Suspense boundary (Next.js missing-suspense-with-csr-bailout), so pnpm build exits 1. The invite-create UI is additionally unreachable because the S1 admin page never authorizes. Shared TSC gate fails repo-wide. Own gates (INVITES_OK, I18N_OK, INVITE_MAILER_OK, INVITES_PG_OK, INVITE_RACE_OK x2) pass.",
+          "evidence": "invite-accept-suspense"
         }
       ]
     },
@@ -801,14 +850,17 @@
       "riskTier": 3,
       "uuid": "e9a65063-a5ec-42fc-bf20-aeaca5b1938d",
       "impl": {
-        "status": "ready_for_verification",
-        "hash": "30b3de82bf5e499a40dfdd0812ed2ef824692c7acfd58a97bf6840c1e9ec89dd",
-        "actor": "implementer",
-        "at": "2026-09-06T11:40:05.775Z"
-      },
-      "verification": {
         "status": "pending",
         "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "rejected",
+        "hash": "5479982bbad3888daa7717c091f71998b58497d38047dc766ad256d3d6386e3e",
+        "actor": "verifier",
+        "at": "2026-09-06T13:15:31.945Z",
+        "deficiencies": [
+          "The courses section renders only inside the permanently not-authorized S1 admin page, so the postcondition 'the section renders in Safari' cannot hold. Shared TSC gate fails repo-wide, blocking this slice's g3. Own gates (ADMIN_COURSES_OK, ADMIN_COURSES_PG_OK) pass."
+        ]
       },
       "expectation": "An admin sees every non-deleted course with owner, status, audience, and publish date; the unpublish and republish actions drive the certified 017 routes and work for any course; the delete action removes any course, cascades stage meta, and never resurrects through PUT because PUT is existence-gated; a creator without course.delete gets 403 on the admin delete route.",
       "gates": [
@@ -832,6 +884,19 @@
           "check": "npx tsc --noEmit && echo TSC_OK",
           "expect": "TSC_OK",
           "evidence": "pending"
+        }
+      ],
+      "findings": [
+        {
+          "id": 1,
+          "correlation": "3786e5ab2667be34ba905972d21032bc8711ec8b0707a87ff955c66be05d260b",
+          "at": "2026-09-06T13:15:31.945Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "The courses section renders only inside the permanently not-authorized S1 admin page, so the postcondition 'the section renders in Safari' cannot hold. Shared TSC gate fails repo-wide, blocking this slice's g3. Own gates (ADMIN_COURSES_OK, ADMIN_COURSES_PG_OK) pass.",
+          "evidence": "shared-tsc-breach"
         }
       ]
     },
@@ -888,14 +953,17 @@
       "riskTier": 4,
       "uuid": "6896b370-07e3-4a54-bb8f-90796d39f2e4",
       "impl": {
-        "status": "ready_for_verification",
-        "hash": "ded3a2ae9cb060907e9d5209d31889ecb9750a482d44b25a2bb81b149e402c40",
-        "actor": "implementer",
-        "at": "2026-09-06T11:59:48.426Z"
-      },
-      "verification": {
         "status": "pending",
         "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "rejected",
+        "hash": "443763b68e84f20f1840032c722d72b468c6d8002517f47db331ed4dbd605f45",
+        "actor": "verifier",
+        "at": "2026-09-06T13:15:31.945Z",
+        "deficiencies": [
+          "Shared TSC gate (g4) fails repo-wide: npx tsc --noEmit exits 1 on tests/admin/cold-boot-owner.pg.test.ts:112. All own gates pass including MEDIA_NO_LEAK_OK twice."
+        ]
       },
       "expectation": "Under the flag, published everyone-audience media serves to rank 0 and above, guest media to rank 1 and above, learner media to rank 2 and above, while drafts, wrong-audience courses, and media ids with no stage_meta row answer 404 with no bytes; the gated responses carry a cache header that no longer claims public immutability; flag-off response bodies, statuses, and headers stay byte-identical; range streaming keeps working; the flag-on gate never opens the file before the decision.",
       "gates": [
@@ -926,6 +994,19 @@
           "check": "npx tsc --noEmit && echo TSC_OK",
           "expect": "TSC_OK",
           "evidence": "pending"
+        }
+      ],
+      "findings": [
+        {
+          "id": 1,
+          "correlation": "9500ce48a1ef21c8ea28a019bbe7d2d37024f8f50d4a0d442d7ad6e5b2f54988",
+          "at": "2026-09-06T13:15:31.945Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "Shared TSC gate (g4) fails repo-wide: npx tsc --noEmit exits 1 on tests/admin/cold-boot-owner.pg.test.ts:112. All own gates pass including MEDIA_NO_LEAK_OK twice.",
+          "evidence": "shared-tsc-breach"
         }
       ]
     },
@@ -1015,14 +1096,17 @@
       "riskTier": 4,
       "uuid": "22ff17bf-413b-4cb7-862c-4a99b4d115a3",
       "impl": {
-        "status": "ready_for_verification",
-        "hash": "74d22047b863625a951684408680a85fd4d711bb2016afbae43a487c68e6cbb3",
-        "actor": "implementer",
-        "at": "2026-09-06T12:11:22.605Z"
-      },
-      "verification": {
         "status": "pending",
         "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "rejected",
+        "hash": "aa18857aab92232ec204babf00a1fc1d1f6b42b378488b4984b4d8fec3d391c3",
+        "actor": "verifier",
+        "at": "2026-09-06T13:15:31.945Z",
+        "deficiencies": [
+          "tests/admin/cold-boot-owner.pg.test.ts:112 uses ReturnType<typeof createAuthServer> in a type position, but createAuthServer is only imported dynamically inside test bodies (:153, :231, :241), so npx tsc --noEmit fails repo-wide. The shared TSC gate on every slice fails because of this slice's own deliverable. COLD_BOOT_OK, COLD_BOOT_ANON_OK, COLD_BOOT_PG_OK x2 pass under vitest; the type error breaks the CI compile gate."
+        ]
       },
       "expectation": "The probe reproduces the failure class, the hardening keeps a real signed-in session from resolving to anon on the first PUT after a cold boot, and the probe passes across repeated cold boots; a request without a session cookie still resolves the anon identity; a miswired reset cannot pass the gate vacuously because the probe asserts the exact owner bytes.",
       "gates": [
@@ -1053,6 +1137,19 @@
           "check": "npx tsc --noEmit && echo TSC_OK",
           "expect": "TSC_OK",
           "evidence": "pending"
+        }
+      ],
+      "findings": [
+        {
+          "id": 1,
+          "correlation": "5d1dd79b6b7e444573738904e7e4030f3634b74d66c3fc8e6a3e45a4cfc9cbe3",
+          "at": "2026-09-06T13:15:31.945Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "tests/admin/cold-boot-owner.pg.test.ts:112 uses ReturnType<typeof createAuthServer> in a type position, but createAuthServer is only imported dynamically inside test bodies (:153, :231, :241), so npx tsc --noEmit fails repo-wide. The shared TSC gate on every slice fails because of this slice's own deliverable. COLD_BOOT_OK, COLD_BOOT_ANON_OK, COLD_BOOT_PG_OK x2 pass under vitest; the type error breaks the CI compile gate.",
+          "evidence": "cold-boot-test-type-import"
         }
       ]
     }
@@ -2177,7 +2274,18 @@
       "slice": null,
       "hash": "4ff107ff661da8230f0ffd6fea04dd0114550fb1287d3892ee857ae726bf4a5c",
       "fileHash": "9a9aebcf5a0e247d5a87884c98d06815cbd0e639d9bf16bfaee4311076258414"
+    },
+    {
+      "seq": 103,
+      "id": "c03d2f0e-395f-4960-aab0-ddb4bd95856b",
+      "at": "2026-09-06T13:15:31.945Z",
+      "actor": "verifier",
+      "command": "slice_reject_batch",
+      "transition": "reject-batch:S1,S2,S3,S4,S5,S6",
+      "slice": null,
+      "hash": "3dbc4ef302e56eb0239fd438003524356851805f91720a33c8bdc121cf81e9d5",
+      "fileHash": "ed1ad512780b827deaa2ce61c5c8ef249fe24012a78e674624db0fe7640d5e22"
     }
   ],
-  "fileHash": "ed1ad512780b827deaa2ce61c5c8ef249fe24012a78e674624db0fe7640d5e22"
+  "fileHash": "d3cdb2bc784b412bcd23e447860950fe31c65f1a1eeba203621dd3650f984579"
 }
