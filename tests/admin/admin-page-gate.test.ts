@@ -141,8 +141,7 @@ vi.mock('@/lib/i18n/server', () => ({
 vi.mock('@/lib/i18n/server-translate', () => ({
   serverTranslate: vi.fn(async (_locale: string, key: string) => {
     const translations: Record<string, string> = {
-      'admin.notAuthorized':
-        'You do not have permission to access this page.',
+      'admin.notAuthorized': 'You do not have permission to access this page.',
       'admin.settings.title': 'Admin Settings',
       'admin.users.title': 'Users',
       'admin.invites.title': 'Invites',
@@ -168,14 +167,11 @@ describe('Admin settings page gate', () => {
     it('renders translated not-authorized when session is null', async () => {
       _mockSession = null;
       try {
-        const { default: AdminSettingsPage } =
-          await import('@/app/admin/settings/page');
+        const { default: AdminSettingsPage } = await import('@/app/admin/settings/page');
         const result = await AdminSettingsPage();
         const { renderToStaticMarkup } = await import('react-dom/server');
         const html = renderToStaticMarkup(result as React.ReactElement);
-        expect(html).toContain(
-          'You do not have permission to access this page.',
-        );
+        expect(html).toContain('You do not have permission to access this page.');
         expect(html).not.toContain('USERS_SECTION');
         expect(html).not.toContain('INVITES_SECTION');
         expect(html).not.toContain('COURSES_SECTION');
@@ -206,8 +202,7 @@ describe('Admin settings page gate', () => {
         ipAddress: null,
         userAgent: null,
       };
-      const { default: AdminSettingsPage } =
-        await import('@/app/admin/settings/page');
+      const { default: AdminSettingsPage } = await import('@/app/admin/settings/page');
       const result = await AdminSettingsPage();
       const { renderToStaticMarkup } = await import('react-dom/server');
       const html = renderToStaticMarkup(result as React.ReactElement);

@@ -33,9 +33,7 @@ export default async function AdminSettingsPage() {
 
   if (!authorized) {
     const locale = await resolveServerLocale();
-    const [notAuthorized] = await Promise.all([
-      serverTranslate(locale, 'admin.notAuthorized'),
-    ]);
+    const [notAuthorized] = await Promise.all([serverTranslate(locale, 'admin.notAuthorized')]);
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="text-center">
@@ -58,9 +56,7 @@ export default async function AdminSettingsPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-8">
-          {title}
-        </h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-8">{title}</h1>
         <div className="space-y-8">
           <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">

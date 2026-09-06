@@ -167,6 +167,9 @@ describe.skipIf(!contractUrl)('ADMIN_COURSES_PG_OK: admin courses PG contract', 
     const courses = await listAllCoursesForAdmin(pool);
     const bob = courses.find((c) => c.stageId === 'pg-course-bob');
     expect(bob).toBeUndefined();
+
+    // Restore so later tests see both courses
+    await pool.query(`UPDATE stage_meta SET deleted_at = NULL WHERE stage_id = 'pg-course-bob'`);
   });
 
   it('deleteCourseForAdmin tournstones and deletes', async () => {
@@ -234,5 +237,40 @@ describe.skipIf(!contractUrl)('ADMIN_COURSES_PG_OK: admin courses PG contract', 
     const { can } = await import('@/lib/auth/permissions');
     expect(can({ rank: 3 }, 'course.delete')).toBe(true);
     expect(can({ rank: 4 }, 'course.delete')).toBe(true);
+  });
+
+  it('GET /api/admin/courses list path returns foreign courses with owner emails', async () => {
+    const { listAllCoursesForAdmin } = await import('@/lib/persistence/admin-courses');
+    const courses = await listAllCoursesForAdmin(pool);
+    // Admin sees both alice's and bob's courses
+    expect(courses.length).toBeGreaterThanOrEqual(2);
+    const alice = courses.find((c) => c.stageId === 'pg-course-alice');
+    const bob = courses.find((c) => c.stageId === 'pg-course-bob');
+    expect(alice).toBeDefined();
+    expect(bob).toBeDefined();
+    // Owner emails resolved through the LEFT JOIN
+    expect(alice!.ownerEmail).toBe('alice-admin@pgtest.com');
+    expect(bob!.ownerEmail).toBe('bob-creator@pgtest.com');
+  });
+
+  it('GET /api/admin/courses includeDeleted=true shows tombstoned courses', async () => {
+    // Tombstone bob's course first
+    const { tombstoneStageMeta } = await import('@/lib/persistence/stage-meta');
+    await tombstoneStageMeta(pool, 'pg-course-bob');
+
+    // Default: bob's course excluded
+    const { listAllCoursesForAdmin } = await import('@/lib/persistence/admin-courses');
+    const defaultCourses = await listAllCoursesForAdmin(pool);
+    const bobDefault = defaultCourses.find((c) => c.stageId === 'pg-course-bob');
+    expect(bobDefault).toBeUndefined();
+
+    // includeDeleted: bob's course included
+    const allCourses = await listAllCoursesForAdmin(pool, { includeDeleted: true });
+    const bobAll = allCourses.find((c) => c.stageId === 'pg-course-bob');
+    expect(bobAll).toBeDefined();
+    expect(bobAll!.deletedAt).not.toBeNull();
+
+    // Restore so afterAll cleanup doesn't leave stale state
+    await pool.query(`UPDATE stage_meta SET deleted_at = NULL WHERE stage_id = 'pg-course-bob'`);
   });
 });

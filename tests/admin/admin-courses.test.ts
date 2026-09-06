@@ -311,6 +311,43 @@ describe('ADMIN_COURSES_OK: admin-courses gate', () => {
     });
   });
 
+  describe('ADMIN_COURSES_OK: GET /api/admin/courses', () => {
+    it('returns 200 with courses array when authorized as admin', async () => {
+      _mockSession = { userId: 'test-admin-1', token: 'tok', id: 'sess' };
+      const { GET } = await import('@/app/api/admin/courses/route');
+      const req = new Request('http://localhost/api/admin/courses', {
+        method: 'GET',
+        headers: new Headers({ cookie: 'session=tok' }),
+      });
+      const res = await GET(req as never);
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.success).toBe(true);
+      expect(Array.isArray(body.courses)).toBe(true);
+      expect(body.courses).toHaveLength(2);
+      expect(body.courses[0]).toMatchObject({
+        stageId: 'stage-1',
+        name: 'Intro to Algebra',
+        ownerId: 'user:raw-user-alice',
+        ownerEmail: 'alice@example.com',
+        status: 'published',
+        audience: 0,
+        publishedAt: 1700000000000,
+      });
+    });
+
+    it('returns 403 when no session', async () => {
+      _mockSession = null;
+      const { GET } = await import('@/app/api/admin/courses/route');
+      const req = new Request('http://localhost/api/admin/courses', {
+        method: 'GET',
+        headers: new Headers(),
+      });
+      const res = await GET(req as never);
+      expect(res.status).toBe(403);
+    });
+  });
+
   describe('ADMIN_COURSES_OK: courses-section component', () => {
     it('exports a client component', async () => {
       const mod = await import('@/components/admin/courses-section');

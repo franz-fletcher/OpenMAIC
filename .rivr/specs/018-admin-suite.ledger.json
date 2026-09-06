@@ -185,8 +185,10 @@
       "riskTier": 2,
       "uuid": "f9fe2b29-9a7f-4a03-863e-529912e0a1ef",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "107013d5fbb742942384c8d1e86913dac615889d19f2bf9f0b165cc9703c8849",
+        "actor": "implementer",
+        "at": "2026-09-06T14:14:32.250Z"
       },
       "verification": {
         "status": "rejected",
@@ -1051,8 +1053,10 @@
       "riskTier": 3,
       "uuid": "e9a65063-a5ec-42fc-bf20-aeaca5b1938d",
       "impl": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "ready_for_verification",
+        "hash": "58c2d1f78a9c2268ac21031eb8db5143a87225465f19e092d1d4770ec1e74079",
+        "actor": "implementer",
+        "at": "2026-09-06T14:14:32.531Z"
       },
       "verification": {
         "status": "rejected",
@@ -2885,7 +2889,29 @@
       "slice": null,
       "hash": "8e60d3a0a57a9c2df4c29f0c51791ec24d9e17cd7ba3c587b19bda5fc7f5d9ec",
       "fileHash": "4967af9ac6503be02a9d87c04733232307da3b3c9f2da5db3b8d6d34d8c23aec"
+    },
+    {
+      "seq": 122,
+      "id": "a266f404-0fa4-48dc-a8b8-e5c6d68a7a65",
+      "at": "2026-09-06T14:14:32.250Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S1:impl:pending->ready_for_verification",
+      "slice": "S1",
+      "hash": "9e56fda630769d812543e2e59e7ec58790c2c0292e2ae1a16b4dd1006ba8546b",
+      "fileHash": "70b742459c52fbba2c99241d48ff600b984e69dc7b719af4fa94bad67c6dd5de"
+    },
+    {
+      "seq": 123,
+      "id": "c3e0a493-bbf4-4efa-ba20-8f200713c318",
+      "at": "2026-09-06T14:14:32.531Z",
+      "actor": "implementer",
+      "command": "impl_mark",
+      "transition": "slice:S4:impl:pending->ready_for_verification",
+      "slice": "S4",
+      "hash": "e86157dfdbda696b3af22300159bd925113a9cff50ee469d8f196f8f5f411ab1",
+      "fileHash": "da2fe7a2d882721ff3d4849582ff9f2ff59e108680e3293650aadfb5eae015fc"
     }
   ],
-  "fileHash": "70b742459c52fbba2c99241d48ff600b984e69dc7b719af4fa94bad67c6dd5de"
+  "fileHash": "8311d5d22a31384d8e8ee3d08e5545283fc6d7130c6d3601fc8dc3d7d493ec5f"
 }
