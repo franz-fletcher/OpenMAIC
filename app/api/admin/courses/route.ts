@@ -26,7 +26,9 @@ export async function GET(req: NextRequest): Promise<Response> {
 
     const { pool } = await getServerPersistenceProvider(process.env.DATABASE_URL ?? '');
     const url = new URL(req.url);
-    const includeDeleted = url.searchParams.get('includeDeleted') === 'true';
+    const includeDeletedParam = url.searchParams.get('includeDeleted');
+    const includeDeleted =
+      includeDeletedParam === '1' || includeDeletedParam?.toLowerCase() === 'true';
 
     const courses = await listAllCoursesForAdmin(pool, { includeDeleted });
     return Response.json({ success: true, courses });
