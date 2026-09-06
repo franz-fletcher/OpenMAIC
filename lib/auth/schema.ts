@@ -130,6 +130,12 @@ ALTER TABLE "user" ADD COLUMN IF NOT EXISTS "banReason" TEXT;
 ALTER TABLE "user" ADD COLUMN IF NOT EXISTS "banExpires" TIMESTAMPTZ;
 `;
 
+// Drop the rank uniqueness constraint so custom roles may share a seeded rank.
+// Postgres names the auto-generated constraint roles_rank_key.
+const RANK_CONSTRAINT_SQL = `
+ALTER TABLE roles DROP CONSTRAINT IF EXISTS roles_rank_key;
+`;
+
 /**
  * Creates the eight auth tables idempotently. Runs as part of the lazy
  * ensure-chain in createServerPersistenceProvider. Safe to call on every
@@ -142,6 +148,11 @@ export async function ensureAuthSchema(queryable: Queryable): Promise<void> {
   }
   // Lazy ALTER for ban columns. Safe to run on every boot.
   for (const sql of BAN_COLUMNS_SQL.split(';')) {
+    const statement = sql.trim();
+    if (statement !== '') await queryable.query(statement);
+  }
+  // Drop rank uniqueness constraint so custom roles may share a seeded rank.
+  for (const sql of RANK_CONSTRAINT_SQL.split(';')) {
     const statement = sql.trim();
     if (statement !== '') await queryable.query(statement);
   }
