@@ -109,8 +109,15 @@ export async function PATCH(req: NextRequest, { params }: Params): Promise<Respo
       return Response.json({ success: true });
     } catch (err) {
       if (err instanceof Error) {
+        const msg = err.message;
+        if (msg.includes('not found')) {
+          return Response.json(
+            { success: false, code: 'UPDATE_FAILED', error: 'not-found' },
+            { status: 404 },
+          );
+        }
         return Response.json(
-          { success: false, code: 'UPDATE_FAILED', message: err.message },
+          { success: false, code: 'UPDATE_FAILED', error: 'unknown' },
           { status: 400 },
         );
       }
@@ -160,8 +167,36 @@ export async function DELETE(req: NextRequest, { params }: Params): Promise<Resp
       return Response.json({ success: true });
     } catch (err) {
       if (err instanceof Error) {
+        const msg = err.message;
+        if (msg.includes('attached users')) {
+          const roleName = msg.split(': ').pop() ?? '';
+          return Response.json(
+            { success: false, code: 'DELETE_FAILED', error: 'attached-users', role: roleName },
+            { status: 400 },
+          );
+        }
+        if (msg.includes('pending invites')) {
+          const roleName = msg.split(': ').pop() ?? '';
+          return Response.json(
+            { success: false, code: 'DELETE_FAILED', error: 'pending-invites', role: roleName },
+            { status: 400 },
+          );
+        }
+        if (msg.includes('system role')) {
+          const roleName = msg.split(': ').pop() ?? '';
+          return Response.json(
+            { success: false, code: 'DELETE_FAILED', error: 'system-role', role: roleName },
+            { status: 400 },
+          );
+        }
+        if (msg.includes('not found')) {
+          return Response.json(
+            { success: false, code: 'DELETE_FAILED', error: 'not-found' },
+            { status: 404 },
+          );
+        }
         return Response.json(
-          { success: false, code: 'DELETE_FAILED', message: err.message },
+          { success: false, code: 'DELETE_FAILED', error: 'unknown' },
           { status: 400 },
         );
       }

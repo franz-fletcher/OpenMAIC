@@ -224,7 +224,7 @@ describe('USERS_ADMIN_OK: users-admin gate', () => {
   });
 
   describe('USERS_ADMIN_OK: listUsers', () => {
-    it('returns users with email, verified, role, rank, banned, created', async () => {
+    it('returns users with email, verified, role, roleId, rank, banned, created', async () => {
       const { listUsers } = await import('@/lib/persistence/admin-users');
       const query = vi.fn(async () => ({ rows: MOCK_USERS }));
       const queryable = { query } as any;
@@ -234,10 +234,52 @@ describe('USERS_ADMIN_OK: users-admin gate', () => {
         id: 'user-1',
         email: 'alice@example.com',
         emailVerified: true,
+        roleId: 'admin',
         role: 'admin',
         rank: 4,
         banned: false,
       });
+    });
+
+    it('returns roleId for custom-role users so the picker matches by ID', async () => {
+      const { listUsers } = await import('@/lib/persistence/admin-users');
+      const customRoleRow = {
+        id: 'user-custom',
+        email: 'custom@example.com',
+        name: 'Custom',
+        email_verified: true,
+        role_id: '9bbddd4a-3df0-4133-98c0-472bc6623158',
+        role_name: 'ta',
+        role_rank: 2,
+        banned: false,
+        ban_reason: null,
+        created_at: new Date('2025-03-01'),
+      };
+      const query = vi.fn(async () => ({ rows: [customRoleRow] }));
+      const queryable = { query } as any;
+      const users = await listUsers(queryable);
+      expect(users[0].roleId).toBe('9bbddd4a-3df0-4133-98c0-472bc6623158');
+      expect(users[0].role).toBe('ta');
+    });
+
+    it('returns roleId=null for users with no role assignment', async () => {
+      const { listUsers } = await import('@/lib/persistence/admin-users');
+      const noRoleRow = {
+        id: 'user-none',
+        email: 'none@example.com',
+        name: 'None',
+        email_verified: false,
+        role_id: null,
+        role_name: null,
+        role_rank: 1,
+        banned: false,
+        ban_reason: null,
+        created_at: new Date('2025-04-01'),
+      };
+      const query = vi.fn(async () => ({ rows: [noRoleRow] }));
+      const queryable = { query } as any;
+      const users = await listUsers(queryable);
+      expect(users[0].roleId).toBeNull();
     });
   });
 

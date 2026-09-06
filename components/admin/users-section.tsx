@@ -15,6 +15,7 @@ interface AdminUser {
   email: string;
   name: string;
   emailVerified: boolean;
+  roleId: string | null;
   role: string | null;
   rank: number;
   banned: boolean;
@@ -199,7 +200,7 @@ export default function UsersSection() {
                   </td>
                   <td className="py-2 px-3">
                     <select
-                      value={user.role ?? ''}
+                      value={user.roleId ?? ''}
                       onChange={(e) => handleRoleChange(user.id, e.target.value)}
                       className="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-xs bg-white dark:bg-gray-800"
                     >

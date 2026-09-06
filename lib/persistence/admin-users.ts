@@ -15,6 +15,7 @@ export interface AdminUser {
   email: string;
   name: string;
   emailVerified: boolean;
+  roleId: string | null;
   role: string | null;
   rank: number;
   banned: boolean;
@@ -83,6 +84,7 @@ export async function listUsers(
     email: row.email,
     name: row.name,
     emailVerified: row.email_verified,
+    roleId: row.role_id,
     role: row.role_name,
     rank: row.role_rank,
     banned: row.banned,

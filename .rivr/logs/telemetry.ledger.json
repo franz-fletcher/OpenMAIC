@@ -18810,6 +18810,21 @@
       "actor": "verifier",
       "outcome": "ok",
       "extra": {}
+    },
+    {
+      "ts": "2026-09-06T18:43:56.512Z",
+      "command": "slice.mark",
+      "flags": [
+        "actor",
+        "slice"
+      ],
+      "exit": 0,
+      "duration_ms": 8,
+      "stage": "implementation",
+      "actor": "implementer",
+      "slice": "S4",
+      "outcome": "ok",
+      "extra": {}
     }
   ],
   "audit": [
@@ -32209,7 +32224,18 @@
       "slice": null,
       "hash": "1ce6e461aca81e2d96a70353507cdaf30cc1848f4872c415eebaf04dc790d7b2",
       "fileHash": "268310564e894eeec78778be8c656599669796000574127e2035dc18a58169d3"
+    },
+    {
+      "seq": 1219,
+      "id": "feb11570-c004-4eca-bf18-879b733a4989",
+      "at": "2026-09-06T18:43:56.512Z",
+      "actor": "implementer",
+      "command": "telemetry",
+      "transition": "command:slice.mark:exit:0:outcome:ok",
+      "slice": "S4",
+      "hash": "699720ad11c606019edd130a13e37835da8ed36ea36b22cdcab3f800a254a00a",
+      "fileHash": "03991a2a9875db1c986e5a9acab67a8b4eda4b7a5dd94af892a80cf49a293d99"
     }
   ],
-  "fileHash": "03991a2a9875db1c986e5a9acab67a8b4eda4b7a5dd94af892a80cf49a293d99"
+  "fileHash": "8ddb161a9e8af4887654e9d6ab6655a120fc425b73b839ed5968e402413af74f"
 }

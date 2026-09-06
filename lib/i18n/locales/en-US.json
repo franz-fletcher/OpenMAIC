@@ -2229,7 +2229,15 @@
       "roleName": "Role Name",
       "selectRank": "Select Rank",
       "selfLockoutError": "Cannot mutate your own role.",
-      "selfDemoteError": "Cannot change your own role assignment."
+      "selfDemoteError": "Cannot change your own role assignment.",
+      "deleteAttachedUsers": "Cannot delete role with attached users: {{role}}",
+      "deletePendingInvites": "Cannot delete role with pending invites: {{role}}",
+      "deleteSystemRole": "Cannot delete system role: {{role}}",
+      "deleteNotFound": "Role not found.",
+      "deleteFailed": "Failed to delete role.",
+      "updateFailed": "Failed to update role.",
+      "createFailed": "Failed to create role.",
+      "resetFailed": "Failed to reset role."
     },
     "notAuthorized": "You do not have permission to access this page."
   }

@@ -93,10 +93,14 @@ export default function RolesSection() {
         fetchRoles();
       } else {
         const data = await res.json();
-        setError(data.message || 'Failed to create role');
+        if (data.error === 'not-found') {
+          setError(t('admin.roles.deleteNotFound'));
+        } else {
+          setError(t('admin.roles.createFailed'));
+        }
       }
     } catch {
-      setError('Failed to create role');
+      setError(t('admin.roles.createFailed'));
     }
   };
 
@@ -130,10 +134,14 @@ export default function RolesSection() {
         fetchRoles();
       } else {
         const data = await res.json();
-        setError(data.message || 'Failed to update role');
+        if (data.error === 'not-found') {
+          setError(t('admin.roles.deleteNotFound'));
+        } else {
+          setError(t('admin.roles.updateFailed'));
+        }
       }
     } catch {
-      setError('Failed to update role');
+      setError(t('admin.roles.updateFailed'));
     }
   };
 
@@ -147,11 +155,10 @@ export default function RolesSection() {
       if (res.ok) {
         fetchRoles();
       } else {
-        const data = await res.json();
-        setError(data.message || 'Failed to reset role');
+        setError(t('admin.roles.resetFailed'));
       }
     } catch {
-      setError('Failed to reset role');
+      setError(t('admin.roles.resetFailed'));
     }
   };
 
@@ -166,10 +173,20 @@ export default function RolesSection() {
         fetchRoles();
       } else {
         const data = await res.json();
-        setError(data.message || 'Failed to delete role');
+        if (data.error === 'attached-users') {
+          setError(t('admin.roles.deleteAttachedUsers').replace('{{role}}', data.role ?? roleName));
+        } else if (data.error === 'pending-invites') {
+          setError(t('admin.roles.deletePendingInvites').replace('{{role}}', data.role ?? roleName));
+        } else if (data.error === 'system-role') {
+          setError(t('admin.roles.deleteSystemRole').replace('{{role}}', data.role ?? roleName));
+        } else if (data.error === 'not-found') {
+          setError(t('admin.roles.deleteNotFound'));
+        } else {
+          setError(t('admin.roles.deleteFailed'));
+        }
       }
     } catch {
-      setError('Failed to delete role');
+      setError(t('admin.roles.deleteFailed'));
     }
   };
 
