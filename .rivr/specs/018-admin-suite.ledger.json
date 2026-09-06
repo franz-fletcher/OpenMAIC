@@ -4,12 +4,12 @@
   "spec": {
     "reference": "docs/specs/018-admin-suite.md",
     "title": "Batch 018 spec: admin-suite",
-    "hash": "261fbc45c25e87787179eb671b42d7f7b85a06739b92528e8257af06955c2474"
+    "hash": "7811e8f776c2b4b680038e8577124e88077ad6901980dceea206d75cf0c233b4"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "verification",
+  "stage": "research_update",
   "retry": {
     "count": 2,
     "max": 5,
@@ -191,10 +191,10 @@
         "at": "2026-09-06T14:14:32.250Z"
       },
       "verification": {
-        "status": "rejected",
-        "hash": "8d11e740a5c6600f2358b00e68c4bb4377b1b1b41444f53e495f7e3863923222",
+        "status": "verified",
+        "hash": "1232aed5f79fa09e2d6d2288d7001f5d94c51ea650b788ceb18add0f72e311b0",
         "actor": "verifier",
-        "at": "2026-09-06T13:57:36.487Z",
+        "at": "2026-09-06T14:19:56.930Z",
         "deficiencies": [
           "pnpm check fails repo-wide on app/admin/settings/page.tsx (prettier 3.8.1 violations at :36-38 and :61-63) and tests/admin/admin-page-gate.test.ts (:144-145, :171-172, :176-178, :209-210). Both files were formatting-clean at the round-1 tree (3c975660) and dirty at b8d65102: the fix commit introduced the violations, breaking the repo CI gate pnpm check. Orchestrator confirmation of no formatter damage is contradicted by the fresh pinned-prettier run."
         ],
@@ -207,7 +207,7 @@
               "exit": 0,
               "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
               "pathCount": 30,
-              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/admin-page-gate.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/admin-page-gate.test.ts \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 162\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m6 passed\u001b[39m\u001b[22m\u001b[90m (6)\u001b[39m\n\u001b[2m   Start at \u001b[22m 01:36:10\n\u001b[2m   Duration \u001b[22m 242ms\u001b[2m (transform 34ms, setup 9ms, import 15ms, tests 162ms, environment 0ms)\u001b[22m\n\nADMIN_PAGE_OK\n",
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/admin-page-gate.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/admin-page-gate.test.ts \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 151\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m6 passed\u001b[39m\u001b[22m\u001b[90m (6)\u001b[39m\n\u001b[2m   Start at \u001b[22m 02:19:52\n\u001b[2m   Duration \u001b[22m 225ms\u001b[2m (transform 32ms, setup 9ms, import 15ms, tests 151ms, environment 0ms)\u001b[22m\n\nADMIN_PAGE_OK\n",
               "passed": true
             },
             {
@@ -240,7 +240,7 @@
           "type": "unit",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/admin/admin-page-gate.test.ts && echo ADMIN_PAGE_OK",
           "expect": "ADMIN_PAGE_OK",
-          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/admin-page-gate.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/admin-page-gate.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m6 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 162\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m6 passed\\u001b[39m\\u001b[22m\\u001b[90m (6)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 01:36:10\\n\\u001b[2m   Duration \\u001b[22m 242ms\\u001b[2m (transform 34ms, setup 9ms, import 15ms, tests 162ms, environment 0ms)\\u001b[22m\\n\\nADMIN_PAGE_OK\\n\",\"passed\":true}",
+          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/admin-page-gate.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/admin-page-gate.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m6 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 151\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m6 passed\\u001b[39m\\u001b[22m\\u001b[90m (6)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 02:19:52\\n\\u001b[2m   Duration \\u001b[22m 225ms\\u001b[2m (transform 32ms, setup 9ms, import 15ms, tests 151ms, environment 0ms)\\u001b[22m\\n\\nADMIN_PAGE_OK\\n\",\"passed\":true}",
           "captures": [
             {
               "captureId": "64231175-b171-4a19-bbe7-909ed969bdfb",
@@ -1059,10 +1059,10 @@
         "at": "2026-09-06T14:14:32.531Z"
       },
       "verification": {
-        "status": "rejected",
-        "hash": "a73988679c2284d89f21230546a9dc2cf4e57282110d4908a59cd1979ee17007",
+        "status": "verified",
+        "hash": "7ea1a7a2831aec3a839cb1462a2b1a5862b3876c555bc363b3eeaa5e22c4abe8",
         "actor": "verifier",
-        "at": "2026-09-06T13:57:36.487Z",
+        "at": "2026-09-06T14:20:08.209Z",
         "deficiencies": [
           "GET /api/admin/courses does not exist: app/api/admin/courses/route.ts is absent (only [id]/route.ts exists) and never existed in git history, yet components/admin/courses-section.tsx:43 fetches it as the section data path. Live-wire GET /api/admin/courses answers 404; Safari shows Failed to load courses + No courses found; the console logs a 404 on every load. No gate exercises the section data path: ADMIN_COURSES_OK checks only module exports and the DELETE route, ADMIN_COURSES_PG_OK never hits the list route. The postcondition an admin sees every non-deleted course and the section renders in Safari cannot hold (spec 018 :503 requires a new app-owned admin course list route, never a reuse of GET /api/stages)."
         ],
@@ -1075,7 +1075,7 @@
               "exit": 0,
               "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
               "pathCount": 30,
-              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/admin-courses.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/admin-courses.test.ts \u001b[2m(\u001b[22m\u001b[2m13 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 181\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m13 passed\u001b[39m\u001b[22m\u001b[90m (13)\u001b[39m\n\u001b[2m   Start at \u001b[22m 01:36:58\n\u001b[2m   Duration \u001b[22m 268ms\u001b[2m (transform 151ms, setup 13ms, import 19ms, tests 181ms, environment 0ms)\u001b[22m\n\nADMIN_COURSES_OK\n",
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/admin-courses.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/admin-courses.test.ts \u001b[2m(\u001b[22m\u001b[2m15 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 159\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m15 passed\u001b[39m\u001b[22m\u001b[90m (15)\u001b[39m\n\u001b[2m   Start at \u001b[22m 02:20:04\n\u001b[2m   Duration \u001b[22m 238ms\u001b[2m (transform 132ms, setup 11ms, import 20ms, tests 159ms, environment 0ms)\u001b[22m\n\nADMIN_COURSES_OK\n",
               "passed": true
             },
             {
@@ -1085,7 +1085,7 @@
               "exit": 0,
               "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
               "pathCount": 30,
-              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/admin-courses.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/admin-courses.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m10 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 371\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m10 passed\u001b[39m\u001b[22m\u001b[90m (10)\u001b[39m\n\u001b[2m   Start at \u001b[22m 01:36:59\n\u001b[2m   Duration \u001b[22m 459ms\u001b[2m (transform 143ms, setup 13ms, import 20ms, tests 371ms, environment 0ms)\u001b[22m\n\nADMIN_COURSES_PG_OK\n",
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/admin/admin-courses.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/admin/admin-courses.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m12 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 355\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m12 passed\u001b[39m\u001b[22m\u001b[90m (12)\u001b[39m\n\u001b[2m   Start at \u001b[22m 02:20:04\n\u001b[2m   Duration \u001b[22m 437ms\u001b[2m (transform 119ms, setup 11ms, import 22ms, tests 355ms, environment 0ms)\u001b[22m\n\nADMIN_COURSES_PG_OK\n",
               "passed": true
             },
             {
@@ -1108,14 +1108,14 @@
           "type": "unit",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/admin/admin-courses.test.ts && echo ADMIN_COURSES_OK",
           "expect": "ADMIN_COURSES_OK",
-          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/admin-courses.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/admin-courses.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m13 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 181\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m13 passed\\u001b[39m\\u001b[22m\\u001b[90m (13)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 01:36:58\\n\\u001b[2m   Duration \\u001b[22m 268ms\\u001b[2m (transform 151ms, setup 13ms, import 19ms, tests 181ms, environment 0ms)\\u001b[22m\\n\\nADMIN_COURSES_OK\\n\",\"passed\":true}"
+          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/admin-courses.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/admin-courses.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m15 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 159\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m15 passed\\u001b[39m\\u001b[22m\\u001b[90m (15)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 02:20:04\\n\\u001b[2m   Duration \\u001b[22m 238ms\\u001b[2m (transform 132ms, setup 11ms, import 20ms, tests 159ms, environment 0ms)\\u001b[22m\\n\\nADMIN_COURSES_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g2",
           "type": "integration",
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/admin/admin-courses.pg.test.ts && echo ADMIN_COURSES_PG_OK",
           "expect": "ADMIN_COURSES_PG_OK",
-          "evidence": "{\"id\":\"g2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/admin-courses.pg.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/admin-courses.pg.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m10 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[33m 371\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m10 passed\\u001b[39m\\u001b[22m\\u001b[90m (10)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 01:36:59\\n\\u001b[2m   Duration \\u001b[22m 459ms\\u001b[2m (transform 143ms, setup 13ms, import 20ms, tests 371ms, environment 0ms)\\u001b[22m\\n\\nADMIN_COURSES_PG_OK\\n\",\"passed\":true}"
+          "evidence": "{\"id\":\"g2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/admin/admin-courses.pg.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/admin/admin-courses.pg.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m12 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[33m 355\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m12 passed\\u001b[39m\\u001b[22m\\u001b[90m (12)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 02:20:04\\n\\u001b[2m   Duration \\u001b[22m 437ms\\u001b[2m (transform 119ms, setup 11ms, import 22ms, tests 355ms, environment 0ms)\\u001b[22m\\n\\nADMIN_COURSES_PG_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g3",
@@ -2922,7 +2922,44 @@
       "slice": null,
       "hash": "284ed12b976ac7d2ef7e487bc06715996bfabaa85f57111c9af2b17e82c4c365",
       "fileHash": "8311d5d22a31384d8e8ee3d08e5545283fc6d7130c6d3601fc8dc3d7d493ec5f"
+    },
+    {
+      "seq": 125,
+      "id": "87e40113-54cb-4b40-89fe-24ca9bb9f116",
+      "at": "2026-09-06T14:19:56.930Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S1:verification:pending->verified",
+      "slice": "S1",
+      "hash": "5897f71053b0402f59be2c94b3fd293f5eca5e1187fab0c7c6fdbc64e7492b1e",
+      "oracle": "00093ee5e476670f232acb8ac0e99e88d8925acf004a4cebe1a0abc4cb7c8400",
+      "evidence": "ba0555d465bdd54f4e65659c2aa76e2daaf8f75d3d5117259ab311e0fc60990b",
+      "fileHash": "8bb5721f5af7d4abbd3a7ae82df822a1c0fc5077b17c401b6bef53ef35cb30ed"
+    },
+    {
+      "seq": 126,
+      "id": "8890e14d-8cf2-4fdd-bb3a-f002dbd389a5",
+      "at": "2026-09-06T14:20:08.209Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S4:verification:pending->verified",
+      "slice": "S4",
+      "hash": "532059c28c40ee5f991bebe0366edb90f5939237fef67a6e0897c06e31f9966d",
+      "oracle": "acac51bd778aa856d68db40f87a8bdac9ee290315e1a3aff9dbdc6cdc3ccab24",
+      "evidence": "5a3bd2c1e3cf8fb33211534e8ab555abaaa0539b6b726279df26a98ca6ae2926",
+      "fileHash": "e186c83091584b6970f613cde92e22182cd93796f2e2d2c8b9e51ad9c753a657"
+    },
+    {
+      "seq": 127,
+      "id": "fde3d2cb-8c2b-4a08-8222-1b34511a014d",
+      "at": "2026-09-06T14:32:15.821Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:verification->research_update",
+      "slice": null,
+      "hash": "91aa2551ead74fff9ddc0d0c84f6af331d394f4f1d5e499b83d9a799f4296d14",
+      "fileHash": "261776d43405c01e99f1005498a2c6466dc1fef4868962d3eaddbc91623f88da"
     }
   ],
-  "fileHash": "8bb5721f5af7d4abbd3a7ae82df822a1c0fc5077b17c401b6bef53ef35cb30ed"
+  "fileHash": "8e549c161d88646a120549481e943b9e7184a80e45946cf77f99f4d8218f7b27"
 }
