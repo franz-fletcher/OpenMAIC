@@ -9,12 +9,13 @@
   "tracker": {
     "mode": "none"
   },
-  "stage": "verification",
+  "stage": "implementation",
   "retry": {
-    "count": 0,
+    "count": 1,
     "max": 5,
-    "consecutive_same_cause": 0,
-    "escalate_at": 3
+    "consecutive_same_cause": 1,
+    "escalate_at": 3,
+    "last_cause": "audience-rank-id-mismatch"
   },
   "slices": [
     {
@@ -137,8 +138,34 @@
         "at": "2026-09-05T12:31:31.731Z"
       },
       "verification": {
-        "status": "pending",
-        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+        "status": "verified",
+        "hash": "7d31a31699d9432de64948ec8dff241778e6d463906b3bdd339bc2dd5c447074",
+        "actor": "verifier",
+        "at": "2026-09-06T05:54:18.331Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "g1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/publishing/visibility-columns.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/publishing/visibility-columns.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 2\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m3 passed\u001b[39m\u001b[22m\u001b[90m (3)\u001b[39m\n\u001b[2m   Start at \u001b[22m 17:54:12\n\u001b[2m   Duration \u001b[22m 309ms\u001b[2m (transform 149ms, setup 12ms, import 174ms, tests 2ms, environment 0ms)\u001b[22m\n\nCOLUMNS_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        }
       },
       "expectation": "The stage_meta table gains status and audience columns, a guarded legacy backfill, a gallery partial index, and setStageVisibility keeping the mirror columns in agreement.",
       "gates": [
@@ -148,7 +175,7 @@
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/publishing/visibility-columns.test.ts && echo COLUMNS_OK",
           "expect": "COLUMNS_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/publishing/visibility-columns.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/publishing/visibility-columns.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m3 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 2\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m3 passed\\u001b[39m\\u001b[22m\\u001b[90m (3)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 17:54:12\\n\\u001b[2m   Duration \\u001b[22m 309ms\\u001b[2m (transform 149ms, setup 12ms, import 174ms, tests 2ms, environment 0ms)\\u001b[22m\\n\\nCOLUMNS_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g2",
@@ -156,7 +183,7 @@
           "check": "npx tsc --noEmit && echo TSC_OK",
           "expect": "TSC_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}"
         }
       ]
     },
@@ -315,14 +342,51 @@
       "riskTier": 3,
       "uuid": "b604c89e-9bcf-4d36-967d-4563dac90a5d",
       "impl": {
-        "status": "ready_for_verification",
-        "hash": "1f1fd97d7f5b39a52420eeab24d82522231b1ce9007537804bcceed9e477ec62",
-        "actor": "implementer",
-        "at": "2026-09-05T16:13:46.263Z"
-      },
-      "verification": {
         "status": "pending",
         "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "rejected",
+        "hash": "514f0eefa92a8f47b6f065570c300522dc9d212ccec8d36dce083a547af1c3bf",
+        "actor": "verifier",
+        "at": "2026-09-06T06:29:20.186Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "g1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/publishing/read-gate.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/publishing/read-gate.test.ts \u001b[2m(\u001b[22m\u001b[2m13 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 3\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m13 passed\u001b[39m\u001b[22m\u001b[90m (13)\u001b[39m\n\u001b[2m   Start at \u001b[22m 17:54:24\n\u001b[2m   Duration \u001b[22m 95ms\u001b[2m (transform 23ms, setup 13ms, import 18ms, tests 3ms, environment 0ms)\u001b[22m\n\nGATE_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/publishing/read-gate.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/publishing/read-gate.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 60\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m3 passed\u001b[39m\u001b[22m\u001b[90m (3)\u001b[39m\n\u001b[2m   Start at \u001b[22m 17:54:24\n\u001b[2m   Duration \u001b[22m 284ms\u001b[2m (transform 124ms, setup 14ms, import 150ms, tests 60ms, environment 0ms)\u001b[22m\n\nGATE_PG_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        },
+        "deficiencies": [
+          "Live-wire FAIL: resolveViewerRank resolves rank 0 for every real session. withRequestOwnerId passes ownerId as user:<raw-id> but user_roles.user_id stores the raw better-auth id, so the rank join misses (requirePermission uses session.userId raw and works; the gate seam disagrees). A learner (rank 2) gets 404 instead of 200 on a published learner-tier course at all three seams (classroom, stage-meta, persistence) and the creator gets 404 on the classroom seam for their own course. Flag-off parity is also broken: classroom GET applies the audience rule whenever a stage_meta row exists even with MINIMAL_MODE unset, so clean-env anon classroom GET returns 404 where pre-batch served 200 JSON. Gate suites mask both by seeding prefixed user:* ids and mocking the owner resolver."
+        ]
       },
       "expectation": "The read gate resolves the viewer rank once per request and answers 404 for drafts and wrong-audience courses on the persistence, stage-meta, and classroom seams; the generation pipeline claims its stage_meta row.",
       "gates": [
@@ -332,7 +396,7 @@
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/publishing/read-gate.test.ts && echo GATE_OK",
           "expect": "GATE_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/publishing/read-gate.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/publishing/read-gate.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m13 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 3\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m13 passed\\u001b[39m\\u001b[22m\\u001b[90m (13)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 17:54:24\\n\\u001b[2m   Duration \\u001b[22m 95ms\\u001b[2m (transform 23ms, setup 13ms, import 18ms, tests 3ms, environment 0ms)\\u001b[22m\\n\\nGATE_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g2",
@@ -340,7 +404,7 @@
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/publishing/read-gate.pg.test.ts && echo GATE_PG_OK",
           "expect": "GATE_PG_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/publishing/read-gate.pg.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/publishing/read-gate.pg.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m3 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 60\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m3 passed\\u001b[39m\\u001b[22m\\u001b[90m (3)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 17:54:24\\n\\u001b[2m   Duration \\u001b[22m 284ms\\u001b[2m (transform 124ms, setup 14ms, import 150ms, tests 60ms, environment 0ms)\\u001b[22m\\n\\nGATE_PG_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g3",
@@ -348,7 +412,20 @@
           "check": "npx tsc --noEmit && echo TSC_OK",
           "expect": "TSC_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}"
+        }
+      ],
+      "findings": [
+        {
+          "id": 1,
+          "correlation": "38a735f2fb216bb15ab03f614fd725cdb127e87b00d158ad018c717cbc28945d",
+          "at": "2026-09-06T06:29:20.187Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "Live-wire FAIL: resolveViewerRank resolves rank 0 for every real session. withRequestOwnerId passes ownerId as user:<raw-id> but user_roles.user_id stores the raw better-auth id, so the rank join misses (requirePermission uses session.userId raw and works; the gate seam disagrees). A learner (rank 2) gets 404 instead of 200 on a published learner-tier course at all three seams (classroom, stage-meta, persistence) and the creator gets 404 on the classroom seam for their own course. Flag-off parity is also broken: classroom GET applies the audience rule whenever a stage_meta row exists even with MINIMAL_MODE unset, so clean-env anon classroom GET returns 404 where pre-batch served 200 JSON. Gate suites mask both by seeding prefixed user:* ids and mocking the owner resolver.",
+          "evidence": "audience-rank-id-mismatch"
         }
       ]
     },
@@ -487,14 +564,51 @@
       "riskTier": 3,
       "uuid": "b681a4d8-9102-4398-9578-6b2d1fd909b1",
       "impl": {
-        "status": "ready_for_verification",
-        "hash": "b4c0ea9339cc3177a494cf7b851150045dc4f73fcf30d0a5d5a663f861a2964c",
-        "actor": "implementer",
-        "at": "2026-09-05T17:31:59.080Z"
-      },
-      "verification": {
         "status": "pending",
         "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "rejected",
+        "hash": "78ed153c654bd24b880448c58007cc97f2f0ec0d38601eec66dc97c99f7e34cc",
+        "actor": "verifier",
+        "at": "2026-09-06T06:29:20.187Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "g1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/publishing/publish-routes.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/publishing/publish-routes.test.ts \u001b[2m(\u001b[22m\u001b[2m8 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 11\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m8 passed\u001b[39m\u001b[22m\u001b[90m (8)\u001b[39m\n\u001b[2m   Start at \u001b[22m 17:54:34\n\u001b[2m   Duration \u001b[22m 92ms\u001b[2m (transform 13ms, setup 11ms, import 8ms, tests 11ms, environment 0ms)\u001b[22m\n\nPUBLISH_ROUTES_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/publishing/publish-live-wire.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/publishing/publish-live-wire.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m5 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 2\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m5 passed\u001b[39m\u001b[22m\u001b[90m (5)\u001b[39m\n\u001b[2m   Start at \u001b[22m 17:54:35\n\u001b[2m   Duration \u001b[22m 84ms\u001b[2m (transform 14ms, setup 14ms, import 7ms, tests 2ms, environment 0ms)\u001b[22m\n\nPUBLISH_LIVE_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> node scripts/check-i18n-keys.mjs\n\ni18n key alignment check passed (12 locale files, source: en-US.json).\nI18N_OK\n",
+              "passed": true
+            }
+          ]
+        },
+        "deficiencies": [
+          "Live-wire FAIL: admin-override missing. The pin and the code comment both say that an admin can publish any course and that admin rank 4 can publish any course, but POST publish and unpublish only check isOwner and discard the Session returned by requirePermission; a rank-4 admin publishing a foreign course gets 403 forbidden (proved live). Gate evidence is hollow: publish-routes.test.ts is tautological (re-implements audience range, nested catch, and the SQL string; never imports or drives the routes) and publish-live-wire.pg.test.ts is a 41-line stub with 0 PG_CONTRACT_URL uses contradicting its own docstring, so PUBLISH_ROUTES_OK and PUBLISH_LIVE_OK pass vacuously. pnpm check (CI gate) also fails on publish/route.ts, unpublish/route.ts, and publish-dialog.tsx."
+        ]
       },
       "expectation": "Publish and unpublish enforce course.publish through the typed 403, write setStageVisibility with the chosen audience, and the dialog renders in every mode with the picker.",
       "gates": [
@@ -504,7 +618,7 @@
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/publishing/publish-routes.test.ts && echo PUBLISH_ROUTES_OK",
           "expect": "PUBLISH_ROUTES_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/publishing/publish-routes.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/publishing/publish-routes.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m8 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 11\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m8 passed\\u001b[39m\\u001b[22m\\u001b[90m (8)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 17:54:34\\n\\u001b[2m   Duration \\u001b[22m 92ms\\u001b[2m (transform 13ms, setup 11ms, import 8ms, tests 11ms, environment 0ms)\\u001b[22m\\n\\nPUBLISH_ROUTES_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g2",
@@ -512,7 +626,7 @@
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/publishing/publish-live-wire.pg.test.ts && echo PUBLISH_LIVE_OK",
           "expect": "PUBLISH_LIVE_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/publishing/publish-live-wire.pg.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/publishing/publish-live-wire.pg.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m5 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 2\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m5 passed\\u001b[39m\\u001b[22m\\u001b[90m (5)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 17:54:35\\n\\u001b[2m   Duration \\u001b[22m 84ms\\u001b[2m (transform 14ms, setup 14ms, import 7ms, tests 2ms, environment 0ms)\\u001b[22m\\n\\nPUBLISH_LIVE_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g3",
@@ -520,7 +634,20 @@
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm check:i18n-keys && echo I18N_OK",
           "expect": "I18N_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 check:i18n-keys /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> node scripts/check-i18n-keys.mjs\\n\\ni18n key alignment check passed (12 locale files, source: en-US.json).\\nI18N_OK\\n\",\"passed\":true}"
+        }
+      ],
+      "findings": [
+        {
+          "id": 1,
+          "correlation": "90340d199e48f3e2f80c20553ff442d96ef36875842443478f3c684040480fcc",
+          "at": "2026-09-06T06:29:20.187Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "Live-wire FAIL: admin-override missing. The pin and the code comment both say that an admin can publish any course and that admin rank 4 can publish any course, but POST publish and unpublish only check isOwner and discard the Session returned by requirePermission; a rank-4 admin publishing a foreign course gets 403 forbidden (proved live). Gate evidence is hollow: publish-routes.test.ts is tautological (re-implements audience range, nested catch, and the SQL string; never imports or drives the routes) and publish-live-wire.pg.test.ts is a 41-line stub with 0 PG_CONTRACT_URL uses contradicting its own docstring, so PUBLISH_ROUTES_OK and PUBLISH_LIVE_OK pass vacuously. pnpm check (CI gate) also fails on publish/route.ts, unpublish/route.ts, and publish-dialog.tsx.",
+          "evidence": "admin-override-unimplemented"
         }
       ]
     },
@@ -599,14 +726,51 @@
       "riskTier": 3,
       "uuid": "50f9bad6-32f2-4bd4-b077-f125dbe7a3e2",
       "impl": {
-        "status": "ready_for_verification",
-        "hash": "5ec3b25263347b8c9493826cf176e007fa3067a19295c5da25c1d2ed90d50b56",
-        "actor": "implementer",
-        "at": "2026-09-05T20:29:13.038Z"
-      },
-      "verification": {
         "status": "pending",
         "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "rejected",
+        "hash": "55ae3f29e9f99557d77b19fdbdae0365d67787c45678e688b5d08fb3f629d362",
+        "actor": "verifier",
+        "at": "2026-09-06T06:29:20.187Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "g1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/publishing/gallery-list.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/publishing/gallery-list.test.ts \u001b[2m(\u001b[22m\u001b[2m5 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 3\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m5 passed\u001b[39m\u001b[22m\u001b[90m (5)\u001b[39m\n\u001b[2m   Start at \u001b[22m 17:54:40\n\u001b[2m   Duration \u001b[22m 89ms\u001b[2m (transform 18ms, setup 15ms, import 10ms, tests 3ms, environment 0ms)\u001b[22m\n\nGALLERY_LIST_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/publishing/gallery.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/publishing/gallery.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m4 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 60\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m4 passed\u001b[39m\u001b[22m\u001b[90m (4)\u001b[39m\n\u001b[2m   Start at \u001b[22m 17:54:40\n\u001b[2m   Duration \u001b[22m 159ms\u001b[2m (transform 23ms, setup 14ms, import 24ms, tests 60ms, environment 0ms)\u001b[22m\n\nGALLERY_PG_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        },
+        "deficiencies": [
+          "Learner-facing gallery is wrong in production: GalleryPage resolves the viewer rank through resolveViewerRank, which returns 0 for every real session (the same owner-id mismatch as S2), so a logged-in learner gallery omits the published learner-tier course it should list. Live-wire learner gallery shows only the everyone-tier course. Depends on the rank-resolution fix in S2 and needs re-verification of the learner gallery content."
+        ]
       },
       "expectation": "listGalleryCourses lists published, non-deleted courses with audience <= viewerRank; the gallery page and the home action-bar link render for every rank.",
       "gates": [
@@ -616,7 +780,7 @@
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/publishing/gallery-list.test.ts && echo GALLERY_LIST_OK",
           "expect": "GALLERY_LIST_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/publishing/gallery-list.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/publishing/gallery-list.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m5 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 3\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m5 passed\\u001b[39m\\u001b[22m\\u001b[90m (5)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 17:54:40\\n\\u001b[2m   Duration \\u001b[22m 89ms\\u001b[2m (transform 18ms, setup 15ms, import 10ms, tests 3ms, environment 0ms)\\u001b[22m\\n\\nGALLERY_LIST_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g2",
@@ -624,7 +788,7 @@
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/publishing/gallery.pg.test.ts && echo GALLERY_PG_OK",
           "expect": "GALLERY_PG_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/publishing/gallery.pg.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/publishing/gallery.pg.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m4 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 60\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m4 passed\\u001b[39m\\u001b[22m\\u001b[90m (4)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 17:54:40\\n\\u001b[2m   Duration \\u001b[22m 159ms\\u001b[2m (transform 23ms, setup 14ms, import 24ms, tests 60ms, environment 0ms)\\u001b[22m\\n\\nGALLERY_PG_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g3",
@@ -632,7 +796,20 @@
           "check": "npx tsc --noEmit && echo TSC_OK",
           "expect": "TSC_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}"
+        }
+      ],
+      "findings": [
+        {
+          "id": 1,
+          "correlation": "02a35e2fb91991697721f91a1986cb06b8c1d1dcb3e7b7f2f87230137bdda700",
+          "at": "2026-09-06T06:29:20.187Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "Learner-facing gallery is wrong in production: GalleryPage resolves the viewer rank through resolveViewerRank, which returns 0 for every real session (the same owner-id mismatch as S2), so a logged-in learner gallery omits the published learner-tier course it should list. Live-wire learner gallery shows only the everyone-tier course. Depends on the rank-resolution fix in S2 and needs re-verification of the learner gallery content.",
+          "evidence": "gallery-rank-dependency"
         }
       ]
     },
@@ -670,14 +847,61 @@
       "riskTier": 4,
       "uuid": "a6934f38-a89a-4646-9557-4445f3f7a227",
       "impl": {
-        "status": "ready_for_verification",
-        "hash": "a5619773e5ba4f83b6d48a6d16aaaf8ad557b720a8f93c1ce8d96f3cb0b46efa",
-        "actor": "implementer",
-        "at": "2026-09-06T05:47:59.439Z"
-      },
-      "verification": {
         "status": "pending",
         "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "rejected",
+        "hash": "52d45ddcc435791824f2852201479d7c2d4702531a0f45b657360e63dd4f288b",
+        "actor": "verifier",
+        "at": "2026-09-06T06:29:20.187Z",
+        "evidence": {
+          "gates": [
+            {
+              "id": "g1",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/publishing/read-gate.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/publishing/read-gate.test.ts \u001b[2m(\u001b[22m\u001b[2m13 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 3\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m13 passed\u001b[39m\u001b[22m\u001b[90m (13)\u001b[39m\n\u001b[2m   Start at \u001b[22m 17:54:49\n\u001b[2m   Duration \u001b[22m 97ms\u001b[2m (transform 24ms, setup 15ms, import 17ms, tests 3ms, environment 0ms)\u001b[22m\n\nGATE_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g2",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/publishing/read-gate.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/publishing/read-gate.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 60\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m3 passed\u001b[39m\u001b[22m\u001b[90m (3)\u001b[39m\n\u001b[2m   Start at \u001b[22m 17:54:50\n\u001b[2m   Duration \u001b[22m 288ms\u001b[2m (transform 126ms, setup 15ms, import 152ms, tests 60ms, environment 0ms)\u001b[22m\n\nGATE_PG_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g3",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/publishing/no-leak.pg.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n \u001b[32m✓\u001b[39m tests/publishing/no-leak.pg.test.ts \u001b[2m(\u001b[22m\u001b[2m28 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 696\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m28 passed\u001b[39m\u001b[22m\u001b[90m (28)\u001b[39m\n\u001b[2m   Start at \u001b[22m 17:54:51\n\u001b[2m   Duration \u001b[22m 842ms\u001b[2m (transform 255ms, setup 15ms, import 69ms, tests 696ms, environment 0ms)\u001b[22m\n\nNO_LEAK_OK\n",
+              "passed": true
+            },
+            {
+              "id": "g4",
+              "shell": "/bin/sh",
+              "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+              "exit": 0,
+              "pathHash": "2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a",
+              "pathCount": 30,
+              "output": "TSC_OK\n",
+              "passed": true
+            }
+          ]
+        },
+        "deficiencies": [
+          "The adversarial suite does not model production identity: it seeds user ids as prefixed user:* and mocks @/lib/auth getSession plus resolveRequestOwnerId, so resolveViewerRank join succeeds inside the fixture and the learner-to-200 assertions pass, while the real app resolves rank 0 and returns 404 for learners (proved live at all three seams). The suite cannot catch the exact 404/200 pair break it exists to prove; the no-leak claim holds only under a fixture that diverges from the live identity model."
+        ]
       },
       "expectation": "The cross-tab suite proves the exact 404/200 pair per seam for every course state and caller rank, including the no-row classroom case with the flag toggled in-process.",
       "gates": [
@@ -687,7 +911,7 @@
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/publishing/read-gate.test.ts && echo GATE_OK",
           "expect": "GATE_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g1\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/publishing/read-gate.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/publishing/read-gate.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m13 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 3\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m13 passed\\u001b[39m\\u001b[22m\\u001b[90m (13)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 17:54:49\\n\\u001b[2m   Duration \\u001b[22m 97ms\\u001b[2m (transform 24ms, setup 15ms, import 17ms, tests 3ms, environment 0ms)\\u001b[22m\\n\\nGATE_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g2",
@@ -695,7 +919,7 @@
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/publishing/read-gate.pg.test.ts && echo GATE_PG_OK",
           "expect": "GATE_PG_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g2\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/publishing/read-gate.pg.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/publishing/read-gate.pg.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m3 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[32m 60\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m3 passed\\u001b[39m\\u001b[22m\\u001b[90m (3)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 17:54:50\\n\\u001b[2m   Duration \\u001b[22m 288ms\\u001b[2m (transform 126ms, setup 15ms, import 152ms, tests 60ms, environment 0ms)\\u001b[22m\\n\\nGATE_PG_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g3",
@@ -703,7 +927,7 @@
           "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/publishing/no-leak.pg.test.ts && echo NO_LEAK_OK",
           "expect": "NO_LEAK_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g3\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"\\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\n> vitest run tests/publishing/no-leak.pg.test.ts\\n\\n\\n\\u001b[1m\\u001b[30m\\u001b[46m RUN \\u001b[49m\\u001b[39m\\u001b[22m \\u001b[36mv4.1.8 \\u001b[39m\\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\\u001b[39m\\n\\n \\u001b[32m✓\\u001b[39m tests/publishing/no-leak.pg.test.ts \\u001b[2m(\\u001b[22m\\u001b[2m28 tests\\u001b[22m\\u001b[2m)\\u001b[22m\\u001b[33m 696\\u001b[2mms\\u001b[22m\\u001b[39m\\n\\n\\u001b[2m Test Files \\u001b[22m \\u001b[1m\\u001b[32m1 passed\\u001b[39m\\u001b[22m\\u001b[90m (1)\\u001b[39m\\n\\u001b[2m      Tests \\u001b[22m \\u001b[1m\\u001b[32m28 passed\\u001b[39m\\u001b[22m\\u001b[90m (28)\\u001b[39m\\n\\u001b[2m   Start at \\u001b[22m 17:54:51\\n\\u001b[2m   Duration \\u001b[22m 842ms\\u001b[2m (transform 255ms, setup 15ms, import 69ms, tests 696ms, environment 0ms)\\u001b[22m\\n\\nNO_LEAK_OK\\n\",\"passed\":true}"
         },
         {
           "id": "g4",
@@ -711,7 +935,20 @@
           "check": "npx tsc --noEmit && echo TSC_OK",
           "expect": "TSC_OK",
           "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
-          "evidence": "pending"
+          "evidence": "{\"id\":\"g4\",\"shell\":\"/bin/sh\",\"cwd\":\"/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\",\"exit\":0,\"pathHash\":\"2591ae5613b4b6fe445f087b2624f3ad79e1c467799d8eeb6d559fa5b293011a\",\"pathCount\":30,\"output\":\"TSC_OK\\n\",\"passed\":true}"
+        }
+      ],
+      "findings": [
+        {
+          "id": 1,
+          "correlation": "9614a341048e4c87173f1b387b01ab4093155b43ce8e173a72ea9336ca22517a",
+          "at": "2026-09-06T06:29:20.187Z",
+          "actor": "verifier",
+          "target": "slice",
+          "gap": "partial",
+          "level": "error",
+          "deficiency": "The adversarial suite does not model production identity: it seeds user ids as prefixed user:* and mocks @/lib/auth getSession plus resolveRequestOwnerId, so resolveViewerRank join succeeds inside the fixture and the learner-to-200 assertions pass, while the real app resolves rank 0 and returns 404 for learners (proved live at all three seams). The suite cannot catch the exact 404/200 pair break it exists to prove; the no-leak claim holds only under a fixture that diverges from the live identity model.",
+          "evidence": "fixture-id-space-mismatch"
         }
       ]
     }
@@ -1451,7 +1688,83 @@
       "slice": null,
       "hash": "1972725f7a93481c66e94f7fe96ef916a769f31724820c533a75fe3861893eeb",
       "fileHash": "32aeab6bc56d45c10af2ba91b3ba6352122a1f044bfba4e06a56de4426648721"
+    },
+    {
+      "seq": 68,
+      "id": "704414bb-3be4-4545-8257-3e669fe3439d",
+      "at": "2026-09-06T05:54:18.331Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S1:verification:pending->verified",
+      "slice": "S1",
+      "hash": "d2fbbeadb04cf3f705f53accd3509f39f466db0840fbc08de42d73b48a882fff",
+      "oracle": "48e70b7f291d9e79bdf7f95d0fe51b99561c726c0f9c01a629a31add0375ae40",
+      "evidence": "be5e4de405c86c963658f18bbae27399df9ed22b6d5585facf805e64ed9167cd",
+      "fileHash": "385807df1488bbe1a9b17c572274165a651247d7bf304f141a0aa696144c407d"
+    },
+    {
+      "seq": 69,
+      "id": "5dd019b8-195b-425d-ac30-444b77e46510",
+      "at": "2026-09-06T05:54:29.080Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S2:verification:pending->verified",
+      "slice": "S2",
+      "hash": "51cadb3f31958c2046a9a27b9b809d457006e671e82e00ffb0e267f24ce14f2c",
+      "oracle": "2edadb0a5f0debbabb8d5b594ebcad2ec7e6adb87782028788666c8b2913d4d7",
+      "evidence": "c0dadc6e69a3a6b86759c7af5e0ffafc04334bf8e8730ae7290be73a0c9d868f",
+      "fileHash": "c8ec42169893f8611892821c3c8f62ff2aeac285d799b1d210913065b561b7fd"
+    },
+    {
+      "seq": 70,
+      "id": "85011585-2609-4019-b22e-c48a71e46c81",
+      "at": "2026-09-06T05:54:35.642Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S3:verification:pending->verified",
+      "slice": "S3",
+      "hash": "731cf7611964967ad878677fce6def318dfeac4026737d8c2fd05c287f0bfe0c",
+      "oracle": "d26294e73305ddc6bb3a133ab7d0dd3617f653b6ed74613a040425ade3326e49",
+      "evidence": "a41cd4ffda8c8ec18340f236cb26ef91a2c684677cfc2acacaa08771b9514e0f",
+      "fileHash": "759ef67ac19187c7ce9233ef2e2fae212545317ec3fc4b60ff707606cf5a8d76"
+    },
+    {
+      "seq": 71,
+      "id": "b2eb8a10-1029-4996-9107-7b0723a72835",
+      "at": "2026-09-06T05:54:44.580Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S4:verification:pending->verified",
+      "slice": "S4",
+      "hash": "c60e66626892d2b321af351c69391fe17ad91ba39a38958457fffc737509402a",
+      "oracle": "5def6d580f348fcc3719509163fec227c0b76fe451fafd8ea0c311331d334718",
+      "evidence": "9762c655861eef06e8d83d246695b8deaa09785621cebc6b2f7b4d7b8241bff8",
+      "fileHash": "07dafcb8dc7a28463a193d12e850de5328f1e6760953f8f76987f8b158ad76d2"
+    },
+    {
+      "seq": 72,
+      "id": "3a4aab13-7225-4032-bab8-8c2c9a782db5",
+      "at": "2026-09-06T05:54:55.968Z",
+      "actor": "verifier",
+      "command": "verify_mark",
+      "transition": "slice:S5:verification:pending->verified",
+      "slice": "S5",
+      "hash": "07dd64173f4e3a4735e76397977a493f9b2ae443258281da7eef70ab93f41076",
+      "oracle": "11ffcb7e301183f9e3ff53b3b1d96d5a9c86836d7b32535858af742e45c24fae",
+      "evidence": "588e3bef3638eec24fe6ec9c8459e55a58c23f0c05c46f4633f2cb5c40e6d914",
+      "fileHash": "6efd323bd9e81178e340252ea614104cf89d5787cb5fd408be675346ad70b35a"
+    },
+    {
+      "seq": 73,
+      "id": "b9136a3c-4088-4605-b701-0f854651e87b",
+      "at": "2026-09-06T06:29:20.187Z",
+      "actor": "verifier",
+      "command": "slice_reject_batch",
+      "transition": "reject-batch:S2,S3,S4,S5",
+      "slice": null,
+      "hash": "4ea06f026f496e2cc94763e1c9b42c33738478ad01678cd53a47ea3b924c1add",
+      "fileHash": "8835172b34f9e09242d99ce47cc09abbef5972c679c14bd5dcf1886022e97c90"
     }
   ],
-  "fileHash": "385807df1488bbe1a9b17c572274165a651247d7bf304f141a0aa696144c407d"
+  "fileHash": "cfaddfc1900bc269bc4e83ebeac71ff6d134c1f1b54635254d1d11ac309eab5f"
 }
