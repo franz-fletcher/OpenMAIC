@@ -738,7 +738,15 @@ function HomePage() {
         )}
       </div>
       {/* ═══ Top-right capsule ═══ */}
-      <HeaderCapsule onSettingsOpen={() => setSettingsOpen(true)} accountSlot={<AccountZone />} />
+      <HeaderCapsule
+        onSettingsOpen={() => setSettingsOpen(true)}
+        accountSlot={
+          <AccountZone
+            onOpenSettings={() => setSettingsOpen(true)}
+            onOpenAdmin={() => router.push('/admin/settings')}
+          />
+        }
+      />
       <SettingsDialog
         open={settingsOpen}
         onOpenChange={(open) => {

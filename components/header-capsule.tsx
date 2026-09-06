@@ -30,9 +30,15 @@ export interface HeaderCapsuleProps {
    * Optional account slot. Renders null in batch G. Batch A fills it.
    */
   accountSlot?: React.ReactNode;
+  /**
+   * Optional settings gear gating. When true, the gear hides for
+   * non-settings.manage ranks under the client mirror. When false
+   * or undefined, keeps today's visibility (always shown).
+   */
+  settingsGated?: boolean;
 }
 
-export function HeaderCapsule({ onSettingsOpen, accountSlot }: HeaderCapsuleProps) {
+export function HeaderCapsule({ onSettingsOpen, accountSlot, settingsGated }: HeaderCapsuleProps) {
   const { theme, setTheme } = useTheme();
   const [themeOpen, setThemeOpen] = useState(false);
 
@@ -122,14 +128,16 @@ export function HeaderCapsule({ onSettingsOpen, accountSlot }: HeaderCapsuleProp
       <div className="w-[1px] h-4 bg-gray-200 dark:bg-gray-700" />
 
       {/* 5. Settings Gear */}
-      <div className="relative">
-        <button
-          onClick={onSettingsOpen}
-          className="p-2 rounded-full text-gray-400 dark:text-gray-500 hover:bg-white dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-gray-200 hover:shadow-sm transition-all group"
-        >
-          <Settings className="w-4 h-4 group-hover:rotate-90 transition-transform duration-500" />
-        </button>
-      </div>
+      {(!settingsGated || can('settings.manage')) && (
+        <div className="relative">
+          <button
+            onClick={onSettingsOpen}
+            className="p-2 rounded-full text-gray-400 dark:text-gray-500 hover:bg-white dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-gray-200 hover:shadow-sm transition-all group"
+          >
+            <Settings className="w-4 h-4 group-hover:rotate-90 transition-transform duration-500" />
+          </button>
+        </div>
+      )}
     </div>
   );
 }

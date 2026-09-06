@@ -2145,5 +2145,20 @@
     "unpublishConfirm": "Unpublish this course?",
     "galleryTitle": "Gallery",
     "galleryEmpty": "No courses available yet."
+  },
+  "admin": {
+    "settings": {
+      "title": "Admin Settings"
+    },
+    "users": {
+      "title": "Users"
+    },
+    "invites": {
+      "title": "Invites"
+    },
+    "courses": {
+      "title": "Courses"
+    },
+    "notAuthorized": "You do not have permission to access this page."
   }
 }

@@ -5,7 +5,7 @@ import { createElement, act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 
 // Component-level test: non-holders get no Settings/Admin nodes at all.
-// Holders see Settings with the auth.common.soon badge.
+// Holders see Settings without the auth.common.soon badge (batch E removes it).
 // Admin appears only with users.manage.
 
 const mocks = vi.hoisted(() => ({
@@ -144,7 +144,7 @@ describe('AccountZone — non-holder gating', () => {
 // ---------------------------------------------------------------------------
 
 describe('AccountZone — holder gating', () => {
-  it('renders Settings with Soon badge when user has settings.manage', async () => {
+  it('renders Settings without Soon badge when user has settings.manage', async () => {
     mocks.mockCan.mockImplementation((perm: string) => perm === 'settings.manage');
 
     renderWithSession();
@@ -156,7 +156,7 @@ describe('AccountZone — holder gating', () => {
 
     const allText = container.textContent || '';
     expect(allText).toContain('auth.account.settings');
-    expect(allText).toContain('auth.common.soon');
+    expect(allText).not.toContain('auth.common.soon');
   });
 
   it('renders Admin when user has users.manage', async () => {
@@ -173,7 +173,7 @@ describe('AccountZone — holder gating', () => {
     expect(allText).toContain('auth.account.admin');
   });
 
-  it('renders both Settings and Admin for admin user', async () => {
+  it('renders both Settings and Admin for admin user without Soon badge', async () => {
     mocks.mockCan.mockReturnValue(true);
 
     renderWithSession();
@@ -186,6 +186,6 @@ describe('AccountZone — holder gating', () => {
     const allText = container.textContent || '';
     expect(allText).toContain('auth.account.settings');
     expect(allText).toContain('auth.account.admin');
-    expect(allText).toContain('auth.common.soon');
+    expect(allText).not.toContain('auth.common.soon');
   });
 });

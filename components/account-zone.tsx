@@ -17,6 +17,10 @@ const auth = createAuthClient({});
 interface AccountZoneProps {
   /** Called when the user signs out. */
   onSignOut?: () => void;
+  /** Called when the user opens settings. Opens the provider dialog. */
+  onOpenSettings?: () => void;
+  /** Called when the user opens admin. Navigates to admin page. */
+  onOpenAdmin?: () => void;
 }
 
 interface SessionData {
@@ -32,10 +36,14 @@ function AccountMenuItems({
   t,
   setMenuOpen,
   handleSignOut,
+  onOpenSettings,
+  onOpenAdmin,
 }: {
   t: (key: string) => string;
   setMenuOpen: (open: boolean) => void;
   handleSignOut: () => void;
+  onOpenSettings?: () => void;
+  onOpenAdmin?: () => void;
 }) {
   const { can } = usePermissions();
 
@@ -49,18 +57,21 @@ function AccountMenuItems({
       </button>
       {can('settings.manage') ? (
         <button
-          onClick={() => setMenuOpen(false)}
-          className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 flex items-center gap-2"
+          onClick={() => {
+            setMenuOpen(false);
+            onOpenSettings?.();
+          }}
+          className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
         >
           {t('auth.account.settings')}
-          <span className="text-[9px] bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded font-medium text-gray-400">
-            {t('auth.common.soon')}
-          </span>
         </button>
       ) : null}
       {can('users.manage') && (
         <button
-          onClick={() => setMenuOpen(false)}
+          onClick={() => {
+            setMenuOpen(false);
+            onOpenAdmin?.();
+          }}
           className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
         >
           {t('auth.account.admin')}
@@ -76,7 +87,7 @@ function AccountMenuItems({
   );
 }
 
-export function AccountZone({ onSignOut }: AccountZoneProps) {
+export function AccountZone({ onSignOut, onOpenSettings, onOpenAdmin }: AccountZoneProps) {
   const { t } = useI18n();
   const router = useRouter();
   const [session, setSession] = useState<SessionData | null>(null);
@@ -166,7 +177,13 @@ export function AccountZone({ onSignOut }: AccountZoneProps) {
                 {session.user.email}
               </p>
             </div>
-            <AccountMenuItems t={t} setMenuOpen={setMenuOpen} handleSignOut={handleSignOut} />
+            <AccountMenuItems
+              t={t}
+              setMenuOpen={setMenuOpen}
+              handleSignOut={handleSignOut}
+              onOpenSettings={onOpenSettings}
+              onOpenAdmin={onOpenAdmin}
+            />
           </div>
         </>
       )}
