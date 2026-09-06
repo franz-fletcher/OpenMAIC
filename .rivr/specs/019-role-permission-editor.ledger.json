@@ -4,12 +4,12 @@
   "spec": {
     "reference": "docs/specs/019-role-permission-editor.md",
     "title": "Batch 019 spec: role-permission-editor",
-    "hash": "1aff6b9a1a758f93692b97a369826d112bce822a9158aac1396958fa72e8bc61"
+    "hash": "cf685abfd39f6cd56e00160d03ad339f213f442d19c25af83e4ef79daac6996d"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "research_update",
+  "stage": "closed",
   "retry": {
     "count": 1,
     "max": 5,
@@ -2003,7 +2003,30 @@
       "slice": null,
       "hash": "a3a7e7b8bf8efd8c7236bad22a969f4934686d26317ef128548f1f25ebaa562d",
       "fileHash": "f3add5fe70fb41e2b0343457728d0792c3c96c540f182d5a3e0bf8ec1c763673"
+    },
+    {
+      "seq": 85,
+      "id": "5b4e573b-067c-4f23-aa95-b800a353a2c6",
+      "at": "2026-09-06T20:39:35.235Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:respecify:research update recorded after round-2 verification; S5 postcondition corrected to allow semantics",
+      "slice": null,
+      "hash": "e5616c44eb9c8b4a82f8460f45533506fbaae7f7a201d6edae342de2a6211356",
+      "fileHash": "63d895c7f0aaa9f16e991615e62342642f2e7558a880b790034cd157e07a93d0"
+    },
+    {
+      "seq": 86,
+      "id": "444685e0-8374-4744-bbcc-09d6b6e4aee5",
+      "at": "2026-09-06T20:39:35.296Z",
+      "actor": "verifier",
+      "command": "certify",
+      "transition": "certify:23612c6f305b7f07df9c5add73fc9136fd19b8285f52487563f79d88bb2725d8",
+      "slice": null,
+      "hash": "e7c2968e88fcda5dad62e28fd803333d0c9348c7fed88911079c1ef2e4933849",
+      "oracle": "23612c6f305b7f07df9c5add73fc9136fd19b8285f52487563f79d88bb2725d8",
+      "fileHash": "933aa30a1450e45f2c8fa576bfaf85bbe999f8406b1626a227b2d0d87385ecca"
     }
   ],
-  "fileHash": "63d895c7f0aaa9f16e991615e62342642f2e7558a880b790034cd157e07a93d0"
+  "fileHash": "9e452a8f2c40eb78a653d17ef81e7b5cb390792cf2e6d0782572e8ef1e9a74eb"
 }
