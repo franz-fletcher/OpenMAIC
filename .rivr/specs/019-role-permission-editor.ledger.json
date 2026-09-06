@@ -1,0 +1,1434 @@
+{
+  "schema_version": 2,
+  "$schema": "https://rivr.dev/schemas/ledger/v2",
+  "spec": {
+    "reference": "docs/specs/019-role-permission-editor.md",
+    "title": "Batch 019 spec: role-permission-editor",
+    "hash": "303902f3fb3825e574ffb06bd4262e4d8aba7f24028e9583532ce58235446233"
+  },
+  "tracker": {
+    "mode": "none"
+  },
+  "stage": "implementation",
+  "retry": {
+    "count": 0,
+    "max": 5,
+    "consecutive_same_cause": 0,
+    "escalate_at": 3
+  },
+  "slices": [
+    {
+      "id": "S1",
+      "title": "Roles persistence core and the rank uniqueness delta",
+      "intent": "the schema delta that drops the rank uniqueness constraint, and the app-owned admin-roles persistence module with defaults-and-overrides introspection, custom role create, update, reset, and guarded delete",
+      "user_stories": [],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/auth/schema.ts",
+          "symbols": [
+            {
+              "name": "ensureAuthSchema",
+              "kind": "function",
+              "expectation": "modified: drops the `roles_rank_key` uniqueness constraint through the lazy ALTER pattern, so custom roles may share a seeded rank",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable): Promise<void>"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable): Promise<void>"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "lib/persistence/admin-roles.ts",
+          "symbols": [
+            {
+              "name": "listRolesWithPermissions",
+              "kind": "function",
+              "expectation": "new: lists every role with rank, system flag, the rank-derived default set, and the `role_permissions` override map per role",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable): Promise<AdminRoleWithPermissions[]>"
+              },
+              "postcondition_quality": "INFERRED"
+            },
+            {
+              "name": "createRole",
+              "kind": "function",
+              "expectation": "new: inserts a custom role and its initial overrides, refuses system-reserved names",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable, input: { name: string; rank: number; permissions: PermissionGrant[] }): Promise<Role>"
+              },
+              "postcondition_quality": "INFERRED"
+            },
+            {
+              "name": "updateRole",
+              "kind": "function",
+              "expectation": "new: renames through `role_permissions.role_name` in one transaction, changes rank, replaces the override set",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable, roleId: string, input: { name?: string; rank?: number; permissions?: PermissionGrant[] }): Promise<void>"
+              },
+              "postcondition_quality": "INFERRED"
+            },
+            {
+              "name": "resetRoleOverrides",
+              "kind": "function",
+              "expectation": "new: deletes every `role_permissions` row for the role name",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable, roleName: string): Promise<void>"
+              },
+              "postcondition_quality": "INFERRED"
+            },
+            {
+              "name": "deleteRole",
+              "kind": "function",
+              "expectation": "new: deletes only non-system roles with no `user_roles` row referencing them and no unrevoked, unexpired, unused invite naming them (`invites.role_name` with `used_at IS NULL AND revoked_at IS NULL AND expires_at > now()`), then removes their override rows",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable, roleId: string): Promise<void>"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "lib/auth/invites.ts",
+          "symbols": [
+            {
+              "name": "listPendingInvites",
+              "kind": "function",
+              "expectation": "reference: the existing pending-invites lookup (unused, unrevoked, unexpired predicate) that the deleteRole guard reads; unchanged by this batch",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable): Promise<Invite[]>"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(queryable: Queryable): Promise<Invite[]>"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 3,
+      "uuid": "e027095f-f1bc-4ecc-bfc0-93ba9fefc457",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "the rank column loses its uniqueness constraint without any migration files, and a custom role may share rank 2 with learner. The introspection lists every role with its default set from `defaultPermissionsForRank` and its override map. `createRole` rejects system-reserved names. `updateRole` renames and re-ranks atomically and replaces the override set. `resetRoleOverrides` returns the role to pure rank defaults. `deleteRole` refuses system roles, roles with attached users, and roles that a pending invite references by name (unused, unrevoked, and unexpired), and cleans the override rows for the deleted role.",
+      "gates": [
+        {
+          "id": "g1",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/admin/roles-persistence.test.ts && echo ROLES_CORE_OK",
+          "expect": "ROLES_CORE_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g2",
+          "type": "integration",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/admin/roles-persistence.pg.test.ts && echo ROLES_CORE_PG_OK",
+          "expect": "ROLES_CORE_PG_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g3",
+          "type": "smoke",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "evidence": "pending"
+        }
+      ]
+    },
+    {
+      "id": "S2",
+      "title": "Roles API routes and the self-lockout guard",
+      "intent": "the `roles.manage`-gated role routes, the self-mutation lockout guard on both the role routes and the user role assigner, and the route error copy",
+      "user_stories": [],
+      "blocked_by": [
+        "S1"
+      ],
+      "targets": [
+        {
+          "path": "app/api/admin/roles/route.ts",
+          "symbols": [
+            {
+              "name": "GET",
+              "kind": "function",
+              "expectation": "new: gated `roles.manage`, returns the role list with defaults and overrides, guard wrapped in the nested Response-rethrow catch so the typed 403 survives both outer catch layers",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<Response>"
+              },
+              "postcondition_quality": "INFERRED"
+            },
+            {
+              "name": "POST",
+              "kind": "function",
+              "expectation": "new: gated `roles.manage`, creates a custom role with initial permissions, guard wrapped in the nested Response-rethrow catch so the typed 403 survives both outer catch layers",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<Response>"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/admin/roles/[id]/route.ts",
+          "symbols": [
+            {
+              "name": "PATCH",
+              "kind": "function",
+              "expectation": "new: gated `roles.manage`, applies rename, rank change, permission overrides, or override reset, refuses mutation of the acting session's own role, guard wrapped in the nested Response-rethrow catch so the typed 403 survives both outer catch layers",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest, { params }: Params)"
+              },
+              "postcondition_quality": "INFERRED"
+            },
+            {
+              "name": "DELETE",
+              "kind": "function",
+              "expectation": "new: gated `roles.manage`, deletes a custom role with no attached users, refuses the acting session's own role, guard wrapped in the nested Response-rethrow catch so the typed 403 survives both outer catch layers",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest, { params }: Params)"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "lib/persistence/admin-users.ts",
+          "symbols": [
+            {
+              "name": "setUserRole",
+              "kind": "function",
+              "expectation": "modified: refuses when `grantedBy === userId`, mirroring the self-ban refusal at `lib/persistence/admin-users.ts:125-127`, so an administrator cannot change their own assignment",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  queryable: Queryable,\n  userId: string,\n  roleId: string,\n  grantedBy: string,\n): Promise<void>"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  queryable: Queryable,\n  userId: string,\n  roleId: string,\n  grantedBy: string,\n): Promise<void>"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/admin/users/route.ts",
+          "symbols": [
+            {
+              "name": "PATCH",
+              "kind": "function",
+              "expectation": "modified: converts the `setUserRole` self-demote refusal next to the self-ban block at `app/api/admin/users/route.ts:84-89`, returning the typed `{ success: false, code, message }` response with code `SELF_DEMOTE_REFUSED` and status 400, so the refusal never surfaces as a 500 from the outer catch at `:99-102`",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<Response>"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<Response>"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "lib/i18n/locales/en-US.json",
+          "symbols": [
+            {
+              "name": "en-US.json",
+              "kind": "file",
+              "expectation": "modified: source-of-truth keys for the route statuses and error copy",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable",
+                "signature": "new `admin.roles` group"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 4,
+      "uuid": "adf07e12-c075-4a19-8424-132f262fde14",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "a `roles.manage` holder lists roles, creates a custom role, patches it, and deletes it. A denied rank receives the typed 403 with shape `{ message, code }`. No route ever mutates the acting session's own role, and no user route changes the acting session's own assignment: the self-demote refusal converts to the typed `{ success: false, code, message }` response next to the self-ban block, asserted as status 400 with code `SELF_DEMOTE_REFUSED`, never a 500. The new copy passes the 12-locale parity check.",
+      "gates": [
+        {
+          "id": "g1",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/admin/roles-admin.test.ts && echo ROLES_ADMIN_OK",
+          "expect": "ROLES_ADMIN_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g2",
+          "type": "adversarial",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/admin/roles-lockout.pg.test.ts && echo ROLES_LOCKOUT_OK",
+          "expect": "ROLES_LOCKOUT_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g3",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm check:i18n-keys && echo I18N_OK",
+          "expect": "I18N_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g4",
+          "type": "smoke",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "evidence": "pending"
+        }
+      ]
+    },
+    {
+      "id": "S3",
+      "title": "Enforcement wiring: overrides reach the route guards",
+      "intent": "the guard change that merges `role_permissions` overrides into route enforcement, and live proof that a database override changes a real guarded route on the next request",
+      "user_stories": [],
+      "blocked_by": [],
+      "targets": [
+        {
+          "path": "lib/auth/permissions-server.ts",
+          "symbols": [
+            {
+              "name": "requirePermission",
+              "kind": "function",
+              "expectation": "modified: resolves the full role row instead of the bare rank, checks the merged set from a fresh, uncached `resolvePermissionSet` call per guarded request, so database overrides reach every guard and never stale across requests",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  headers: Headers,\n  permission: Permission,\n): Promise<Session>"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  headers: Headers,\n  permission: Permission,\n): Promise<Session>"
+              },
+              "postcondition_quality": "INFERRED"
+            },
+            {
+              "name": "resolvePermissionSet",
+              "kind": "function",
+              "expectation": "modified: drops the module-scoped `requestCache` (WeakMap at `lib/auth/permissions-server.ts:19`), so each call performs a fresh merge of rank defaults with the current `role_permissions` rows instead of reading a process-lifetime cached copy",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  queryable: Queryable,\n  role: Role,\n): Promise<PermissionSet>"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(\n  queryable: Queryable,\n  role: Role,\n): Promise<PermissionSet>"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "app/api/generate/image/route.ts",
+          "symbols": [
+            {
+              "name": "POST",
+              "kind": "function",
+              "expectation": "contract symbol, unchanged: the guarded generate route the adversarial gate drives through `requirePermissionIfMinimalMode` with `course.create`",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(request: NextRequest)"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(request: NextRequest)"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 4,
+      "uuid": "f48a65f9-e485-4375-af37-5dd15e15d730",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "a `role_permissions` row that grants `course.create` to the learner role lets a learner pass the real image generate route guard under `MINIMAL_MODE` on the very next request. A denied row removes a default permission from an existing role and blocks the same route. Every guarded call resolves the full role row and requests a fresh merge: rank defaults plus one indexed SELECT on `role_permissions.role_name`, a bounded per-request cost. Staleness across requests is impossible by construction, and the next-request claim holds literally. Route text stays untouched; only the resolver changes.",
+      "gates": [
+        {
+          "id": "g1",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/permissions/guard-override-wiring.test.ts && echo GUARD_WIRE_OK",
+          "expect": "GUARD_WIRE_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g2",
+          "type": "integration",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/permissions/guard-override-wiring.pg.test.ts && echo GUARD_WIRE_PG_OK",
+          "expect": "GUARD_WIRE_PG_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g3",
+          "type": "adversarial",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && MINIMAL_MODE=true pnpm test tests/permissions/guard-live-route.pg.test.ts && echo GUARD_LIVE_OK",
+          "expect": "GUARD_LIVE_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g4",
+          "type": "smoke",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "evidence": "pending"
+        }
+      ]
+    },
+    {
+      "id": "S4",
+      "title": "Roles section UI and the real-cookie page probe",
+      "intent": "the `roles-section.tsx` client section on `/admin/settings`, the users-section picker delta, the section i18n copy, and the real-cookie RSC wire probe",
+      "user_stories": [],
+      "blocked_by": [
+        "S1",
+        "S2"
+      ],
+      "targets": [
+        {
+          "path": "components/admin/roles-section.tsx",
+          "symbols": [
+            {
+              "name": "roles-section.tsx",
+              "kind": "file",
+              "expectation": "new: role list, create form with name, rank pick, and the 11-key checkboxes, per-role defaults-and-overrides display, reset, rename, rank change, delete with the attached-users guard",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "client section for the role table"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "components/admin/users-section.tsx",
+          "symbols": [
+            {
+              "name": "users-section.tsx",
+              "kind": "file",
+              "expectation": "modified: the role picker reads `GET /api/admin/roles` instead of the hardcoded four roles, keeping the current list as the failure fallback; option values are role IDs and the current-selection highlight resolves by ID through the fetched list",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "client section for the user table"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "app/admin/settings/page.tsx",
+          "symbols": [
+            {
+              "name": "AdminSettingsPage",
+              "kind": "function",
+              "expectation": "modified: renders the roles section under its own client gate and a server-translated title, gates the page with `users.manage` OR `roles.manage` so a roles-only holder reaches the roles section and the roles API together",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "()"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "()"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "tests/admin/roles-rsc-probe.pg.test.ts",
+          "symbols": [
+            {
+              "name": "roles-rsc-probe.pg.test.ts",
+              "kind": "suite",
+              "expectation": "new: signs a real `roles.manage` holder and a real non-holder, renders `AdminSettingsPage` in-process with a real signed cookie in the `next/headers` stub, asserts the roles title renders for the holder and the not-authorized state stays correct for the denied rank",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "describe('roles section RSC wire probes')"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "lib/i18n/locales/en-US.json",
+          "symbols": [
+            {
+              "name": "en-US.json",
+              "kind": "file",
+              "expectation": "modified: source-of-truth keys for the section copy",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "variable",
+                "signature": "new `admin.roles` section keys"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 3,
+      "uuid": "256367fa-8d5d-4d8b-bc68-444b164af979",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "a `roles.manage` holder sees the roles section with the role list, the create form, and the defaults-and-overrides table. The users picker lists custom roles and highlights the current role by ID, so an operator can reassign users off a role before deleting it. The page still answers the typed not-authorized state for ranks holding neither `users.manage` nor `roles.manage`, and the real-cookie probe proves the roles title renders for a real holder cookie and never for a denied rank. All new strings pass the 12-locale parity check. The section renders in Safari. The client section hides entirely without `roles.manage`; a `roles.manage`-only holder reaches the page and the roles section, and `users.manage` holders keep the users, invites, and courses sections.",
+      "gates": [
+        {
+          "id": "g1",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/admin/roles-section.test.ts && echo ROLES_UI_OK",
+          "expect": "ROLES_UI_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g2",
+          "type": "integration",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/admin/roles-rsc-probe.pg.test.ts && echo ROLES_RSC_OK",
+          "expect": "ROLES_RSC_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g3",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm check:i18n-keys && echo I18N_OK",
+          "expect": "I18N_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g4",
+          "type": "smoke",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "evidence": "pending"
+        }
+      ]
+    },
+    {
+      "id": "S5",
+      "title": "Audience-rank probe and the includeDeleted hardening",
+      "intent": "the test that proves a custom rank-2 role reads learner-tier courses through the existing audience gates, and the one-line `includeDeleted` strictness fix with its regression test",
+      "user_stories": [],
+      "blocked_by": [
+        "S1"
+      ],
+      "targets": [
+        {
+          "path": "app/api/admin/courses/route.ts",
+          "symbols": [
+            {
+              "name": "GET",
+              "kind": "function",
+              "expectation": "modified: accepts `'1'` as well as `'true'` for `includeDeleted`, closing deviation (g)",
+              "before": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<Response>"
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "(req: NextRequest): Promise<Response>"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "tests/admin/roles-audience.pg.test.ts",
+          "symbols": [
+            {
+              "name": "roles-audience.pg.test.ts",
+              "kind": "suite",
+              "expectation": "new: creates a custom rank-2 role, assigns a real user, asserts the user resolves to rank 2 and opens a learner-audience published course through `decideDocumentAccess`",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "describe('custom role audience rank probes')"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        },
+        {
+          "path": "tests/admin/include-deleted-strict.test.ts",
+          "symbols": [
+            {
+              "name": "include-deleted-strict.test.ts",
+              "kind": "suite",
+              "expectation": "new: asserts `'1'`, `'true'`, and the missing value map correctly on the admin course route",
+              "before": {
+                "exists": false
+              },
+              "postcondition": {
+                "exists": true,
+                "kind": "function",
+                "signature": "describe('includeDeleted strict parsing')"
+              },
+              "postcondition_quality": "INFERRED"
+            }
+          ]
+        }
+      ],
+      "riskTier": 3,
+      "uuid": "f9a009dd-d272-442b-98f7-9c1b3bd25b4e",
+      "impl": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "verification": {
+        "status": "pending",
+        "hash": "a839711b15b8e9862282ec0ed1034f134efb54b5d9969e66ea285babef923d4a"
+      },
+      "expectation": "the probe proves the custom rank-2 holder opens a learner-audience published course and still gets 404 on a guest-audience denial boundary case without special handling. The route maps `'1'` to true exactly like `'true'`, and `'0'` and missing stay false.",
+      "gates": [
+        {
+          "id": "g1",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/admin/roles-audience.test.ts && echo ROLE_AUDIENCE_OK",
+          "expect": "ROLE_AUDIENCE_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g2",
+          "type": "integration",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; test -n \"$PG_CONTRACT_URL\" && pnpm test tests/admin/roles-audience.pg.test.ts && echo ROLE_AUDIENCE_PG_OK",
+          "expect": "ROLE_AUDIENCE_PG_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g3",
+          "type": "unit",
+          "check": "unset DATABASE_URL PERSISTENCE_DEV_TOKEN ACCESS_CODE OPENMAIC_AGENT_RUNTIME_ENABLED NEXT_PUBLIC_PRO_WORKBENCH_ENABLED NEXT_PUBLIC_MAIC_EDITOR_ENABLED MINIMAL_MODE NEXT_PUBLIC_MINIMAL_MODE; pnpm test tests/admin/include-deleted-strict.test.ts && echo INCLUDE_DELETED_OK",
+          "expect": "INCLUDE_DELETED_OK",
+          "evidence": "pending"
+        },
+        {
+          "id": "g4",
+          "type": "smoke",
+          "check": "npx tsc --noEmit && echo TSC_OK",
+          "expect": "TSC_OK",
+          "evidence": "pending"
+        }
+      ]
+    }
+  ],
+  "audit": [
+    {
+      "seq": 1,
+      "id": "6937fe2c-3ed7-462e-9e56-753520d72220",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "init",
+      "transition": "spec-approved:docs/specs/019-role-permission-editor.md",
+      "slice": null,
+      "hash": "a5968e14e177ebe04cc4234bb91a6e6a17668549e9e0c6350170985506048a89"
+    },
+    {
+      "seq": 2,
+      "id": "59687a67-112a-4a02-bb15-d0d433a1281b",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect",
+      "slice": "S1",
+      "hash": "2724d5eb542ce1144865d0e8bb0c34de0680c1718de79e609c1ac03ccf567bdc",
+      "expectationHash": "37276d793fdd3c655810bad1fb446f64e1310d51e9b7b38274e77d1c36514c02"
+    },
+    {
+      "seq": 3,
+      "id": "db6d4451-6025-403f-a6cd-dca23a3fcb12",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/auth/schema.ts::ensureAuthSchema",
+      "slice": "S1",
+      "hash": "f382f0d65497aa5456c96eb329563f2a87845cc4ca01634126923bfdf0396d5e",
+      "expectationHash": "3373756dfc4821d5de05a963e532c6a9c4dd9ef3c9e2f1efba5485a015305386"
+    },
+    {
+      "seq": 4,
+      "id": "844fcbc2-c169-4bd4-8b17-8a9913369c8b",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/persistence/admin-roles.ts::listRolesWithPermissions",
+      "slice": "S1",
+      "hash": "4832499146e50fe1c2956850253f6f402a783b7ec161c3ff07b462dfedb05998",
+      "expectationHash": "b03af403c9b4667d7e2261a6e3210bef528b29b998a9b7da58b12d5f5095f495"
+    },
+    {
+      "seq": 5,
+      "id": "dd0624f3-6334-4ffd-8e7a-68c87b8a3559",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/persistence/admin-roles.ts::createRole",
+      "slice": "S1",
+      "hash": "14a54c590b7a6c59eab2730793eacb95d0f6ae606fd15a2be4ba4b2b1a528996",
+      "expectationHash": "90cac342aa129531b42d530466bb3c16ef73a812d0a819957c65674c6a32f2f2"
+    },
+    {
+      "seq": 6,
+      "id": "8e86a839-20b2-4342-963a-3780bdd7eb2f",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/persistence/admin-roles.ts::updateRole",
+      "slice": "S1",
+      "hash": "23100e541c9893c5c16a2c950540325d820c712d62b9698cc5b89e1a3fa6d9aa",
+      "expectationHash": "66ec73b7d1ebef2be93c572fe8667f2c8985cb4e629f22eda3fc815dd86af07b"
+    },
+    {
+      "seq": 7,
+      "id": "e39f5195-3ed9-4f39-b5b3-04dafcd66bbb",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/persistence/admin-roles.ts::resetRoleOverrides",
+      "slice": "S1",
+      "hash": "d0e1f1872dd124cef550b8b303b3eaf17d7f0c99bc876bcbbc732cbd7d7eda6d",
+      "expectationHash": "54d8fafbbe355530dda3b2250e10b22b8654c122d1f7451965079a88b1d66a6f"
+    },
+    {
+      "seq": 8,
+      "id": "f6097ef0-a445-43a7-8035-e9c9b5bf447e",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/persistence/admin-roles.ts::deleteRole",
+      "slice": "S1",
+      "hash": "d593c8aab0c90286b221e86908cfce950aea5312d404f168307d302b52d3d70c",
+      "expectationHash": "239beffac326bb1f8a42ecd65e731fa6497321b4d2bb0a360c2c17395970d79b"
+    },
+    {
+      "seq": 9,
+      "id": "6eb380dc-3c89-481b-bb88-1785c92969c8",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S1:expect-symbol:lib/auth/invites.ts::listPendingInvites",
+      "slice": "S1",
+      "hash": "d651c601b5abd6d593f38c98920754364d1da8d27cc16ff30d942cdf07bc450f",
+      "expectationHash": "e7e75ad02d5e828ff599643f5559b2d86a05057aaf54ce48adf04419a2dc1348"
+    },
+    {
+      "seq": 10,
+      "id": "e668baf8-8397-4c1b-a0c4-b0c06a28db0b",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect",
+      "slice": "S2",
+      "hash": "5bd64591e719da4a164c4790690ff3e0f10e884a35cc6ea1e1d692c9bdeb11cc",
+      "expectationHash": "a086fcfbd3a581b1c013408df306d033b32971051531c67c767412b7de03be0d"
+    },
+    {
+      "seq": 11,
+      "id": "2a82fb01-4e83-455c-a2b6-671dd9f273ba",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/admin/roles/route.ts::GET",
+      "slice": "S2",
+      "hash": "6f786c86e6ae73caa85470c81c6e9c72a0291570b6a060a949c72f1e9d28ac6f",
+      "expectationHash": "69e9d64cbbc4e996509b920bc3267ad627da1147cd085068db12299c6b6eb93d"
+    },
+    {
+      "seq": 12,
+      "id": "e8c4b71e-87e8-46bf-b45d-f02f2f994b0c",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/admin/roles/route.ts::POST",
+      "slice": "S2",
+      "hash": "84de270cdba51802dde0007e63b4dfe12fb400750119cb6fadb91a3dc1fb6054",
+      "expectationHash": "c83277574edcce19f5be76a5e5a80641d4242ac5a31a58a50b7000dc17720220"
+    },
+    {
+      "seq": 13,
+      "id": "9e7cc113-31b4-4aaf-bd5a-7f755630f013",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/admin/roles/[id]/route.ts::PATCH",
+      "slice": "S2",
+      "hash": "545c790cea89e70743a67da6c8aff07c268a7a1693369af890cf0d1bd7c4d246",
+      "expectationHash": "d35114e525cc9568d1c66bc4f15e1a2319ccbb37cc2a6b00703fa673700fdc91"
+    },
+    {
+      "seq": 14,
+      "id": "63ce0d19-42cb-49c9-b707-28f682b0362d",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/admin/roles/[id]/route.ts::DELETE",
+      "slice": "S2",
+      "hash": "2a258d0e03c8e70bccd59e07045560e7dc3f4d28fe7b838f617a0c29f6bbfad9",
+      "expectationHash": "041f42e929aae1be083304de88fe8127e8bab77bfc8ecc5a477f25fadb70ec9c"
+    },
+    {
+      "seq": 15,
+      "id": "18e3953a-ef60-45d8-a3c4-1793150e7936",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/persistence/admin-users.ts::setUserRole",
+      "slice": "S2",
+      "hash": "f812b7d06a4a3d756fce743c97e3094a4a1ba251af8eb2efa7c4e50bd7145c8a",
+      "expectationHash": "572cae0360951925f8497251fb3ea3faddf00e511a6a890d800ae6e1b226ee08"
+    },
+    {
+      "seq": 16,
+      "id": "8bf5da72-098b-420d-a299-68da5a712e4a",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:app/api/admin/users/route.ts::PATCH",
+      "slice": "S2",
+      "hash": "a06ef7a18b1982d39ddaaf4fe457a5d1fc8932033d551717266f066c9824ffef",
+      "expectationHash": "3f068b89682d396271b8d45017e3cfa0eaebc8ad84934d41629e997ba0ade1cc"
+    },
+    {
+      "seq": 17,
+      "id": "67af7cfa-1dc0-4cdc-83cb-1ec4858bc524",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S2:expect-symbol:lib/i18n/locales/en-US.json::en-US.json",
+      "slice": "S2",
+      "hash": "37f17ac71e2659fafedde1df529f86faf839ecde78c2b4b47b2b0f0dd395d40d",
+      "expectationHash": "2126131c10d0a875d4963cabf1bec9d2f8d7cd7d33637bf5de0b7e1ff689e322"
+    },
+    {
+      "seq": 18,
+      "id": "07648ee2-ea8f-4545-a158-8e3d285beed4",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect",
+      "slice": "S3",
+      "hash": "81479fbaf2c5f64e20dae7fbd6778c172279799c0640149426d99dedb987d657",
+      "expectationHash": "ba3c72c134a6e55af811a3cfbf889a550fc54f85ed13b751f17c5bb7a223909f"
+    },
+    {
+      "seq": 19,
+      "id": "baca613b-ce58-4a7b-95d2-97e17970098e",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:lib/auth/permissions-server.ts::requirePermission",
+      "slice": "S3",
+      "hash": "2fd0977b6081642dcb7c2c491b05dcc40a084fae4b19ce10f878f42ec92f4e7f",
+      "expectationHash": "a5d1abe17787103b7fa4c618bf6e8f5f6f886f139cbd3eb8507d9b47ac045921"
+    },
+    {
+      "seq": 20,
+      "id": "1970c8e3-979f-49b7-9feb-af8247927dca",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:lib/auth/permissions-server.ts::resolvePermissionSet",
+      "slice": "S3",
+      "hash": "c00dbc7fec07bca9de654404bcc3cd8c07174fcaf692d2652fa6fb473064da7e",
+      "expectationHash": "6d1760bda7e8bc095010d833fa61647d56bdc55874426e0676d76ab16be08bba"
+    },
+    {
+      "seq": 21,
+      "id": "10b1075e-255c-495e-a830-5e3b0b8afec4",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S3:expect-symbol:app/api/generate/image/route.ts::POST",
+      "slice": "S3",
+      "hash": "2f5dd103bd47844c92703e94742c1cc03e6e5b5e103bb195139cc18aa752debd",
+      "expectationHash": "7b32ac697bb9c1400815a516fc1c3a870e9edf0188ebe6cce4758c325241d997"
+    },
+    {
+      "seq": 22,
+      "id": "db263ae6-0891-4366-81df-606aa54ee147",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect",
+      "slice": "S4",
+      "hash": "cc9264291605dda2381502caf0667a91f78d983140eb0e5e96701170ed94b6a4",
+      "expectationHash": "2ab69b8610b843707f47b9c6c7d5a5bc81e05d7dca5f6b0d7c256b8b8e153d7d"
+    },
+    {
+      "seq": 23,
+      "id": "fbedfc2a-c9b3-47a6-a74c-0219488bf8a4",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect-symbol:components/admin/roles-section.tsx::roles-section.tsx",
+      "slice": "S4",
+      "hash": "8840a03cc2c1a428823de3ee71ff08c9e64b9cf1a0c36fa59ff13e27486977fb",
+      "expectationHash": "4b49043dd7f06140222a810fb266b3fdc283b9b3af70878f6dd05a29a662ffeb"
+    },
+    {
+      "seq": 24,
+      "id": "46e89985-b6d1-4db9-aef9-66ba6a083538",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect-symbol:components/admin/users-section.tsx::users-section.tsx",
+      "slice": "S4",
+      "hash": "509091df9fc5951b6cb24a21022e0d186da279f363d3b9005dbc04bf4bc12a50",
+      "expectationHash": "91baed35564120c844db7072e74614e521bf6002497e704cd6e847449451f58d"
+    },
+    {
+      "seq": 25,
+      "id": "1811748e-a991-428e-b07a-116db6cd7704",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect-symbol:app/admin/settings/page.tsx::AdminSettingsPage",
+      "slice": "S4",
+      "hash": "3898d21f446e7b46f8bbf6a0890409796042e6e8ece3036a2b6d5255eab1249b",
+      "expectationHash": "414ed66f525a4d280af9faeced7087e1f05c234b83fd4c1e0f1076f8a751de2b"
+    },
+    {
+      "seq": 26,
+      "id": "c49b4d0a-8193-4187-b469-952641bddc79",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect-symbol:tests/admin/roles-rsc-probe.pg.test.ts::roles-rsc-probe.pg.test.ts",
+      "slice": "S4",
+      "hash": "5afe9e8c7fdc081e46bbf95f05ee370cc4d5b5193558274120ab1b690fc481a4",
+      "expectationHash": "9a65452fb0d6fb6ccd7c624b4b1d5a30348d76eec4f2927aca314af659ad3640"
+    },
+    {
+      "seq": 27,
+      "id": "9625d9b1-ca04-42d1-aee2-4cdcb64eb7e9",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S4:expect-symbol:lib/i18n/locales/en-US.json::en-US.json",
+      "slice": "S4",
+      "hash": "7359ae19159ca11dc20a16904f1ba190833d4a6da81ff35ce981451859e12056",
+      "expectationHash": "e28ea4abac8e59c512600180068f6ba74faa48c9ff65fc54b336bce23192e914"
+    },
+    {
+      "seq": 28,
+      "id": "075fe150-e777-4f68-a339-b7c57c6e8312",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S5:expect",
+      "slice": "S5",
+      "hash": "f95d74b991138f1294967fbbb7ac8e0feae22ce74ece187a8d15093c6a41504f",
+      "expectationHash": "5ba17e423a89925578622994e3fc6d2f805dfb6cf19e474adf72ec711ca2066b"
+    },
+    {
+      "seq": 29,
+      "id": "e74a1dc6-8362-45bc-b04c-df87ceb0e5f9",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S5:expect-symbol:app/api/admin/courses/route.ts::GET",
+      "slice": "S5",
+      "hash": "d070e70656731fd23ad168dba30c1c168d621b23c9c5785bb0f4e3483a527f0d",
+      "expectationHash": "b19674c95bc2b7ada14148a061c3906c529ea0e6c50e85826226b0582bb1a69a"
+    },
+    {
+      "seq": 30,
+      "id": "7656ffd9-113d-469f-bd73-e968f200e2e8",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S5:expect-symbol:tests/admin/roles-audience.pg.test.ts::roles-audience.pg.test.ts",
+      "slice": "S5",
+      "hash": "cf51e6e8fff4b4cea1ef43f02c910ee9cde17d0ddea8b11743847079e58a73f4",
+      "expectationHash": "4306622b22d6212032d9228df55c26688d1b41a260ad5db8f1f3213164ddd7d4"
+    },
+    {
+      "seq": 31,
+      "id": "a0ebe7ea-36f9-4abc-a9aa-fc42c07b043d",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "slice_expect",
+      "transition": "slice:S5:expect-symbol:tests/admin/include-deleted-strict.test.ts::include-deleted-strict.test.ts",
+      "slice": "S5",
+      "hash": "1678ced31154be6ec979c51f39281b96ed5d35837f9886fff68d29ddcb97c174",
+      "expectationHash": "34fef417f870c7215c04bb9fdc5be979d28059334d90dc214356e470b5946894"
+    },
+    {
+      "seq": 32,
+      "id": "0471ac68-be8b-43aa-a0e3-abf0246abf10",
+      "at": "2026-09-06T16:28:27.516Z",
+      "actor": "orchestrator",
+      "command": "init_batch",
+      "transition": "batch-init:S1,S2,S3,S4,S5",
+      "slice": null,
+      "hash": "551b01cbce57205d19bf8f6c83f857e205bf72028082698bfdd03c43c57a9794"
+    },
+    {
+      "seq": 33,
+      "id": "c02f89fa-f9d0-4634-97eb-3d5adae4cda0",
+      "at": "2026-09-06T16:28:33.799Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S1:capture",
+      "slice": "S1",
+      "hash": "9e9dabc0239ed4a6ae8b058820443e8999dd5b9a3c008520474b5a1830863f1a",
+      "fileHash": "b188531f34014e391ff6734870d8d8d93f530375b9a6da45092c85eff992b77e"
+    },
+    {
+      "seq": 34,
+      "id": "1658b2c7-ebbe-4792-b35a-a0d624feda4c",
+      "at": "2026-09-06T16:28:33.860Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S2:capture",
+      "slice": "S2",
+      "hash": "2ee46ceeff1a7d54feaa39de31cd1d0037c097219c13c4be1c3096d3fba7406c",
+      "fileHash": "0a2f918f181ac829cc9c34b3ad8507b4f1f25f0b50fa1ff96841a1f787c75eb1"
+    },
+    {
+      "seq": 35,
+      "id": "f95214cd-8974-4f31-a1f7-766e82063651",
+      "at": "2026-09-06T16:28:33.909Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S3:capture",
+      "slice": "S3",
+      "hash": "3d83deb52f2244d1bfac2c85abc55aab92ee0dd1a60637d5c7ead8e356d79c6f",
+      "fileHash": "19eff425a01a0f72269017547c0679548daac4e56d18662f5198aa37ed3246aa"
+    },
+    {
+      "seq": 36,
+      "id": "4dc023f6-c46f-4a93-a84d-cebc02d9c2da",
+      "at": "2026-09-06T16:28:33.965Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S4:capture",
+      "slice": "S4",
+      "hash": "0204fa8fc5e7d035b25a71d61db4ff77bd6f5e75d485ccc05682f00975592cf2",
+      "fileHash": "3e065ca920c016bf4683de2e230223d9313c8cec697ebc65bd2a0c02942a2387"
+    },
+    {
+      "seq": 37,
+      "id": "90c5da90-b922-4913-922f-a400d3959dac",
+      "at": "2026-09-06T16:28:34.016Z",
+      "actor": "orchestrator",
+      "command": "capture",
+      "transition": "slice:S5:capture",
+      "slice": "S5",
+      "hash": "5fbc024af4b0bc2ee849d37531a8d3eae04e2ce46f0bc9bedbac4727a8ab4422",
+      "fileHash": "da0feb74d9e980f8f48d44d5dc25d838e7199143087ea8f35ad1c3de84653a6f"
+    },
+    {
+      "seq": 38,
+      "id": "5dd2cc01-305a-40cd-af3b-7191fa4f7767",
+      "at": "2026-09-06T16:28:47.246Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/auth/schema.ts::ensureAuthSchema",
+      "slice": "S1",
+      "hash": "258f9d29ef6c85d1777d6a26f585b0e6316912a19d01fb76da56dec829f3d61d",
+      "fileHash": "a25858ef16a024ddaf72d3e12924c157b160ab8fa1b90797d4472a21ccf9530c"
+    },
+    {
+      "seq": 39,
+      "id": "b89ee20b-12d3-4054-adac-b17c1d017438",
+      "at": "2026-09-06T16:28:47.296Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/persistence/admin-roles.ts::listRolesWithPermissions",
+      "slice": "S1",
+      "hash": "19f7bae7503b9ccc037b3f8e2412c7a7826f8f63ca8c80f90bc0b214b6c4a895",
+      "fileHash": "554d1b30a3b4cdbd1b164d3c8ea665135c45d8878572adee63fa7435ef8b86de"
+    },
+    {
+      "seq": 40,
+      "id": "36716233-edee-4328-8b5d-3325eca95a39",
+      "at": "2026-09-06T16:28:47.342Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/persistence/admin-roles.ts::createRole",
+      "slice": "S1",
+      "hash": "e5c2135c4f7acc610b80d197203a62df4fac81d4d36be7d1a0e413dcfac5fe99",
+      "fileHash": "213279f094d8695c4296d9c3f65453ecc14f423301831b9f6a91681abc35501d"
+    },
+    {
+      "seq": 41,
+      "id": "591f33ee-0635-4cbc-a17f-823f7675e01f",
+      "at": "2026-09-06T16:28:47.390Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/persistence/admin-roles.ts::updateRole",
+      "slice": "S1",
+      "hash": "9fb1758491bacdf0cf919f3de35db42d265ee86255e825ae5d5af3f1a0e9907c",
+      "fileHash": "d29b46f73d8281804ee064f39d20a75590203422d75586a1cda952aeb67e15da"
+    },
+    {
+      "seq": 42,
+      "id": "ecf5f3b6-1e98-42eb-8302-9805b30ffe15",
+      "at": "2026-09-06T16:28:47.433Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/persistence/admin-roles.ts::resetRoleOverrides",
+      "slice": "S1",
+      "hash": "ab25165cd818628e7eaa5cc54b7920f12249147ba62ef3c9cf9972b327b8eb8e",
+      "fileHash": "02c85d5e3e4d2ff6074b789a616f474d54b56a47fc0875d764186ffc1cac0902"
+    },
+    {
+      "seq": 43,
+      "id": "514ad4cd-77f0-48f1-a531-ab9b8f8a20a8",
+      "at": "2026-09-06T16:28:47.478Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/persistence/admin-roles.ts::deleteRole",
+      "slice": "S1",
+      "hash": "c9decf0107431080a315ae542f8119c17ca9dac3c8743964f073343a4d116016",
+      "fileHash": "66b4f5a77ac3b76d1c6c62708cd7b5b9deaba512d36d89142333581d5a98940e"
+    },
+    {
+      "seq": 44,
+      "id": "fdb2f659-5699-49f5-8340-8c1a23cc7ab2",
+      "at": "2026-09-06T16:28:47.525Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S1:postcondition:lib/auth/invites.ts::listPendingInvites",
+      "slice": "S1",
+      "hash": "c1705c13448e16427b074b32b0fb5179e4feb923a9147a0613e072dfdf5c6646",
+      "fileHash": "418cb5b483edb91288319d7740ad02053fe72ab3f8b33e3430bdb379af8cebc7"
+    },
+    {
+      "seq": 45,
+      "id": "61745c34-92a6-44f4-b005-c24dbdd133da",
+      "at": "2026-09-06T16:28:47.572Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/admin/roles/route.ts::GET",
+      "slice": "S2",
+      "hash": "78d24fe6fcdf66e46140ae947540154382764e676c5f8b26a07c4c65478aa200",
+      "fileHash": "e394438d29307e4fbfe6e29bf06cd1e76fe22bab755cb433a3c9fba25e1e805a"
+    },
+    {
+      "seq": 46,
+      "id": "bcf85b3c-2920-4d34-8ecb-2032131c69bd",
+      "at": "2026-09-06T16:28:47.616Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/admin/roles/route.ts::POST",
+      "slice": "S2",
+      "hash": "ac0f322c6f2882b9621a3245c53c22cf07920862c820fe9a017ebbb58e429349",
+      "fileHash": "04c1c6567789096a99e10a956bca20f2863a02ec50e8dbd7e137eb417df387c5"
+    },
+    {
+      "seq": 47,
+      "id": "3971ba5c-260e-41b3-98fc-7edc76758ff4",
+      "at": "2026-09-06T16:28:47.661Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/admin/roles/[id]/route.ts::PATCH",
+      "slice": "S2",
+      "hash": "07638c3fd259ed42359284594dbef0e67df3752a60aa05e1fa39b52dfc3629b6",
+      "fileHash": "930d84ae41bc5beac3066e913bc397a0bfe6d2bfcbcd69f4a03fe0c0ab983990"
+    },
+    {
+      "seq": 48,
+      "id": "0b43b1b4-7b09-48cc-a481-b575a79b1f37",
+      "at": "2026-09-06T16:28:47.705Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/admin/roles/[id]/route.ts::DELETE",
+      "slice": "S2",
+      "hash": "fe3d167078cd5e0311ed8a397853b6d81c221b782b42553e326c5c7e29ca7a86",
+      "fileHash": "9ceca115bb22b493f0df1148ca9e9312ade4f097fb42e9a53d92ae8897f36e8c"
+    },
+    {
+      "seq": 49,
+      "id": "2d80b60d-db08-4825-9cb0-e02954b6f0c1",
+      "at": "2026-09-06T16:28:47.761Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/persistence/admin-users.ts::setUserRole",
+      "slice": "S2",
+      "hash": "c1fe0ddb9e129df48f3ce1d444c4b5892d7312a015bd1edc6c57de8e425452a8",
+      "fileHash": "f782a652b490e951d209cf40b4f878b92e884822b7f5f5c048715fa3bfd82906"
+    },
+    {
+      "seq": 50,
+      "id": "7c664a53-8145-4461-9a22-17b1c7abfd07",
+      "at": "2026-09-06T16:28:47.806Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:app/api/admin/users/route.ts::PATCH",
+      "slice": "S2",
+      "hash": "cab23db5b49addce1c3d10de675d0c93f017399a14a0ae9bd6a40f3370d5b378",
+      "fileHash": "093f8e332024b2b09bbaa3db35391c4cad808b1ceaafb3e5ed65a0d5a247345d"
+    },
+    {
+      "seq": 51,
+      "id": "9774287b-660e-4b6c-bac1-f3b76bb80947",
+      "at": "2026-09-06T16:28:47.853Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S2:postcondition:lib/i18n/locales/en-US.json::en-US.json",
+      "slice": "S2",
+      "hash": "37c8e6373394ec09e2ee330cf8784eae57573974f5682677eda559dce2716ce1",
+      "fileHash": "74dd1d98c4cd3124b31a1e22f26e6b2ac1038220940495e472e5af75e292ad5b"
+    },
+    {
+      "seq": 52,
+      "id": "46024e29-ff60-4dbb-af42-3962ac1d4d21",
+      "at": "2026-09-06T16:28:47.897Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:lib/auth/permissions-server.ts::requirePermission",
+      "slice": "S3",
+      "hash": "68927026b32add46880e8f577f4f6608b4f0c9fc3a5f579f62750f146fd24042",
+      "fileHash": "51ebe65fbf94692eff0d3ff42391e5289ee646ad5878a311887ba9d3bd779270"
+    },
+    {
+      "seq": 53,
+      "id": "30df3f37-008c-4b19-a005-66f1a95b20de",
+      "at": "2026-09-06T16:28:47.945Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:lib/auth/permissions-server.ts::resolvePermissionSet",
+      "slice": "S3",
+      "hash": "9e158f5b933d27d005728a8e8a42640f053664ed39154b99eaeec2f62cfd6a5e",
+      "fileHash": "118e61d1569a346e20320d3e13e077390b1a31638ee3cd2654339552b4006e9b"
+    },
+    {
+      "seq": 54,
+      "id": "80ed2658-4db9-435f-847f-76b7a83a9e3c",
+      "at": "2026-09-06T16:28:47.989Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S3:postcondition:app/api/generate/image/route.ts::POST",
+      "slice": "S3",
+      "hash": "3e5af04f97a18fc3b650ba2db183faef07bcce518fc78f9e685a2fd0c6f5fa53",
+      "fileHash": "9423866882e2c2af044fdb6719ba19d3f5fd8f43601c3b16f952f2dc149f7718"
+    },
+    {
+      "seq": 55,
+      "id": "9f6e66c5-718b-4c0c-985f-b2c64696eda9",
+      "at": "2026-09-06T16:28:55.028Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S4:postcondition:components/admin/roles-section.tsx::roles-section.tsx",
+      "slice": "S4",
+      "hash": "9860a5892a8990767d22231b33dae2d58ebce96d62517fd829df02121f147eb3",
+      "fileHash": "e59b66bb033946f4a4cb1962200269490937f0544c24071d25c173ae05a87cf1"
+    },
+    {
+      "seq": 56,
+      "id": "9c1a3624-23d3-4254-b327-2aadac054c66",
+      "at": "2026-09-06T16:28:55.076Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S4:postcondition:components/admin/users-section.tsx::users-section.tsx",
+      "slice": "S4",
+      "hash": "a07e6020a74c9e247501cc58e7630b2d5fbfd2e9d4e9141d6d334698e15da080",
+      "fileHash": "16cccc6423cac4ade293a3ab5de326ba4ea5bcdcd44449423453fde5b5e28eda"
+    },
+    {
+      "seq": 57,
+      "id": "b6ec2d7d-3a90-446d-a6e7-64b35eeea58a",
+      "at": "2026-09-06T16:28:55.119Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S4:postcondition:app/admin/settings/page.tsx::AdminSettingsPage",
+      "slice": "S4",
+      "hash": "62a0db024894fbd2acbd93193450d52b0e2dfb21653ebd3cd1d5cdf750445555",
+      "fileHash": "488560a59f273b3760a78a051c50aa95ff9063c3fe6c8f5b721620cfad8ca3af"
+    },
+    {
+      "seq": 58,
+      "id": "c8af8586-4932-4d07-95a6-5b5f9ed746b4",
+      "at": "2026-09-06T16:28:55.165Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S4:postcondition:tests/admin/roles-rsc-probe.pg.test.ts::roles-rsc-probe.pg.test.ts",
+      "slice": "S4",
+      "hash": "29484eb4bfe195e868acbcfdb74eadf6002257383bfe55759d7ca27440ec2023",
+      "fileHash": "394522d51f03d36dbcf46037175bfa53a5b10afc656226226128d4eebc44ee70"
+    },
+    {
+      "seq": 59,
+      "id": "33253052-a881-4085-8873-c38314bbefe5",
+      "at": "2026-09-06T16:28:55.214Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S4:postcondition:lib/i18n/locales/en-US.json::en-US.json",
+      "slice": "S4",
+      "hash": "c2b089fbdb40d42c0030855767abfd85674394d819cfb59969b63ec126557afd",
+      "fileHash": "cdc67210cad99318950762618c950af28e808ddfcea1832cf4331025889424db"
+    },
+    {
+      "seq": 60,
+      "id": "cfe82587-16c9-4f77-84a9-5bf7348bf315",
+      "at": "2026-09-06T16:28:55.262Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S5:postcondition:app/api/admin/courses/route.ts::GET",
+      "slice": "S5",
+      "hash": "a287f57f9c571a674afffa4c4257bb56e6eb3c5f58b951d754f80cb1b49292b5",
+      "fileHash": "7f1ed2393111cc308c61e2e0ec07c7eed1ee2c5a45b7f4c2809ca6d277b244fd"
+    },
+    {
+      "seq": 61,
+      "id": "3e528cc6-9a24-4460-a3b1-0aa4f7036461",
+      "at": "2026-09-06T16:28:55.308Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S5:postcondition:tests/admin/roles-audience.pg.test.ts::roles-audience.pg.test.ts",
+      "slice": "S5",
+      "hash": "e3d894b7e8aa222669134026e66c222e7eb2f28b4c88405f0793747b69acd0bf",
+      "fileHash": "902038cdf860d9162a15229317b4a864b5ba2bd9979eaeb4ab3101af1f055a83"
+    },
+    {
+      "seq": 62,
+      "id": "86b46c22-4a6e-4065-895f-64c8bb16ec20",
+      "at": "2026-09-06T16:28:55.354Z",
+      "actor": "orchestrator",
+      "command": "slice_crud",
+      "transition": "slice:S5:postcondition:tests/admin/include-deleted-strict.test.ts::include-deleted-strict.test.ts",
+      "slice": "S5",
+      "hash": "ca57214472215557886e2610d72f116ec8cec9a08c3f3ab5ca908be6e3e2b2dc",
+      "fileHash": "22717ada60d9a1b5a3750757b3969563a02fd17220ddf4b72aca05557826a714"
+    },
+    {
+      "seq": 63,
+      "id": "e6db9b03-6b38-46e9-9de8-ff48317927dd",
+      "at": "2026-09-06T16:30:36.724Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:clarification:marker moved to the research stage value so the stage advance pre-check accepts the spec binding",
+      "slice": null,
+      "hash": "f2928b9e2d5dbf4b46851b5d2a276586f3505299c4f971bf82a08ddab217fc57",
+      "fileHash": "e1e9a5b70cfdc69a8b5fe63186d04891b6f19e5101c58ff8e6413db669b08b2e"
+    },
+    {
+      "seq": 64,
+      "id": "ef50e23c-cc84-4505-adc9-37e9f47fdae1",
+      "at": "2026-09-06T16:30:36.773Z",
+      "actor": "orchestrator",
+      "command": "stage_advance",
+      "transition": "stage:research->implementation",
+      "slice": null,
+      "hash": "869690ae82f9ee83afb27ffe7a1ff7cd60ec936b1615af22942cd9e4424472ab",
+      "fileHash": "ee298bcc5d1920a3e303da8221ed9f4311341fd59a2ed3b2339ba610befd3845"
+    }
+  ],
+  "fileHash": "9fd08062a450df68d6c6181bbcd866bf999b1a512cd5b2233d2a43f825da1ee4"
+}

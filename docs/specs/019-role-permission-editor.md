@@ -1,6 +1,6 @@
 # Batch 019 spec: role-permission-editor
 
-Spec status: approved
+Spec status: implementation
 
 ## Problem Statement
 
