@@ -10,7 +10,7 @@
   "tracker": {
     "mode": "none"
   },
-  "stage": "research",
+  "stage": "closed",
   "retry": {
     "count": 0,
     "max": 5,
@@ -38,7 +38,22 @@
     {
       "batch": "016-minimal-mode-gating",
       "ledger": ".rivr/specs/016-minimal-mode-gating.ledger.json",
-      "stage": "implementation"
+      "stage": "closed"
+    },
+    {
+      "batch": "017-publishing-visibility",
+      "ledger": ".rivr/specs/017-publishing-visibility.ledger.json",
+      "stage": "closed"
+    },
+    {
+      "batch": "018-admin-suite",
+      "ledger": ".rivr/specs/018-admin-suite.ledger.json",
+      "stage": "closed"
+    },
+    {
+      "batch": "019-role-permission-editor",
+      "ledger": ".rivr/specs/019-role-permission-editor.ledger.json",
+      "stage": "closed"
     }
   ],
   "audit": [
@@ -359,7 +374,107 @@
       "slice": null,
       "hash": "b519d3a9c6ffda866a9cd0f90029e6329a720961371300e9778e04dd31a25591",
       "fileHash": "fe1e346c2b63f3b464e9847d5a9e1cf4c9d528dae17cdf02049be51f95816224"
+    },
+    {
+      "seq": 30,
+      "id": "f3784747-71aa-4c13-9c3f-f00ef06f43e8",
+      "at": "2026-09-06T20:41:03.377Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:clarification:register child 017-publishing-visibility",
+      "slice": null,
+      "hash": "983d12ec5ed28f4e6f204549891fc9f106a94615e5207e37b05f80f86b6deb42",
+      "fileHash": "0781e786f37e8f45e91486c4a1badd5a8533f22042e951389ea961b6dbec16b7"
+    },
+    {
+      "seq": 31,
+      "id": "f9470529-eeb3-4ca4-b0f0-dc3d02f07f13",
+      "at": "2026-09-06T20:41:03.378Z",
+      "actor": "orchestrator",
+      "command": "metaspec_child_link",
+      "transition": "child-link:017-publishing-visibility:.rivr/specs/017-publishing-visibility.ledger.json:closed",
+      "slice": null,
+      "hash": "d7731be9a807ab25a223e0693f3d91dfe95c9959e43ec08c3b665bda06ccb80e",
+      "fileHash": "0781e786f37e8f45e91486c4a1badd5a8533f22042e951389ea961b6dbec16b7"
+    },
+    {
+      "seq": 32,
+      "id": "017eb876-ca7d-4868-9a30-110faeabf8a0",
+      "at": "2026-09-06T20:41:03.432Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:clarification:register child 018-admin-suite",
+      "slice": null,
+      "hash": "94970455431050314664771a043c3f21aa7360606b6d8e350f71daa2eee8f632",
+      "fileHash": "a3a08e4f1e90717f82ec6d37d84dc29b618d867f277bcba42dbe39a4a89ec221"
+    },
+    {
+      "seq": 33,
+      "id": "de08f686-2369-43c6-aa8d-c0536c5ac8fc",
+      "at": "2026-09-06T20:41:03.433Z",
+      "actor": "orchestrator",
+      "command": "metaspec_child_link",
+      "transition": "child-link:018-admin-suite:.rivr/specs/018-admin-suite.ledger.json:closed",
+      "slice": null,
+      "hash": "c79a23ea86aafa22163e87f8b052251b7cfe93f0170e8ebceb50791485a724ce",
+      "fileHash": "a3a08e4f1e90717f82ec6d37d84dc29b618d867f277bcba42dbe39a4a89ec221"
+    },
+    {
+      "seq": 34,
+      "id": "770ee288-8f7f-4709-96fb-5e9b3b151f3e",
+      "at": "2026-09-06T20:41:03.486Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:clarification:register child 019-role-permission-editor",
+      "slice": null,
+      "hash": "16410fd140eed265c2c0ca60df3f8dbde4885d68558d7f7cdb8e8e94059e5b2d",
+      "fileHash": "7a188fd66b9013261c0910891de8d7a476281fc53da33490a756cd21dbcb38c6"
+    },
+    {
+      "seq": 35,
+      "id": "6d8aadcf-b085-44fa-a9a2-05619a4e5158",
+      "at": "2026-09-06T20:41:03.487Z",
+      "actor": "orchestrator",
+      "command": "metaspec_child_link",
+      "transition": "child-link:019-role-permission-editor:.rivr/specs/019-role-permission-editor.ledger.json:closed",
+      "slice": null,
+      "hash": "daff8b07ff7e0b6af9aa91d1d5178352917ae874cff7c933fabbb1691738ad44",
+      "fileHash": "7a188fd66b9013261c0910891de8d7a476281fc53da33490a756cd21dbcb38c6"
+    },
+    {
+      "seq": 36,
+      "id": "1715798c-f080-4039-bedd-20609d1bb6f2",
+      "at": "2026-09-06T20:41:20.384Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:clarification:resync child 016 stage",
+      "slice": null,
+      "hash": "0e682772753fe64d6d49c7d580210f31f61045bf7446948c40b154d191714edd",
+      "fileHash": "787384ab7126069d5362d65d3614e679736649f97c67ba005e70938437105d96"
+    },
+    {
+      "seq": 37,
+      "id": "b40f62d1-bc7b-43c3-a137-76814378cb03",
+      "at": "2026-09-06T20:41:20.385Z",
+      "actor": "orchestrator",
+      "command": "metaspec_child_link",
+      "transition": "child-link:016-minimal-mode-gating:.rivr/specs/016-minimal-mode-gating.ledger.json:closed",
+      "slice": null,
+      "hash": "016c721d61a2e88e11d2de0117ed0eb028cb8ec98520b00d89393af04c995e14",
+      "fileHash": "787384ab7126069d5362d65d3614e679736649f97c67ba005e70938437105d96"
+    },
+    {
+      "seq": 38,
+      "id": "5bd17883-a845-4c5b-95eb-0d7289906092",
+      "at": "2026-09-06T20:42:14.841Z",
+      "actor": "verifier",
+      "command": "metaspec_certify",
+      "transition": "metaspec_certify:16ad5096a24c681cc5b4df6bb409f365bd83db07effda5c2dd56dc7c05e0ffcc",
+      "slice": null,
+      "hash": "d3e661e0da383a7ddde400003a889d72a9baed675d2bdfd59c1449ea11065718",
+      "oracle": "16ad5096a24c681cc5b4df6bb409f365bd83db07effda5c2dd56dc7c05e0ffcc",
+      "fileHash": "945ade554f493fa85c0a756f4eada610bcddb508bfb77259dfa09b2b4d30339a"
     }
   ],
-  "fileHash": "0781e786f37e8f45e91486c4a1badd5a8533f22042e951389ea961b6dbec16b7"
+  "fileHash": "707b8db636b819b2906cf27041a2d1b4ef640a4079493d99a5aacba98529ff45"
 }

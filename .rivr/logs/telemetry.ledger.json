@@ -19182,6 +19182,160 @@
       "actor": "orchestrator",
       "outcome": "ok",
       "extra": {}
+    },
+    {
+      "ts": "2026-09-06T20:39:48.415Z",
+      "command": "metaspec",
+      "flags": [
+        "help"
+      ],
+      "exit": 0,
+      "duration_ms": 0,
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-06T20:40:31.726Z",
+      "command": "metaspec",
+      "flags": [],
+      "exit": 1,
+      "duration_ms": 1,
+      "outcome": "error",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-06T20:40:46.410Z",
+      "command": "metaspec",
+      "flags": [
+        "action",
+        "actor",
+        "link",
+        "link",
+        "link",
+        "reason"
+      ],
+      "exit": 3,
+      "duration_ms": 3,
+      "stage": "research",
+      "actor": "orchestrator",
+      "outcome": "invariant",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-06T20:41:03.379Z",
+      "command": "metaspec",
+      "flags": [
+        "action",
+        "actor",
+        "link",
+        "reason"
+      ],
+      "exit": 0,
+      "duration_ms": 4,
+      "stage": "research",
+      "actor": "orchestrator",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-06T20:41:03.434Z",
+      "command": "metaspec",
+      "flags": [
+        "action",
+        "actor",
+        "link",
+        "reason"
+      ],
+      "exit": 0,
+      "duration_ms": 3,
+      "stage": "research",
+      "actor": "orchestrator",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-06T20:41:03.488Z",
+      "command": "metaspec",
+      "flags": [
+        "action",
+        "actor",
+        "link",
+        "reason"
+      ],
+      "exit": 0,
+      "duration_ms": 4,
+      "stage": "research",
+      "actor": "orchestrator",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-06T20:41:20.386Z",
+      "command": "metaspec",
+      "flags": [
+        "action",
+        "actor",
+        "link",
+        "reason"
+      ],
+      "exit": 0,
+      "duration_ms": 4,
+      "stage": "research",
+      "actor": "orchestrator",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-06T20:41:20.445Z",
+      "command": "metaspec",
+      "flags": [
+        "actor"
+      ],
+      "exit": 0,
+      "duration_ms": 5,
+      "stage": "research",
+      "actor": "orchestrator",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-06T20:41:34.421Z",
+      "command": "metaspec",
+      "flags": [
+        "actor"
+      ],
+      "exit": 3,
+      "duration_ms": 1,
+      "stage": "research",
+      "actor": "orchestrator",
+      "outcome": "invariant",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-06T20:41:34.481Z",
+      "command": "metaspec",
+      "flags": [
+        "actor"
+      ],
+      "exit": 0,
+      "duration_ms": 5,
+      "stage": "research",
+      "actor": "orchestrator",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-06T20:42:14.843Z",
+      "command": "metaspec",
+      "flags": [
+        "certifier"
+      ],
+      "exit": 0,
+      "duration_ms": 6,
+      "stage": "closed",
+      "actor": "verifier",
+      "outcome": "ok",
+      "extra": {}
     }
   ],
   "audit": [
@@ -32889,7 +33043,128 @@
       "slice": null,
       "hash": "ab74bb16c7997c9c9ae5bba43bed0745e3fe383c00dffdfb2ed8a005e6a92221",
       "fileHash": "156b0c0de5a323ef79e9686609dc8b012c135d8792068c1cff2daa6f3c5a8c27"
+    },
+    {
+      "seq": 1247,
+      "id": "34b62787-19c0-41d0-b68d-bd060bb17eae",
+      "at": "2026-09-06T20:39:48.415Z",
+      "actor": "anonymous",
+      "command": "telemetry",
+      "transition": "command:metaspec:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "90deb3d39500984959c1450c3f1ed2f72ca33ada679e9d47d39f9caf7824a251",
+      "fileHash": "ac6aa952d5086dab20f9be1adec2a03319e632aaa671b3451d4c989b6d84d639"
+    },
+    {
+      "seq": 1248,
+      "id": "b382b8e8-e7ce-48af-9824-949c4f1730b2",
+      "at": "2026-09-06T20:40:31.726Z",
+      "actor": "anonymous",
+      "command": "telemetry",
+      "transition": "command:metaspec:exit:1:outcome:error",
+      "slice": null,
+      "hash": "66ae102d495a5d19c11020268cf9ecfe170c1cdbd7140bb1c25cd0bfa6647c1e",
+      "fileHash": "725d82f2b6147ce96ee34fe569a7232d409ea520a395a47b1d515eb4fee60f63"
+    },
+    {
+      "seq": 1249,
+      "id": "f3a702cc-9522-499e-b0d0-09eabe53f982",
+      "at": "2026-09-06T20:40:46.410Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:metaspec:exit:3:outcome:invariant",
+      "slice": null,
+      "hash": "df3ca4a9a0a0ab1375cf5e3f362f3e682c820bf78d305fcf9d67ec2e042bc63d",
+      "fileHash": "8b87828c793cc5db5918ec4078f671c433d9d6149b0d372d13f0a3ff583ec3cb"
+    },
+    {
+      "seq": 1250,
+      "id": "feba5f3f-b925-40fa-a93e-e6aa012293e0",
+      "at": "2026-09-06T20:41:03.379Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:metaspec:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "c6f4e33852c523a04deb85d3288f5628f68c731f1bf42f55db867916cd559656",
+      "fileHash": "4c2722dfae29cf84271e5404b0cc01308ce40d391b7cc93c0517a93e7788b874"
+    },
+    {
+      "seq": 1251,
+      "id": "45882046-b24b-478e-8272-1493fe2ad1bf",
+      "at": "2026-09-06T20:41:03.434Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:metaspec:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "37dd7fdcb29ed612c07fa0985fe46917b76366b080ce096b0bcb722c3f185640",
+      "fileHash": "f44687cac364356eaa10a844cc2f879264ff48e9b40be1d6fa6c875521404e16"
+    },
+    {
+      "seq": 1252,
+      "id": "d15c4d78-07fc-4713-bb8c-59f2b9be825b",
+      "at": "2026-09-06T20:41:03.488Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:metaspec:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "c75958bc8c6993f639677e679bcdeaa5dc219f51a7a4b069dc87682c2351eb1f",
+      "fileHash": "b5163cc88fba1fcb440d3772cbdce6914c0723d1b1c286f67cbd9dddb942e9bf"
+    },
+    {
+      "seq": 1253,
+      "id": "343cd242-6094-4219-b8bb-2fb03f2deedc",
+      "at": "2026-09-06T20:41:20.386Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:metaspec:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "e85b7645cbfe98bf33dcc4976f76df8e00da3ef59a66e1cc3a2b6e245694fc86",
+      "fileHash": "fd5bf7e1078f204076304a65a3a4c8437e84e8c3a5232c5ba5a21c4131a93a1f"
+    },
+    {
+      "seq": 1254,
+      "id": "e1c940cd-9504-4b68-b612-b986d5268751",
+      "at": "2026-09-06T20:41:20.445Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:metaspec:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "6d36c514cae6b65846c74050e709a1fd86f820f7601d3b86b975d50ee70071d8",
+      "fileHash": "ce7e63c774934a058b5642a3f900dd3cab4becd6351f88c5861bda98751aab68"
+    },
+    {
+      "seq": 1255,
+      "id": "278cfcae-8c9f-46a6-bc29-b1c6f1c0e694",
+      "at": "2026-09-06T20:41:34.421Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:metaspec:exit:3:outcome:invariant",
+      "slice": null,
+      "hash": "8843ff37803e85d63ec68434922d98e6e8d7d86f81aa023aa3aed4752a23a25c",
+      "fileHash": "4c3a83d821de20fdb329b5068c3245e756ea5b6d9be4487a0d6445ccdcf49c68"
+    },
+    {
+      "seq": 1256,
+      "id": "44195601-9905-4bcb-a8ea-3e40c96c9b77",
+      "at": "2026-09-06T20:41:34.481Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:metaspec:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "e5ecc662a927cda99f8abfe94fb4b31d2fb5c275a1fedd966e9854080443c8e5",
+      "fileHash": "cb6eaa24a063b741099e296a9a880697c4999c42fda5a7da680f1a2b757812b2"
+    },
+    {
+      "seq": 1257,
+      "id": "00a25d43-d8cf-41fe-b432-9850c2e2eac9",
+      "at": "2026-09-06T20:42:14.843Z",
+      "actor": "verifier",
+      "command": "telemetry",
+      "transition": "command:metaspec:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "a7614bbcee2ccc570f88453499a108887a835eff704b53175c3e411c969f473b",
+      "fileHash": "c98721b595f52d9f4fcbd3b0c0901d50a7da008e47e92a81a0a79209e5089c73"
     }
   ],
-  "fileHash": "ac6aa952d5086dab20f9be1adec2a03319e632aaa671b3451d4c989b6d84d639"
+  "fileHash": "037cb80237adc3af64ce39be56fc169e587b63d7bcc5399a10479a396d7a099f"
 }
