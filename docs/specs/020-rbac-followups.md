@@ -1,6 +1,6 @@
 # Batch 020 spec: rbac-followups
 
-Spec status: verification
+Spec status: research_update
 
 ## Problem Statement
 
