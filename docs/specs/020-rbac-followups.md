@@ -375,3 +375,89 @@ opens the dialog.
   an interrupted gate run.
 - Commit convention for this batch: `feat(rbac): ...` for behavior changes and
   `chore(rbac): ...` for the docs and the file removal.
+## Research Update (2026-09-07)
+
+### Shipped
+
+Batch 020 shipped three slices across five implementation commits and two
+verification commits. S1 landed the hermetic web-search mock at
+`tests/agent-runtime/runner-skills-registration.test.ts:109-111`, mirroring the
+runner-wakeup pattern. The doctrine records gained resolution notes:
+`docs/research/013-implementation-diagnosis.md:22`,
+`docs/specs/017-publishing-visibility.md:618`,
+`docs/specs/018-admin-suite.md:775`, and
+`docs/specs/019-role-permission-editor.md:751`. S2 added `admin.users.loadFailed`
+and `admin.roles.loadFailed` across all 12 locales
+(`lib/i18n/locales/en-US.json:2170, :2242`), swapped the four component fallbacks
+to read through `t(...)` (`components/admin/users-section.tsx:51, :54`;
+`components/admin/roles-section.tsx:57, :60`), and deleted the stray root
+`auth.config.mjs` (confirmed gone: `test ! -f auth.config.mjs` exits 0). S3 wired
+`settingsGated={minimalMode}` at `app/page.tsx:743` under the existing render
+condition at `components/header-capsule.tsx:131`, and the gear describe block in
+`tests/minimal-mode/minimal-layout.test.ts` carries the `LAYOUT_OK` marker. The
+voice suite gained the video-capability mock at
+`tests/agent-runtime/runner-voice-registration.test.ts:116-119` (commit
+`cbab8139`). The runner-skills and runner-web-search suites gained the same mock
+at `tests/agent-runtime/runner-skills-registration.test.ts:115-117` and
+`tests/agent-runtime/runner-web-search-registration.test.ts:110-115` (commit
+`1ee2ec28`). Safari shots 35-37 prove the flag-on states: anonymous sees no gear,
+administrator sees the gear, administrator opens the dialog
+(`docs/research/ui-after/35-gear-anon.png`, `36-gear-admin.png`,
+`37-gear-admin-dialog.png`). The scratch spec `tests/_gear-check.spec.ts` was
+dropped in `1ee2ec28` and the marker edit fixed in `8874b8b8`.
+
+### Deviations and surprises
+
+(a) The round-1 gate RED was misdiagnosed by two agents as "rivr buffer
+truncation / a CLI limitation." The true cause was the F6 class again. The
+bun-compiled rivr auto-loads `.env.local` at startup cwd and passes `VIDEO_*`,
+`TAVILY_*`, `BRAVE_*` to gate children. Plain `/bin/sh` runs were green because
+the parent shell was clean. The orchestrator reproduced both conditions directly:
+the bun harness exits 1 with 2 voice failures, and the clean-sh runs 18/18. The
+leak moved in three stages: web-search env (S1 main), video env (S1 completion),
+and the voice suite's video mock (final). One mock pattern, three blind spots.
+
+(b) A verifier left a scratch spec file committed
+(`tests/_gear-check.spec.ts`, created in `6f994eeb`) and a second uncommitted
+marker edit. Commit `8874b8b8` fixed the marker; commit `1ee2ec28` dropped the
+scratch file.
+
+(c) `LAYOUT_OK` was designed as a regression gate. It was green pre-fix by spec
+(review C1 at `docs/research/020-spec-soundness-review.md:112-133`). The new gear
+describe cannot change that: it renders `HeaderCapsule` directly with
+`settingsGated` passed explicitly, the component already implements the gate at
+`header-capsule.tsx:131`, and every gear assertion passes before the S3 delta
+lands. The behavioral proof lives in `tsc` (prop shape), the Safari checkpoint
+(flag-on states), and the branding suite (flag-off gear).
+
+### Test results
+
+All 6 gates passed green twice where required (S2 at seq 73/78, S3 at seq
+74/77, S1 at seq 107 after the g1 runs stabilized). The CLI gate g1 evidence is
+green from repo root under loaded env: this is the definitive hermeticity proof.
+The full suite ran 7939 tests with 0 failures and 200 skipped (the timer-class
+solo passed in this run; see Follow-on notes). The production build exits 0.
+`pnpm check` exits 0 (all files use Prettier code style). The two-run
+config-present/emptied proof (`RUNNER_HERMETIC_OK`) runs 18/18 both legs: the
+four runner family suites pass with the operator config present and with the
+yaml emptied and the web-search env cleared.
+
+### Doctrine for future specs
+
+Suites that assert exact tool lists must mock EVERY capability-injection source,
+not just the one that leaked first. Batch 020 discovered three sources across
+three rounds: web-search (`resolveWebSearchCapability`), video
+(`hasConfiguredVideoGeneration`), and future media capabilities will follow the
+same pattern. Gate commands must pass under the CLI's own bun env inheritance.
+Prove gates via `rivr slice verify --run-gates` from repo root, never only via
+clean-shell runs. The bun harness auto-loads `.env.local`, so a clean-shell pass
+is necessary but not sufficient.
+
+### Follow-on notes
+
+- The owner-events/session-events timer flake class remains a real pre-existing
+  CI issue. It passes solo every time and fails roughly 1-in-4 under full-suite
+  contention. It is now the ONLY tolerated failure kind. Candidate for a dedicated
+  vitest-fake-timers batch.
+- Program state after this batch: 8/8 children closed (the RBAC program
+  `docs/meta-specs/rbac-minimal-mode.md` is complete).
