@@ -107,6 +107,12 @@ vi.mock('@/lib/server/agent-runtime/user-skills', async (importActual) => {
   const actual = await importActual<typeof import('@/lib/server/agent-runtime/user-skills')>();
   return { ...actual, listUserSkills: vi.fn(async () => []) };
 });
+// Video capability stays hermetic: bun-loaded .env.local may inject
+// VIDEO_*_API_KEY env vars, making hasConfiguredVideoGeneration() true
+// and registering the generate_video tool that breaks exact-list assertions.
+vi.mock('@/lib/server/agent-runtime/generate-video', () => ({
+  hasConfiguredVideoGeneration: () => false,
+}));
 
 import { runSession } from '@/lib/server/agent-runtime/runner';
 
