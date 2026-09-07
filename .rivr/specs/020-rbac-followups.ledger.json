@@ -4,12 +4,12 @@
   "spec": {
     "reference": "docs/specs/020-rbac-followups.md",
     "title": "Batch 020 spec: rbac-followups",
-    "hash": "a39cfb7da40343dd0f08cf43305456710f8f88ce580c70b4cf60c88d41a06ca1"
+    "hash": "31216516d11491a466c85e75f3d38db2383af45bd66752787931804bb6597296"
   },
   "tracker": {
     "mode": "none"
   },
-  "stage": "research_update",
+  "stage": "closed",
   "retry": {
     "count": 0,
     "max": 5,
@@ -2697,7 +2697,30 @@
       "slice": null,
       "hash": "20811382a715b1f428aa539c2928000d363e949b622739a688ff1030c396b08b",
       "fileHash": "63511e907490213862c64d20d62ca7378af2214f8f6f4242c887e4adec9fa2d4"
+    },
+    {
+      "seq": 109,
+      "id": "a6c511b4-8348-4495-a72d-e18c2d466770",
+      "at": "2026-09-07T02:37:48.373Z",
+      "actor": "orchestrator",
+      "command": "spec_amend",
+      "transition": "spec_amend:respecify:research update recorded after round-2 verification",
+      "slice": null,
+      "hash": "00c10b193caacfa214ed63d0b560e20c8fceadfce52e2e5d04abb0ac9777a2dd",
+      "fileHash": "894fdbec2a188974027858e7134618f5b46125edb3b620ed4f69a8f406961573"
+    },
+    {
+      "seq": 110,
+      "id": "5c1cd7ef-444a-4313-abfc-fad4a9c22b4f",
+      "at": "2026-09-07T02:37:48.440Z",
+      "actor": "verifier",
+      "command": "certify",
+      "transition": "certify:21a2ef7b58ddaccddccd3c7383da90a721091d792d1286fe1a8f2a4d9497d513",
+      "slice": null,
+      "hash": "1a2614e5d80eca85657349b2a0d232e982f1ed328538a475bd7b163eb0015e7d",
+      "oracle": "21a2ef7b58ddaccddccd3c7383da90a721091d792d1286fe1a8f2a4d9497d513",
+      "fileHash": "df404ab32dfaa72dc4c40a1c4b48d52ad2cb4397b024b93684122521b40e23e7"
     }
   ],
-  "fileHash": "894fdbec2a188974027858e7134618f5b46125edb3b620ed4f69a8f406961573"
+  "fileHash": "3b6af841a3911e84499ae25f2666a8c7712865dc466e12280a34e55657bc4e65"
 }

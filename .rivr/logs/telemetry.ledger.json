@@ -866,6 +866,51 @@
       "actor": "orchestrator",
       "outcome": "ok",
       "extra": {}
+    },
+    {
+      "ts": "2026-09-07T02:37:48.376Z",
+      "command": "spec.amend",
+      "flags": [
+        "action",
+        "actor",
+        "reason"
+      ],
+      "exit": 0,
+      "duration_ms": 10,
+      "stage": "research_update",
+      "actor": "orchestrator",
+      "outcome": "ok",
+      "extra": {}
+    },
+    {
+      "ts": "2026-09-07T02:37:48.444Z",
+      "command": "ledger.accept",
+      "flags": [
+        "certifier"
+      ],
+      "exit": 0,
+      "duration_ms": 8,
+      "stage": "closed",
+      "actor": "verifier",
+      "outcome": "ok",
+      "extra": {
+        "gatePass": 6,
+        "gateFail": 0
+      }
+    },
+    {
+      "ts": "2026-09-07T02:37:48.494Z",
+      "command": "stage.advance",
+      "flags": [
+        "actor",
+        "to"
+      ],
+      "exit": 3,
+      "duration_ms": 3,
+      "stage": "closed",
+      "actor": "orchestrator",
+      "outcome": "invariant",
+      "extra": {}
     }
   ],
   "audit": [
@@ -1516,7 +1561,40 @@
       "slice": null,
       "hash": "b8b158185ca2c346578700dbc2d2b935ec6c8b6d17ed28bc966fffeed775120d",
       "fileHash": "c465f12362c3926e43e68a33445934f10bb26b3462b728b21812d2f16e20fa9b"
+    },
+    {
+      "seq": 60,
+      "id": "a48aa18f-62cc-41f1-b43e-dd4c14816e52",
+      "at": "2026-09-07T02:37:48.376Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:spec.amend:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "03ce94530220c9073d824e974df8a7ff8100cac61476c0f43f5c38bb85765309",
+      "fileHash": "46550516cc913176efa6155deb7fd479201fe676b0026d937426933bf1815e70"
+    },
+    {
+      "seq": 61,
+      "id": "410abe7b-d02a-4512-81e9-4b65a5c26b04",
+      "at": "2026-09-07T02:37:48.444Z",
+      "actor": "verifier",
+      "command": "telemetry",
+      "transition": "command:ledger.accept:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "d7be05c4805ed3b1e0c8a14d4176ea2ec6711c1529ab46cf97ddce1c867e35be",
+      "fileHash": "60b7f8caa67e57e2eb8da8ba857c6bffd3b8bd101249f52353f4d8a8d6f0336d"
+    },
+    {
+      "seq": 62,
+      "id": "9c3d5d73-3d8c-429f-8d4f-4e946dad3f61",
+      "at": "2026-09-07T02:37:48.494Z",
+      "actor": "orchestrator",
+      "command": "telemetry",
+      "transition": "command:stage.advance:exit:3:outcome:invariant",
+      "slice": null,
+      "hash": "1d27e14b2b8e607c2d2b818f821e35b8f60e6e421d218369f85f3e31823a6f9e",
+      "fileHash": "4f96308dd7c422d007aec618fddc1fa29827d85b6832376f4c69f13d7068021c"
     }
   ],
-  "fileHash": "46550516cc913176efa6155deb7fd479201fe676b0026d937426933bf1815e70"
+  "fileHash": "5db5bf645a3308765dd0dcfe23efbfbdba579c9155f319a501430828119b44c3"
 }
