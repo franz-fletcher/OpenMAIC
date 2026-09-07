@@ -501,7 +501,19 @@
       "slice": null,
       "hash": "406a8a4a4da6f5499a26fb3ce243ba82832b7b798d99d067b34254f6a4475556",
       "fileHash": "707b8db636b819b2906cf27041a2d1b4ef640a4079493d99a5aacba98529ff45"
+    },
+    {
+      "seq": 41,
+      "id": "02a28c2e-0500-4c60-86f6-562e0b7f0648",
+      "at": "2026-09-07T02:39:27.857Z",
+      "actor": "verifier",
+      "command": "metaspec_certify",
+      "transition": "metaspec_certify:10d6ee3b3df687608717b2a5ab6565d04ab9d33630b12cc46e8d0d2e1b17b8b7",
+      "slice": null,
+      "hash": "19b770fb157486c9a00769f92678080488baae91c585d9d7d4f896710eff9af5",
+      "oracle": "10d6ee3b3df687608717b2a5ab6565d04ab9d33630b12cc46e8d0d2e1b17b8b7",
+      "fileHash": "99f6e91cca8f175d869d74d1211ae9ff7bd75564932d0edba48b1c7654b62872"
     }
   ],
-  "fileHash": "99f6e91cca8f175d869d74d1211ae9ff7bd75564932d0edba48b1c7654b62872"
+  "fileHash": "3341f58841de7923cb5360b635b5b8f17d1e64bb333121f248c9c90de18c542d"
 }
