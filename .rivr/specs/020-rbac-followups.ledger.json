@@ -623,6 +623,153 @@
                 "failureReason": "nonzero-exit"
               },
               "consumed": false
+            },
+            {
+              "captureId": "fe91b8df-ca92-40e4-8586-3208dc28e0bb",
+              "ts": "2026-09-07T01:42:36.904Z",
+              "actor": "verifier",
+              "stage": "verification",
+              "headSha": "1ee2ec28c6700dac18313b1470a0b07a16c5b0dc",
+              "round": 78,
+              "oracleSignature": "bc81e03e4c7cba66995420b49b3091a17b05cf880c7af6ef3973a8af7f032204",
+              "evidence": {
+                "id": "g1",
+                "shell": "/bin/sh",
+                "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+                "exit": 1,
+                "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+                "pathCount": 30,
+                "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/agent-runtime/runner-skills-registration.test.ts tests/agent-runtime/runner-web-search-registration.test.ts tests/agent-runtime/runner-voice-registration.test.ts tests/agent-runtime/runner-wakeup.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-wakeup.test.ts\u001b[2m > \u001b[22m\u001b[2mrunSession NOTIFY wakeup wiring\u001b[2m > \u001b[22m\u001b[2msubscribes to the session route, wakes the cancel check and drain, and unsubscribes on settle\n\u001b[22m\u001b[39m[2026-09-07T01:42:35.028Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 3 LLM, 1 TTS, 1 ASR, 1 PDF, 0 Image, 1 Video, 2 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-wakeup.test.ts\u001b[2m > \u001b[22m\u001b[2mrunSession NOTIFY wakeup wiring\u001b[2m > \u001b[22m\u001b[2msubscribes to the session route, wakes the cancel check and drain, and unsubscribes on settle\n\u001b[22m\u001b[39m[2026-09-07T01:42:35.039Z] [INFO] [AgentRunner] session session-wake: steered 1 follow-up message(s)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mregisters both tools and the web-search prompt block when a backend is configured\n\u001b[22m\u001b[39m[2026-09-07T01:42:35.044Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 3 LLM, 1 TTS, 1 ASR, 1 PDF, 0 Image, 1 Video, 2 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mregisters both tools and the web-search prompt block when a backend is configured\n\u001b[22m\u001b[39m[2026-09-07T01:42:35.045Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mregisters ask_user and the skill tools, but no web-search prompt, when nothing is configured\n\u001b[22m\u001b[39m[2026-09-07T01:42:35.047Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mwires web_search result URLs to the session URL trust gate\n\u001b[22m\u001b[39m[2026-09-07T01:42:35.048Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mlists the session materials in the system prompt so the model knows what it can read\n\u001b[22m\u001b[39m[2026-09-07T01:42:35.049Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2momits the materials block when the session has no materials\n\u001b[22m\u001b[39m[2026-09-07T01:42:35.050Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/runner-web-search-registration.test.ts \u001b[2m(\u001b[22m\u001b[2m5 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 10\u001b[2mms\u001b[22m\u001b[39m\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-skills-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mskills runner registration\u001b[2m > \u001b[22m\u001b[2mregisters the skill tools and the skill-scoped read tool, with a matching allowlist and prompt block\n\u001b[22m\u001b[39m[2026-09-07T01:42:35.051Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 3 LLM, 1 TTS, 1 ASR, 1 PDF, 0 Image, 1 Video, 2 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-skills-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mskills runner registration\u001b[2m > \u001b[22m\u001b[2mregisters the skill tools and the skill-scoped read tool, with a matching allowlist and prompt block\n\u001b[22m\u001b[39m[2026-09-07T01:42:35.052Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool",
+                "passed": false,
+                "failureReason": "nonzero-exit"
+              },
+              "consumed": false
+            },
+            {
+              "captureId": "538fa594-d292-4933-9162-822578ab9944",
+              "ts": "2026-09-07T01:43:07.767Z",
+              "actor": "verifier",
+              "stage": "verification",
+              "headSha": "1ee2ec28c6700dac18313b1470a0b07a16c5b0dc",
+              "round": 78,
+              "oracleSignature": "bc81e03e4c7cba66995420b49b3091a17b05cf880c7af6ef3973a8af7f032204",
+              "evidence": {
+                "id": "g1",
+                "shell": "/bin/sh",
+                "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+                "exit": 1,
+                "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+                "pathCount": 30,
+                "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/agent-runtime/runner-skills-registration.test.ts tests/agent-runtime/runner-web-search-registration.test.ts tests/agent-runtime/runner-voice-registration.test.ts tests/agent-runtime/runner-wakeup.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-wakeup.test.ts\u001b[2m > \u001b[22m\u001b[2mrunSession NOTIFY wakeup wiring\u001b[2m > \u001b[22m\u001b[2msubscribes to the session route, wakes the cancel check and drain, and unsubscribes on settle\n\u001b[22m\u001b[39m[2026-09-07T01:43:05.864Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 3 LLM, 1 TTS, 1 ASR, 1 PDF, 0 Image, 1 Video, 2 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-wakeup.test.ts\u001b[2m > \u001b[22m\u001b[2mrunSession NOTIFY wakeup wiring\u001b[2m > \u001b[22m\u001b[2msubscribes to the session route, wakes the cancel check and drain, and unsubscribes on settle\n\u001b[22m\u001b[39m[2026-09-07T01:43:05.872Z] [INFO] [AgentRunner] session session-wake: steered 1 follow-up message(s)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mregisters both tools and the web-search prompt block when a backend is configured\n\u001b[22m\u001b[39m[2026-09-07T01:43:05.880Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 3 LLM, 1 TTS, 1 ASR, 1 PDF, 0 Image, 1 Video, 2 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mregisters both tools and the web-search prompt block when a backend is configured\n\u001b[22m\u001b[39m[2026-09-07T01:43:05.881Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mregisters ask_user and the skill tools, but no web-search prompt, when nothing is configured\n\u001b[22m\u001b[39m[2026-09-07T01:43:05.883Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mwires web_search result URLs to the session URL trust gate\n\u001b[22m\u001b[39m[2026-09-07T01:43:05.883Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mlists the session materials in the system prompt so the model knows what it can read\n\u001b[22m\u001b[39m[2026-09-07T01:43:05.884Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2momits the materials block when the session has no materials\n\u001b[22m\u001b[39m[2026-09-07T01:43:05.885Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/runner-web-search-registration.test.ts \u001b[2m(\u001b[22m\u001b[2m5 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 10\u001b[2mms\u001b[22m\u001b[39m\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-skills-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mskills runner registration\u001b[2m > \u001b[22m\u001b[2mregisters the skill tools and the skill-scoped read tool, with a matching allowlist and prompt block\n\u001b[22m\u001b[39m[2026-09-07T01:43:05.887Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 3 LLM, 1 TTS, 1 ASR, 1 PDF, 0 Image, 1 Video, 2 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-skills-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mskills runner registration\u001b[2m > \u001b[22m\u001b[2mregisters the skill tools and the skill-scoped read tool, with a matching allowlist and prompt block\n\u001b[22m\u001b[39m[2026-09-07T01:43:05.888Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool",
+                "passed": false,
+                "failureReason": "nonzero-exit"
+              },
+              "consumed": false
+            },
+            {
+              "captureId": "d2212982-6005-4b4e-8b95-1bf84aa3507d",
+              "ts": "2026-09-07T01:44:22.783Z",
+              "actor": "verifier",
+              "stage": "verification",
+              "headSha": "1ee2ec28c6700dac18313b1470a0b07a16c5b0dc",
+              "round": 78,
+              "oracleSignature": "bc81e03e4c7cba66995420b49b3091a17b05cf880c7af6ef3973a8af7f032204",
+              "evidence": {
+                "id": "g1",
+                "shell": "/bin/sh",
+                "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+                "exit": 1,
+                "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+                "pathCount": 30,
+                "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/agent-runtime/runner-skills-registration.test.ts tests/agent-runtime/runner-web-search-registration.test.ts tests/agent-runtime/runner-voice-registration.test.ts tests/agent-runtime/runner-wakeup.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-wakeup.test.ts\u001b[2m > \u001b[22m\u001b[2mrunSession NOTIFY wakeup wiring\u001b[2m > \u001b[22m\u001b[2msubscribes to the session route, wakes the cancel check and drain, and unsubscribes on settle\n\u001b[22m\u001b[39m[2026-09-07T01:44:20.830Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 3 LLM, 1 TTS, 1 ASR, 1 PDF, 0 Image, 1 Video, 2 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-wakeup.test.ts\u001b[2m > \u001b[22m\u001b[2mrunSession NOTIFY wakeup wiring\u001b[2m > \u001b[22m\u001b[2msubscribes to the session route, wakes the cancel check and drain, and unsubscribes on settle\n\u001b[22m\u001b[39m[2026-09-07T01:44:20.840Z] [INFO] [AgentRunner] session session-wake: steered 1 follow-up message(s)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mregisters both tools and the web-search prompt block when a backend is configured\n\u001b[22m\u001b[39m[2026-09-07T01:44:20.848Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 3 LLM, 1 TTS, 1 ASR, 1 PDF, 0 Image, 1 Video, 2 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mregisters both tools and the web-search prompt block when a backend is configured\n\u001b[22m\u001b[39m[2026-09-07T01:44:20.849Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mregisters ask_user and the skill tools, but no web-search prompt, when nothing is configured\n\u001b[22m\u001b[39m[2026-09-07T01:44:20.851Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mwires web_search result URLs to the session URL trust gate\n\u001b[22m\u001b[39m[2026-09-07T01:44:20.852Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mlists the session materials in the system prompt so the model knows what it can read\n\u001b[22m\u001b[39m[2026-09-07T01:44:20.852Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2momits the materials block when the session has no materials\n\u001b[22m\u001b[39m[2026-09-07T01:44:20.854Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/runner-web-search-registration.test.ts \u001b[2m(\u001b[22m\u001b[2m5 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 12\u001b[2mms\u001b[22m\u001b[39m\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-skills-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mskills runner registration\u001b[2m > \u001b[22m\u001b[2mregisters the skill tools and the skill-scoped read tool, with a matching allowlist and prompt block\n\u001b[22m\u001b[39m[2026-09-07T01:44:20.855Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 3 LLM, 1 TTS, 1 ASR, 1 PDF, 0 Image, 1 Video, 2 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-skills-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mskills runner registration\u001b[2m > \u001b[22m\u001b[2mregisters the skill tools and the skill-scoped read tool, with a matching allowlist and prompt block\n\u001b[22m\u001b[39m[2026-09-07T01:44:20.856Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool",
+                "passed": false,
+                "failureReason": "nonzero-exit"
+              },
+              "consumed": false
+            },
+            {
+              "captureId": "6ea94f3b-13a9-41a8-a0b7-b58e2472dadb",
+              "ts": "2026-09-07T01:47:12.119Z",
+              "actor": "verifier",
+              "stage": "verification",
+              "headSha": "1ee2ec28c6700dac18313b1470a0b07a16c5b0dc",
+              "round": 78,
+              "oracleSignature": "bc81e03e4c7cba66995420b49b3091a17b05cf880c7af6ef3973a8af7f032204",
+              "evidence": {
+                "id": "g1",
+                "shell": "/bin/sh",
+                "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+                "exit": 1,
+                "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+                "pathCount": 30,
+                "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/agent-runtime/runner-skills-registration.test.ts tests/agent-runtime/runner-web-search-registration.test.ts tests/agent-runtime/runner-voice-registration.test.ts tests/agent-runtime/runner-wakeup.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-wakeup.test.ts\u001b[2m > \u001b[22m\u001b[2mrunSession NOTIFY wakeup wiring\u001b[2m > \u001b[22m\u001b[2msubscribes to the session route, wakes the cancel check and drain, and unsubscribes on settle\n\u001b[22m\u001b[39m[2026-09-07T01:47:10.171Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 3 LLM, 1 TTS, 1 ASR, 1 PDF, 0 Image, 1 Video, 2 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-wakeup.test.ts\u001b[2m > \u001b[22m\u001b[2mrunSession NOTIFY wakeup wiring\u001b[2m > \u001b[22m\u001b[2msubscribes to the session route, wakes the cancel check and drain, and unsubscribes on settle\n\u001b[22m\u001b[39m[2026-09-07T01:47:10.179Z] [INFO] [AgentRunner] session session-wake: steered 1 follow-up message(s)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mregisters both tools and the web-search prompt block when a backend is configured\n\u001b[22m\u001b[39m[2026-09-07T01:47:10.188Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 3 LLM, 1 TTS, 1 ASR, 1 PDF, 0 Image, 1 Video, 2 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mregisters both tools and the web-search prompt block when a backend is configured\n\u001b[22m\u001b[39m[2026-09-07T01:47:10.189Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mregisters ask_user and the skill tools, but no web-search prompt, when nothing is configured\n\u001b[22m\u001b[39m[2026-09-07T01:47:10.191Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mwires web_search result URLs to the session URL trust gate\n\u001b[22m\u001b[39m[2026-09-07T01:47:10.191Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mlists the session materials in the system prompt so the model knows what it can read\n\u001b[22m\u001b[39m[2026-09-07T01:47:10.192Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2momits the materials block when the session has no materials\n\u001b[22m\u001b[39m[2026-09-07T01:47:10.193Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/runner-web-search-registration.test.ts \u001b[2m(\u001b[22m\u001b[2m5 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 11\u001b[2mms\u001b[22m\u001b[39m\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-skills-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mskills runner registration\u001b[2m > \u001b[22m\u001b[2mregisters the skill tools and the skill-scoped read tool, with a matching allowlist and prompt block\n\u001b[22m\u001b[39m[2026-09-07T01:47:10.194Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 3 LLM, 1 TTS, 1 ASR, 1 PDF, 0 Image, 1 Video, 2 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-skills-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mskills runner registration\u001b[2m > \u001b[22m\u001b[2mregisters the skill tools and the skill-scoped read tool, with a matching allowlist and prompt block\n\u001b[22m\u001b[39m[2026-09-07T01:47:10.195Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool",
+                "passed": false,
+                "failureReason": "nonzero-exit"
+              },
+              "consumed": false
+            },
+            {
+              "captureId": "018a675e-a915-4d03-a10b-3da7577f66ef",
+              "ts": "2026-09-07T01:49:11.303Z",
+              "actor": "verifier",
+              "stage": "verification",
+              "headSha": "1ee2ec28c6700dac18313b1470a0b07a16c5b0dc",
+              "round": 78,
+              "oracleSignature": "bc81e03e4c7cba66995420b49b3091a17b05cf880c7af6ef3973a8af7f032204",
+              "evidence": {
+                "id": "g1",
+                "shell": "/bin/sh",
+                "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+                "exit": 1,
+                "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+                "pathCount": 30,
+                "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/agent-runtime/runner-skills-registration.test.ts tests/agent-runtime/runner-web-search-registration.test.ts tests/agent-runtime/runner-voice-registration.test.ts tests/agent-runtime/runner-wakeup.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-wakeup.test.ts\u001b[2m > \u001b[22m\u001b[2mrunSession NOTIFY wakeup wiring\u001b[2m > \u001b[22m\u001b[2msubscribes to the session route, wakes the cancel check and drain, and unsubscribes on settle\n\u001b[22m\u001b[39m[2026-09-07T01:49:09.359Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 3 LLM, 1 TTS, 1 ASR, 1 PDF, 0 Image, 1 Video, 2 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-wakeup.test.ts\u001b[2m > \u001b[22m\u001b[2mrunSession NOTIFY wakeup wiring\u001b[2m > \u001b[22m\u001b[2msubscribes to the session route, wakes the cancel check and drain, and unsubscribes on settle\n\u001b[22m\u001b[39m[2026-09-07T01:49:09.369Z] [INFO] [AgentRunner] session session-wake: steered 1 follow-up message(s)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mregisters both tools and the web-search prompt block when a backend is configured\n\u001b[22m\u001b[39m[2026-09-07T01:49:09.374Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 3 LLM, 1 TTS, 1 ASR, 1 PDF, 0 Image, 1 Video, 2 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mregisters both tools and the web-search prompt block when a backend is configured\n\u001b[22m\u001b[39m[2026-09-07T01:49:09.375Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mregisters ask_user and the skill tools, but no web-search prompt, when nothing is configured\n\u001b[22m\u001b[39m[2026-09-07T01:49:09.377Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mwires web_search result URLs to the session URL trust gate\n\u001b[22m\u001b[39m[2026-09-07T01:49:09.378Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mlists the session materials in the system prompt so the model knows what it can read\n\u001b[22m\u001b[39m[2026-09-07T01:49:09.379Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2momits the materials block when the session has no materials\n\u001b[22m\u001b[39m[2026-09-07T01:49:09.380Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/runner-web-search-registration.test.ts \u001b[2m(\u001b[22m\u001b[2m5 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 11\u001b[2mms\u001b[22m\u001b[39m\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-skills-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mskills runner registration\u001b[2m > \u001b[22m\u001b[2mregisters the skill tools and the skill-scoped read tool, with a matching allowlist and prompt block\n\u001b[22m\u001b[39m[2026-09-07T01:49:09.380Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 3 LLM, 1 TTS, 1 ASR, 1 PDF, 0 Image, 1 Video, 2 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-skills-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mskills runner registration\u001b[2m > \u001b[22m\u001b[2mregisters the skill tools and the skill-scoped read tool, with a matching allowlist and prompt block\n\u001b[22m\u001b[39m[2026-09-07T01:49:09.381Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool",
+                "passed": false,
+                "failureReason": "nonzero-exit"
+              },
+              "consumed": false
+            },
+            {
+              "captureId": "3d6bc604-5af5-45be-9a35-3abac6f528db",
+              "ts": "2026-09-07T01:49:25.546Z",
+              "actor": "verifier",
+              "stage": "verification",
+              "headSha": "1ee2ec28c6700dac18313b1470a0b07a16c5b0dc",
+              "round": 78,
+              "oracleSignature": "bc81e03e4c7cba66995420b49b3091a17b05cf880c7af6ef3973a8af7f032204",
+              "evidence": {
+                "id": "g1",
+                "shell": "/bin/sh",
+                "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+                "exit": 1,
+                "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+                "pathCount": 30,
+                "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/agent-runtime/runner-skills-registration.test.ts tests/agent-runtime/runner-web-search-registration.test.ts tests/agent-runtime/runner-voice-registration.test.ts tests/agent-runtime/runner-wakeup.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-wakeup.test.ts\u001b[2m > \u001b[22m\u001b[2mrunSession NOTIFY wakeup wiring\u001b[2m > \u001b[22m\u001b[2msubscribes to the session route, wakes the cancel check and drain, and unsubscribes on settle\n\u001b[22m\u001b[39m[2026-09-07T01:49:23.586Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 3 LLM, 1 TTS, 1 ASR, 1 PDF, 0 Image, 1 Video, 2 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-wakeup.test.ts\u001b[2m > \u001b[22m\u001b[2mrunSession NOTIFY wakeup wiring\u001b[2m > \u001b[22m\u001b[2msubscribes to the session route, wakes the cancel check and drain, and unsubscribes on settle\n\u001b[22m\u001b[39m[2026-09-07T01:49:23.594Z] [INFO] [AgentRunner] session session-wake: steered 1 follow-up message(s)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mregisters both tools and the web-search prompt block when a backend is configured\n\u001b[22m\u001b[39m[2026-09-07T01:49:23.603Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 3 LLM, 1 TTS, 1 ASR, 1 PDF, 0 Image, 1 Video, 2 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mregisters both tools and the web-search prompt block when a backend is configured\n\u001b[22m\u001b[39m[2026-09-07T01:49:23.604Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mregisters ask_user and the skill tools, but no web-search prompt, when nothing is configured\n\u001b[22m\u001b[39m[2026-09-07T01:49:23.606Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mwires web_search result URLs to the session URL trust gate\n\u001b[22m\u001b[39m[2026-09-07T01:49:23.607Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mlists the session materials in the system prompt so the model knows what it can read\n\u001b[22m\u001b[39m[2026-09-07T01:49:23.608Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2momits the materials block when the session has no materials\n\u001b[22m\u001b[39m[2026-09-07T01:49:23.609Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/runner-web-search-registration.test.ts \u001b[2m(\u001b[22m\u001b[2m5 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 11\u001b[2mms\u001b[22m\u001b[39m\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-skills-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mskills runner registration\u001b[2m > \u001b[22m\u001b[2mregisters the skill tools and the skill-scoped read tool, with a matching allowlist and prompt block\n\u001b[22m\u001b[39m[2026-09-07T01:49:23.609Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 3 LLM, 1 TTS, 1 ASR, 1 PDF, 0 Image, 1 Video, 2 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-skills-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mskills runner registration\u001b[2m > \u001b[22m\u001b[2mregisters the skill tools and the skill-scoped read tool, with a matching allowlist and prompt block\n\u001b[22m\u001b[39m[2026-09-07T01:49:23.611Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool",
+                "passed": false,
+                "failureReason": "nonzero-exit"
+              },
+              "consumed": false
+            },
+            {
+              "captureId": "76231ea0-3c68-44ea-9ad9-07bbe1eb7628",
+              "ts": "2026-09-07T01:50:11.182Z",
+              "actor": "verifier",
+              "stage": "verification",
+              "headSha": "1ee2ec28c6700dac18313b1470a0b07a16c5b0dc",
+              "round": 78,
+              "oracleSignature": "bc81e03e4c7cba66995420b49b3091a17b05cf880c7af6ef3973a8af7f032204",
+              "evidence": {
+                "id": "g1",
+                "shell": "/bin/sh",
+                "cwd": "/Users/franky/Projects/MyOpenMAIC/Source/openMAIC",
+                "exit": 1,
+                "pathHash": "1bf61d2260bdd3fbe5be372aa11d01730dd2191c30d8d8a798ff0dfdfe6610e9",
+                "pathCount": 30,
+                "output": "\n> openmaic@1.0.0 test /Users/franky/Projects/MyOpenMAIC/Source/openMAIC\n> vitest run tests/agent-runtime/runner-skills-registration.test.ts tests/agent-runtime/runner-web-search-registration.test.ts tests/agent-runtime/runner-voice-registration.test.ts tests/agent-runtime/runner-wakeup.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.8 \u001b[39m\u001b[90m/Users/franky/Projects/MyOpenMAIC/Source/openMAIC\u001b[39m\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-wakeup.test.ts\u001b[2m > \u001b[22m\u001b[2mrunSession NOTIFY wakeup wiring\u001b[2m > \u001b[22m\u001b[2msubscribes to the session route, wakes the cancel check and drain, and unsubscribes on settle\n\u001b[22m\u001b[39m[2026-09-07T01:50:09.234Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 3 LLM, 1 TTS, 1 ASR, 1 PDF, 0 Image, 1 Video, 2 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-wakeup.test.ts\u001b[2m > \u001b[22m\u001b[2mrunSession NOTIFY wakeup wiring\u001b[2m > \u001b[22m\u001b[2msubscribes to the session route, wakes the cancel check and drain, and unsubscribes on settle\n\u001b[22m\u001b[39m[2026-09-07T01:50:09.243Z] [INFO] [AgentRunner] session session-wake: steered 1 follow-up message(s)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mregisters both tools and the web-search prompt block when a backend is configured\n\u001b[22m\u001b[39m[2026-09-07T01:50:09.249Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 3 LLM, 1 TTS, 1 ASR, 1 PDF, 0 Image, 1 Video, 2 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mregisters both tools and the web-search prompt block when a backend is configured\n\u001b[22m\u001b[39m[2026-09-07T01:50:09.251Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mregisters ask_user and the skill tools, but no web-search prompt, when nothing is configured\n\u001b[22m\u001b[39m[2026-09-07T01:50:09.253Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mwires web_search result URLs to the session URL trust gate\n\u001b[22m\u001b[39m[2026-09-07T01:50:09.254Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2mlists the session materials in the system prompt so the model knows what it can read\n\u001b[22m\u001b[39m[2026-09-07T01:50:09.254Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-web-search-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mweb_search runner registration\u001b[2m > \u001b[22m\u001b[2momits the materials block when the session has no materials\n\u001b[22m\u001b[39m[2026-09-07T01:50:09.255Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool calls)\n\n \u001b[32m✓\u001b[39m tests/agent-runtime/runner-web-search-registration.test.ts \u001b[2m(\u001b[22m\u001b[2m5 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 11\u001b[2mms\u001b[22m\u001b[39m\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-skills-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mskills runner registration\u001b[2m > \u001b[22m\u001b[2mregisters the skill tools and the skill-scoped read tool, with a matching allowlist and prompt block\n\u001b[22m\u001b[39m[2026-09-07T01:50:09.257Z] [INFO] [ServerProviderConfig] [ServerProviderConfig] Loaded (server-providers.yml): 3 LLM, 1 TTS, 1 ASR, 1 PDF, 0 Image, 1 Video, 2 WebSearch providers\n\n\u001b[90mstdout\u001b[2m | tests/agent-runtime/runner-skills-registration.test.ts\u001b[2m > \u001b[22m\u001b[2mskills runner registration\u001b[2m > \u001b[22m\u001b[2mregisters the skill tools and the skill-scoped read tool, with a matching allowlist and prompt block\n\u001b[22m\u001b[39m[2026-09-07T01:50:09.258Z] [INFO] [AgentRunner] session session-1 -> succeeded (attempt 1, 0 tool",
+                "passed": false,
+                "failureReason": "nonzero-exit"
+              },
+              "consumed": false
             }
           ]
         },
@@ -2308,7 +2455,98 @@
       "oracle": "bc81e03e4c7cba66995420b49b3091a17b05cf880c7af6ef3973a8af7f032204",
       "evidence": "a171a54cd6fa7398aa07860759fec0676186f7e394e350b4cb088e3b35cfe744",
       "fileHash": "998c509569a30c455d3b4bdcdbf141390dcf91b36a9cbc4d9f5cee4613a2436c"
+    },
+    {
+      "seq": 97,
+      "id": "ec264c35-f440-42d6-8cb7-960fef0eada3",
+      "at": "2026-09-07T01:42:36.904Z",
+      "actor": "verifier",
+      "command": "gate_run",
+      "transition": "slice:S1:gate-run:g1:fe91b8df-ca92-40e4-8586-3208dc28e0bb",
+      "slice": "S1",
+      "hash": "6edc6047b8030944509b0014077f5b96a2bddcf444673b5b858dbfcdec6bedf4",
+      "oracle": "bc81e03e4c7cba66995420b49b3091a17b05cf880c7af6ef3973a8af7f032204",
+      "evidence": "00694e1a11da4bc29dec96a08fcedc25922b3e2e846310a3782077c9b1067599",
+      "fileHash": "da81502043481b9911f4e892176a216e2b7087ddae6f7f2d332f6b528d91140a"
+    },
+    {
+      "seq": 98,
+      "id": "da2a8336-44e4-4a3a-a300-20ff964953d9",
+      "at": "2026-09-07T01:43:07.767Z",
+      "actor": "verifier",
+      "command": "gate_run",
+      "transition": "slice:S1:gate-run:g1:538fa594-d292-4933-9162-822578ab9944",
+      "slice": "S1",
+      "hash": "8a251b9744c2301ddee4565835abc299e826539b5de69dabf78074852e94666b",
+      "oracle": "bc81e03e4c7cba66995420b49b3091a17b05cf880c7af6ef3973a8af7f032204",
+      "evidence": "1061692c39fc92d2988defc050af875a23f00ee14a876540c116e3044eefa5a6",
+      "fileHash": "74cfba9227449617734d96f7bb09a4b7fea6ffa928abf7df69aaf3c83105c3ac"
+    },
+    {
+      "seq": 99,
+      "id": "50616227-b493-43e3-a794-482baae84660",
+      "at": "2026-09-07T01:44:22.783Z",
+      "actor": "verifier",
+      "command": "gate_run",
+      "transition": "slice:S1:gate-run:g1:d2212982-6005-4b4e-8b95-1bf84aa3507d",
+      "slice": "S1",
+      "hash": "d267e212efce6f1cf4887c0de844dabd18e64d91acc11e53087781bbe974ad03",
+      "oracle": "bc81e03e4c7cba66995420b49b3091a17b05cf880c7af6ef3973a8af7f032204",
+      "evidence": "2b442e4228933df43ce09a2158a94b67b27b4a3c107e3c9ba73fd468a0115c27",
+      "fileHash": "42a44157c1abdd2fdbab307b2f6b9c793666821736139612e532d5f019f87b5e"
+    },
+    {
+      "seq": 100,
+      "id": "725015c0-7fe5-447b-9cff-84ca47af3815",
+      "at": "2026-09-07T01:47:12.119Z",
+      "actor": "verifier",
+      "command": "gate_run",
+      "transition": "slice:S1:gate-run:g1:6ea94f3b-13a9-41a8-a0b7-b58e2472dadb",
+      "slice": "S1",
+      "hash": "9e661f26c7aa1c97fe428131919e4f35b89f79dd381b3037f85c295475cd246c",
+      "oracle": "bc81e03e4c7cba66995420b49b3091a17b05cf880c7af6ef3973a8af7f032204",
+      "evidence": "7a2ef3d9cc556b7dbbbcea81da8ffa26b4ba43b83c5fe3e3de7cbbfd81a3f501",
+      "fileHash": "7d5933c6e83ecd5010dae9ba5a92c94cfc64572c13d0bcb8e3ef4139059e7029"
+    },
+    {
+      "seq": 101,
+      "id": "d50ec067-3ac3-4a76-a6b5-92b6d1e1f805",
+      "at": "2026-09-07T01:49:11.303Z",
+      "actor": "verifier",
+      "command": "gate_run",
+      "transition": "slice:S1:gate-run:g1:018a675e-a915-4d03-a10b-3da7577f66ef",
+      "slice": "S1",
+      "hash": "64c3d1dc4ee8a38d808ad8667f25cdf3e526ad238d24908757b540528a7988a4",
+      "oracle": "bc81e03e4c7cba66995420b49b3091a17b05cf880c7af6ef3973a8af7f032204",
+      "evidence": "15f16461fffb791d06f994e7c6330842ea0322c2b9cea21b214cedbad7609513",
+      "fileHash": "e1150ce813bf58f26c380dfb3bd438f3e3fc3bd2c6a643249474da4abdf1ab19"
+    },
+    {
+      "seq": 102,
+      "id": "814bfcbe-57d2-426c-99d3-2473e44bf1ec",
+      "at": "2026-09-07T01:49:25.546Z",
+      "actor": "verifier",
+      "command": "gate_run",
+      "transition": "slice:S1:gate-run:g1:3d6bc604-5af5-45be-9a35-3abac6f528db",
+      "slice": "S1",
+      "hash": "d1b7ee090480f8cdc2f6190c01be1e384bc4b45cf63fcf789777eb68aa6e7665",
+      "oracle": "bc81e03e4c7cba66995420b49b3091a17b05cf880c7af6ef3973a8af7f032204",
+      "evidence": "c03898cf9fd4a022f5a1a4a07c47f5fdfd359ac169ab3f60610971dd156058a1",
+      "fileHash": "f28467c32ed7b6a7e3e8071369d77babf813e9688d05f30dc8a8d747f9f077c8"
+    },
+    {
+      "seq": 103,
+      "id": "460a0834-d836-494a-8345-d84eda0d98df",
+      "at": "2026-09-07T01:50:11.182Z",
+      "actor": "verifier",
+      "command": "gate_run",
+      "transition": "slice:S1:gate-run:g1:76231ea0-3c68-44ea-9ad9-07bbe1eb7628",
+      "slice": "S1",
+      "hash": "6a2121034dd77e1f47c45346714e6ad98444ed85c73d43beff20029fa7879e70",
+      "oracle": "bc81e03e4c7cba66995420b49b3091a17b05cf880c7af6ef3973a8af7f032204",
+      "evidence": "a6be3b4b07b1ea45dc869a6b466516e58fd421104a8d88128d32dd0d3a988b5c",
+      "fileHash": "84ea45f6294a5ff38adc5e50c1a640cf10923c84016d4f7605f7030a86b26103"
     }
   ],
-  "fileHash": "da81502043481b9911f4e892176a216e2b7087ddae6f7f2d332f6b528d91140a"
+  "fileHash": "f41c201b201062765aaaeca8b29119d99282b3627e26e98a67850323a90fd9c4"
 }
