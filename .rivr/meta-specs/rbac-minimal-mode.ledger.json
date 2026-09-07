@@ -5,7 +5,7 @@
   "spec": {
     "reference": "docs/meta-specs/rbac-minimal-mode.md",
     "title": "Meta-spec: rbac-minimal-mode",
-    "hash": "addd16adce5d55dbc51b1ff03cacfaccdd4095c345bfd2c28ea9618fbe57a2ab"
+    "hash": "ad5821645e6e43472ebabeb6d2c0be24d75669840361bf1cc4fa36066d2eb0a9"
   },
   "tracker": {
     "mode": "none"
@@ -53,6 +53,11 @@
     {
       "batch": "019-role-permission-editor",
       "ledger": ".rivr/specs/019-role-permission-editor.ledger.json",
+      "stage": "closed"
+    },
+    {
+      "batch": "020-rbac-followups",
+      "ledger": ".rivr/specs/020-rbac-followups.ledger.json",
       "stage": "closed"
     }
   ],
@@ -474,7 +479,29 @@
       "hash": "d3e661e0da383a7ddde400003a889d72a9baed675d2bdfd59c1449ea11065718",
       "oracle": "16ad5096a24c681cc5b4df6bb409f365bd83db07effda5c2dd56dc7c05e0ffcc",
       "fileHash": "945ade554f493fa85c0a756f4eada610bcddb508bfb77259dfa09b2b4d30339a"
+    },
+    {
+      "seq": 39,
+      "id": "f78f0ec7-c115-4d1e-9f5d-80e864d007a9",
+      "at": "2026-09-07T02:38:18.025Z",
+      "actor": "orchestrator",
+      "command": "metaspec_amend",
+      "transition": "metaspec_amend:extension:child 020-rbac-followups added post-certification and closed",
+      "slice": null,
+      "hash": "e5c8faa60a4c6b0ed44aef0c05915393a81accb1d7c2216ebdf93cfc8ed3dc00",
+      "fileHash": "707b8db636b819b2906cf27041a2d1b4ef640a4079493d99a5aacba98529ff45"
+    },
+    {
+      "seq": 40,
+      "id": "ab773f71-6a25-407f-b135-c700ba4ba32a",
+      "at": "2026-09-07T02:38:18.026Z",
+      "actor": "orchestrator",
+      "command": "metaspec_child_link",
+      "transition": "child-link:020-rbac-followups:.rivr/specs/020-rbac-followups.ledger.json:closed",
+      "slice": null,
+      "hash": "406a8a4a4da6f5499a26fb3ce243ba82832b7b798d99d067b34254f6a4475556",
+      "fileHash": "707b8db636b819b2906cf27041a2d1b4ef640a4079493d99a5aacba98529ff45"
     }
   ],
-  "fileHash": "707b8db636b819b2906cf27041a2d1b4ef640a4079493d99a5aacba98529ff45"
+  "fileHash": "99f6e91cca8f175d869d74d1211ae9ff7bd75564932d0edba48b1c7654b62872"
 }
