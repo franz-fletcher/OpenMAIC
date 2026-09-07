@@ -108,6 +108,16 @@ vi.mock('@/lib/audio/voice-registration', async (importActual) => {
   };
 });
 
+// Video generation is orthogonal to voice registration. Pin the runner to a
+// deployment with NO configured video provider so the toolset stays focused
+// on voice tools. Without this mock, VIDEO_* env vars in .env.local cause
+// hasConfiguredVideoGeneration() to return true under bun, injecting an
+// unexpected generate_video tool into the registered toolset.
+vi.mock('@/lib/server/agent-runtime/generate-video', async (importActual) => {
+  const actual = await importActual<typeof import('@/lib/server/agent-runtime/generate-video')>();
+  return { ...actual, hasConfiguredVideoGeneration: () => false };
+});
+
 vi.mock('@/lib/server/agent-runtime/skills', async (importActual) => {
   const actual = await importActual<typeof import('@/lib/server/agent-runtime/skills')>();
   return {
