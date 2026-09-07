@@ -20301,6 +20301,16 @@
       "actor": "orchestrator",
       "outcome": "ok",
       "extra": {}
+    },
+    {
+      "ts": "2026-09-07T00:24:54.900Z",
+      "command": "report",
+      "flags": [],
+      "exit": 0,
+      "duration_ms": 2,
+      "stage": "verification",
+      "outcome": "ok",
+      "extra": {}
     }
   ],
   "audit": [
@@ -34767,7 +34777,18 @@
       "slice": null,
       "hash": "7378f11c25d5029a0e918c6a8f14026892905e4b67c4de78fab86cf5982f4cf9",
       "fileHash": "afab55a74b71972e8ba8f8ade9d5274956f0563f447d7d105d3eb9c4866a927d"
+    },
+    {
+      "seq": 1316,
+      "id": "84bde254-9cb4-48d3-a775-461197f8ba10",
+      "at": "2026-09-07T00:24:54.900Z",
+      "actor": "anonymous",
+      "command": "telemetry",
+      "transition": "command:report:exit:0:outcome:ok",
+      "slice": null,
+      "hash": "fb04978792438e5c33afe92824aa1e7e1dd21b9a6f518839e968926b3b46a4b9",
+      "fileHash": "5c9d446f0dfe9f9e866651f80baebe4b5e43f96e69cba1f291bc9e44fde84f2c"
     }
   ],
-  "fileHash": "5c9d446f0dfe9f9e866651f80baebe4b5e43f96e69cba1f291bc9e44fde84f2c"
+  "fileHash": "c4c7b57b742288fa18228e65ba725edada808c39523bbf3d008c100231ab230a"
 }

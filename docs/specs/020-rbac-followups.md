@@ -1,6 +1,6 @@
 # Batch 020 spec: rbac-followups
 
-Spec status: implementation
+Spec status: verification
 
 ## Problem Statement
 
