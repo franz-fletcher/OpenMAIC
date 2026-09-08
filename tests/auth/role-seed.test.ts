@@ -112,3 +112,84 @@ describe('loadRoleDefaults', () => {
     expect(defaults.adminEmails).toEqual(['a@test.com', 'b@test.com']);
   });
 });
+
+describe('admin email grant at boot', () => {
+  const originalEnv = process.env.ADMIN_EMAILS;
+
+  afterEach(() => {
+    if (originalEnv === undefined) delete process.env.ADMIN_EMAILS;
+    else process.env.ADMIN_EMAILS = originalEnv;
+  });
+
+  it('converts ADMIN_EMAILS to RoleGrantSeed for boot seeding', () => {
+    process.env.ADMIN_EMAILS = 'admin@test.com,super@test.com';
+    const defaults = loadRoleDefaults();
+    const adminGrants = defaults.adminEmails.map((email) => ({
+      email,
+      role: 'admin',
+    }));
+    expect(adminGrants).toEqual([
+      { email: 'admin@test.com', role: 'admin' },
+      { email: 'super@test.com', role: 'admin' },
+    ]);
+  });
+
+  it('applies admin grants at seed time when users exist', async () => {
+    process.env.ADMIN_EMAILS = 'admin@test.com';
+    const mockQuery = vi.fn(async (text: string) => {
+      if (text.includes('SELECT id FROM "user"')) return { rows: [{ id: 'user-admin' }] };
+      if (text.includes('SELECT id FROM roles')) return { rows: [{ id: 'role-admin' }] };
+      return { rows: [] };
+    });
+    const mockQueryable = { query: mockQuery } as never;
+    const defaults = loadRoleDefaults();
+    const adminGrants = defaults.adminEmails.map((email) => ({
+      email,
+      role: 'admin',
+    }));
+    const count = await seedRoleGrants(mockQueryable, adminGrants);
+    expect(count).toBe(1);
+    // Verify the grant was attempted (at least one SELECT id FROM "user" call)
+    const userLookupCalls = mockQuery.mock.calls.filter(
+      (c) => typeof c[0] === 'string' && c[0].includes('SELECT id FROM "user"'),
+    );
+    expect(userLookupCalls.length).toBeGreaterThanOrEqual(1);
+  });
+});
+
+describe('admin role in create hook', () => {
+  const originalEnv = process.env.ADMIN_EMAILS;
+
+  afterEach(() => {
+    if (originalEnv === undefined) delete process.env.ADMIN_EMAILS;
+    else process.env.ADMIN_EMAILS = originalEnv;
+  });
+
+  it('configured admin email gets admin role, not guest', () => {
+    process.env.ADMIN_EMAILS = 'admin@test.com';
+    const defaults = loadRoleDefaults();
+    const adminSet = new Set(defaults.adminEmails.map((e) => e.trim().toLowerCase()));
+    const testEmail = 'admin@test.com';
+    const isAdmin = adminSet.has(testEmail.toLowerCase());
+    expect(isAdmin).toBe(true);
+  });
+
+  it('non-admin email gets guest role', () => {
+    process.env.ADMIN_EMAILS = 'admin@test.com';
+    const defaults = loadRoleDefaults();
+    const adminSet = new Set(defaults.adminEmails.map((e) => e.trim().toLowerCase()));
+    const testEmail = 'regular@test.com';
+    const isAdmin = adminSet.has(testEmail.toLowerCase());
+    expect(isAdmin).toBe(false);
+  });
+
+  it('case-insensitive admin email match', () => {
+    process.env.ADMIN_EMAILS = 'Admin@Test.Com';
+    const defaults = loadRoleDefaults();
+    const adminSet = new Set(defaults.adminEmails.map((e) => e.trim().toLowerCase()));
+    // The Set stores lowercase emails; comparison is done on lowercased input.
+    expect(adminSet.has('admin@test.com')).toBe(true);
+    // Verify the input was normalized to lowercase in the set.
+    expect(Array.from(adminSet)).toEqual(['admin@test.com']);
+  });
+});

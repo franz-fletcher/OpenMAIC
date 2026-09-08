@@ -10,6 +10,7 @@ import { betterAuth } from 'better-auth';
 import type { Pool } from 'pg';
 import { createMailer, sendVerificationLink, type MailerEnv } from '@/lib/auth/mailer';
 import { seedRoleGrants } from '@/lib/auth/roles';
+import { loadRoleDefaults } from '@/lib/auth/roles-config';
 
 export interface AuthServerOptions {
   /** The better-auth secret. Falls back to AUTH_SECRET env. */
@@ -39,6 +40,12 @@ export interface AuthServer {
  */
 export function createAuthServer(options: AuthServerOptions): AuthServer {
   const secret = options.secret ?? process.env.AUTH_SECRET ?? 'dev-secret-change-me';
+
+  // Load configured admin emails once at server creation time.
+  // These are used for both boot-time role seeding and the create hook.
+  const configuredAdminEmails = new Set(
+    loadRoleDefaults().adminEmails.map((e) => e.trim().toLowerCase()),
+  );
 
   const dialect = options.pool ? new PostgresDialect({ pool: options.pool }) : undefined;
 
@@ -75,7 +82,8 @@ export function createAuthServer(options: AuthServerOptions): AuthServer {
               after: async (user) => {
                 // Check for an invite matching this email. If found,
                 // consume it and grant the invited role in one transaction.
-                // Without an invite, insert guest (rank 1) as the default.
+                // Without an invite, check configured admin emails, then
+                // fall back to guest (rank 1) as the default.
                 try {
                   const pool = options.pool!;
                   // Use a real Pool transaction for atomicity.
@@ -132,6 +140,15 @@ export function createAuthServer(options: AuthServerOptions): AuthServer {
                           [user.id],
                         );
                       }
+                    } else if (configuredAdminEmails.has(user.email.toLowerCase())) {
+                      // No invite, but email is in the configured admin list.
+                      // Grant admin role directly.
+                      await client.query(
+                        `INSERT INTO user_roles (user_id, role_id, granted_at)
+                         SELECT $1, id, now() FROM roles WHERE name = 'admin'
+                         ON CONFLICT (user_id) DO UPDATE SET role_id = EXCLUDED.role_id`,
+                        [user.id],
+                      );
                     } else {
                       // No invite found. Assign guest role (rank 1).
                       await client.query(
@@ -167,8 +184,13 @@ export function createAuthServer(options: AuthServerOptions): AuthServer {
 
   // Seed the four system roles on first boot.
   // This is idempotent and non-destructive.
+  // Convert configured admin emails to RoleGrantSeed format.
   if (options.pool) {
-    seedRoleGrants(options.pool, []).catch(() => {
+    const adminGrants = Array.from(configuredAdminEmails).map((email) => ({
+      email,
+      role: 'admin',
+    }));
+    seedRoleGrants(options.pool, adminGrants).catch(() => {
       // Role table may not exist yet during early bootstrap.
     });
   }

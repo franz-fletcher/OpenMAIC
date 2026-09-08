@@ -36,7 +36,10 @@ export default function Page() {
     setLoading(true);
     setError('');
 
-    const result = await auth.signUp({ email, password });
+    // Derive display name from email local-part for the signUp payload.
+    // The DB schema requires name NOT NULL; better-auth rejects without it.
+    const name = email.split('@')[0] || email;
+    const result = await auth.signUp({ email, password, name });
     setLoading(false);
 
     if (result.error) {
