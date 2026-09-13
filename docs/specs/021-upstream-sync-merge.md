@@ -1,5 +1,7 @@
 # 021 - Upstream Sync Merge
 
+Spec status: research
+
 ## Problem Statement
 
 The OpenMAIC fork (origin: franz-fletcher/OpenMAIC) has diverged from upstream (THU-MAIC/OpenMAIC) by 216 local commits while upstream advanced 49 commits since the merge-base. The fork needs to sync with upstream to receive security fixes, new model support (GLM-5.3, DeepSeek V4), input validation hardening, and other improvements. Nine files conflict and require manual resolution.
@@ -31,7 +33,7 @@ Resolve the 6 code-level conflicts: classroom/route.ts, stage-meta route, provid
 **Target files:**
 - `app/api/classroom/route.ts` -- union: keep both helper functions (`isMinimalMode` ours + `describeSceneIssue` theirs); POST handler auto-merged (their `validateScene`/`sanitizeSceneContent` + our MINIMAL_MODE flag); GET handler: wrap their `sanitizeSceneContent(classroom)` return inside our `withRequestOwnerId` callback with MINIMAL_MODE-gated RBAC preserved
 - `app/api/stage-meta/[stageId]/route.ts` -- take upstream's `isServerPersistenceConfigured` import; keep our RBAC body (auto-merged)
-- `lib/ai/providers.ts` -- take upstream's `transportFetch` approach; remove our `getLlmNoTimeoutAgent` dead code
+- `lib/ai/providers.ts` -- take upstream's `transportFetch` approach; remove our `getLlmNoTimeoutAgent` function, `cachedNoTimeoutAgent` variable, and the dispatcher injection lines (`const dispatcher = await getLlmNoTimeoutAgent()` + `const fetchInit = ...`) in both OpenAI-compatible and Anthropic branches
 - `lib/server/agent-runtime/generation-tools.ts` -- union: our `notify` calls + their structured failure handling
 - `lib/server/model-routes.ts` -- keep both `maic-agent-compaction` and `conversation-title`
 - `tests/server/model-routes.test.ts` -- keep both entries in expected stages
