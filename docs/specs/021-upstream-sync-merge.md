@@ -1,6 +1,6 @@
 # 021 - Upstream Sync Merge
 
-Spec status: research
+Spec status: implementation
 
 ## Problem Statement
 
