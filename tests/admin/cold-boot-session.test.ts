@@ -47,8 +47,8 @@ afterEach(() => {
 // Mocks
 // ---------------------------------------------------------------------------
 
-let _mockPoolEnd = vi.fn(async () => {});
-let _mockApiCall = vi.fn(async () => ({
+const _mockPoolEnd = vi.fn(async () => {});
+const _mockApiCall = vi.fn(async () => ({
   ok: true,
   json: async () => ({
     session: {

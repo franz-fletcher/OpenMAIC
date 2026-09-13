@@ -144,7 +144,7 @@ describe.skipIf(!PG_URL || process.env.MINIMAL_MODE !== 'true')(
         }),
       });
 
-      const response = await (POST as Function)(request);
+      const response = await (POST as unknown as (req: Request) => Promise<Response>)(request);
       expect(response.status).toBe(403);
 
       const body = await response.json();
@@ -177,12 +177,16 @@ describe.skipIf(!PG_URL || process.env.MINIMAL_MODE !== 'true')(
 
       // First 5 should succeed
       for (let i = 0; i < 5; i++) {
-        const response = await (POST as Function)(makeRequest());
+        const response = await (POST as unknown as (req: Request) => Promise<Response>)(
+          makeRequest(),
+        );
         expect(response.status).toBe(200);
       }
 
       // 6th should return 429
-      const response6 = await (POST as Function)(makeRequest());
+      const response6 = await (POST as unknown as (req: Request) => Promise<Response>)(
+        makeRequest(),
+      );
       expect(response6.status).toBe(429);
       const body6 = await response6.json();
       expect(body6.code).toBe('quota_exhausted');

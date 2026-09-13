@@ -66,7 +66,7 @@ async function resolveOwnerId(): Promise<string> {
   } catch {
     // Session lookup failed; fall through to anonymous.
   }
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
+
   const { resolveRequestOwnerId } = await import('@/lib/server/agent-runtime/owner');
   return resolveRequestOwnerId({ headers: h }, new Headers());
 }

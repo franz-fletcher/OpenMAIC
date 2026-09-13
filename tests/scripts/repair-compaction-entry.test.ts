@@ -11,7 +11,7 @@ import { describe, expect, it, vi } from 'vitest';
 // The script is plain .js with ESM dynamic imports for pi-agent-core and
 // CJS require for pg. Vitest resolves it through the path alias.
 // ---------------------------------------------------------------------------
-// eslint-disable-next-line @typescript-eslint/no-require-imports
+
 const mod = await import('../../scripts/repair-compaction-entry.js');
 
 const { planRepairs, main } = mod as {

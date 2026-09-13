@@ -13,6 +13,9 @@
  */
 
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
+import type { createMailer } from '@/lib/auth/mailer';
+
+type MailerDeps = NonNullable<Parameters<typeof createMailer>[1]>;
 
 const ENV_KEYS = [
   'DATABASE_URL',
@@ -69,7 +72,9 @@ describe('INVITE_MAILER_OK: invite-mailer gate', () => {
   describe('INVITE_MAILER_OK: smtp transport', () => {
     it('sends invite via smtp transport', async () => {
       const sendMail = vi.fn(async () => ({}));
-      const createTransport = vi.fn(() => ({ sendMail })) as any;
+      const createTransport = vi.fn(() => ({ sendMail })) as unknown as NonNullable<
+        MailerDeps['createTransport']
+      >;
       const { createMailer } = await import('@/lib/auth/mailer');
       const mailer = createMailer(
         {
@@ -96,9 +101,9 @@ describe('INVITE_MAILER_OK: invite-mailer gate', () => {
     it('sends invite via resend transport', async () => {
       const send = vi.fn(async () => ({}));
       // The Resend mock must be a class (not an arrow fn) so it works with `new`.
-      const Resend = vi.fn(function (this: any) {
+      const Resend = vi.fn(function (this: { emails: { send: typeof send } }) {
         this.emails = { send };
-      }) as any;
+      }) as unknown as NonNullable<MailerDeps['Resend']>;
       const { createMailer } = await import('@/lib/auth/mailer');
       const mailer = createMailer(
         {

@@ -12,6 +12,7 @@
  */
 
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
+import type { Queryable } from '@openmaic/storage/document/pg';
 
 const ENV_KEYS = [
   'DATABASE_URL',
@@ -53,7 +54,7 @@ describe('ROLE_AUDIENCE_OK: custom role audience rank probes', () => {
       const { resolveViewerRank } = await import('@/lib/persistence/audience');
       const queryable = {
         query: vi.fn(async () => ({ rows: [] })),
-      } as any;
+      } satisfies Queryable;
       const rank = await resolveViewerRank(queryable, 'anon:session-1');
       expect(rank).toBe(0);
     });
@@ -70,8 +71,8 @@ describe('ROLE_AUDIENCE_OK: custom role audience rank probes', () => {
           }
           return { rows: [] };
         }),
-      } as any;
-      const rank = await resolveViewerRank(queryable, 'user:custom-user-1');
+      };
+      const rank = await resolveViewerRank(queryable as unknown as Queryable, 'user:custom-user-1');
       expect(rank).toBe(2);
     });
 
@@ -89,8 +90,8 @@ describe('ROLE_AUDIENCE_OK: custom role audience rank probes', () => {
           }
           return { rows: [] };
         }),
-      } as any;
-      await resolveViewerRank(queryable, 'user:abc-123');
+      };
+      await resolveViewerRank(queryable as unknown as Queryable, 'user:abc-123');
       // The second call (user_roles join) should have the raw id without prefix
       expect(capturedParams).toContain('abc-123');
     });
@@ -98,16 +99,8 @@ describe('ROLE_AUDIENCE_OK: custom role audience rank probes', () => {
     it('returns 0 for unknown users with no role assignment', async () => {
       const { resolveViewerRank } = await import('@/lib/persistence/audience');
       const queryable = {
-        query: vi.fn(async (sql: string) => {
-          if (sql.includes('"banned"')) {
-            return { rows: [] };
-          }
-          if (sql.includes('user_roles')) {
-            return { rows: [] };
-          }
-          return { rows: [] };
-        }),
-      } as any;
+        query: vi.fn(async () => ({ rows: [] })),
+      } satisfies Queryable;
       const rank = await resolveViewerRank(queryable, 'user:unknown-user');
       expect(rank).toBe(0);
     });
@@ -121,8 +114,8 @@ describe('ROLE_AUDIENCE_OK: custom role audience rank probes', () => {
           }
           return { rows: [] };
         }),
-      } as any;
-      const rank = await resolveViewerRank(queryable, 'user:banned-user');
+      };
+      const rank = await resolveViewerRank(queryable as unknown as Queryable, 'user:banned-user');
       expect(rank).toBe(0);
     });
   });

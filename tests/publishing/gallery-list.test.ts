@@ -1,10 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { Queryable } from '@openmaic/storage/document/pg';
 import { listGalleryCourses, type GalleryCourse } from '@/lib/persistence/gallery';
 
 describe('publishing gallery list', () => {
   describe('listGalleryCourses', () => {
     it('returns published courses within viewer rank', async () => {
-      const queryable = {
+      const queryable: Queryable = {
         query: vi.fn().mockResolvedValue({
           rows: [
             { stage_id: 's1', name: 'Math 101', published_at: 1000 },
@@ -13,7 +14,7 @@ describe('publishing gallery list', () => {
         }),
       };
 
-      const courses = await listGalleryCourses(queryable as any, 0);
+      const courses = await listGalleryCourses(queryable, 0);
 
       expect(courses).toHaveLength(2);
       expect(courses[0]).toEqual({ stageId: 's1', name: 'Math 101', publishedAt: 1000 });
@@ -31,45 +32,45 @@ describe('publishing gallery list', () => {
     });
 
     it('filters by audience tier', async () => {
-      const queryable = {
+      const queryable: Queryable = {
         query: vi.fn().mockResolvedValue({ rows: [] }),
       };
 
-      await listGalleryCourses(queryable as any, 1);
+      await listGalleryCourses(queryable, 1);
 
       expect(queryable.query).toHaveBeenCalledWith(expect.any(String), [1]);
     });
 
     it('returns empty array when no courses match', async () => {
-      const queryable = {
+      const queryable: Queryable = {
         query: vi.fn().mockResolvedValue({ rows: [] }),
       };
 
-      const courses = await listGalleryCourses(queryable as any, 0);
+      const courses = await listGalleryCourses(queryable, 0);
 
       expect(courses).toEqual([]);
     });
 
     it('handles null published_at', async () => {
-      const queryable = {
+      const queryable: Queryable = {
         query: vi.fn().mockResolvedValue({
           rows: [{ stage_id: 's1', name: 'Test', published_at: null }],
         }),
       };
 
-      const courses = await listGalleryCourses(queryable as any, 0);
+      const courses = await listGalleryCourses(queryable, 0);
 
       expect(courses[0].publishedAt).toBeNull();
     });
 
     it('handles string published_at', async () => {
-      const queryable = {
+      const queryable: Queryable = {
         query: vi.fn().mockResolvedValue({
           rows: [{ stage_id: 's1', name: 'Test', published_at: '1700000000' }],
         }),
       };
 
-      const courses = await listGalleryCourses(queryable as any, 0);
+      const courses = await listGalleryCourses(queryable, 0);
 
       expect(courses[0].publishedAt).toBe(1700000000);
     });

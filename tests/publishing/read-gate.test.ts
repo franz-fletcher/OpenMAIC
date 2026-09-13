@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { Queryable } from '@openmaic/storage/document/pg';
 import { AUDIENCE_RANK, resolveViewerRank } from '@/lib/persistence/audience';
 import {
   decideDocumentAccess,
@@ -17,19 +18,19 @@ describe('publishing read gate', () => {
 
   describe('resolveViewerRank', () => {
     it('returns 0 for anon: owners', async () => {
-      const queryable = {
+      const queryable: Queryable = {
         query: vi.fn().mockResolvedValue({ rows: [] }),
       };
-      const rank = await resolveViewerRank(queryable as any, 'anon:guest');
+      const rank = await resolveViewerRank(queryable, 'anon:guest');
       expect(rank).toBe(0);
       expect(queryable.query).not.toHaveBeenCalled();
     });
 
     it('returns 0 for unknown user ids', async () => {
-      const queryable = {
+      const queryable: Queryable = {
         query: vi.fn().mockResolvedValue({ rows: [] }),
       };
-      const rank = await resolveViewerRank(queryable as any, 'user:unknown');
+      const rank = await resolveViewerRank(queryable, 'user:unknown');
       expect(rank).toBe(0);
       expect(queryable.query).toHaveBeenCalledWith(
         'SELECT r.rank FROM user_roles ur JOIN roles r ON ur.role_id = r.id WHERE ur.user_id = $1',
@@ -38,10 +39,10 @@ describe('publishing read gate', () => {
     });
 
     it('returns the role rank for known users', async () => {
-      const queryable = {
+      const queryable: Queryable = {
         query: vi.fn().mockResolvedValue({ rows: [{ rank: 3 }] }),
       };
-      const rank = await resolveViewerRank(queryable as any, 'user:creator');
+      const rank = await resolveViewerRank(queryable, 'user:creator');
       expect(rank).toBe(3);
     });
   });

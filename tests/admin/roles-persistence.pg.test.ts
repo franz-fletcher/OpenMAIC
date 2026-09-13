@@ -71,7 +71,7 @@ describe.skipIf(!contractUrl)('ROLES_CORE_PG_OK: roles persistence PG contract',
       `SELECT name FROM roles WHERE rank = 2 AND "isSystem" = false ORDER BY name`,
     );
     expect(result.rows).toHaveLength(2);
-    expect(result.rows.map((r: any) => r.name)).toEqual(['test-a', 'test-b']);
+    expect(result.rows.map((r: { name: string }) => r.name)).toEqual(['test-a', 'test-b']);
 
     // Clean up.
     await pool.query(`DELETE FROM roles WHERE id IN ('test-role-a', 'test-role-b')`);

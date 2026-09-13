@@ -17,11 +17,7 @@
 
 import { NextRequest } from 'next/server';
 import { recordGenerationUsage } from '@/lib/server/usage-storage';
-import {
-  generateImage,
-  aspectRatioToDimensions,
-  IMAGE_PROVIDERS,
-} from '@/lib/media/image-providers';
+import { generateImage, IMAGE_PROVIDERS } from '@/lib/media/image-providers';
 import {
   isServerConfiguredProvider,
   isServerProviderDisabled,
@@ -35,6 +31,7 @@ import { createLogger } from '@/lib/logger';
 import { apiError, apiSuccess } from '@/lib/server/api-response';
 import { requirePermissionIfMinimalMode } from '@/lib/auth';
 import { validateUrlForSSRF } from '@/lib/server/ssrf-guard';
+import { resolveImageSize } from '@/lib/server/image-sizing';
 
 const log = createLogger('ImageGeneration API');
 
@@ -78,7 +75,7 @@ export async function POST(request: NextRequest) {
     const clientBaseUrl = managed ? undefined : request.headers.get('x-base-url') || undefined;
     const clientModel = request.headers.get('x-image-model')?.trim() || undefined;
 
-    if (clientBaseUrl && process.env.NODE_ENV === 'production') {
+    if (clientBaseUrl) {
       const ssrfError = await validateUrlForSSRF(clientBaseUrl);
       if (ssrfError) {
         return apiError('INVALID_URL', 403, ssrfError);
@@ -112,19 +109,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Resolve dimensions from aspect ratio if not explicitly set
-    if (!body.width && !body.height && body.aspectRatio) {
-      const dims = aspectRatioToDimensions(body.aspectRatio);
-      body.width = dims.width;
-      body.height = dims.height;
-    }
+    const sizedOptions = resolveImageSize(body, { providerId, modelId: model });
 
     log.info(
       `Generating image: provider=${providerId}, model=${model || 'default'}, ` +
-        `prompt="${body.prompt.slice(0, 80)}...", size=${body.width ?? 'auto'}x${body.height ?? 'auto'}`,
+        `prompt="${sizedOptions.prompt.slice(0, 80)}...", size=${sizedOptions.width ?? 'auto'}x${sizedOptions.height ?? 'auto'}`,
     );
 
-    const result = await generateImage({ providerId, apiKey, baseUrl, model }, body);
+    const result = await generateImage({ providerId, apiKey, baseUrl, model }, sizedOptions);
 
     void recordGenerationUsage({
       kind: 'image',

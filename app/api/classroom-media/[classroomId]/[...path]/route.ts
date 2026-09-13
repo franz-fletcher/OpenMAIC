@@ -33,7 +33,6 @@ const GATED_CACHE_HEADERS = { 'Cache-Control': 'private, no-store' } as const;
  * Uses globalThis.process to survive Turbopack's compile-time env replacement.
  */
 function isMinimalMode(): boolean {
-  // eslint-disable-next-line no-restricted-globals -- runtime env access for server-only flag
   const runtimeProcess = globalThis.process as NodeJS.Process | undefined;
   const mode = runtimeProcess?.env?.MINIMAL_MODE;
   return mode === 'true' || mode === '1';

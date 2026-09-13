@@ -17,6 +17,7 @@
  */
 
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
+import type { Root } from 'react-dom/client';
 
 const ENV_KEYS = [
   'DATABASE_URL',
@@ -137,7 +138,7 @@ import { isMinimalModeClientEnabled } from '@/lib/config/feature-flags';
 
 // @vitest-environment jsdom
 describe('Minimal-mode account zone', () => {
-  let root: any;
+  let root: Root;
   let container: HTMLDivElement;
 
   beforeEach(async () => {
@@ -209,7 +210,7 @@ describe('Minimal-mode account zone', () => {
 
 // @vitest-environment jsdom
 describe('Minimal-mode header capsule Pro toggle', () => {
-  let root: any;
+  let root: Root;
   let container: HTMLDivElement;
 
   beforeEach(async () => {
@@ -385,7 +386,7 @@ describe('Minimal-mode flag behavior', () => {
 
 // @vitest-environment jsdom
 describe('Minimal-mode header capsule gear visibility', () => {
-  let root: any;
+  let root: Root;
   let container: HTMLDivElement;
 
   beforeEach(async () => {

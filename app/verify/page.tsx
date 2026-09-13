@@ -14,15 +14,14 @@ function VerifyContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
 
-  const [status, setStatus] = useState<'loading' | 'success' | 'failure'>('loading');
+  const [status, setStatus] = useState<'loading' | 'success' | 'failure'>(
+    token ? 'loading' : 'failure',
+  );
   const [email, setEmail] = useState('');
   const [resending, setResending] = useState(false);
 
   useEffect(() => {
-    if (!token) {
-      setStatus('failure');
-      return;
-    }
+    if (!token) return;
 
     // Try to verify the token by calling the verify endpoint.
     fetch(`/api/auth/verify-email?token=${encodeURIComponent(token)}`)

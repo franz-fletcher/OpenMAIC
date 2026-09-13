@@ -232,7 +232,7 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
 
     // Import route handlers AFTER DATABASE_URL is set.
     const stageMetaRoute = await import('@/app/api/stage-meta/[stageId]/route');
-    getStageMeta = stageMetaRoute.GET as any;
+    getStageMeta = stageMetaRoute.GET as unknown as typeof getStageMeta;
 
     const classroomRoute = await import('@/app/api/classroom/route');
     getClassroom = classroomRoute.GET;
@@ -285,7 +285,7 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
     const stageId = options.stageId || path.match(/\/api\/stage-meta\/(.+)/)?.[1];
     const ctx = stageId ? { params: { stageId } } : undefined;
 
-    const res = await handler(req, ctx as any);
+    const res = await handler(req, ctx);
     let body: unknown;
     const ct = res.headers.get('content-type') || '';
     if (ct.includes('json')) {
@@ -378,11 +378,16 @@ describe.skipIf(!PG_URL)('publishing no-leak probes', () => {
   // ---------------------------------------------------------------------------
   // S5 probes: stage-meta route
   // ---------------------------------------------------------------------------
-  let _origUncaught: NodeJS.UncaughtExceptionListener | undefined;
+  let _origUncaught: NodeJS.UncaughtExceptionListener[] | undefined;
   beforeAll(() => {
-    _origUncaught = process.listeners('uncaughtException') as any;
+    _origUncaught = process.listeners('uncaughtException') as NodeJS.UncaughtExceptionListener[];
     process.on('uncaughtException', (err) => {
-      if (err && typeof err === 'object' && 'code' in err && (err as any).code === '57P01') {
+      if (
+        err &&
+        typeof err === 'object' &&
+        'code' in err &&
+        (err as { code?: unknown }).code === '57P01'
+      ) {
         // Silently ignore -- the error is from the DB drop, not a real failure.
         return;
       }

@@ -73,6 +73,8 @@ describe('model-routes', () => {
     const { getStageModel } = await import('@/lib/server/model-routes');
     expect(getStageModel('scene-content')).toBeUndefined();
     expect(error).toHaveBeenCalled();
+    expect(error.mock.calls[0]?.[0]).toContain('callers apply their own fallback');
+    expect(error.mock.calls[0]?.[0]).not.toContain('DEFAULT_MODEL');
   });
 
   it('ignores non-string route values', async () => {
@@ -377,6 +379,7 @@ describe('model-routes', () => {
         'maic-agent',
         'maic-agent-driver',
         'maic-agent-compaction',
+        'conversation-title',
       ]),
     );
   });

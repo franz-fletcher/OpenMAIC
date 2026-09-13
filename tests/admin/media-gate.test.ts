@@ -51,7 +51,7 @@ afterEach(() => {
 // Mocks
 // ---------------------------------------------------------------------------
 
-let _mockSession: { userId: string; token: string; id: string } | null = null;
+const _mockSession: { userId: string; token: string; id: string } | null = null;
 
 vi.mock('@/lib/auth/permissions-server', () => ({
   requirePermission: vi.fn(async () => {

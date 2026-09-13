@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import type { AgentMessage } from '@earendil-works/pi-agent-core';
 import {
   resolveCompactionSettings,
   measureDriverContextTokens,
@@ -93,7 +94,7 @@ describe('measureDriverContextTokens', () => {
         stopReason: 'stop',
         usage: { input: 1000, output: 500, cacheRead: 0, cacheWrite: 0 },
       },
-    ] as any[];
+    ] as unknown as AgentMessage[];
     const tokens = measureDriverContextTokens(messages);
     expect(tokens).toBeGreaterThan(0);
   });
@@ -115,7 +116,7 @@ describe('measureDriverContextTokens', () => {
         stopReason: 'stop',
         usage: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
       },
-    ] as any[];
+    ] as unknown as AgentMessage[];
     const tokens = measureDriverContextTokens(messages);
     // Must count every message, not just the usage anchor.
     expect(tokens).toBeGreaterThan(0);
@@ -125,7 +126,7 @@ describe('measureDriverContextTokens', () => {
     const messages = [
       { role: 'user', content: [{ type: 'text', text: 'hello' }] },
       { role: 'assistant', content: [{ type: 'text', text: 'world' }] },
-    ] as any[];
+    ] as unknown as AgentMessage[];
     const tokens = measureDriverContextTokens(messages);
     expect(tokens).toBeGreaterThan(0);
   });

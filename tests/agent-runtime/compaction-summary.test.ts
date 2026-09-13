@@ -1,6 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import type { AgentMessage } from '@earendil-works/pi-agent-core';
+import type { ResolvedModel } from '@/lib/server/resolve-model';
 
 vi.mock('@/lib/ai/llm', () => ({
   streamLLM: vi.fn(),
@@ -34,8 +36,8 @@ describe('generateCompactionSummary', () => {
 
     const mockModel = { modelId: 'test-model', provider: 'test-provider' };
     resolveModel.mockResolvedValue({
-      model: mockModel as any,
-      modelInfo: {} as any,
+      model: mockModel as unknown as ResolvedModel['model'],
+      modelInfo: {} as unknown as ResolvedModel['modelInfo'],
       modelString: 'test:model',
       providerId: 'test',
       modelId: 'model',
@@ -59,7 +61,7 @@ describe('generateCompactionSummary', () => {
         role: 'assistant',
         content: [{ type: 'text', text: 'Hi there' }],
       },
-    ] as any[];
+    ] as unknown as AgentMessage[];
 
     const result = await generateCompactionSummary(messages, 'key topics', 1024, () => {});
 
@@ -80,8 +82,8 @@ describe('generateCompactionSummary', () => {
 
     const mockModel = { modelId: 'test-model', provider: 'test-provider' };
     resolveModel.mockResolvedValue({
-      model: mockModel as any,
-      modelInfo: {} as any,
+      model: mockModel as unknown as ResolvedModel['model'],
+      modelInfo: {} as unknown as ResolvedModel['modelInfo'],
       modelString: 'test:model',
       providerId: 'test',
       modelId: 'model',
@@ -98,7 +100,9 @@ describe('generateCompactionSummary', () => {
     });
 
     const onDelta = vi.fn();
-    const messages = [{ role: 'user', content: [{ type: 'text', text: 'Hi' }] }] as any[];
+    const messages = [
+      { role: 'user', content: [{ type: 'text', text: 'Hi' }] },
+    ] as unknown as AgentMessage[];
 
     await generateCompactionSummary(messages, 'focus', 1024, onDelta);
 
@@ -113,8 +117,8 @@ describe('generateCompactionSummary', () => {
 
     const mockModel = { modelId: 'test-model', provider: 'test-provider' };
     resolveModel.mockResolvedValue({
-      model: mockModel as any,
-      modelInfo: {} as any,
+      model: mockModel as unknown as ResolvedModel['model'],
+      modelInfo: {} as unknown as ResolvedModel['modelInfo'],
       modelString: 'test:model',
       providerId: 'test',
       modelId: 'model',
@@ -129,7 +133,9 @@ describe('generateCompactionSummary', () => {
     });
 
     const controller = new AbortController();
-    const messages = [{ role: 'user', content: [{ type: 'text', text: 'Hi' }] }] as any[];
+    const messages = [
+      { role: 'user', content: [{ type: 'text', text: 'Hi' }] },
+    ] as unknown as AgentMessage[];
 
     await generateCompactionSummary(messages, 'focus', 1024, () => {}, controller.signal);
 
@@ -147,7 +153,7 @@ describe('generateCompactionSummary', () => {
 
     await expect(
       generateCompactionSummary(
-        [{ role: 'user', content: [{ type: 'text', text: 'Hello' }] }] as any[],
+        [{ role: 'user', content: [{ type: 'text', text: 'Hello' }] }] as unknown as AgentMessage[],
         'summary',
         1024,
         () => {},

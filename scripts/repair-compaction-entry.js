@@ -280,8 +280,8 @@ async function main(argv) {
     return 1;
   }
 
-  const pg = require('pg');
-  const pool = new pg.Pool({ connectionString: args.databaseUrl });
+  const { Pool } = await import('pg');
+  const pool = new Pool({ connectionString: args.databaseUrl });
   const client = await pool.connect();
 
   try {

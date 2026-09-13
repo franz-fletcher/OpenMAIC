@@ -2,6 +2,7 @@
 
 import { memo, useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { answerIncludesOption } from '@/lib/quiz/grading';
 import {
   PieChart,
   CheckCircle2,
@@ -268,7 +269,7 @@ function SingleChoiceQuestion({
       <div className="grid gap-2">
         {question.options?.map((opt) => {
           const selected = value === opt.value;
-          const isCorrectOpt = isReview && question.answer?.includes(opt.value);
+          const isCorrectOpt = isReview && answerIncludesOption(question, opt.value);
           const isWrong = isReview && selected && result?.status === 'incorrect';
 
           return (
@@ -378,7 +379,7 @@ function MultipleChoiceQuestion({
       <div className="grid gap-2">
         {question.options?.map((opt) => {
           const isSelected = selected.includes(opt.value);
-          const isCorrectOpt = isReview && question.answer?.includes(opt.value);
+          const isCorrectOpt = isReview && answerIncludesOption(question, opt.value);
           const isWrong = isReview && isSelected && !isCorrectOpt;
 
           return (

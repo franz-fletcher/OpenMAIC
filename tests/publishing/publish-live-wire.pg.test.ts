@@ -263,11 +263,16 @@ describe.skipIf(!PG_URL)('publish-live-wire', () => {
   });
 
   // Suppress harmless DB-drop errors in afterAll.
-  let _origUncaught: NodeJS.UncaughtExceptionListener | undefined;
+  let _origUncaught: NodeJS.UncaughtExceptionListener[] | undefined;
   beforeAll(() => {
-    _origUncaught = process.listeners('uncaughtException') as any;
+    _origUncaught = process.listeners('uncaughtException') as NodeJS.UncaughtExceptionListener[];
     process.on('uncaughtException', (err) => {
-      if (err && typeof err === 'object' && 'code' in err && (err as any).code === '57P01') {
+      if (
+        err &&
+        typeof err === 'object' &&
+        'code' in err &&
+        (err as { code?: unknown }).code === '57P01'
+      ) {
         return;
       }
       throw err;

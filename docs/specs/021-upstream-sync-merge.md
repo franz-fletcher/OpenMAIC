@@ -80,6 +80,35 @@ Commit the merge resolution, push the sync branch, fast-forward main.
 **Target files:** (git operation)
 **Postconditions:** Merge commit exists on `chore/merge-upstream-2026-09`. Branch is pushed to origin. Main can be fast-forwarded.
 
+### S7: Pre-existing lint debt cleanup (amendment)
+
+Fix error-severity lint violations in 13 pre-merge files that block S05 G2 (`pnpm lint --fix && echo LINT_OK`). All 13 files are byte-identical to pre-merge main (`git diff --quiet main -- <file>` proves this); the debt predates the sync.
+
+**Scope:** The 13 files and NOTHING else:
+- app/verify/page.tsx
+- scripts/repair-compaction-entry.js
+- tests/admin/invite-mailer.test.ts
+- tests/admin/roles-audience.test.ts
+- tests/admin/roles-persistence.pg.test.ts
+- tests/agent-runtime/compaction-summary.test.ts
+- tests/agent-runtime/compaction-trigger.test.ts
+- tests/minimal-mode/live-wire.pg.test.ts
+- tests/minimal-mode/minimal-layout.test.ts
+- tests/publishing/gallery-list.test.ts
+- tests/publishing/no-leak.pg.test.ts
+- tests/publishing/publish-live-wire.pg.test.ts
+- tests/publishing/read-gate.test.ts
+
+**Rules:**
+- Fix only error-severity violations to reach 0 errors. Warnings are untouched.
+- No `eslint-disable` escapes unless a specific site is genuinely un-typeable (then justify inline).
+- Test semantics must not change (type-only edits in tests).
+- No repo-wide format/lint fix drive-bys.
+- Evidence: all 13 files are byte-identical to pre-merge main.
+
+**Target files:** Representative symbols in the 13 files above (offending functions/constants typed to satisfy the linter).
+**Postconditions:** `pnpm lint` exits 0 (0 errors). Targeted test files pass.
+
 ## Implementation Decisions
 
 1. **Merge strategy:** `git merge upstream/main` on a dedicated branch. NOT rebase (216 local commits make rewrite unsafe).
@@ -118,3 +147,5 @@ Commit the merge resolution, push the sync branch, fast-forward main.
 6. **onUpdate parameter:** The fork added `onUpdate` to `generateTools.execute` for phase-progress observability. Upstream does not have this. It is preserved in the merge (not in conflict with upstream's changes).
 7. **Post-merge verification:** After merge, run `pnpm test tests/server/model-routes.test.ts tests/providers/provider-neutrality-guard.test.ts tests/agent-runtime/generation-tools.test.ts` as targeted verification before the full suite.
 8. **Risk tiers (set at ledger build, per soundness review):** S1=1, S2=3, S3=2, S4=1, S5=3, S6=1. Tier 3 slices need one integration-tagged gate. Review: `docs/research/021-spec-soundness-review.md`.
+9. **Amendment: S07 lint debt cleanup.** During implementation, S05 G2 (`pnpm lint --fix && echo LINT_OK`) failed with 44 error-severity violations across 13 files. All 13 files are byte-identical to pre-merge main; the debt predates the sync. S07 was added to scope this cleanup. The researcher proposed the extension via `rivr spec propose` (audit entry recorded). The orchestrator must run `rivr spec amend --action extension` to rebind the hash and return the stage to research before S07 can be contracted in the ledger.
+10. **Node 22 requirement.** CI pins Node 22 (see `.nvmrc`). Gate runs (`pnpm test`, `npx tsc --noEmit`, `pnpm lint`) require Node >= 20.9; Node 22 is the verified environment. Implementers must use Node 22 locally for gate parity.
